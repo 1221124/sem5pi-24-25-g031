@@ -2,10 +2,8 @@
 
 ## 1. Context
 
-> The backoffice system enables the Customer Manager to manage job openings 
-> and notify candidates of the results of the verification process. 
+> The backoffice system enables the Customer Manager to manage job openings and notify candidates of the results of the verification process.
 > This use case focuses on sending email notifications to candidates, informing them of the outcome of their job application.
-
 > Part of the requirements needed to implement this use case are fulfilled by the EAPLI framework provided by the course.
 
 ## 2. Requirements
@@ -15,7 +13,7 @@
 ## 3. Analysis
 
 * The analysis related to this use case can be found in the [Analysis](02.analysis/README.md) file.
- 
+
 ## 4. Design
 
 * The design related to this use case can be found in the [Design](03.design/README.md) file.

@@ -45,7 +45,7 @@ This project is a **web-based system** designed to manage surgical appointments 
 
 ## Data Model
 
-### Entities and Attributes:
+### Entities and Attributes
 
 1. **User**
    - Attributes: `Username`, `Role` (Admin, Doctor, Nurse, Technician, Patient), `Email`
