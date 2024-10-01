@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC030
+actor CustomerManager as CM
+participant ":System" as System
+
+activate CM
+
+        CM -> System: Send email
+
+    activate System
+        System -> System: sendNotification()
+
+        System -> System : Save in database
+
+        System --> CM: Email successfully sent and notification record saved
+    deactivate System
+
+
+deactivate CM
+
+@enduml

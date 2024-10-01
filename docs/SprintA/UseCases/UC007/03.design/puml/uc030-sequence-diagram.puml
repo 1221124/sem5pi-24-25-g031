@@ -1,0 +1,89 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC030
+
+actor CustomerManager as CM
+participant ResultProcessNotificationUI as UI <<presentation>>
+participant ResultProcessNotificationController as Controller <<application>>
+participant JobOpeningManagementService as Service <<persistence>>
+database JobOpeningRepository as Repository <<repository>>
+
+activate CM
+
+CM -> UI: Send Email
+
+activate UI
+
+    UI -> Controller: updatedJobOpeningAndStatus()
+
+    activate Controller
+
+        Controller -> Service: updatedJobOpeningAndStatus()
+
+        activate Service
+
+            Service --> Service: return new Pair<>(updatedJobOpening, updatedStatus)
+
+            Service --> Controller : return new Pair<>(updatedJobOpening, updatedStatus)
+
+        deactivate Service
+
+        Controller -> UI : return new Pair<>(updatedJobOpening, updatedStatus)
+
+    deactivate Controller
+
+        alt if Phase.SCREENING = Status.COMPLETED
+
+            UI -> Controller : sendEmail()
+
+            activate Controller
+
+                Controller -> Service : sendEmail()
+                activate Service
+
+                    Service --> Service : sendNotification()
+
+                    activate Service
+
+
+                    alt if send email with success
+
+                        Service -> Repository : save(jobOpening)
+                    deactivate Service
+
+                        activate Repository
+
+                            Repository --> Service :  Job opening successfully saved in the repository
+
+                        deactivate Repository
+
+                    Service --> Controller : Email successfully sent and notification record saved
+
+                deactivate Service
+
+                Controller --> UI : Email successfully sent and notification record saved
+
+
+
+        else
+
+            Controller --> UI : Email not sent and notification record not saved
+
+            deactivate Controller
+
+        end alt
+
+            UI --> CM : Email successfully sent and notification record saved
+
+        end alt
+
+deactivate UI
+
+deactivate CM
+
+@enduml

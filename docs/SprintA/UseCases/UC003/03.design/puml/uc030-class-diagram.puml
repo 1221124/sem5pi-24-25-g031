@@ -1,0 +1,32 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC030
+
+class ResultProcessNotificationUI <<interface>>
+
+class ResultProcessNotificationController <<controller>>
+
+class JobOpeningManagementService <<service>>
+
+class JobOpeningRepository <<repository>>
+
+class StatusEmail <<value>>
+
+class SMTP <<service>>
+
+
+ResultProcessNotificationUI ..> ResultProcessNotificationController
+
+ResultProcessNotificationController ..> JobOpeningManagementService : uses >
+ResultProcessNotificationController ..> JobOpeningRepository : accesses >
+
+JobOpeningRepository <.. RepositoryFactory : creates <
+JobOpeningRepository ..> StatusEmail : saves in database >
+
+JobOpeningManagementService ..> SMTP : sends email >
+
+@enduml

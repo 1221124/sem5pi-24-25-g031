@@ -1,0 +1,91 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+top to bottom direction
+left to right direction
+
+hide circle
+hide methods
+
+title Domain Model (DM) - UC030
+
+package SystemUserAggregate {
+    class SystemUser <<Root Entity>>
+    class Name <<Value Object>>
+    class EmailAddress <<Value Object>>
+    enum Role <<Value Object>> {
+        ADMIN
+        CUSTOMER_MANAGER
+        OPERATOR
+        CUSTOMER
+        CANDIDATE
+    }
+}
+
+class CustomerManager
+note left of CustomerManager: conceptual class
+
+
+package CustomerAggregate {
+    class Customer <<Root Entity>>
+}
+
+package CandidateAggregate {
+    class Candidate <<Root Entity>>
+}
+
+
+package JobOpeningAggregate {
+    class JobOpening <<Root Entity>>
+    class JobReference <<Value Object>>
+    class JobFunction <<Value Object>>
+    enum Phase <<Value Object>> {
+        APPLICATION
+        SCREENING
+        INTERVIEWS
+        ANALYSIS
+        RESULT
+    }
+    enum Status <<Value Object>> {
+        PENDING
+        IN_PROGRESS
+        COMPLETED
+    }
+    class PhaseDetails <<Value Object>>
+}
+
+package JobApplicationAggregate {
+    class JobApplication <<Root Entity>>
+}
+
+SystemUser "1" -- "1" Name
+SystemUser "1" -- "1" EmailAddress
+SystemUser "1" -- "*" Role
+
+SystemUser <--- CustomerManager : is a <
+SystemUser <--- Candidate : is a <
+
+Admin "1" -- "*" CustomerManager : manages >
+
+CustomerManager "1" -- "*" Customer : manages >
+
+
+Candidate "1" -- "*" JobApplication : applies to >
+
+CustomerManager "1" -- "*" JobOpening : creates >
+
+
+JobOpening "1" -- "*" JobApplication : to <
+JobOpening "1" -- "1" JobReference : identified by >
+JobOpening "1" -- "1" Status : has >
+JobOpening "1" -- "4..5" Phase : has >
+JobOpening "1" -- "1" JobFunction : with >
+
+Phase "1" -- "1" PhaseDetails : with >
+PhaseDetails "1" -- "1" Status : has >
+
+
+@enduml
