@@ -13,20 +13,16 @@
 ## Discussion Summary
 
 ### 1. Project Overview
+
 - The team revisited the main goals of the project, ensuring that all members understand the key functionalities we are developing (surgical appointment management, 3D visualization, GDPR compliance, etc.).
 - The focus is on organizing the project into well-defined modules: Backoffice, 3D Visualization, Planning/Optimization, GDPR, and Business Continuity.
 
 ### 2. Use Case Distribution
-Each team member was assigned specific use cases to work on:
 
-- **[Beatriz Silva, 1200347]**:
-  - UC00X (US5.1.X): ... 
+- The Use Case Distribution is related on the [Sprint A Planning document](../SprintAPlanning.md).
 
-- **[David Sousa, 1220784]**:
-  - UC00X (US5.1.X): ...
+### 3. Next Steps
 
-- **[Guilherme Ribeiro, 1220786]**:
-  - UC00X (US5.1.X): ...
-
-- **[Tiago Carvalho, 1221124]**:
-  - UC00X (US5.1.X): ...
+- Each team member will start working on their assigned use cases, focusing on the requirements engineering, analysis of the acceptance criteria, design considerations and test planning.
+- The team will meet again on Monday, October 7, 2024, to review the progress and discuss any issues encountered.
+- The team will use the project's GitHub repository to share their work and collaborate on the project.
