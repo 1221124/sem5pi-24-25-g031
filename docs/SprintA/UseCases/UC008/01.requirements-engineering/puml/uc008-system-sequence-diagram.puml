@@ -13,17 +13,60 @@ activate ADM
     ADM -> System: create a new patient profile
 
     activate System
-        System -> ADM: asks to insert the patient details
 
+        System --> ADM: asks to insert the first and last names of\n the patient as well as the full name
     deactivate System
 
-    ADM -> System : Insert details
+    ADM -> System : Insert required fields
     activate System
+
+        System --> ADM: asks to insert the date of birth of the patient
+    deactivate System
+
+    ADM -> System : Insert required field
+    activate System
+
+        System --> ADM: asks to insert the gender of the patient
+    deactivate System
+
+    ADM -> System : Insert required field
+    activate System
+
+        System --> ADM: asks to insert the contact information\n (email, phone number) of the patient
+    deactivate System
+
+    ADM -> System : Insert required fields
+    activate System
+
+        System -> System: validates email and phone number
+
+    opt
+        System --> ADM: asks to insert Allergies/Medical Conditions \nof the patient
+        deactivate System
+
+        ADM -> System: insert required field
+        activate System
+
+    end opt
         
-        System -> System: validates email and phone \nnumber are unique
+    System --> ADM: ask to insert emergency contact
+    deactivate System
 
-        System -> System: generate unique patient ID
+    ADM -> System: insert required field
+    activate System
 
+    opt
+
+        System --> ADM: asks to insert the previus or upcaming \nappointment history
+        deactivate System
+
+        ADM -> System: insert required field
+        activate System
+
+    end opt
+
+        System --> System: generate unique patient ID
+        System --> System: creates patient profile
         System --> ADM: show operation success/error
     deactivate System
 
