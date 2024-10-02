@@ -1,25 +1,36 @@
-@startuml
-skinparam monochrome true
-skinparam packageStyle rectangle
-skinparam shadowing false
+@startuml uc030-system-sequence-diagram
 
-title System Sequence Diagram (SSD) - UC030
-actor CustomerManager as CM
-participant ":System" as System
+title System Sequence Diagram (SSD) - UC001
+actor Admin as Adm
+participant ":IAM" as IAM
 
-activate CM
+activate Adm
 
-        CM -> System: Send email
+    Adm -> IAM: Register Backoffice User
+    activate IAM
+    
+        IAM --> Adm: Ask for new user's name
+    deactivate IAM
 
-    activate System
-        System -> System: sendNotification()
+    Adm -> IAM: Provide new user's name
+    activate IAM
 
-        System -> System : Save in database
+        IAM --> Adm: Ask for new user's email
+    deactivate IAM
 
-        System --> CM: Email successfully sent and notification record saved
-    deactivate System
+    Adm -> IAM: Provide new user's email
+    activate IAM
 
+        IAM --> Adm: Ask for new user's role (Admin, Doctor, Nurse, Technician)
+    deactivate IAM
 
-deactivate CM
+    Adm -> IAM: Provide new user's role
+    activate IAM
+
+        IAM -> IAM: Send user confirmation email in order for them to set their password\nand activate their account
+        
+        IAM --> Adm: User confirmation email sent
+    deactivate IAM
+deactivate Adm
 
 @enduml

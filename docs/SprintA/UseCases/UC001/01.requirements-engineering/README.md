@@ -1,11 +1,11 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
 
 
 ## 1. Requirements Engineering
 
 ### 1.1. Use Case Description
 
-> As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process.
+> As Admin, I want to register new backoffice users.
 
 ---
 
@@ -13,9 +13,7 @@
 
 **From the specifications document:**
 
-- The solution should be deployed using several network nodes. It is expected that, at least, the relational
-  database server and the Follow Up Server be deployed in nodes diferent from localhost, preferably in the cloud. The e-mail notification
-  tasks must be executed in background by the Follow Up Server.
+- 
 
 **From the client clarifications:**
 
