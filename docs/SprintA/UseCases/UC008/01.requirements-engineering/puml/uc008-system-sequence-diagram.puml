@@ -1,0 +1,33 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram (SSD) - UC008
+actor Admin as ADM
+participant ":System" as System
+
+activate ADM
+
+    ADM -> System: create a new patient profile
+
+    activate System
+        System -> ADM: asks to insert the patient details
+
+    deactivate System
+
+    ADM -> System : Insert details
+    activate System
+        
+        System -> System: validates email and phone \nnumber are unique
+
+        System -> System: generate unique patient ID
+
+        System --> ADM: show operation success/error
+    deactivate System
+
+
+deactivate ADM
+
+@enduml
