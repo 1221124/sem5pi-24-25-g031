@@ -40,14 +40,14 @@ account.
 
 - This Use Case is relative to US5.1.1, which is related to the backoffice management functionality.
 - It relates to the following Use Case(s) as well:
-  - [UC006 (US 5.1.6)](../../UC006/README.md) - As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials, so that I can access the backoffice features according to my assigned role.
-  - [UC008](../../UC008/README.md) - As an Admin, I want to create a new patient profile, so that I can register their personal details and medical history.
+  - [UC006 (US5.1.6)](../../UC006/README.md) - As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials, so that I can access the backoffice features according to my assigned role.
+  - [UC008 (US5.1.8)](../../UC008/README.md) - As an Admin, I want to create a new patient profile, so that I can register their personal details and medical history.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Typed data: user's name and email
+- Typed data: username and email
 - Selected data: user's role (i.e.: Admin, Doctor, Nurse, Technician)
 
 **Output Data:**
@@ -56,7 +56,7 @@ account.
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/uc001-system-sequence-diagram.svg)
+![System Sequence Diagram](png/uc001-system-sequence-diagram.png)
 
 ### 1.7 Other Relevant Remarks
 

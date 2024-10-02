@@ -9,10 +9,10 @@ activate Adm
     Adm -> IAM: Register Backoffice User
     activate IAM
     
-        IAM --> Adm: Ask for new user's name
+        IAM --> Adm: Ask for new user's username
     deactivate IAM
 
-    Adm -> IAM: Provide new user's name
+    Adm -> IAM: Provide new user's username
     activate IAM
 
         IAM --> Adm: Ask for new user's email
@@ -21,10 +21,10 @@ activate Adm
     Adm -> IAM: Provide new user's email
     activate IAM
 
-        IAM --> Adm: Ask for new user's role (Admin, Doctor, Nurse, Technician)
+        IAM --> Adm: Ask for new user's role, giving a set of options\nto choose from (Admin, Doctor, Nurse, Technician)
     deactivate IAM
 
-    Adm -> IAM: Provide new user's role
+    Adm -> IAM: Select new user's role
     activate IAM
 
         IAM -> IAM: Send user confirmation email in order for them to set their password\nand activate their account
