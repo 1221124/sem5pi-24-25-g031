@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+top to bottom direction
+left to right direction
+
+hide methods
+hide circle
+
+title Domain Model - Backend
+
+
+class Patient{}
+
+class Staff{}
+
+class User{
+  -username
+  -email
+  -role
+}
+
+class Room{}
+
+class Appointment{}
+
+class OperationType{}
+
+class OperationRequest{}
+
+User "0..1" -- "0..1" Staff
+User "0..1" -- "0..1" Patient
