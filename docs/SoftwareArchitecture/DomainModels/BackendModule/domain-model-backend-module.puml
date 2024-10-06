@@ -18,27 +18,36 @@ title Domain Model - Backend
 package PatientAggregate {
   class Patient{}
   class Name{}
-  class Date{} note right of Date: Patient's Date of Birth
+  class Date{}
+  note right of Date: Patient's Date of Birth
   class Gender{}
-  class MedicalRecordNumber{} note right of MedicalRecordNumber: unique identifier
+  class MedicalRecordNumber{}
+  note right of MedicalRecordNumber: unique identifier
   class ContactInformation{}
-  class Email {} note right of Email: unique
-  class PhoneNumber {} note right of PhoneNumber: Emergency Contact also
-  class MedicalConditions{} note right of MedicalConditions: optional
-  class AppointmentHistory {} note right of AppointmentHistory: contains previous and upcoming appointments
+  class Email {}
+  note right of Email: unique
+  class PhoneNumber {}
+  note right of PhoneNumber: Emergency Contact also
+  class MedicalConditions{}
+  note right of MedicalConditions: optional
+  class AppointmentHistory {}
+  note right of AppointmentHistory: contains previous and upcoming appointments
 }
 
 package StaffAggregate {
   class Staff{}
   class Name{}
   class ContactInformation{}
-  class Email {} note right of Email: unique
+  class Email {}
+  note right of Email: unique
   class PhoneNumber
-  class LicenseNumber{} note right of LicenseNumber: unique identifier
+  class LicenseNumber{}
+  note right of LicenseNumber: unique identifier
   class Specialization{
     CARDIOLOGY,ORTOPEDICS
   }
-  class AvailabilitySlots{} note right of AvailabilitySlots: contains available date and time slots for appointments
+  class AvailabilitySlots{}
+  note right of AvailabilitySlots: contains available date and time slots for appointments
 }
 
 package UserAggregate {
