@@ -1,4 +1,5 @@
-@startuml
+@startuml domain-model-backend-module
+
 'https://plantuml.com/class-diagram
 
 skinparam packageStyle rectangle
@@ -14,15 +15,39 @@ hide circle
 
 title Domain Model - Backend
 
+package PatientAggregate {
+  class Patient{}
+  class Name{}
+  class Date{} note right of Date: Patient's Date of Birth
+  class Gender{}
+  class MedicalRecordNumber{} note right of MedicalRecordNumber: unique identifier
+  class ContactInformation{}
+  class Email {} note right of Email: unique
+  class PhoneNumber {} note right of PhoneNumber: Emergency Contact also
+  class MedicalConditions{} note right of MedicalConditions: optional
+  class AppointmentHistory {} note right of AppointmentHistory: contains previous and upcoming appointments
+}
 
-class Patient{}
+package StaffAggregate {
+  class Staff{}
+  class Name{}
+  class ContactInformation{}
+  class Email {} note right of Email: unique
+  class PhoneNumber
+  class LicenseNumber{} note right of LicenseNumber: unique identifier
+  class Specialization{
+    CARDIOLOGY,ORTOPEDICS
+  }
+  class AvailabilitySlots{} note right of AvailabilitySlots: contains available date and time slots for appointments
+}
 
-class Staff{}
-
-class User{
-  -username
-  -email
-  -role
+package UserAggregate {
+  class User{}
+  class Username{}
+  class Email{}
+  class Role{
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT 
+  }
 }
 
 class Room{}
@@ -31,7 +56,12 @@ class Appointment{}
 
 class OperationType{}
 
-class OperationRequest{}
+package OperationRequestAggregate {
+  class OperationRequest{}
+  class OperationRequestID{}
+}
 
 User "0..1" -- "0..1" Staff
-User "0..1" -- "0..1" Patient
+User "0..1" -- "1" Patient
+
+Staff "1" -- "1" Specialization
