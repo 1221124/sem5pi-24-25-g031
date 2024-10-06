@@ -1,0 +1,76 @@
+@startuml domain-model-backend-module
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+top to bottom direction
+left to right direction
+
+hide methods
+hide circle
+
+title Domain Model - Backoffice Module
+
+package PatientAggregate {
+  class Patient <<root entity>> {}
+  class Name <<value object>> {}
+  class Date <<value object>> {}
+  note right of Date: Patient's Date of Birth
+  class Gender <<value object>> {}
+  class MedicalRecordNumber <<value object>> {}
+  note right of MedicalRecordNumber: unique identifier
+  class ContactInformation <<value object>> {}
+  class Email <<value object>> {}
+  note right of Email: unique
+  class PhoneNumber <<value object>> {}
+  class EmergencyNumber <<value object>> {}
+  note right of EmergencyNumber: is a phone number with pre-determined business rules
+  class MedicalConditions <<value object>> {}
+  note right of MedicalConditions: optional
+  class AppointmentHistory <<value object>> {}
+  note right of AppointmentHistory: contains previous and upcoming appointments
+}
+
+package StaffAggregate {
+  class Staff <<root entity>> {}
+  class Name <<value object>> {}
+  class ContactInformation <<value object>> {}
+  class Email <<value object>> {}
+  note right of Email: unique
+  class PhoneNumber <<value object>> {}
+  class LicenseNumber <<value object>> {}
+  note right of LicenseNumber: unique identifier
+  class Specialization <<value object>> {
+    CARDIOLOGY,ORTOPEDICS
+  }
+  class AvailabilitySlots <<value object>> {}
+  note right of AvailabilitySlots: contains available date and time slots for appointments
+}
+
+package UserAggregate {
+  class User <<root entity>> {}
+  class Username <<value object>> {}
+  class Email <<value object>> {}
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT 
+  }
+}
+note top of UserAggregate: Users are managed using\nan IAM (external to the system)
+
+class Room{}
+
+class Appointment{}
+
+class OperationType{}
+
+package OperationRequestAggregate {
+  class OperationRequest <<root entity>> {}
+  class OperationRequestID <<value object>> {}
+}
+
+User "0..1" -- "0..1" Staff
+User "0..1" -- "1" Patient
+
+Staff "1" -- "1" Specialization
