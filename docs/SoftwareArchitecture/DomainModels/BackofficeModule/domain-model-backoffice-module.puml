@@ -5,8 +5,9 @@ skinparam shadowing false
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 
-top to bottom direction
 left to right direction
+top to bottom direction
+
 
 hide methods
 hide circle
@@ -20,7 +21,7 @@ package UserAggregate {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
   }
 }
-note top of UserAggregate: managed using an IAM\n(external to the system)
+note left of UserAggregate: managed using an IAM\n(external to the system)
 
 package PatientAggregate {
   class Patient <<root entity>>
@@ -74,7 +75,6 @@ package AppointmentAggregate {
   class Appointment <<root entity>>
   class AppointmentID <<value object>>
   note right of AppointmentID: unique identifier
-  class AppointmentDateTime <<value object>>
   class AppointmentStatus <<value object>> {
     SCHEDULED, COMPLETED, CANCELED
   }  
@@ -114,26 +114,58 @@ EmergencyContact "1" -- "1" PhoneNumber : > has
 DateTime "1" -- "1" Date : > has
 DateTime "1" -- "1" Time : > has
 Slot "1" -- "2" DateTime : > consists of
+RequiredStaff "1" -- "1..*" Staff : > has
+MaintenanceSlots "1" -- "1..*" Slot : > has
+AvailabilitySlots "1" -- "1..*" Slot : > has
+AppointmentSlots "1" -- "1..*" Slot : > has
 
-User "1" - "1" Username : > has
-User "1" - "1" Email : > identified by
-User "*" - "1" Role : > has assigned
+User "1" -- "1" Username : > has
+User "1" -- "1" Email : > identified by
+User "*" -- "1" Role : > has assigned
 
-User "0..1" <- "0..1" Staff : < references
-User "0..1" <- "1" Patient : < references
+User "0..1" <-- "0..1" Staff : < references
+User "0..1" <-- "1" Patient : < references
 
-Patient "1..*" -- "1" FullName : > has
-Patient "*" - "1" DateOfBirth : > born on
-Patient "*" - "1" Gender : > has
-Patient "1" - "1" MedicalRecordNumber : > identified by
-Patient "1" - "1" ContactInformation : > has
-Patient "0..*" - "0..*" MedicalCondition : > can have
-Patient "*" - "1" EmergencyContact : > has
-Patient "1" - "1" AppointmentHistory : > has
+Patient "1..*" --- "1" FullName : > has
+Patient "*" --- "1" DateOfBirth : > born on
+Patient "*" --- "1" Gender : > has
+Patient "1" --- "1" MedicalRecordNumber : > identified by
+Patient "1" --- "1" ContactInformation : > has
+Patient "0..*" --- "0..*" MedicalCondition : > can have
+Patient "*" ---"1" EmergencyContact : > has
+Patient "1" --- "1" AppointmentHistory : > has
 
-Staff "*" - "1" FullName : > has
-Staff "1" - "1" LicenseNumber : > identified by
-Staff "*" - "1" Specialization : > has
-Staff "1" - "1" ContactInformation : > has
-Staff "1" - "*" AvailabilitySlots : > has
-Staff "1" - "*" AppointmentSlots : > has
+Staff "*" -- "1" FullName : > has
+Staff "1" -- "1" LicenseNumber : > identified by
+Staff "*" -- "1" Specialization : > has
+Staff "1" -- "1" ContactInformation : > has
+Staff "1" -- "*" AvailabilitySlots : > has
+Staff "1" -- "*" AppointmentSlots : > has
+
+OperationRequest "1" -- "1" RequestID : > identified by
+OperationRequest "*" -- "1" Patient : > has
+OperationRequest "*" -- "1" Staff : > requested by
+OperationRequest "*" -- "1" OperationType : > has
+OperationRequest "*" -- "1" DeadlineDate : > has
+OperationRequest "*" -- "1" OperationPriority : > has
+
+OperationType "1" -- "1" OperationTypeID : > identified by
+OperationType "1" -- "1" OperationTypeName : > has
+OperationType "1" -- "1" RequiredStaff : > needs
+OperationType "1" -- "1..*" SurgeryPhaseDetails : > has
+SurgeryPhaseDetails "1" -- "1" SurgeryPhase : > has
+SurgeryPhaseDetails "1" -- "1" Time : > has
+
+Appointment "1" -- "1" AppointmentID : > identified by
+Appointment "1" -- "1" OperationRequest : > has
+Appointment "*" -- "1" DateTime : > scheduled to
+Appointment "*" -- "1" AppointmentStatus : > has
+Appointment "*" -- "1" SurgeryRoom : > happens in
+
+SurgeryRoom "1" -- "1" SurgeryRoomID : > identified by
+SurgeryRoom "*" -- "1" RoomType : > is
+SurgeryRoom "*" -- "1" RoomCapacity : > has
+'REVIEW MUITOS PARA MUITOS
+SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
+SurgeryRoom "*" -- "1" RoomStatus : > has
+SurgeryRoom "*" -- "*" MaintenanceSlots : > has 
