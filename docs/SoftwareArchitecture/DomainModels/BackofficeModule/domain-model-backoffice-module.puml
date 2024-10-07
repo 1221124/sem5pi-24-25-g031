@@ -13,64 +13,127 @@ hide circle
 
 title Domain Model - Backoffice Module
 
+package UserAggregate {
+  class User <<root entity>>
+  class Username <<value object>>
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+}
+note top of UserAggregate: managed using an IAM\n(external to the system)
+
 package PatientAggregate {
-  class Patient <<root entity>> {}
-  class Name <<value object>> {}
-  class Date <<value object>> {}
-  note right of Date: Patient's Date of Birth
-  class Gender <<value object>> {}
-  class MedicalRecordNumber <<value object>> {}
+  class Patient <<root entity>>
+  class DateOfBirth <<value object>>
+  class Gender <<value object>> {
+    MALE, FEMALE
+  }
+  class MedicalRecordNumber <<value object>>
   note right of MedicalRecordNumber: unique identifier
-  class ContactInformation <<value object>> {}
-  class Email <<value object>> {}
-  note right of Email: unique
-  class PhoneNumber <<value object>> {}
-  class EmergencyNumber <<value object>> {}
-  note right of EmergencyNumber: is a phone number with pre-determined business rules
-  class MedicalConditions <<value object>> {}
-  note right of MedicalConditions: optional
-  class AppointmentHistory <<value object>> {}
-  note right of AppointmentHistory: contains previous and upcoming appointments
+  class MedicalCondition <<value object>>
+  note right of MedicalCondition: optional
+  class EmergencyContact <<value object>>
+  class AppointmentHistory <<value object>>
 }
 
 package StaffAggregate {
-  class Staff <<root entity>> {}
-  class Name <<value object>> {}
-  class ContactInformation <<value object>> {}
-  class Email <<value object>> {}
-  note right of Email: unique
-  class PhoneNumber <<value object>> {}
-  class LicenseNumber <<value object>> {}
+  class Staff <<root entity>>
+  class LicenseNumber <<value object>>
   note right of LicenseNumber: unique identifier
   class Specialization <<value object>> {
-    CARDIOLOGY,ORTOPEDICS
+    CARDIOLOGY, ORTHOPEDICS
   }
-  class AvailabilitySlots <<value object>> {}
-  note right of AvailabilitySlots: contains available date and time slots for appointments
+  'TODO: REVIEW
+  class AvailabilitySlots <<value object>>
+  class AppointmentSlots <<value object>>
 }
-
-package UserAggregate {
-  class User <<root entity>> {}
-  class Username <<value object>> {}
-  class Email <<value object>> {}
-  class Role <<value object>> {
-    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT 
-  }
-}
-note top of UserAggregate: Users are managed using\nan IAM (external to the system)
-
-class Room{}
-
-class Appointment{}
-
-class OperationType{}
 
 package OperationRequestAggregate {
-  class OperationRequest <<root entity>> {}
-  class OperationRequestID <<value object>> {}
+  class OperationRequest <<root entity>>
+  class RequestID <<value object>>
+  note right of RequestID: unique identifier
+  class DeadlineDate <<value object>>
+  class OperationPriority <<value object>> {
+    ELECTIVE, URGENT, EMERGENCY
+  }
 }
 
-User "0..1" -- "0..1" Staff
-User "0..1" -- "1" Patient
+package OperationTypeAggregate {
+  class OperationType <<root entity>>
+  class OperationTypeID <<value object>>
+  note right of OperationTypeID: unique identifier
+  class OperationTypeName <<value object>>
+  class RequiredStaff <<value object>>
+  class SurgeryPhaseDetails <<value object>>
+  class SurgeryPhase <<value object>> {
+    ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
+  }
+}
 
-Staff "1" -- "1" Specialization
+package AppointmentAggregate {
+  class Appointment <<root entity>>
+  class AppointmentID <<value object>>
+  note right of AppointmentID: unique identifier
+  class AppointmentDateTime <<value object>>
+  class AppointmentStatus <<value object>> {
+    SCHEDULED, COMPLETED, CANCELED
+  }  
+}
+
+package SurgeryRoomAggregate {
+  class SurgeryRoom <<root entity>>
+  class SurgeryRoomID <<value object>>
+  note right of SurgeryRoomID: unique identifier
+  class RoomType <<value object>> {
+    OPERATING, CONSULTATION, ICU
+  }
+  class RoomCapacity <<value object>>
+  class AssignedEquipment <<value object>>
+  class RoomStatus <<value object>> {
+    AVAILABLE, OCCUPIED, UNDER_MAINTENANCE
+  }
+  class MaintenanceSlots <<value object>>
+}
+
+class FullName <<value object>>
+class FirstName <<value object>>
+class LastName <<value object>>
+class ContactInformation <<value object>>
+class PhoneNumber <<value object>>
+class Email <<value object>>
+class DateTime <<value object>>
+class Date <<value object>>
+class Time <<value object>>
+class Slot <<value object>>
+
+FullName "1" -- "1" FirstName : > has
+FullName "1" -- "1" LastName : > has
+ContactInformation "1" -- "1" PhoneNumber : > has
+ContactInformation "1" -- "1" Email : > has
+EmergencyContact "1" -- "1" PhoneNumber : > has
+DateTime "1" -- "1" Date : > has
+DateTime "1" -- "1" Time : > has
+Slot "1" -- "2" DateTime : > consists of
+
+User "1" - "1" Username : > has
+User "1" - "1" Email : > identified by
+User "*" - "1" Role : > has assigned
+
+User "0..1" <- "0..1" Staff : < references
+User "0..1" <- "1" Patient : < references
+
+Patient "1..*" -- "1" FullName : > has
+Patient "*" - "1" DateOfBirth : > born on
+Patient "*" - "1" Gender : > has
+Patient "1" - "1" MedicalRecordNumber : > identified by
+Patient "1" - "1" ContactInformation : > has
+Patient "0..*" - "0..*" MedicalCondition : > can have
+Patient "*" - "1" EmergencyContact : > has
+Patient "1" - "1" AppointmentHistory : > has
+
+Staff "*" - "1" FullName : > has
+Staff "1" - "1" LicenseNumber : > identified by
+Staff "*" - "1" Specialization : > has
+Staff "1" - "1" ContactInformation : > has
+Staff "1" - "*" AvailabilitySlots : > has
+Staff "1" - "*" AppointmentSlots : > has

@@ -3,6 +3,7 @@
 **Date**: Monday, September 30, 2024  
 **Time**: 14:00h  
 **Attendees**: Beatriz Silva (1200347), David Sousa (1220784), Guilherme Ribeiro (1220786), Tiago Carvalho (1221124)
+**Absents**: None
 
 ## Agenda
 
