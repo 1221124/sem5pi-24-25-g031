@@ -1,4 +1,4 @@
-@startuml domain-model-backend-module
+@startuml domain-model-backoffice-module
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -169,3 +169,5 @@ SurgeryRoom "*" -- "1" RoomCapacity : > has
 SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
 SurgeryRoom "*" -- "1" RoomStatus : > has
 SurgeryRoom "*" -- "*" MaintenanceSlots : > has 
+
+@enduml
