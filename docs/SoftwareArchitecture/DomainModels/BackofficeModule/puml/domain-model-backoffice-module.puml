@@ -105,6 +105,15 @@ class Date <<value object>>
 class Time <<value object>>
 class Slot <<value object>>
 
+class Admin
+note right of Admin: conceptual class
+class Doctor
+note right of Doctor: conceptual class
+class Nurse
+note right of Nurse: conceptual class
+class Technician
+note right of Technician: conceptual
+
 FullName "1" -- "1" FirstName : > has
 FullName "1" -- "1" LastName : > has
 ContactInformation "1" -- "1" PhoneNumber : > has
@@ -168,5 +177,16 @@ SurgeryRoom "*" -- "1" RoomCapacity : > has
 SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
 SurgeryRoom "*" -- "1" RoomStatus : > has
 SurgeryRoom "*" -- "*" MaintenanceSlots : > has 
+
+Admin --> User : > references
+Doctor -- Staff : > is
+Nurse -- Staff : > is
+Technician -- Staff : > is
+
+Admin -- Staff : > manages
+Admin -- Patient : > manages
+
+Admin -- OperationType : > manages
+Doctor -- OperationRequest : > manages
 
 @enduml
