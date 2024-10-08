@@ -8,13 +8,12 @@ skinparam linetype ortho
 left to right direction
 top to bottom direction
 
-
 hide methods
 hide circle
 
 title Domain Model - Backoffice Module
 
-package UserAggregate {
+package UserAggregate #MediumAquaMarine {
   class User <<root entity>>
   class Username <<value object>>
   class Role <<value object>> {
@@ -23,7 +22,7 @@ package UserAggregate {
 }
 note left of UserAggregate: managed using an IAM\n(external to the system)
 
-package PatientAggregate {
+package PatientAggregate #LightSalmon {
   class Patient <<root entity>>
   class DateOfBirth <<value object>>
   class Gender <<value object>> {
@@ -37,7 +36,7 @@ package PatientAggregate {
   class AppointmentHistory <<value object>>
 }
 
-package StaffAggregate {
+package StaffAggregate #Pink {
   class Staff <<root entity>>
   class LicenseNumber <<value object>>
   note right of LicenseNumber: unique identifier
@@ -49,7 +48,7 @@ package StaffAggregate {
   class AppointmentSlots <<value object>>
 }
 
-package OperationRequestAggregate {
+package OperationRequestAggregate #LightGoldenRodYellow{
   class OperationRequest <<root entity>>
   class RequestID <<value object>>
   note right of RequestID: unique identifier
@@ -59,7 +58,7 @@ package OperationRequestAggregate {
   }
 }
 
-package OperationTypeAggregate {
+package OperationTypeAggregate #PaleGreen {
   class OperationType <<root entity>>
   class OperationTypeID <<value object>>
   note right of OperationTypeID: unique identifier
@@ -71,7 +70,7 @@ package OperationTypeAggregate {
   }
 }
 
-package AppointmentAggregate {
+package AppointmentAggregate #IndianRed {
   class Appointment <<root entity>>
   class AppointmentID <<value object>>
   note right of AppointmentID: unique identifier
@@ -80,7 +79,7 @@ package AppointmentAggregate {
   }  
 }
 
-package SurgeryRoomAggregate {
+package SurgeryRoomAggregate #lightblue {
   class SurgeryRoom <<root entity>>
   class SurgeryRoomID <<value object>>
   note right of SurgeryRoomID: unique identifier
@@ -119,8 +118,8 @@ MaintenanceSlots "1" -- "1..*" Slot : > has
 AvailabilitySlots "1" -- "1..*" Slot : > has
 AppointmentSlots "1" -- "1..*" Slot : > has
 
-User "1" -- "1" Username : > has
-User "1" -- "1" Email : > identified by
+User "1" -- "1" Username : > identified by
+User "1" -- "1" Email : > has
 User "*" -- "1" Role : > has assigned
 
 User "0..1" <-- "0..1" Staff : < references
