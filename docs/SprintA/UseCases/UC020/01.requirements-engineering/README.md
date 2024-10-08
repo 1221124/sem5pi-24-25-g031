@@ -1,11 +1,10 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
-
+# UC020 - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system
 
 ## 1. Requirements Engineering
 
 ### 1.1. Use Case Description
 
-> As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process.
+> As Admin, I want to add new type of operations.
 
 ---
 
@@ -13,58 +12,65 @@
 
 **From the specifications document:**
 
-- The solution should be deployed using several network nodes. It is expected that, at least, the relational
-  database server and the Follow Up Server be deployed in nodes diferent from localhost, preferably in the cloud. The e-mail notification
-  tasks must be executed in background by the Follow Up Server.
+- Operation types are medical procedures that can be performed at the hospital.
+- Admin must be able to add, edit, delete, and list/search operations.
+- When registering a new operation, the Admin must provide several details, such as:
+  - Name
+  - Required staff (by specializations)
+  - Estimated duration
+- An ID (unique identifier) is automatically assigned to each operation.
 
 **From the client clarifications:**
 
-> **Question:** Relativamente ao envio das notificações por email, é necessário guardar que esse envio foi feito?
-> 
-> **Answer:** No documento nada de explicito é dito sobre este assunto. No entanto, do ponto de vista de gestão do processo da jobs4u parece-me adequado que essa informação fique registada.
-
-> **Question:** "As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process" qual é o processo através do qual essa notificação é gerada? Após a avaliação do Requirement Specification module, este gera um resultado "Aprovado" ou "Rejeitado". Este resultado despoleta automaticamente uma notificação para o candidato ou é o Customer Manager que tem a responsabilidade de informar o candidato através do sistema do resultado da verificação (ex. depois de um resultado negativo ser gerado, o Customer Manager vai no sistema rejeitar o candidato para que seja enviado o email)?
->  
-> **Answer:** É a segunda opção que apresenta. A US1015 permite que o Customer Manager invoque o processo de verificação de requisitos. Depois disso todas as candidaturas devem estar aceites ou recusadas. É então possível ao Customer Manager invocar a notificação através da US1016.
-
-> **Question:** About the Us1016 wich states: "As Customer Manager, I want the system to notify candidates, by email, of the result of verification process". I want to know when the client says "verification process" is the same about the screening phase.
-> 
+> **Question:** In the document with the surgeries, they all have 3 phases and respective duration:
+-Anesthesia/patient preparation
+-Surgery
+-Cleaning
+Can we assume while creating a new operation type, that the surgery must always have this 3 phases?
 > **Answer:** Yes.
-
-> **Question:** This user story has a functional dependency with 1015. I would like to know if an error occurs, do I need to delete what happened in US 1015, as if it were a transaction?
-> 
-> **Answer:** The process of notification (US1016) must be done after the verification (US1015) but an error in the notification does not invalidate the “results” of the verification process.
-
+>
+> **Question:** Are the different phases of surgery relevant to the business and should they be recorded in the system?
+> **Answer:** Yes; they are important due to the time it takes each phase and in the future for the planning of different teams (e.g., cleaning team)
+>
+> **Question:** Regarding the required Staff, what is it? A list that defines the specializations and roles of the staff involved in the appointment? Like 2 heart doctors and 5 heart nurses?
+> **Answer:** Yes.
+>
+> **Question:** The document you provided divides surgical times into "specific phases of the surgery," whereas the main statement only mentions recording the total surgery time. Should the system, therefore, store and specify the time spent on each phase of the surgery, or is it sufficient to only record the total surgery time without detailing the time distribution across each phase?
+> **Answer:** When describing an operation type, the system must record the time for each phase.
 ---
 
 ### 1.3. Acceptance Criteria
 
-> AC030.1: When moving from the screening phase to the interview phase, the system must send an email to all candidates who passed the screening phase, informing them that they have advanced to the interview phase.
+> AC020.1: Admin can add new operation types, providing the operation name, estimated duration, and required staff (by specializations).
+> AC020.2: The system validates that the operation name is unique.
+> AC020.3: The system logs the creation of new operation types and makes them available for scheduling immediately.
+
 ---
 
 ### 1.4. Found out Dependencies
 
-* This Use Case is relative to US 1010, which is related to the backoffice job opening management functionality.
-* It relates to the following Use Cases as well:
-  - [UC026](../../UC002/README.md) - As Customer Manager, I want to open phases of the process for a job opening
-  - [UC027](../../UC002/README.md) - As Customer Manager, I want to close phases of the process for a job opening
-
+- This Use Case is relative to US5.1.20, which is related to the operation types management functionality.
+- It relates to the following Use Case(s) as well:
+  - [UC021 (US5.1.21)](../UC021/README.md) - As an Admin,  I want to edit existing operation types, so that I can update or correct information about the procedure.
+  - [UC022 (US5.1.22)](../UC022/README.md) - As an Admin, I want to remove obsolete or no longer performed operation types, so that the system stays current with hospital practices.
+  - [UC023 (US5.1.23)](../UC023/README.md) - As an Admin, I want to list/search operation types, so that I can see the details, edit and remove operation types.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Automatic data:
-	- send email
+- Typed data: operation name, estimated duration (for each phase)
+- Selected data: N.A.
 
 **Output Data:**
-- Send email with the result of the verification process
+
+- Operation ID (unique identifier)
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/uc001-system-sequence-diagram.svg)
+![System Sequence Diagram](png/uc020-system-sequence-diagram.png)
 
 ### 1.7 Other Relevant Remarks
 
-- The email notification functionality depends on the system's ability to authenticate users and manage job openings and candidate data appropriately.
-- To notify by email, it is necessary to connect to the VPN.
+- The system must ensure that the operation ID is unique and automatically assigned.
+- The system must store the time spent on each phase of the surgery.
