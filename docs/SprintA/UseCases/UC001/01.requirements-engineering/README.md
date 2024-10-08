@@ -59,7 +59,7 @@ account.
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](png/uc001-system-sequence-diagram.png)
+![System Sequence Diagram](svg/uc001-system-sequence-diagram.svg)
 
 ### 1.7 Other Relevant Remarks
 

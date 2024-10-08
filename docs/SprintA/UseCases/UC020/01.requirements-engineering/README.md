@@ -68,7 +68,7 @@ Can we assume while creating a new operation type, that the surgery must always 
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](png/uc020-system-sequence-diagram.png)
+![System Sequence Diagram](svg/uc020-system-sequence-diagram.svg)
 
 ### 1.7 Other Relevant Remarks
 

@@ -4,7 +4,7 @@
 
 ### 2.1. Relevant Domain Model Excerpt
 
-![UC020 - Domain Model](png/uc020-domain-model.png)
+![UC020 - Domain Model](svg/uc020-domain-model.svg)
 
 ### 2.2. Process Specification
 
@@ -56,7 +56,7 @@
 
 ### 2.8. Decisions
 
-- **D030.1**: Use a validation mechanism to ensure the uniqueness of operation names during creation.
-- **D030.2**: Implement error handling to log and notify the Admin of any issues during operation type creation.
-- **D030.3**: Utilize secure access control mechanisms (with the help of the IAM) to prevent unauthorized access to operation type creation functionality.
-- **D030.4**: Log the creation of new operation types for audit purposes and immediate availability for scheduling.
+- **D020.1**: Use a validation mechanism to ensure the uniqueness of operation names during creation.
+- **D020.2**: Implement error handling to log and notify the Admin of any issues during operation type creation.
+- **D020.3**: Utilize secure access control mechanisms (with the help of the IAM) to prevent unauthorized access to operation type creation functionality.
+- **D020.4**: Log the creation of new operation types for audit purposes and immediate availability for scheduling.
