@@ -1,4 +1,4 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC020 - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system
 
 ## 3. Design - Use Case Realization
 

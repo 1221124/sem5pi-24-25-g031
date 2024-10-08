@@ -1,12 +1,11 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
 
 ## 1. Context
 
-> The backoffice system enables the Customer Manager to manage job openings 
-> and notify candidates of the results of the verification process. 
-> This use case focuses on sending email notifications to candidates, informing them of the outcome of their job application.
-
-> Part of the requirements needed to implement this use case are fulfilled by the EAPLI framework provided by the course.
+> The backoffice system is a web application that allows admins to manage users, patients, and staff.
+> Admins can create, edit, and deactivate user profiles, ensuring that the right people have access to the system.
+> This use case focuses on the registration of new backoffice users, such as doctors, nurses, technicians and other admins.
+> The registration process is done via an out-of-band process using an IAM, meaning that the admin must manually create the user profile and assign the appropriate role. After that, the admin must regist the user in the backoffice system, associating it with the appropriate IAM credentials.
 
 ## 2. Requirements
 
@@ -15,7 +14,7 @@
 ## 3. Analysis
 
 * The analysis related to this use case can be found in the [Analysis](02.analysis/README.md) file.
- 
+
 ## 4. Design
 
 * The design related to this use case can be found in the [Design](03.design/README.md) file.
@@ -26,11 +25,8 @@
 
 ## 6. Integration/Demonstration
 
-* To run this Use Case, the customer manager must have access to the backoffice system.
-* It is necessary to change the status (from Screening to Interview) for the email to be sent.
+* To run this Use Case, the authenticated user must have admin permissions.
 
 ## 7. Observations
 
-* The notification system is essential for keeping candidates informed about the status of their job applications.
-* The notification system follows the EAPLI framework provided by the course.
-* The notification system is implemented in the backoffice system.
+* N/A
