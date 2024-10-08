@@ -43,12 +43,12 @@ package StaffAggregate #Pink {
   class Specialization <<value object>> {
     CARDIOLOGY, ORTHOPEDICS
   }
-  'TODO: REVIEW
+  'TODO: REVIEW STAFF AVAILABILITY RELATED CLASSES
   class AvailabilitySlots <<value object>>
   class AppointmentSlots <<value object>>
 }
 
-package OperationRequestAggregate #LightGoldenRodYellow{
+package OperationRequestAggregate #LightGoldenRodYellow {
   class OperationRequest <<root entity>>
   class RequestID <<value object>>
   note right of RequestID: unique identifier
@@ -64,8 +64,8 @@ package OperationTypeAggregate #PaleGreen {
   note right of OperationTypeID: unique identifier
   class OperationTypeName <<value object>>
   class RequiredStaff <<value object>>
-  class SurgeryPhaseDetails <<value object>>
-  class SurgeryPhase <<value object>> {
+  class OperationPhaseDetails <<value object>>
+  class OperationPhase <<value object>> {
     ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
   }
 }
@@ -79,7 +79,7 @@ package AppointmentAggregate #IndianRed {
   }  
 }
 
-package SurgeryRoomAggregate #lightblue {
+package SurgeryRoomAggregate #LightBlue {
   class SurgeryRoom <<root entity>>
   class SurgeryRoomID <<value object>>
   note right of SurgeryRoomID: unique identifier
@@ -151,9 +151,9 @@ OperationRequest "*" -- "1" OperationPriority : > has
 OperationType "1" -- "1" OperationTypeID : > identified by
 OperationType "1" -- "1" OperationTypeName : > has
 OperationType "1" -- "1" RequiredStaff : > needs
-OperationType "1" -- "1..*" SurgeryPhaseDetails : > has
-SurgeryPhaseDetails "1" -- "1" SurgeryPhase : > has
-SurgeryPhaseDetails "1" -- "1" Time : > has
+OperationType "1" -- "1..*" OperationPhaseDetails : > has
+OperationPhaseDetails "1" -- "1" OperationPhase : > has
+OperationPhaseDetails "1" -- "1" Time : > has
 
 Appointment "1" -- "1" AppointmentID : > identified by
 Appointment "1" -- "1" OperationRequest : > has
@@ -164,7 +164,7 @@ Appointment "*" -- "1" SurgeryRoom : > happens in
 SurgeryRoom "1" -- "1" SurgeryRoomID : > identified by
 SurgeryRoom "*" -- "1" RoomType : > is
 SurgeryRoom "*" -- "1" RoomCapacity : > has
-'REVIEW MUITOS PARA MUITOS
+  'TODO: REVIEW MANY TO MANY
 SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
 SurgeryRoom "*" -- "1" RoomStatus : > has
 SurgeryRoom "*" -- "*" MaintenanceSlots : > has 
