@@ -19,8 +19,12 @@
 
 **From the client clarifications:**
 
-> **Question:**...
-> **Answer:**...
+> **Question:** Can you please clarify if backoffice users registration uses the IAM system? And if the IAM system is the out-of-band process?
+> **Answer:** What this means is that backoffice users can not self-register in the system like the patients do. The admin must register the backoffice user. If you are using an external IAM (e.g., Google, Azzure, Linkedin, ...) the backoffice user must first create their account in the IAM provider and then pass the credential info to the admin so that the user account in the system is "linked" with the external identity provider.
+>
+> **Question:** Can you clarify the username and email requirements?
+> **Answer:** The username is the "official" email address of the user. For backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "<D180023@myhospital.com>". The system must allow for an easy configuration of the DNS domain (e.g., environment variable).
+For patients, the username is the email address provided in the patient record and used as identity in the external IAM. For instance, patient Carlos Silva has provided his email <csilva98@gmail.com> the first time he entered the hospital. That email address will be his username when he self-registers in the system.
 
 ---
 
@@ -41,7 +45,6 @@ account.
 - This Use Case is relative to US5.1.1, which is related to the backoffice management functionality.
 - It relates to the following Use Case(s) as well:
   - [UC006 (US5.1.6)](../../UC006/README.md) - As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials, so that I can access the backoffice features according to my assigned role.
-  - [UC008 (US5.1.8)](../../UC008/README.md) - As an Admin, I want to create a new patient profile, so that I can register their personal details and medical history.
 
 ### 1.5 Input and Output Data
 
@@ -60,4 +63,4 @@ account.
 
 ### 1.7 Other Relevant Remarks
 
-- N.A.
+- An IAM system (OAuth) must be chosen and integrated with the system.

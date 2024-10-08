@@ -1,4 +1,4 @@
-@startuml uc030-system-sequence-diagram
+@startuml uc001-system-sequence-diagram
 
 title System Sequence Diagram (SSD) - UC001
 actor Admin as Adm
