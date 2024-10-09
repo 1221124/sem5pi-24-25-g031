@@ -39,7 +39,7 @@ package PatientAggregate #LightSalmon {
 package StaffAggregate #Pink {
   class Staff <<root entity>>
   class LicenseNumber <<value object>>
-  note right of LicenseNumber: unique identifier
+  note left of LicenseNumber: unique identifier
   class Specialization <<value object>> {
     CARDIOLOGY, ORTHOPEDICS
   }
@@ -61,7 +61,7 @@ package OperationRequestAggregate #LightGoldenRodYellow {
 package OperationTypeAggregate #PaleGreen {
   class OperationType <<root entity>>
   class OperationTypeID <<value object>>
-  note right of OperationTypeID: unique identifier
+  note bottom of OperationTypeID: unique identifier
   class OperationTypeName <<value object>>
   class RequiredStaff <<value object>>
   class OperationPhaseDetails <<value object>>
@@ -73,7 +73,7 @@ package OperationTypeAggregate #PaleGreen {
 package AppointmentAggregate #IndianRed {
   class Appointment <<root entity>>
   class AppointmentID <<value object>>
-  note right of AppointmentID: unique identifier
+  note bottom of AppointmentID: unique identifier
   class AppointmentStatus <<value object>> {
     SCHEDULED, COMPLETED, CANCELED
   }  
@@ -82,7 +82,7 @@ package AppointmentAggregate #IndianRed {
 package SurgeryRoomAggregate #LightBlue {
   class SurgeryRoom <<root entity>>
   class SurgeryRoomID <<value object>>
-  note right of SurgeryRoomID: unique identifier
+  note bottom of SurgeryRoomID: unique identifier
   class RoomType <<value object>> {
     OPERATING, CONSULTATION, ICU
   }
@@ -110,7 +110,7 @@ note right of Admin: conceptual class
 class Doctor
 note right of Doctor: conceptual class
 class Nurse
-note right of Nurse: conceptual class
+note top of Nurse: conceptual class
 class Technician
 note right of Technician: conceptual class
 
