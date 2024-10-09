@@ -18,9 +18,11 @@
 
 **From the client clarifications:**
 
-> **Question:** 
+n/a
+
+> **Question:** -
 > 
-> **Answer:**
+> **Answer:** -
 
 ---
 
@@ -61,3 +63,5 @@ C007 (US5.1.7)
 ![System Sequence Diagram](png/uc006-system-sequence-diagram.png)
 
 ### 1.7 Other Relevant Remarks
+
+n/a

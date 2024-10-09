@@ -1,4 +1,4 @@
-@startuml "UC006 - System Sequence Diagram"
+@startuml "uc006-system-sequence-diagram"
 skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -54,9 +54,9 @@ activate System
                 activate System
                 deactivate System
 
+        System --> BackofficeUser: Denies User access to the system
         end
 
-        System --> BackofficeUser: Denies User access to the system
     deactivate System
 
 @enduml
