@@ -26,11 +26,8 @@
 
 ## 6. Integration/Demonstration
 
-* To run this Use Case, the customer manager must have access to the backoffice system.
-* It is necessary to change the status (from Screening to Interview) for the email to be sent.
+* To run this Use Case, the Doctor must have access to the backoffice system.
 
 ## 7. Observations
 
-* The notification system is essential for keeping candidates informed about the status of their job applications.
-* The notification system follows the EAPLI framework provided by the course.
-* The notification system is implemented in the backoffice system.
+n/a
