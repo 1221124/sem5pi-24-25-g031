@@ -112,7 +112,7 @@ note right of Doctor: conceptual class
 class Nurse
 note right of Nurse: conceptual class
 class Technician
-note right of Technician: conceptual
+note right of Technician: conceptual class
 
 FullName "1" -- "1" FirstName : > has
 FullName "1" -- "1" LastName : > has
