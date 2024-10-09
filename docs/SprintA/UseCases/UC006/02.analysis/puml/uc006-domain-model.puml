@@ -1,0 +1,67 @@
+@startuml uc006-domain-model
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+hide methods
+hide circle
+
+title Domain Model (DM) - UC006
+
+package UserAggregate {
+  class User <<root entity>>
+  class Email <<value object>>
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+}
+note top of UserAggregate: managed using an IAM\n(external to the system)
+
+package StaffAggregate {
+  class Staff <<root entity>>
+  class LicenseNumber <<value object>>
+  note right of LicenseNumber: unique identifier
+  class Specialization <<value object>> {
+    CARDIOLOGY, ORTHOPEDICS
+  }
+  'TODO: REVIEW
+  class AvailabilitySlots <<value object>>
+  class AppointmentSlots <<value object>>
+  class FullName <<value object>>
+  class FirstName <<value object>>
+  class LastName <<value object>>
+  class ContactInformation <<value object>>
+  class PhoneNumber <<value object>>
+  class Slot <<value object>>
+}
+
+class Email <<value object>>
+
+FullName "1" -- "1" FirstName : > has
+FullName "1" -- "1" LastName : > has
+ContactInformation "1" -- "1" PhoneNumber : > has
+ContactInformation "1" -- "1" Email : > has
+AvailabilitySlots "1" -- "1..*" Slot : > has
+AppointmentSlots "1" -- "1..*" Slot : > has
+DateTime "1" -- "1" Date : > has
+DateTime "1" -- "1" Time : > has
+Slot "1" -- "2" DateTime : > consists of
+
+User "1" -- "1" Username : > has
+User "1" -- "1" Email : > identified by
+User "*" -- "1" Role : > has assigned
+
+User "0..1" <-- "0..1" Staff : < references
+
+Staff "*" -- "1" FullName : > has
+Staff "1" -- "1" LicenseNumber : > identified by
+Staff "*" -- "1" Specialization : > has
+Staff "1" -- "1" ContactInformation : > has
+Staff "1" -- "*" AvailabilitySlots : > has
+Staff "1" -- "*" AppointmentSlots : > has
+
+@enduml
