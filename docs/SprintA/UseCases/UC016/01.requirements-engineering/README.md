@@ -1,11 +1,10 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
-
+# UC016 - As a Doctor, I want to request an operation, so that the Patient has access to the necessary healthcare.
 
 ## 1. Requirements Engineering
 
 ### 1.1. Use Case Description
 
-> As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process.
+> As a Doctor, I want to request an operation, so that the Patient has access to the necessary healthcare.
 
 ---
 
@@ -13,41 +12,39 @@
 
 **From the specifications document:**
 
-- The solution should be deployed using several network nodes. It is expected that, at least, the relational
-  database server and the Follow Up Server be deployed in nodes diferent from localhost, preferably in the cloud. The e-mail notification
-  tasks must be executed in background by the Follow Up Server.
+- n/a
 
 **From the client clarifications:**
 
-> **Question:** Relativamente ao envio das notificações por email, é necessário guardar que esse envio foi feito?
+> **Question:** How does a Doctor suggests a deadline date for an appointment? Does it have any criteria? Or do they just wing it? 
 > 
-> **Answer:** No documento nada de explicito é dito sobre este assunto. No entanto, do ponto de vista de gestão do processo da jobs4u parece-me adequado que essa informação fique registada.
+> **Answer:** The doctor will decide the "best" due date based on their experience. they will enter it in the system as an indication so that the planning module eventually takes that into account alongside priority and other criteria.
 
-> **Question:** "As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process" qual é o processo através do qual essa notificação é gerada? Após a avaliação do Requirement Specification module, este gera um resultado "Aprovado" ou "Rejeitado". Este resultado despoleta automaticamente uma notificação para o candidato ou é o Customer Manager que tem a responsabilidade de informar o candidato através do sistema do resultado da verificação (ex. depois de um resultado negativo ser gerado, o Customer Manager vai no sistema rejeitar o candidato para que seja enviado o email)?
->  
-> **Answer:** É a segunda opção que apresenta. A US1015 permite que o Customer Manager invoque o processo de verificação de requisitos. Depois disso todas as candidaturas devem estar aceites ou recusadas. É então possível ao Customer Manager invocar a notificação através da US1016.
+> **Question:** In the project document it mentions that each operation has a priority. How is a operation's priority defined? Do they have priority levels defined? Is it a scale? Or any other system?
+>
+> **Answer:** Elective Surgery: A planned procedure that is not life-threatening and can be scheduled at a convenient time (e.g., joint replacement, cataract surgery).
+> Urgent Surgery: Needs to be done sooner but is not an immediate emergency. Typically within days (e.g., certain types of cancer > surgeries).
+> Emergency Surgery: Needs immediate intervention to save life, limb, or function. Typically performed within hours (e.g., ruptured aneurysm, trauma).
 
-> **Question:** About the Us1016 wich states: "As Customer Manager, I want the system to notify candidates, by email, of the result of verification process". I want to know when the client says "verification process" is the same about the screening phase.
-> 
-> **Answer:** Yes.
-
-> **Question:** This user story has a functional dependency with 1015. I would like to know if an error occurs, do I need to delete what happened in US 1015, as if it were a transaction?
-> 
-> **Answer:** The process of notification (US1016) must be done after the verification (US1015) but an error in the notification does not invalidate the “results” of the verification process.
+> **Question:**
+>
+> **Answer:** 
 
 ---
 
 ### 1.3. Acceptance Criteria
 
-> AC030.1: When moving from the screening phase to the interview phase, the system must send an email to all candidates who passed the screening phase, informing them that they have advanced to the interview phase.
+> AC016.1: - Doctors can create an operation request by selecting the patient, operation type, priority, and suggested deadline.
+> AC016.2: - The system validates that the operation type matches the doctor’s specialization.
+> AC016.3: - The operation request includes: Patient ID, Doctor ID, Operation Type, Deadline and Priority
+> AC016.4: - The system confirms successful submission of the operation request and logs the request in the patient’s medical history.
 ---
 
 ### 1.4. Found out Dependencies
 
-* This Use Case is relative to US 1010, which is related to the backoffice job opening management functionality.
+* This Use Case is relative to US 5.1.16, which is related to the operation request made by a Doctor.
 * It relates to the following Use Cases as well:
-  - [UC026](../../UC002/README.md) - As Customer Manager, I want to open phases of the process for a job opening
-  - [UC027](../../UC002/README.md) - As Customer Manager, I want to close phases of the process for a job opening
+n/a
 
 
 ### 1.5 Input and Output Data
@@ -55,16 +52,21 @@
 **Input Data:**
 
 - Automatic data:
-	- send email
+	- Doctor ID
+
+- Selected data:
+  - Patient ID
+  - Operation Type
+  - Deadline
+  - Priority
 
 **Output Data:**
-- Send email with the result of the verification process
+- Confirmations message
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/uc001-system-sequence-diagram.svg)
+![System Sequence Diagram](png/uc016-system-sequence-diagram.svg)
 
 ### 1.7 Other Relevant Remarks
 
-- The email notification functionality depends on the system's ability to authenticate users and manage job openings and candidate data appropriately.
-- To notify by email, it is necessary to connect to the VPN.
+n/a
