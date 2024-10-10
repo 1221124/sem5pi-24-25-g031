@@ -1,0 +1,124 @@
+@startuml uc021-class-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+title Class Diagram (CD) - UC021
+
+class OperationTypeController {
+    +GetByName(name: Name): Task<ActionResult<OperationTypeDto>>
+    +Update(dto: OperationTypeDto): Task<ActionResult<OperationTypeDto>>
+}
+
+class OperationTypeService {
+    +GetByNameAsync(name: Name): Task<OperationTypeDto>
+    +ValidateOperationTypeName(name: Name): Task<bool>
+    +UpdateAsync(dto: OperationTypeDto): Task<OperationTypeDto>
+}
+
+class OperationTypeRepository {
+    +GetByNameAsync(name: Name): Task<OperationType>
+    +UpdateAsync(dto: OperationTypeDto): Task<OperationType>
+}
+
+interface IOperationTypeRepository {
+    +GetByNameAsync(name: Name): Task<OperationType>
+    +UpdateAsync(dto: OperationTypeDto): Task<OperationType>
+}
+
+class OperationType {
+    +Id: OperationTypeID
+    +Name: Name
+    +Specialization: Specialization
+    +RequiredStaff: RequiredStaff
+    +PhasesDuration: PhasesDuration
+    +ChangeName(name: Name): void
+    +ChangeSpecialization(specialization: Specialization): void
+    +ChangeRequiredStaff(requiredStaff: RequiredStaff): void
+    +ChangePhasesDuration(phasesDuration: PhasesDuration): void
+}
+
+class OperationTypeDto {
+    +Id: OperationTypeID
+    +Name: Name
+    +Specialization: Specialization
+    +RequiredStaff: RequiredStaff
+    +PhasesDuration: PhasesDuration
+}
+
+class RequiredStaff {
+    - _staff: Dictionary<Role, StaffQuantity>
+}
+note right of RequiredStaff
+    Role can only be a staff role: Doctor, Nurse or Assistant
+end note
+
+class StaffQuantity {
+    +Quantity: int
+}
+note right of StaffQuantity
+    Quantity must be greater than 0
+end note
+
+class Specialization {
+    +Designation: Designation
+}
+
+class PhasesDuration {
+    - _phases: Dictionary<Phase, Duration>
+}
+
+enum Phase {
+    PREPARATION, SURGERY, CLEANING
+}
+
+class Duration {
+    +Minutes: int
+}
+
+class Name {
+    +Name: string
+}
+
+class OperationTypeID {
+    +Id: Guid
+}
+
+enum Role {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+}
+
+OperationTypeController .> OperationTypeService : > uses
+OperationTypeController ----> OperationTypeDto : > returns
+
+OperationTypeService -> OperationTypeRepository : > uses
+OperationTypeService ---> OperationType : > updates
+OperationTypeService ---> OperationTypeDto : > creates
+
+OperationTypeRepository --> IOperationTypeRepository : > implements
+OperationTypeRepository --> OperationType : > saves in database
+
+OperationType --> OperationTypeID : > has
+OperationType --> Name : > has
+OperationType --> Specialization : > has
+OperationType --> RequiredStaff : > has
+OperationType --> PhasesDuration : > has
+
+OperationTypeDto --> OperationTypeID : > has
+OperationTypeDto --> Name : > has
+OperationTypeDto --> Specialization : > has
+OperationTypeDto --> RequiredStaff : > has
+OperationTypeDto --> PhasesDuration : > has
+
+RequiredStaff --> Role: has
+RequiredStaff --> StaffQuantity : > has
+
+PhasesDuration --> Phase : > has
+PhasesDuration --> Duration : > has
+
+@enduml
