@@ -48,7 +48,7 @@ activate Controller
 
         deactivate Domain
 
-        Service -> Repository: AddAsync(dto)
+        Service -> Repository: AddAsync(operationType)
 
         activate Repository
 
