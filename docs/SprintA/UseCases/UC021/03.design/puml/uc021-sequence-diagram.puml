@@ -1,0 +1,90 @@
+@startuml uc021-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC021
+
+participant "OperationTypeController" as Controller
+participant "OperationTypeService" as Service
+participant "OperationType" as Domain
+participant "OperationTypeRepository" as Repository
+participant "IOperationTypeRepository" as IRepo
+
+-> Controller: PUT /api/operationtype
+
+activate Controller
+
+    Controller -> Service: UpdateAsync(dto)
+
+    activate Service
+
+        Service -> Repository: GetByIdAsync(id)
+
+        activate Repository
+
+            Repository -> IRepo: GetByIdAsync(id)
+            
+            activate IRepo
+
+                IRepo --> Repository: dto
+
+            deactivate IRepo
+
+            Repository --> Service: dto
+
+        deactivate Repository
+
+        Service -> Service: ValidateOperationTypeName(name)
+
+        Service -> Repository: GetByNameAsync(name)
+
+        activate Repository
+
+            Repository -> IRepo: GetByNameAsync(name)
+            
+            activate IRepo
+
+                IRepo --> Repository: null
+
+            deactivate IRepo
+
+            Repository --> Service: null
+
+        deactivate Repository
+
+        Service -> Domain: new OperationType(dto.getName(), dto.getSpecialization(), dto.getRequiredStaff(), dto.getPhasesDuration())
+
+        activate Domain
+
+            Domain --> Service: operationType
+
+        deactivate Domain
+
+        Service -> Repository: UpdateAsync(operationType)
+
+        activate Repository
+
+            Repository -> IRepo: UpdateAsync(operationType)
+
+            activate IRepo
+
+                IRepo --> Repository: dto
+
+            deactivate IRepo
+
+            Repository --> Service: dto
+
+        deactivate Repository
+
+        Service --> Controller: dto
+
+    deactivate Service
+
+    <-- Controller : dto
+
+deactivate Controller
+
+@enduml
