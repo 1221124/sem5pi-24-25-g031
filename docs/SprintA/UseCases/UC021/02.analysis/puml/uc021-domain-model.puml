@@ -1,4 +1,4 @@
-@startuml uc020-domain-model
+@startuml uc021-domain-model
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -11,29 +11,31 @@ left to right direction
 hide circle
 hide methods
 
-title Domain Model (DM) - UC020
+title Domain Model (DM) - UC021
 
 package "OperationTypeAggregate" {
     class OperationType <<root entity>>
-    class OperationType <<root entity>>
     class OperationTypeID <<value object>>
     note right of OperationTypeID: unique identifier
-    class OperationTypeName <<value object>>
     class RequiredStaff <<value object>>
-    class OperationPhaseDetails <<value object>>
-    class OperationPhase <<value object>> {
+    class PhaseDetails <<value object>>
+    class Phase <<value object>> {
         ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
     }
+    class Duration <<value object>>
 }
 
 class Admin <<conceptual class>>
+class Name <<value object>>
+class Specialization <<value object>>
 
 Admin "1" -- "*" OperationType : creates >
+
 OperationType "1" -- "1" OperationTypeID : > identified by
-OperationType "1" -- "1" OperationTypeName : > has
+OperationType "1" -- "1" Name : > has
 OperationType "1" -- "1" RequiredStaff : > needs
-OperationType "1" -- "1..*" OperationPhaseDetails : > has
-OperationPhaseDetails "1" -- "1" OperationPhase : > has
-OperationPhaseDetails "1" -- "1" Time : > has
+OperationType "1" -- "1..*" PhaseDetails : > has
+PhaseDetails "1" -- "1" Phase : > has
+PhaseDetails "1" -- "1" Duration : > has
 
 @enduml
