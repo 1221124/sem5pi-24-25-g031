@@ -37,9 +37,9 @@ package PatientAggregate #LightSalmon {
   note right of MedicalCondition: optional
   class EmergencyContact <<value object>>
   class AppointmentHistory <<value object>>
-  class PatientStatus <<value object>> {
-    ACTIVE, INACTIVE
-  }
+'  class PatientStatus <<value object>> {
+'    ACTIVE, INACTIVE
+'  }
 }
 
 package StaffAggregate #Pink {

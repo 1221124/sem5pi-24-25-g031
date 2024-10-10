@@ -1,22 +1,11 @@
-@startuml uc020-class-diagram
+@startuml uc020-class-diagram-backend-database
 
 skinparam packageStyle rectangle
 skinparam shadowing false
 
 skinparam classAttributeIconSize 0
 
-title Class Diagram (CD): Backend Logic - UC020
-
-class OperationTypeController {
-    +GetByName(name: string): Task<ActionResult<OperationTypeDto>>
-    +Create(dto: CreatingOperationTypeDto): Task<ActionResult<OperationTypeDto>>
-}
-
-class OperationTypeService {
-    +GetByNameAsync(name: string): Task<OperationTypeDto>
-    +ValidateOperationTypeName(name: string): Task<bool>
-    +AddAsync(dto: CreatingOperationTypeDto): Task<OperationTypeDto>
-}
+title Class Diagram (CD): Backend Database - UC020
 
 class OperationTypeRepository {
     +GetByNameAsync(name: string): Task<OperationType>
@@ -26,26 +15,6 @@ class OperationTypeRepository {
 interface IOperationTypeRepository {
     +GetByNameAsync(name: string): Task<OperationType>
     +AddAsync(dto: CreatingOperationTypeDto): Task<OperationType>
-}
-
-class CreatingOperationTypeDto {
-    +Name: Name
-    +StaffBySpecialization: StaffBySpecialization
-    +PhasesDuration: PhasesDuration
-    +getName(): Name
-    +getStaffBySpecialization(): StaffBySpecialization
-    +getPhasesDuration(): PhasesDuration
-    +setName(name: Name): void
-    +setStaffBySpecialization(staffBySpecialization: StaffBySpecialization): void
-    +setPhasesDuration(phasesDuration: PhasesDuration): void
-}
-
-class PhasesDuration {
-    - _phases: Dictionary<Phase, Duration>
-}
-
-enum Phase {
-    PREPARATION, SURGERY, CLEANING
 }
 
 @enduml

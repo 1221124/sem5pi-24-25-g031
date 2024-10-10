@@ -1,4 +1,4 @@
-@startuml uc020-class-diagram
+@startuml uc020-class-diagram-backend-logic
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -18,16 +18,6 @@ class OperationTypeService {
     +AddAsync(dto: CreatingOperationTypeDto): Task<OperationTypeDto>
 }
 
-class OperationTypeRepository {
-    +GetByNameAsync(name: string): Task<OperationType>
-    +AddAsync(dto: CreatingOperationTypeDto): Task<OperationType>
-}
-
-interface IOperationTypeRepository {
-    +GetByNameAsync(name: string): Task<OperationType>
-    +AddAsync(dto: CreatingOperationTypeDto): Task<OperationType>
-}
-
 class CreatingOperationTypeDto {
     +Name: Name
     +StaffBySpecialization: StaffBySpecialization
@@ -40,12 +30,20 @@ class CreatingOperationTypeDto {
     +setPhasesDuration(phasesDuration: PhasesDuration): void
 }
 
+class StaffBySpecialization {
+    - _staff: Dictionary<Staff, int>
+}
+
 class PhasesDuration {
     - _phases: Dictionary<Phase, Duration>
 }
 
 enum Phase {
     PREPARATION, SURGERY, CLEANING
+}
+
+class Duration {
+    + Minutes: int
 }
 
 @enduml
