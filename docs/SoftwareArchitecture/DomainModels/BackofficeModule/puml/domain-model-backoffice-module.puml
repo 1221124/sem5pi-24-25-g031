@@ -46,9 +46,6 @@ package StaffAggregate #Pink {
   class Staff <<root entity>>
   class LicenseNumber <<value object>>
   note left of LicenseNumber: unique identifier
-  class Specialization <<value object>> {
-    CARDIOLOGY, ORTHOPEDICS
-  }
   'TODO: REVIEW STAFF AVAILABILITY RELATED CLASSES
   class AvailabilitySlots <<value object>>
   class AppointmentSlots <<value object>>
@@ -113,6 +110,9 @@ class DateTime <<value object>>
 class Date <<value object>>
 class Time <<value object>>
 class Slot <<value object>>
+class Specialization <<value object>> {
+  CARDIOLOGY, ORTHOPEDICS
+}
 
 class Admin
 note right of Admin: conceptual class
@@ -139,6 +139,7 @@ AppointmentSlots "1" -- "1..*" Slot : > has
 User "1" -- "1" Username : > identified by
 User "1" -- "1" Email : > has
 User "*" -- "1" Role : > has assigned
+User "*" -- "1" UserStatus : > has
 
 User "0..1" <-- "0..1" Staff : < references
 User "0..1" <-- "1" Patient : < references
@@ -150,7 +151,8 @@ Patient "1" --- "1" MedicalRecordNumber : > identified by
 Patient "1" --- "1" ContactInformation : > has
 Patient "0..*" --- "0..*" MedicalCondition : > can have
 Patient "*" ---"1" EmergencyContact : > has
-Patient "1" --- "1" AppointmentHistory : > has
+Patient "*" --- "1" AppointmentHistory : > has
+'Patient "1" -- "1" PatientStatus : > has
 
 Staff "*" -- "1" FullName : > has
 Staff "1" -- "1" LicenseNumber : > identified by
@@ -158,6 +160,7 @@ Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
 Staff "1" -- "*" AvailabilitySlots : > has
 Staff "1" -- "*" AppointmentSlots : > has
+Staff "*" -- "1" StaffStatus : > has
 
 OperationRequest "1" -- "1" RequestID : > identified by
 OperationRequest "*" -- "1" Patient : > has
@@ -169,6 +172,7 @@ OperationRequest "*" -- "1" OperationPriority : > has
 OperationType "1" -- "1" OperationTypeID : > identified by
 OperationType "1" -- "1" OperationTypeName : > has
 OperationType "1" -- "1" RequiredStaff : > needs
+OperationType "*" -- "1" Specialization : > has
 OperationType "1" -- "1..*" OperationPhaseDetails : > has
 OperationPhaseDetails "1" -- "1" OperationPhase : > has
 OperationPhaseDetails "1" -- "1" Time : > has
@@ -187,15 +191,15 @@ SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
 SurgeryRoom "*" -- "1" RoomStatus : > has
 SurgeryRoom "*" -- "*" MaintenanceSlots : > has 
 
-Admin --> User : > references
-Doctor -- Staff : > is
-Nurse -- Staff : > is
-Technician -- Staff : > is
+Admin "1" --> "1" User : > references
+Doctor "1" -- "1" Staff : > is
+Nurse "1" -- "1" Staff : > is
+Technician "1" -- "1" Staff : > is
 
-Admin -- Staff : > manages
-Admin -- Patient : > manages
+Admin "1" -- "*" Staff : > manages
+Admin "1" -- "*" Patient : > manages
 
-Admin -- OperationType : > manages
-Doctor -- OperationRequest : > manages
+Admin "1" -- "0..*" OperationType : > manages
+Doctor "1" -- "0..*" OperationRequest : > manages
 
 @enduml
