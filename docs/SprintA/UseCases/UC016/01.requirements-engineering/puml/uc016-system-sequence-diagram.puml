@@ -25,7 +25,7 @@ activate Doc
     Doc -> Sys : Select a Patient's ID
 
     activate Sys
-        Sys -> Sys : Obtains Doctor's sepcializations
+        Sys -> Sys : Obtains Doctor's specializations
         activate Sys
             deactivate Sys
 
