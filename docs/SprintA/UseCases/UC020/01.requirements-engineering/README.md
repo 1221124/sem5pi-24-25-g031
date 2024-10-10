@@ -16,7 +16,8 @@
 - Admin must be able to add, edit, delete, and list/search operations.
 - When registering a new operation, the Admin must provide several details, such as:
   - Name
-  - Required staff (by specializations)
+  - Specialization
+  - Required staff (quantity for each role)
   - Estimated duration
 - An ID (unique identifier) is automatically assigned to each operation.
 
@@ -37,6 +38,9 @@ Can we assume while creating a new operation type, that the surgery must always 
 >
 > **Question:** The document you provided divides surgical times into "specific phases of the surgery," whereas the main statement only mentions recording the total surgery time. Should the system, therefore, store and specify the time spent on each phase of the surgery, or is it sufficient to only record the total surgery time without detailing the time distribution across each phase?
 > **Answer:** When describing an operation type, the system must record the time for each phase.
+>
+>**Question:** When creating a new type of operation, we have a name, 3 temporal phases of the Surgery and the required list of staff (specialties, quantity). Should this new type of operation have a specialty other than those required in the mode according to AC006.2, can a doctor only schedule Surgery in his specialty? The process is to create the new operation type and then add the list of required specialties?
+>**Answer:** The type of operation is associated with a given specialty. The list of specialties is an integral part of the type of operation. Creation is carried out in a single step, not in two.
 ---
 
 ### 1.3. Acceptance Criteria
