@@ -1,76 +1,83 @@
+
+
 @startuml
-skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
+skinparam linetype polyline
 autonumber
 
-title System Sequence Diagram (SSD) - UC008
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC008
+
 actor Admin as ADM
-participant ":System" as System
+participant FrontEnd as FE <<presentation>>
+
 
 activate ADM
 
-    ADM -> System: create a new patient profile
+    ADM -> FE: asks to create a new patient profile
 
-    activate System
+    activate FE
 
-        System --> ADM: asks to insert the first and last names of\n the patient as well as the full name
-    deactivate System
+        FE --> ADM: asks to insert the first and last names of\n the patient as well as the full name
+    deactivate FE
 
-    ADM -> System : Insert required fields
-    activate System
+    ADM -> FE : Insert required fields
+    activate FE
 
-        System --> ADM: asks to insert the date of birth of the patient
-    deactivate System
+        FE --> ADM: asks to insert the date of birth of the patient
+    deactivate FE
 
-    ADM -> System : Insert required field
-    activate System
+    ADM -> FE : Insert required field
+    activate FE
 
-        System --> ADM: asks to insert the gender of the patient
-    deactivate System
+        FE --> ADM: asks to insert the gender of the patient
+    deactivate FE
 
-    ADM -> System : Insert required field
-    activate System
+    ADM -> FE : Insert required field
+    activate FE
 
-        System --> ADM: asks to insert the contact information\n (email, phone number) of the patient
-    deactivate System
+        FE --> ADM: asks to insert the contact information\n (email, phone number) of the patient
+    deactivate FE
 
-    ADM -> System : Insert required fields
-    activate System
+    ADM -> FE : Insert required fields
+    activate FE
 
-        System -> System: validates email and phone number
+        FE -> FE: validates email and phone number
 
     opt
-        System --> ADM: asks to insert Allergies/Medical Conditions \nof the patient
-        deactivate System
+        FE --> ADM: asks to insert Allergies/Medical Conditions \nof the patient
+        deactivate FE
 
-        ADM -> System: insert required field
-        activate System
+        ADM -> FE: insert required field
+        activate FE
 
     end opt
         
-    System --> ADM: ask to insert emergency contact
-    deactivate System
+    FE --> ADM: ask to insert emergency contact
+    deactivate FE
 
-    ADM -> System: insert required field
-    activate System
+    ADM -> FE: insert required field
+    activate FE
 
     opt
 
-        System --> ADM: asks to insert the previus or upcaming \nappointment history
-        deactivate System
+        FE --> ADM: asks to insert the previus or upcaming \nappointment history
+        deactivate FE
 
-        ADM -> System: insert required field
-        activate System
+        ADM -> FE: insert required field
+        activate FE
 
     end opt
 
-        System --> System: generate unique patient ID
-        System --> System: creates patient profile
-        System --> ADM: show operation success/error
-    deactivate System
+        FE --> FE: generate unique patient ID
+        FE --> FE: creates patient profile
+        FE --> ADM: show operation success/error
+    deactivate FE
 
 
 deactivate ADM
+
 
 @enduml
