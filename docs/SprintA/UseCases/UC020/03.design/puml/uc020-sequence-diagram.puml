@@ -8,12 +8,13 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC020
 
 actor Admin as Adm
-participant "Postman (Client)" as Client
+participant "Postman (Client Interface Simulator)" as Client
 participant "OperationTypeController" as Controller
 participant "OperationTypeService" as Service
 participant "OperationType" as Domain
 participant "OperationTypeRepository" as Repository
-database "IOperationTypeRepository" as IRepo
+participant "IOperationTypeRepository" as IRepo
+participant "CreatingOperationTypeDto" as Dto
 
 activate Adm
 
@@ -25,13 +26,21 @@ activate Adm
 
         activate Controller
 
-            Controller -> Service: registerOperationType(name, staffBySpecialization, phasesDuration)
+            Controller -> Dto: new CreatingOperationTypeDto(name, staffBySpecialization, phasesDuration)
+
+            activate Dto
+
+                Dto --> Controller: dto
+
+            deactivate Dto
+
+            Controller -> Service: AddAsync(dto)
 
             activate Service
 
-                Service -> Service: validateOperationTypeName(name)
+                Service -> Service: ValidateOperationTypeName(name)
 
-                Service -> Repository: GET /operationtypes/byname/{name}
+                Service -> Repository: GetByNameAsync(name)
 
                 activate Repository
 
@@ -39,7 +48,7 @@ activate Adm
 
                 deactivate Repository
 
-                Service -> Domain: new OperationType(name, staffBySpecialization, phasesDuration)
+                Service -> Domain: new OperationType(dto.getName(), dto.getSpecialization(), dto.getRequiredStaff(), dto.getPhasesDuration())
 
                 activate Domain
 
@@ -47,11 +56,11 @@ activate Adm
 
                 deactivate Domain
 
-                Service -> Repository: POST /operationtypes \n Body: {operationType}
+                Service -> Repository: AddAsync(dto)
 
                 activate Repository
 
-                    Repository -> IRepo: save(operationType)
+                    Repository -> IRepo: AddAsync(operationType)
 
                     activate IRepo
 
