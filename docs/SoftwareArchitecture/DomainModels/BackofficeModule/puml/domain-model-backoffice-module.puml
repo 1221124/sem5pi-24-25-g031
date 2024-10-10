@@ -101,8 +101,6 @@ package SurgeryRoomAggregate #LightBlue {
 }
 
 class FullName <<value object>>
-class FirstName <<value object>>
-class LastName <<value object>>
 class ContactInformation <<value object>>
 class PhoneNumber <<value object>>
 class Email <<value object>>
@@ -186,7 +184,6 @@ Appointment "*" -- "1" SurgeryRoom : > happens in
 SurgeryRoom "1" -- "1" SurgeryRoomID : > identified by
 SurgeryRoom "*" -- "1" RoomType : > is
 SurgeryRoom "*" -- "1" RoomCapacity : > has
-  'TODO: REVIEW MANY TO MANY
 SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
 SurgeryRoom "*" -- "1" RoomStatus : > has
 SurgeryRoom "*" -- "*" MaintenanceSlots : > has 
