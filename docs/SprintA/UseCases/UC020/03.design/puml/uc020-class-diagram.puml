@@ -105,7 +105,7 @@ enum Role {
 }
 
 OperationTypeController .> OperationTypeService : > uses
-OperationTypeController ----> CreatingOperationTypeDto : > creates
+OperationTypeController ----> CreatingOperationTypeDto : > receives
 OperationTypeController ----> OperationTypeDto : > returns
 
 OperationTypeService -> OperationTypeRepository : > uses

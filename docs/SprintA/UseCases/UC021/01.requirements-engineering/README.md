@@ -1,4 +1,4 @@
-# UC020 - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system
+# UC021 - As an Admin, I want to edit existing operation types, so that I can update or correct information about the procedure
 
 ## 1. Requirements Engineering
 

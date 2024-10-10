@@ -7,8 +7,6 @@ skinparam classAttributeIconSize 0
 
 title Sequence Diagram (SD) - UC020
 
-actor Admin as Adm
-participant "Postman (Client Interface Simulator)" as Client
 participant "OperationTypeController" as Controller
 participant "OperationTypeService" as Service
 participant "OperationType" as Domain
@@ -20,14 +18,6 @@ participant "CreatingOperationTypeDto" as Dto
 
 activate Controller
 
-    Controller -> Dto: new CreatingOperationTypeDto(name, staffBySpecialization, phasesDuration)
-
-    activate Dto
-
-        Dto --> Controller: dto
-
-    deactivate Dto
-
     Controller -> Service: AddAsync(dto)
 
     activate Service
@@ -38,7 +28,15 @@ activate Controller
 
         activate Repository
 
-            Repository --> Service: 404 Not Found (Operation Type with said name)
+            Repository -> IRepo: GetByNameAsync(name)
+            
+            activate IRepo
+
+                IRepo --> Repository: null
+
+            deactivate IRepo
+
+            Repository --> Service: null
 
         deactivate Repository
 
@@ -58,19 +56,19 @@ activate Controller
 
             activate IRepo
 
-                IRepo --> Repository: 201 Created (Operation Type successfully saved)
+                IRepo --> Repository: dto
 
             deactivate IRepo
 
-            Repository --> Service: Operation Type successfully saved
+            Repository --> Service: dto
 
         deactivate Repository
 
-        Service --> Controller: 201 Created (Operation Type successfully saved)
+        Service --> Controller: dto
 
     deactivate Service
 
-    Controller --> : 201 Created \n Body: {operationTypeId}
+    <-- Controller : dto
 
 deactivate Controller
 
