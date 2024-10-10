@@ -16,74 +16,62 @@ participant "OperationTypeRepository" as Repository
 participant "IOperationTypeRepository" as IRepo
 participant "CreatingOperationTypeDto" as Dto
 
-activate Adm
+-> Controller: POST /api/operationtype \n Body: {name, staffBySpecialization, phasesDuration}
 
-    Adm -> Client: POST /api/operationtype
+activate Controller
 
-    activate Client
+    Controller -> Dto: new CreatingOperationTypeDto(name, staffBySpecialization, phasesDuration)
 
-        Client -> Controller: POST /api/operationtype \n Body: {name, staffBySpecialization, phasesDuration}
+    activate Dto
 
-        activate Controller
+        Dto --> Controller: dto
 
-            Controller -> Dto: new CreatingOperationTypeDto(name, staffBySpecialization, phasesDuration)
+    deactivate Dto
 
-            activate Dto
+    Controller -> Service: AddAsync(dto)
 
-                Dto --> Controller: dto
+    activate Service
 
-            deactivate Dto
+        Service -> Service: ValidateOperationTypeName(name)
 
-            Controller -> Service: AddAsync(dto)
+        Service -> Repository: GetByNameAsync(name)
 
-            activate Service
+        activate Repository
 
-                Service -> Service: ValidateOperationTypeName(name)
+            Repository --> Service: 404 Not Found (Operation Type with said name)
 
-                Service -> Repository: GetByNameAsync(name)
+        deactivate Repository
 
-                activate Repository
+        Service -> Domain: new OperationType(dto.getName(), dto.getSpecialization(), dto.getRequiredStaff(), dto.getPhasesDuration())
 
-                    Repository --> Service: 404 Not Found (Operation Type with said name)
+        activate Domain
 
-                deactivate Repository
+            Domain --> Service: operationType
 
-                Service -> Domain: new OperationType(dto.getName(), dto.getSpecialization(), dto.getRequiredStaff(), dto.getPhasesDuration())
+        deactivate Domain
 
-                activate Domain
+        Service -> Repository: AddAsync(dto)
 
-                    Domain --> Service: operationType
+        activate Repository
 
-                deactivate Domain
+            Repository -> IRepo: AddAsync(operationType)
 
-                Service -> Repository: AddAsync(dto)
+            activate IRepo
 
-                activate Repository
+                IRepo --> Repository: 201 Created (Operation Type successfully saved)
 
-                    Repository -> IRepo: AddAsync(operationType)
+            deactivate IRepo
 
-                    activate IRepo
+            Repository --> Service: Operation Type successfully saved
 
-                        IRepo --> Repository: 201 Created (Operation Type successfully saved)
+        deactivate Repository
 
-                    deactivate IRepo
+        Service --> Controller: 201 Created (Operation Type successfully saved)
 
-                    Repository --> Service: Operation Type successfully saved
+    deactivate Service
 
-                deactivate Repository
+    Controller --> : 201 Created \n Body: {operationTypeId}
 
-                Service --> Controller: 201 Created (Operation Type successfully saved)
-
-            deactivate Service
-
-            Controller --> Client: 201 Created \n Body: {operationTypeId}
-
-        deactivate Controller
-
-        Client --> Adm: Operation Type successfully created with ID
-
-    deactivate Client
-
-deactivate Adm
+deactivate Controller
 
 @enduml
