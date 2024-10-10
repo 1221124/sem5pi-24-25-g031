@@ -14,7 +14,7 @@ participant "OperationTypeRepository" as Repository
 participant "IOperationTypeRepository" as IRepo
 participant "CreatingOperationTypeDto" as Dto
 
--> Controller: POST /api/operationtype \n Body: {name, staffBySpecialization, phasesDuration}
+-> Controller: POST /api/operationtype
 
 activate Controller
 
