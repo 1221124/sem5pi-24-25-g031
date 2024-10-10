@@ -1,4 +1,4 @@
-@startuml
+@startuml "uc016-class-diagram"
 skinparam packageStyle rectangle
 skinparam shadowing false
 
