@@ -44,6 +44,7 @@ package PatientAggregate #LightSalmon {
 
 package StaffAggregate #Pink {
   class Staff <<root entity>>
+  class StaffID <<value object>>
   class LicenseNumber <<value object>>
   note left of LicenseNumber: unique identifier
   'TODO: REVIEW STAFF AVAILABILITY RELATED CLASSES
@@ -153,7 +154,8 @@ Patient "*" --- "1" AppointmentHistory : > has
 'Patient "1" -- "1" PatientStatus : > has
 
 Staff "*" -- "1" FullName : > has
-Staff "1" -- "1" LicenseNumber : > identified by
+Staff "1" -- "1" StaffID : > identified by
+Staff "1" -- "1" LicenseNumber : > has
 Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
 Staff "1" -- "*" AvailabilitySlots : > has
