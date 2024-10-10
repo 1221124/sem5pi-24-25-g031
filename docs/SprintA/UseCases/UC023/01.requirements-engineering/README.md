@@ -1,10 +1,10 @@
-# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
+# UC020 - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system
 
 ## 1. Requirements Engineering
 
 ### 1.1. Use Case Description
 
-> As Admin, I want to register new backoffice users.
+> As Admin, I want to add new type of operations.
 
 ---
 
@@ -12,55 +12,65 @@
 
 **From the specifications document:**
 
-- Backoffice users divide themselves into two categories: admins and staff; staff is further divided into doctors, nurses, and technicians, all with a different set of permissions and feautures.
-- Admins are responsible for managing the system and the staff.
-- The account is only activated after the user sets their password.
-- Strong password requirements are enforced.
+- Operation types are medical procedures that can be performed at the hospital.
+- Admin must be able to add, edit, delete, and list/search operations.
+- When registering a new operation, the Admin must provide several details, such as:
+  - Name
+  - Required staff (by specializations)
+  - Estimated duration
+- An ID (unique identifier) is automatically assigned to each operation.
 
 **From the client clarifications:**
 
-> **Question:** Can you please clarify if backoffice users registration uses the IAM system? And if the IAM system is the out-of-band process?
-> **Answer:** What this means is that backoffice users can not self-register in the system like the patients do. The admin must register the backoffice user. If you are using an external IAM (e.g., Google, Azzure, Linkedin, ...) the backoffice user must first create their account in the IAM provider and then pass the credential info to the admin so that the user account in the system is "linked" with the external identity provider.
+> **Question:** In the document with the surgeries, they all have 3 phases and respective duration:
+-Anesthesia/patient preparation
+-Surgery
+-Cleaning
+Can we assume while creating a new operation type, that the surgery must always have this 3 phases?
+> **Answer:** Yes.
 >
-> **Question:** Can you clarify the username and email requirements?
-> **Answer:** The username is the "official" email address of the user. For backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "<D180023@myhospital.com>". The system must allow for an easy configuration of the DNS domain (e.g., environment variable).
-For patients, the username is the email address provided in the patient record and used as identity in the external IAM. For instance, patient Carlos Silva has provided his email <csilva98@gmail.com> the first time he entered the hospital. That email address will be his username when he self-registers in the system.
-
+> **Question:** Are the different phases of surgery relevant to the business and should they be recorded in the system?
+> **Answer:** Yes; they are important due to the time it takes each phase and in the future for the planning of different teams (e.g., cleaning team)
+>
+> **Question:** Regarding the required Staff, what is it? A list that defines the specializations and roles of the staff involved in the appointment? Like 2 heart doctors and 5 heart nurses?
+> **Answer:** Yes.
+>
+> **Question:** The document you provided divides surgical times into "specific phases of the surgery," whereas the main statement only mentions recording the total surgery time. Should the system, therefore, store and specify the time spent on each phase of the surgery, or is it sufficient to only record the total surgery time without detailing the time distribution across each phase?
+> **Answer:** When describing an operation type, the system must record the time for each phase.
 ---
 
 ### 1.3. Acceptance Criteria
 
-> AC001.1: Backoffice users (e.g., doctors, nurses, technicians) are registered by an Admin via an internal
-process, not via self-registration.
-> AC001.2: Admin assigns roles (e.g., Doctor, Nurse, Technician) during the registration process.
-> AC001.3: Registered users receive a one-time setup link via email to set their password and activate their
-account.
-> AC001.4: The system enforces strong password requirements for security.
-> AC001.5: A confirmation email is sent to verify the user’s registration.
+> AC020.1: Admin can add new operation types, providing the operation name, estimated duration, and required staff (by specializations).
+> AC020.2: The system validates that the operation name is unique.
+> AC020.3: The system logs the creation of new operation types and makes them available for scheduling immediately.
 
 ---
 
 ### 1.4. Found out Dependencies
 
-- This Use Case is relative to US5.1.1, which is related to the backoffice management functionality.
+- This Use Case is relative to US5.1.20, which is related to the operation types management functionality.
 - It relates to the following Use Case(s) as well:
-  - [UC006 (US5.1.6)](../../UC006/README.md) - As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials, so that I can access the backoffice features according to my assigned role.
+  - [UC021 (US5.1.21)](../UC021/README.md) - As an Admin,  I want to edit existing operation types, so that I can update or correct information about the procedure.
+  - [UC022 (US5.1.22)](../UC022/README.md) - As an Admin, I want to remove obsolete or no longer performed operation types, so that the system stays current with hospital practices.
+  - [UC023 (US5.1.23)](../UC023/README.md) - As an Admin, I want to list/search operation types, so that I can see the details, edit and remove operation types.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Typed data: username and email
-- Selected data: user's role (i.e.: Admin, Doctor, Nurse, Technician)
+- Typed data: operation name, estimated duration (for each phase)
+- Selected data: N.A.
 
 **Output Data:**
 
-- Email notification to the user with a one-time setup link to set their password and activate their account.
+- Operation ID (unique identifier)
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](png/uc001-system-sequence-diagram.png)
+![System Sequence Diagram](svg/uc020-system-sequence-diagram.svg)
 
 ### 1.7 Other Relevant Remarks
 
-- An IAM system (OAuth) must be chosen and integrated with the system.
+- The system must ensure that the operation ID is unique and automatically assigned.
+- The system must store the time spent on each phase of the surgery.

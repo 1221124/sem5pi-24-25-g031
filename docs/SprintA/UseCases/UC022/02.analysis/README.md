@@ -1,55 +1,62 @@
-# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
+# UC020 - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system
 
 ## 2. Analysis
 
 ### 2.1. Relevant Domain Model Excerpt
 
-![UC001 - Domain Model](png/uc001-domain-model.png)
+![UC020 - Domain Model](svg/uc020-domain-model.svg)
 
 ### 2.2. Process Specification
 
 #### 2.2.1. Normal Flow
 
 1. **Preconditions**: The Admin is logged in and has access to the backoffice management functionality.
-2. **Select Option**: The Admin chooses to register a new backoffice user.
-3. **Enter User Details**: The Admin enters the user's mechanographic number and selects the user's role (e.g., Doctor, Nurse, Technician, Admin).
+2. **Select Option**: The Admin chooses to register a new type of operation.
+3. **Enter Operation Type Details**: The Admin enters the operation name, estimated duration (for each phase - anaesthesia/preparation, surgery and cleaning), and required staff (by specializations).
+4. **Validate Operation Name**: The system checks if the operation name is unique.
+5. **Save Operation Type**: The system saves the new operation type in the database and assigns it an unique ID.
+6. **Log Creation**: The system logs the creation of the new operation type.
+7. **Make Operation Type Available**: The system makes the new operation type available for scheduling immediately.
 
 #### 2.2.2. Exceptional Flows
 
-- **EF030.1**: If the email is not sent, the system must notify the Customer Manager and log the error.
+- **EF020.1**: If the operation name is not unique, the system must notify the Admin and request a different name.
+- **EF020.2**: If the operation type cannot be saved, the system must notify the Admin and log the error.
 
 ### 2.3. Functional Requirements Reevaluation
 
-- **FR030.1**: The system shall notify candidates by email about the results of the verification process.
-- **FR030.2**: The system shall record that the notification has been made.
-- **FR030.3**: The system shall provide feedback to the Customer Manager on the success or failure of the phase closure and notification process.
+- **FR020.1**: The system shall allow the Admin to add new types of operations, providing the operation name, estimated duration (for each phase), and required staff (by specializations).
 
 ### 2.4. Non-functional Requirements Specification
 
-- **Security**: Implement access control mechanisms to ensure that only authorized Customer Managers can send notifications.
-- **Performance**: Ensure the notification process completes within acceptable time limits to maintain system responsiveness.
-- **Usability**: Interface should be intuitive, guiding the Customer Manager smoothly through the notification process with clear instructions and error handling.
+- **Functionality**: The system shall allow the Admin to add new types of operations with the required details.
+- **Usability**: The interface should be intuitive, guiding the Admin smoothly through the operation type creation process with clear instructions and error handling.
+- **Reliability**: The system shall validate the operation name to ensure uniqueness and provide feedback on the success or failure of the operation type creation process.
+- **Performance**: The operation type creation process should complete within acceptable time limits to maintain system responsiveness.
+- **Supportability**: The system shall log the creation of new operation types for audit purposes and make them available for scheduling immediately.
 
 ### 2.5. Data Integrity and Security
 
-- Data integrity measures should ensure that notification actions are accurately recorded and reflected in the system without compromising data consistency.
-- Security measures should prevent unauthorized access to notification functionality and protect sensitive candidate data.
+- Data integrity measures should ensure that operation types are accurately recorded and reflected in the system without compromising data consistency.
+- Security measures should prevent unauthorized access to operation type creation functionality and protect sensitive operation data.
+- The system should validate the operation name to ensure that it is unique and prevent duplicate entries.
 
 ### 2.6. Interface Design
 
-- The interface will follow the EAPLI framework's design patterns, providing a user-friendly experience for the Customer Manager.
-- The interface should provide an intuitive and efficient workflow for selecting candidates and sending notifications, with clear indications of success or failure.
+- The interface shall be user-friendly, providing a clear workflow for creating new operation types with input fields for operation name, estimated duration (for each phase - in sequential order), and required staff (number and speciality).
 
 ### 2.7. Risk Analysis
 
-- **R030.1**: System Error During Notification
-  - **Mitigation**: Implement error handling mechanisms to notify the Customer Manager of any system failures and provide guidance on how to proceed.
-- **R030.2**: Unauthorized Access to Notification Functionality
-  - **Mitigation**: Implement secure encryption standards for storing and transmitting user credentials to prevent unauthorized access.
+- **R020.1**: Duplicate Operation Name
+  - **Mitigation**: Implement a validation mechanism to check for duplicate operation names and notify the Admin to provide a unique name.
+- **R020.2**: Database Error During Operation Type Creation
+  - **Mitigation**: Implement error handling mechanisms to log the error and notify the Admin of the issue.
+- **R020.3**: Unauthorized Access to Operation Type Creation
+  - **Mitigation**: Implement secure access control mechanisms to restrict operation type creation to authorized Admin users.
 
 ### 2.8. Decisions
 
-- **D030.1**: Use role-based access control for notification functionality, restricting access to authorized Customer Managers only.
-- **D030.2**: Utilize the system's email notification service to send updates to candidates.
-- **D030.3**: Implement a logging mechanism to record the success or failure of email notifications for audit purposes.
-- **D030.4**: Use the provided domain model as a reference for implementing notification functionality.
+- **D020.1**: Use a validation mechanism to ensure the uniqueness of operation names during creation.
+- **D020.2**: Implement error handling to log and notify the Admin of any issues during operation type creation.
+- **D020.3**: Utilize secure access control mechanisms (with the help of the IAM) to prevent unauthorized access to operation type creation functionality.
+- **D020.4**: Log the creation of new operation types for audit purposes and immediate availability for scheduling.

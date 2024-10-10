@@ -1,11 +1,9 @@
-# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
+# UC021 - As an Admin, I want to edit existing operation types, so that I can update or correct information about the procedure
 
 ## 1. Context
 
-> The backoffice system is a web application that allows admins to manage users, patients, and staff.
-> Admins can create, edit, and deactivate user profiles, ensuring that the right people have access to the system.
-> This use case focuses on the registration of new backoffice users, such as doctors, nurses, technicians and other admins.
-> The registration process is done via an out-of-band process using an IAM, meaning that the admin must manually create the user profile and assign the appropriate role. After that, the admin must regist the user in the backoffice system, associating it with the appropriate IAM credentials.
+> The system allows the Admin to edit existing types of operations so that the system is up-to-date with the available medical procedures.
+> Admin users can add, edit, delete and list/search operations, ensuring that the system reflects the current medical procedures available at the hospital.
 
 ## 2. Requirements
 
