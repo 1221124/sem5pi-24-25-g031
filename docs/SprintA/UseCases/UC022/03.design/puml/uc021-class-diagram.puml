@@ -1,4 +1,4 @@
-@startuml uc020-class-diagram
+@startuml uc021-class-diagram
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -8,42 +8,27 @@ skinparam linetype ortho
 left to right direction
 top to bottom direction
 
-title Class Diagram (CD) - UC020
+title Class Diagram (CD) - UC021
 
 class OperationTypeController {
     +GetByName(name: Name): Task<ActionResult<OperationTypeDto>>
-    +Create(dto: CreatingOperationTypeDto): Task<ActionResult<OperationTypeDto>>
+    +Update(dto: OperationTypeDto): Task<ActionResult<OperationTypeDto>>
 }
 
 class OperationTypeService {
     +GetByNameAsync(name: Name): Task<OperationTypeDto>
     +ValidateOperationTypeName(name: Name): Task<bool>
-    +AddAsync(dto: CreatingOperationTypeDto): Task<OperationTypeDto>
+    +UpdateAsync(dto: OperationTypeDto): Task<OperationTypeDto>
 }
 
 class OperationTypeRepository {
     +GetByNameAsync(name: Name): Task<OperationType>
-    +AddAsync(dto: CreatingOperationTypeDto): Task<OperationType>
+    +UpdateAsync(dto: OperationTypeDto): Task<OperationType>
 }
 
 interface IOperationTypeRepository {
     +GetByNameAsync(name: Name): Task<OperationType>
-    +AddAsync(dto: CreatingOperationTypeDto): Task<OperationType>
-}
-
-class CreatingOperationTypeDto {
-    +Name: Name
-    +Specialization: Specialization
-    +RequiredStaff: RequiredStaff
-    +PhasesDuration: PhasesDuration
-    +getName(): Name
-    +getSpecialization(): Specialization
-    +getRequiredStaff(): RequiredStaff
-    +getPhasesDuration(): PhasesDuration
-    +setName(name: Name): void
-    +setSpecialization(Specialization: Specialization): void
-    +setRequiredStaff(requiredStaff: RequiredStaff): void
-    +setPhasesDuration(phasesDuration: PhasesDuration): void
+    +UpdateAsync(dto: OperationTypeDto): Task<OperationType>
 }
 
 class OperationType {
@@ -52,6 +37,10 @@ class OperationType {
     +Specialization: Specialization
     +RequiredStaff: RequiredStaff
     +PhasesDuration: PhasesDuration
+    +ChangeName(name: Name): void
+    +ChangeSpecialization(specialization: Specialization): void
+    +ChangeRequiredStaff(requiredStaff: RequiredStaff): void
+    +ChangePhasesDuration(phasesDuration: PhasesDuration): void
 }
 
 class OperationTypeDto {
@@ -105,23 +94,14 @@ enum Role {
 }
 
 OperationTypeController .> OperationTypeService : > uses
-OperationTypeController ----> CreatingOperationTypeDto : > creates
 OperationTypeController ----> OperationTypeDto : > returns
 
 OperationTypeService -> OperationTypeRepository : > uses
-OperationTypeService ---> CreatingOperationTypeDto : > uses
-OperationTypeService ---> OperationType : > creates
+OperationTypeService ---> OperationType : > updates
 OperationTypeService ---> OperationTypeDto : > creates
 
 OperationTypeRepository --> IOperationTypeRepository : > implements
 OperationTypeRepository --> OperationType : > saves in database
-
-IOperationTypeRepository --> OperationType : > saves in database
-
-CreatingOperationTypeDto --> Name : > has
-CreatingOperationTypeDto --> Specialization : > has
-CreatingOperationTypeDto --> RequiredStaff : > has
-CreatingOperationTypeDto --> PhasesDuration : > has
 
 OperationType --> OperationTypeID : > has
 OperationType --> Name : > has

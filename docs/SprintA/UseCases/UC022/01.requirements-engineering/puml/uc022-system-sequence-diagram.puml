@@ -1,0 +1,49 @@
+@startuml uc022-system-sequence-diagram
+
+title System Sequence Diagram (SSD) - UC022
+actor Admin as Adm
+participant ":System" as System
+
+activate Adm
+
+    Adm -> System: Delete existing operation type
+
+    activate System
+    
+        System --> Adm: Ask for operation type ID
+
+    deactivate System
+
+    Adm -> System: Provide operation type ID for deletion
+
+    activate System
+
+        System -> System: Validate operation type ID
+        
+    alt ID is valid
+
+            System --> Adm: Ask to confirm operation type deletion
+
+        deactivate System
+
+        Adm -> System: Confirm operation type deletion
+    
+        activate System
+
+            System -> System: Delete operation type and log deletion
+
+            System --> Adm: Inform that operation type was deleted
+
+        deactivate System
+
+    else ID is invalid
+
+            System --> Adm: Inform that operation type ID is invalid
+    
+        deactivate System
+
+    end
+
+deactivate Adm
+
+@enduml

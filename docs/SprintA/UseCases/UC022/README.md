@@ -1,8 +1,8 @@
-# UC020 - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system
+# UC022 - As an Admin, I want to remove obsolete or no longer performed operation types, so that the system stays current with hospital practices
 
 ## 1. Context
 
-> The system allows the Admin to add new types of operations so that the system is up-to-date with the available medical procedures.
+> The system allows the Admin to delete existing types of operations so that the system is up-to-date with the available medical procedures.
 > Admin users can add, edit, delete and list/search operations, ensuring that the system reflects the current medical procedures available at the hospital.
 
 ## 2. Requirements
