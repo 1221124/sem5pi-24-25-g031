@@ -19,6 +19,9 @@ package UserAggregate #MediumAquaMarine {
   class Role <<value object>> {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
   }
+  class UserStatus <<value object>> {
+    ACTIVE, INACTIVE, PENDING, BLOCKED
+  }
 }
 note left of UserAggregate: managed using an IAM\n(external to the system)
 
@@ -34,6 +37,9 @@ package PatientAggregate #LightSalmon {
   note right of MedicalCondition: optional
   class EmergencyContact <<value object>>
   class AppointmentHistory <<value object>>
+  class PatientStatus <<value object>> {
+    ACTIVE, INACTIVE
+  }
 }
 
 package StaffAggregate #Pink {
@@ -46,6 +52,9 @@ package StaffAggregate #Pink {
   'TODO: REVIEW STAFF AVAILABILITY RELATED CLASSES
   class AvailabilitySlots <<value object>>
   class AppointmentSlots <<value object>>
+  class StaffStatus <<value object>> {
+    ACTIVE, INACTIVE
+  }
 }
 
 package OperationRequestAggregate #LightGoldenRodYellow {
