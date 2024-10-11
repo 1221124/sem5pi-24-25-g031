@@ -12,7 +12,7 @@
 
 1. **Preconditions**: The Admin is logged in and has access to the backoffice management functionality.
 2. **Select Option**: The Admin chooses to register a new type of operation.
-3. **Enter Operation Type Details**: The Admin enters the operation name, estimated duration (for each phase - anaesthesia/preparation, surgery and cleaning), and required staff (by specializations).
+3. **Enter Operation Type Details**: The Admin enters the operation name, specialization, estimated duration for each phase (anaesthesia/preparation, surgery and cleaning) and list of required staff (role, specialization and quantity).
 4. **Validate Operation Name**: The system checks if the operation name is unique.
 5. **Save Operation Type**: The system saves the new operation type in the database and assigns it an unique ID.
 6. **Log Creation**: The system logs the creation of the new operation type.
@@ -25,7 +25,7 @@
 
 ### 2.3. Functional Requirements Reevaluation
 
-- **FR020.1**: The system shall allow the Admin to add new types of operations, providing the operation name, estimated duration (for each phase), and required staff (by specializations).
+- **FR020.1**: The system shall allow the Admin to add new types of operations, providing the operation name, specialization, estimated duration for each phase, and required staff (role, specialization, quantity).
 
 ### 2.4. Non-functional Requirements Specification
 
@@ -43,7 +43,7 @@
 
 ### 2.6. Interface Design
 
-- The interface shall be user-friendly, providing a clear workflow for creating new operation types with input fields for operation name, estimated duration (for each phase - in sequential order), and required staff (number and speciality).
+- The interface shall be user-friendly, providing a clear workflow for creating new operation types with input fields for operation name, specialization, estimated duration for each phase, and required staff details.
 
 ### 2.7. Risk Analysis
 
