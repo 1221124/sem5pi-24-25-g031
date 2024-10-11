@@ -26,8 +26,8 @@ According to the taken rationale, the conceptual classes promoted to software cl
 
 Other software classes (i.e., Pure Fabrication) identified:
 
-* **StaffQuantity**: Represents the required quantity of staff for the operation, encapsulating logic and validation rules that ensure the numbers are always valid and positive.
-* **RequiredStaff**: Stores the roles and their required quantities for each type of operation, allowing for clear and accessible logic for staff requests and assignments.
+* **Quantity**: Represents the required quantity of staff for the operation, encapsulating logic and validation rules that ensure the numbers are always valid and positive.
+* **RequiredStaff**: Stores the role, specialization and the required quantity for each type of operation, allowing for clear and accessible logic for staff requests and assignments.
 
 ## 3.2. Sequence Diagram (SD)
 
