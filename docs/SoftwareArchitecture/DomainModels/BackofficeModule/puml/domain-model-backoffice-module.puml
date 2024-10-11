@@ -113,7 +113,7 @@ class Date <<value object>>
 class Time <<value object>>
 class Slot <<value object>>
 class Specialization <<value object>> {
-  CARDIOLOGY, ORTHOPEDICS
+  ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
 }
 
 class Admin
