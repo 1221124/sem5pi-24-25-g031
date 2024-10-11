@@ -6,8 +6,6 @@
 
 > As Admin, I want to add new type of operations.
 
----
-
 ### 1.2. Customer Specifications and Clarifications
 
 **From the specifications document:**
@@ -41,15 +39,15 @@ Can we assume while creating a new operation type, that the surgery must always 
 >
 >**Question:** When creating a new type of operation, we have a name, 3 temporal phases of the Surgery and the required list of staff (specialties, quantity). Should this new type of operation have a specialty other than those required in the mode according to AC006.2, can a doctor only schedule Surgery in his specialty? The process is to create the new operation type and then add the list of required specialties?
 >**Answer:** The type of operation is associated with a given specialty. The list of specialties is an integral part of the type of operation. Creation is carried out in a single step, not in two.
----
+>
+>**Question:** In a previous answer you stated that "The type of operation is associated with a given specialty". In another answer you said "a team of 1 doctor with specialization X and one nurse with specialization Y" (regarding the required staff for a said type of operation). From the specifications document and the additional document with the 10 most common types of operations, we have two specializations: orthopedics and cardiology. The question is: If the operation type already has a specialization associated, how can we have staff with different specializations? What do you understand by specialization? Is it cardiology/orthopedics? Or anaesthesist/circulating/...?
+>**Answer:** The operation is mainly associated with one specialization, but for a specific operation it might require a team with multiple specializations. Cardiology, orthopedics, anaesthesists, ... are specializations that either doctors or nurses can have. The circulating technician is a different type of medical professional. For now the system doesn't need to support technicians.
 
 ### 1.3. Acceptance Criteria
 
 > AC020.1: Admin can add new operation types, providing the operation name, estimated duration, and required staff (by specializations).
 > AC020.2: The system validates that the operation name is unique.
 > AC020.3: The system logs the creation of new operation types and makes them available for scheduling immediately.
-
----
 
 ### 1.4. Found out Dependencies
 
