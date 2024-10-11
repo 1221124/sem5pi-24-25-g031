@@ -8,11 +8,11 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC012
 
 participant ":Routing" as Routing
-participant ":CreateStaffController" as Controller
+participant ":StaffProfileController" as Controller
 participant ":StaffService" as Service
 database ":StaffRepository" as Repository
 database ":IStaffRepository" as IRepository
-participant ":CreateStaffDTO" as StaffDTO
+participant ":StaffDTO" as StaffDTO
 participant ":Staff" as Domain
 participant IStaffRepository as InterfaceStaffRepository <<interface>>
 

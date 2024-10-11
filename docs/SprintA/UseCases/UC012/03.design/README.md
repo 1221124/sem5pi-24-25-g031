@@ -1,40 +1,39 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC012 - As an Admin, I want to create a new staff profile, so that I can add them to the hospital’s roster
 
 ## 3. Design - Use Case Realization
 
 ### 3.1. Rationale
 
-| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
-|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+| Interaction ID                                      | Question: Which class is responsible for...       | Answer                 | Justification (with patterns)                                                                                              |
+|:----------------------------------------------------|:--------------------------------------------------|:-----------------------|:---------------------------------------------------------------------------------------------------------------------------|
+| Step 1: Create Staff Profile                        | ... triggering the profile creation process?      | StaffProfileController | Controller: Controller: StaffProfileController is responsible for managing the flow of creating new staff profiles.        |
+|                                                     | ... storing information about staff?              | Staff                  | Information Expert: Staff holds all relevant details about the staff, including name, specialization, and contact details. |
+|                                                     | ... saving the new staff profile?                 | StaffRepository        | Information Expert: StaffRepository is responsible for saving staff profile details after validation.                      |
+| Step 2: Create a DTO to encapsulate staff data.     | ...                                               | StaffDTO               |                                                                                                                            |
+| Step 2: Validate Input                              | ... validating the staff profile details?         | StaffService           | Service: StaffService validates the provided data, ensuring email and phone number are unique.                             |
+| Step 3: Show (in)success of the operation's message | ... showing the notification (in)success message? |                        | Pure Fabrication: StaffProfileUI shows the success or failure message of the staff profile creation process.               |
 
 ### Systematization ##
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+* Staff
+* Specialization
+* ContactInformation
+* FullName
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
+* StaffController
+* StaffProfileController
+* IStaffRepository
+* StaffService
+* StaffDTO
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+![uc012-sequence-diagram.svg](png/uc012-sequence-diagram.svg)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc012-class-diagram.svg](png/uc012-class-diagram.svg)
