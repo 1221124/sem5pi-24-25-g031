@@ -23,18 +23,29 @@ package "OperationTypeAggregate" {
         ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
     }
     class Duration <<value object>>
+    class Quantity <<value object>>
 }
 
 class Admin <<conceptual class>>
 class Name <<value object>>
-class Specialization <<value object>>
+enum Specialization <<value object>> {
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+} 
+enum Role {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT 
+}
+note right of Role: in this Use Case, only Staff roles are considered (DOCTOR, NURSE, TECHNICIAN)
 
 Admin "1" -- "*" OperationType : creates >
 
 OperationType "1" -- "1" OperationTypeID : > identified by
 OperationType "1" -- "1" Name : > has
-OperationType "1" -- "1" RequiredStaff : > needs
+OperationType "*" -- "1" Specialization : > has
+OperationType "1" -- "*" RequiredStaff : > needs
 OperationType "1" -- "1..*" PhaseDetails : > has
+RequiredStaff "1" -- "1" Role : > has
+RequiredStaff "1" -- "1" Specialization : > has
+RequiredStaff "1" -- "1" Quantity : > this many
 PhaseDetails "1" -- "1" Phase : > has
 PhaseDetails "1" -- "1" Duration : > has
 
