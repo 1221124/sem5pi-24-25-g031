@@ -34,15 +34,15 @@ interface IOperationTypeRepository {
 class CreatingOperationTypeDto {
     +Name: Name
     +Specialization: Specialization
-    +RequiredStaff: RequiredStaff
+    - _requiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
     +getName(): Name
     +getSpecialization(): Specialization
-    +getRequiredStaff(): RequiredStaff
+    +getRequiredStaff(): List<RequiredStaff>
     +getPhasesDuration(): PhasesDuration
     +setName(name: Name): void
     +setSpecialization(Specialization: Specialization): void
-    +setRequiredStaff(requiredStaff: RequiredStaff): void
+    +setRequiredStaff(requiredStaff: List<RequiredStaff>): void
     +setPhasesDuration(phasesDuration: PhasesDuration): void
 }
 
@@ -50,7 +50,7 @@ class OperationType {
     +Id: OperationTypeID
     +Name: Name
     +Specialization: Specialization
-    +RequiredStaff: RequiredStaff
+    - _requiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
 }
 
@@ -58,26 +58,25 @@ class OperationTypeDto {
     +Id: OperationTypeID
     +Name: Name
     +Specialization: Specialization
-    +RequiredStaff: RequiredStaff
+    - _requiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
 }
 
 class RequiredStaff {
-    - _staff: Dictionary<Role, StaffQuantity>
+    +Role: Role
+    +Specialization: Specialization
+    +Quantity: Quantity
 }
-note right of RequiredStaff
-    Role can only be a staff role: Doctor, Nurse or Assistant
-end note
 
-class StaffQuantity {
+class Quantity {
     +Quantity: int
 }
-note right of StaffQuantity
+note right of Quantity
     Quantity must be greater than 0
 end note
 
-class Specialization {
-    +Designation: Designation
+enum Specialization {
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
 }
 
 class PhasesDuration {
@@ -103,6 +102,9 @@ class OperationTypeID {
 enum Role {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
 }
+note right of Role
+    In this Use Case, role can only be a staff role: Doctor, Nurse or Technician
+end note
 
 OperationTypeController .> OperationTypeService : > uses
 OperationTypeController ----> CreatingOperationTypeDto : > receives
@@ -132,11 +134,12 @@ OperationType --> PhasesDuration : > has
 OperationTypeDto --> OperationTypeID : > has
 OperationTypeDto --> Name : > has
 OperationTypeDto --> Specialization : > has
-OperationTypeDto --> RequiredStaff : > has
+OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has
 
 RequiredStaff --> Role: has
-RequiredStaff --> StaffQuantity : > has
+RequiredStaff --> Specialization : > of
+RequiredStaff --> Quantity : > this many
 
 PhasesDuration --> Phase : > has
 PhasesDuration --> Duration : > has
