@@ -1,55 +1,60 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC012 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
 
 ## 2. Analysis
 
 ### 2.1. Relevant Domain Model Excerpt
 
-The following diagram was extracted from the EAPLI framework (provided by the course's teachers).
+The relevant domain model includes aggregates such as Staff and User, with root entities like Staff, and value objects like License Number and Specialization. These value objects are essential for creating a new staff profile in the system.
 
-![UC030 - Domain Model](svg/uc030-domain-model.svg)
+![UC012 - Domain Model](png/uc012-domain-model.png)
 
 ### 2.2. Process Specification
 
 #### 2.2.1. Normal Flow
-1. **Authenticate Admin**: Verify that the Customer Manager is logged in with appropriate permissions.
-2. **Access User Management Interface**: Navigates to the job opening management section of the backoffice.
-3. **Select Job Opening**: Choose the specific job opening for which phases need to be closed.
-4. **Close Phrases**: Customer Manager closes the desired phases of the job opening.
-5. **Update Phrases**: When closing a phase, the next phase is automatically opened.
-6. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing operation.
-7. **Notify Candidates**: The system sends an email to the candidates informing them of the result of the verification process.
-8. **Record Notification**: Record that the notification has been made for process management purposes.
-9. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing and notification operation.
+
+1. **Authenticate Admin**: Verify that the Admin is authenticated and has the necessary permissions.
+2. **Access Staff Management Interface**: The Admin navigates to the staff management section in the backoffice.
+3. **Create New Staff**: The Admin inputs the new staff member's details, such as First Name, Last Name, Contact Information (email and phone), and Specialization.
+4. **Generate License Number:**: The system automatically generates a unique **License Number** for the new staff member.
+5. **Validate Data:** The system checks that the email and phone number are unique within the system.
+6. **Store Profile:** The system securely stores the staff profile, applying role-based access control.
+7. **Feedback:** The system provides feedback to the Admin on the success or failure of the staff profile creation.
 
 #### 2.2.2. Exceptional Flows
-- **EF030.1**: If the email is not sent, the system must notify the Customer Manager and log the error.
+
+- **EF012.1**: If the email or phone number is already in use, the system alerts the Admin of the duplication and does not create the profile.
 
 ### 2.3. Functional Requirements Reevaluation
-- **FR030.1**: The system shall notify candidates by email about the results of the verification process.
-- **FR030.2**: The system shall record that the notification has been made. 
-- **FR030.3**: The system shall provide feedback to the Customer Manager on the success or failure of the phase closure and notification process.
+
+- **FR012.1:** The system shall allow the Admin to create new staff profiles with details like name, contact information, and specialization.
+- **FR012.2:** The system shall generate a unique **staff ID** when creating a new staff profile.
+- **FR012.3:** The system shall validate that the staff’s email and phone number are unique.
+- **FR012.4:** The system shall store staff profiles securely with role-based permissions.
 
 ### 2.4. Non-functional Requirements Specification
-- **Security**: Implement access control mechanisms to ensure that only authorized Customer Managers can send notifications.
-- **Performance**: Ensure the notification process completes within acceptable time limits to maintain system responsiveness.
-- **Usability**: Interface should be intuitive, guiding the Customer Manager smoothly through the notification process with clear instructions and error handling.
+
+- **Security:** The system must ensure that only authenticated and authorized Admins can create staff profiles, and that data is stored securely.
+- **Usability:** The interface should be intuitive, allowing the Admin to create new profiles quickly and without errors.
 
 ### 2.5. Data Integrity and Security
-- Data integrity measures should ensure that notification actions are accurately recorded and reflected in the system without compromising data consistency.
-- Security measures should prevent unauthorized access to notification functionality and protect sensitive candidate data.
+
+- **Data Integrity:** The system must ensure that staff data is accurately stored and that no duplicates are created.
+- **Data Security:** Staff profiles must be protected from unauthorized access, and any sensitive data should be encrypted.
 
 ### 2.6. Interface Design
-- The interface will follow the EAPLI framework's design patterns, providing a user-friendly experience for the Customer Manager.
-- The interface should provide an intuitive and efficient workflow for selecting candidates and sending notifications, with clear indications of success or failure.
+
+- The interface will follow the system’s design patterns, providing a user-friendly experience for Admins when entering new staff details.
+- There should be clear fields for inputting Name, Contact Information, and Specialization, with automatic validation for duplicate data.
 
 ### 2.7. Risk Analysis
-- **R030.1**: System Error During Notification
-    - **Mitigation**: Implement error handling mechanisms to notify the Customer Manager of any system failures and provide guidance on how to proceed.
-- **R030.2**: Unauthorized Access to Notification Functionality
-  - **Mitigation**: Implement secure encryption standards for storing and transmitting user credentials to prevent unauthorized access.
+
+- **R012.1**: Data Duplication Error
+  - **Mitigation**: Implement strict validation to ensure that email and phone numbers are unique before creating the profile.
+- **R012.2**: Unauthorized Access to the System
+  - **Mitigation**: Use role-based access control to restrict profile creation to authorized Admins only.
 
 ### 2.8. Decisions
-- **D030.1**: Use role-based access control for notification functionality, restricting access to authorized Customer Managers only.
-- **D030.2**: Utilize the system's email notification service to send updates to candidates.
-- **D030.3**: Implement a logging mechanism to record the success or failure of email notifications for audit purposes.
-- **D030.4**: Use the provided domain model as a reference for implementing notification functionality.
+
+- **D012.1**: Use role-based access control to ensure that only authorized Admins can create staff profiles.
+- **D012.2**: Implement a validation mechanism to ensure that emails and phone numbers are not duplicated.
+- **D012.3**: The system will automatically generate a unique license number for staff, ensuring uniqueness.
