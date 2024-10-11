@@ -16,6 +16,7 @@ title Domain Model - Backoffice Module
 package UserAggregate #MediumAquaMarine {
   class User <<root entity>>
   class Username <<value object>>
+  note right of Username: same as the user's email
   class Role <<value object>> {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
   }
@@ -23,18 +24,18 @@ package UserAggregate #MediumAquaMarine {
     ACTIVE, INACTIVE, PENDING, BLOCKED
   }
 }
-note left of UserAggregate: managed using an IAM\n(external to the system)
 
 package PatientAggregate #LightSalmon {
   class Patient <<root entity>>
   class DateOfBirth <<value object>>
+  note right of DateOfBirth: format: system date
   class Gender <<value object>> {
     MALE, FEMALE
   }
   class MedicalRecordNumber <<value object>>
-  note right of MedicalRecordNumber: unique identifier
+  note right of MedicalRecordNumber: unique identifier (format: YYYYMMnnnnnn - YYYY = year, MM = month, nnnnnn = sequential number)
   class MedicalCondition <<value object>>
-  note right of MedicalCondition: optional
+  note right of MedicalCondition: optional (free text)
   class EmergencyContact <<value object>>
   class AppointmentHistory <<value object>>
 '  class PatientStatus <<value object>> {
@@ -71,6 +72,8 @@ package OperationTypeAggregate #PaleGreen {
   note bottom of OperationTypeID: unique identifier
   class OperationTypeName <<value object>>
   class RequiredStaff <<value object>>
+  class Quantity <<value object>>
+  note right of Quantity: number of staff required (integer > 0)
   class OperationPhaseDetails <<value object>>
   class OperationPhase <<value object>> {
     ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
@@ -171,9 +174,12 @@ OperationRequest "*" -- "1" OperationPriority : > has
 
 OperationType "1" -- "1" OperationTypeID : > identified by
 OperationType "1" -- "1" OperationTypeName : > has
-OperationType "1" -- "1" RequiredStaff : > needs
+OperationType "1" -- "*" RequiredStaff : > needs
 OperationType "*" -- "1" Specialization : > has
 OperationType "1" -- "1..*" OperationPhaseDetails : > has
+RequiredStaff "1" -- "1" Role : > has
+RequiredStaff "1" -- "1" Specialization : > has
+RequiredStaff "1" -- "1" Quantity : > has
 OperationPhaseDetails "1" -- "1" OperationPhase : > has
 OperationPhaseDetails "1" -- "1" Time : > has
 
