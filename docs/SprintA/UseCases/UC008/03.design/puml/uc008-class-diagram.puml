@@ -1,0 +1,77 @@
+@startuml
+skinparam monochrome false
+skinparam shadowing false
+
+title Class Diagram for UC008
+
+class CreatePatientController {
+  +CreatePatient(CreatingPatientDto dto): ActionResult<PatientDTO>
+}
+
+
+class PatientService {
+  +AddAsync(CreatingPatientDto dto): PatientDto
+}
+
+class CreatePatientDTO {
+  - FullName: FullName
+  - ContactInformation: ContactInformation
+  - DateOfBirth: SystemDate
+  - Gender: Gender
+  - MedicalCondition: MedicalCondition
+  - ContactInformation: ContactInformation
+  - EmergencyContact: int
+  - AppointmentHistory: AppointmentHistory 
+  'TODO: Review AppointmentHistory type
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+enum Gender {
+  Male, Female
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+
+class Patient {
+  - FullName: FullName
+  - ContactInformation: ContactInformation
+  - DateOfBirth: SystemDate
+  - Gender: Gender
+  - MedicalCondition: String
+  - MedicalRecordNumber: int
+  - ContactInformation: ContactInformation
+  - EmergencyContact: int
+  - AppointmentHistory: AppointmentHistory
+    'TODO: Review AppointmentHistory type
+}
+
+class PatientRepository {
+  + AddAsync(Patient patient): void
+}
+
+interface IPatientRepository {
+}
+
+
+'class Database {
+'  + save(Patient patient): void
+'}
+
+CreatePatientDTO --> CreatePatientController : uses
+CreatePatientController --> PatientService : uses
+PatientService --> Patient : creates
+IPatientRepository --> PatientService : depends on
+PatientRepository --> IPatientRepository : implements
+Patient --> ContactInformation : has
+Patient --> FullName : has
+Patient --> Gender : has
+
+@enduml
