@@ -1,0 +1,85 @@
+@startuml "uc006-class-diagram"
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC006
+
+class BackofficeLoginController <<controller>>{
+    +Login(dto: UserDTO): Task<ActionResult<UserDto>>
+}
+
+class BackofficeLoginService <<service>>{
+    +Login(dto: UserDTO): Task<ActionResult<UserDto>>
+    +AddAsync(dto: UserDTO): Task<User>
+}
+
+class NotificationService <<service>>{
+    +SendNotificationToAdmin(user: User): Task<bool>
+}
+
+class UserRepository <<repository>>{
+    +AddAsync(dto: UserDTO): Task<User>
+    +UpdateAsync(user: User): Task<User>
+}
+
+class InterfaceUserRepository <<interface>>{
+    +AddAsync(dto: UserDTO): Task<User>
+    +UpdateAsync(user: User): Task<User>
+}
+
+class UserDTO <<domain>>{
+    +username: Username
+    +password: Password
+}
+
+class User <<entity>>{
+    +username: Username
+    +password: Password
+    +loginAttempts: int
+    +role: Role
+    +status: Status
+    +PasswordVerification(password: Password): Task<bool>
+    +BlockUser(): void
+}
+
+class Username <<value object>>{
+    +username: String
+}
+
+class Password <<value object>> {
+    +password: String
+}
+
+enum Role <<value object>>{
+    +ADMIN
+    +DOCTOR
+    +NURSE
+    +TECHNICIAN
+    +PATIENT
+}
+
+enum Status <<value object>>{
+    +ACTIVE
+    +BLOCKED
+}
+
+BackofficeLoginService --> NotificationService: <<uses>>
+BackofficeLoginController --> BackofficeLoginService: <<uses>>
+
+BackofficeLoginService --> UserRepository: <<access>>
+UserRepository --> InterfaceUserRepository: <<implements>>
+
+UserDTO --> Username
+UserDTO --> Password
+
+User --> Username
+User --> Password
+User --> Role
+User --> Status
+
+BackofficeLoginService --> User
+BackofficeLoginService --> UserDTO
+
+@enduml
