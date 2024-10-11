@@ -1,40 +1,46 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC006 - As a Backoffice User, I want to log in to the system using my credentials
 
 ## 3. Design - Use Case Realization
 
 ### 3.1. Rationale
 
-| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
-|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                       |
+|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------|
+| Step 1: User Login                                   | ... receiving and processing the login request?     | BackofficeLoginController           | Controller: BackofficeLoginController is responsible for handling login requests from backoffice users.                              |
+|                                                      | ... validating the user’s credentials?              | BackofficeLoginService              | Service: BackofficeLoginService validates the user’s credentials using the provided username and password.                          |
+|                                                      | ... representing the user in the system?            | UserDTO                             | Data Transfer Object (DTO): UserDTO represents user data transferred between layers.                                                 |
+| Step 2: Password Verification                        | ... verifying the user's password?                  | User                                | Domain: User represents the user entity, responsible for managing user information and password validation.                          |
+| Step 3: Role-Based Access Control                    | ... checking the user's role?                       | BackofficeLoginService              | Service: BackofficeLoginService checks the user's role to ensure appropriate access to features.                                     |
+| Step 4: Blocking User after Failed Attempts          | ... blocking the user after failed login attempts?   | User, UserRepository                | Information Expert: User and UserRepository handle failed login attempt counting and blocking users when necessary.                  |
+| Step 5: Sending Notification to Admin                | ... sending notifications to admins?                | NotificationService                 | Service: NotificationService is responsible for notifying the admin after five failed login attempts.                                |
+| Step 6: Updating User Information                    | ... updating the user information (e.g., login attempts, status)? | UserRepository           | Repository: UserRepository is responsible for updating and persisting user data.                                                     |
+| Step 7: Returning the login response                 | ... sending the success or failure response?        | BackofficeLoginController           | Controller: BackofficeLoginController returns the appropriate response based on the outcome of the login process.                   |
 
 ### Systematization ##
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+* User
+* UserDTO
+* Role
 
-Other software classes (i.e. Pure Fabrication) identified:
+Other software classes (i.e., Pure Fabrication) identified:
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
+* BackofficeLoginController
+* BackofficeLoginService
+* UserRepository
+* NotificationService
+
+## 3.2. Sequence Diagram (SD) - Invalid Credentials
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+### 3.2.1 Valid Credentials
+![uc006-sequence-diagram.svg](svg/uc006-sequence-diagram_valid-credentials.svg)
+
+### 3.2.2 Invalid Credentials
+![uc003-sequence-diagram.svg](svg/uc006-sequence-diagram_invalid-credentials.svg)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc006-class-diagram.svg](svg/uc006-class-diagram.svg)
