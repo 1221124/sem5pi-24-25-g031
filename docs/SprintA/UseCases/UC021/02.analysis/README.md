@@ -25,7 +25,7 @@
 
 ### 2.3. Functional Requirements Reevaluation
 
-- **FR021.1**: The system shall allow the Admin to edit existing types of operations, providing the operation name, estimated duration (for each phase), specialization and required staff.
+- **FR021.1**: The system shall allow the Admin to edit existing types of operations, providing the operation name, estimated duration (for each phase), specialization and required staff (role, specialization and quantity).
 
 ### 2.4. Non-functional Requirements Specification
 
@@ -43,7 +43,7 @@
 
 ### 2.6. Interface Design
 
-- The interface shall be user-friendly, providing a clear workflow for editing operation types with input fields for operation name, estimated duration (for each phase - in sequential order), specialization and required staff (quantity for each role).
+- The interface shall be user-friendly, providing a clear workflow for editing operation types with input fields for operation name, estimated duration (for each phase - in sequential order), specialization and required staff (role, specialization and quantity).
 
 ### 2.7. Risk Analysis
 
