@@ -41,6 +41,7 @@ package PatientAggregate #LightSalmon {
 '  class PatientStatus <<value object>> {
 '    ACTIVE, INACTIVE
 '  }
+  class DeletionLog <<value object>>
 }
 
 package StaffAggregate #Pink {
@@ -155,6 +156,7 @@ Patient "0..*" --- "0..*" MedicalCondition : > can have
 Patient "*" ---"1" EmergencyContact : > has
 Patient "*" --- "1" AppointmentHistory : > has
 'Patient "1" -- "1" PatientStatus : > has
+Patient "*" -- "1" DeletionLog : > has
 
 Staff "*" -- "1" FullName : > has
 Staff "1" -- "1" StaffID : > identified by
