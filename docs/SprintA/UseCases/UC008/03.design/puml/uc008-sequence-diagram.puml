@@ -7,7 +7,7 @@ autonumber
 title System Sequence Diagram (SSD) - UC008
 
 participant ":Routing" as Routing
-participant ":CreatePatientController" as Controller
+participant ":PatientController" as Controller
 participant ":PatientService" as Service
 participant "Patient" as Patient 
 participant "IPatientRepository" as IPatientRepositry
