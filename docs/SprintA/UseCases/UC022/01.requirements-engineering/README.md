@@ -1,4 +1,4 @@
-# UC021 - As an Admin, I want to edit existing operation types, so that I can update or correct information about the procedure
+# UC022 - As an Admin, I want to remove obsolete or no longer performed operation types, so that the system stays current with hospital practices
 
 ## 1. Requirements Engineering
 
