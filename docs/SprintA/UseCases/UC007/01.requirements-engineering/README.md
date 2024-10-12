@@ -37,27 +37,26 @@ n/a
 
 ### 1.4. Found out Dependencies
 
-* This Use Case is relative to US 1010, which is related to the backoffice job opening management functionality.
+* This Use Case is relative to US 5.1.7, which is related to patient login functionality.
 * It relates to the following Use Cases as well:
-  - [UC026](../../UC002/README.md) - As Customer Manager, I want to open phases of the process for a job opening
-  - [UC027](../../UC002/README.md) - As Customer Manager, I want to close phases of the process for a job opening
+  n/a
 
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Automatic data:
-	- send email
+- Typed data:
+	- username
+  - password
 
 **Output Data:**
-- Send email with the result of the verification process
+- token
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/uc001-system-sequence-diagram.svg)
+![System Sequence Diagram](svg/uc007-system-sequence-diagram.svg)
 
 ### 1.7 Other Relevant Remarks
 
-- The email notification functionality depends on the system's ability to authenticate users and manage job openings and candidate data appropriately.
-- To notify by email, it is necessary to connect to the VPN.
+n/a
