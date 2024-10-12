@@ -38,9 +38,6 @@ package PatientAggregate #LightSalmon {
   note right of MedicalCondition: optional (free text)
   class EmergencyContact <<value object>>
   class AppointmentHistory <<value object>>
-'  class PatientStatus <<value object>> {
-'    ACTIVE, INACTIVE
-'  }
   class DeletionLog <<value object>>
   class InactivityTime <<value object>>
 }
@@ -53,9 +50,6 @@ package StaffAggregate #Pink {
   'TODO: REVIEW STAFF AVAILABILITY RELATED CLASSES
   class AvailabilitySlots <<value object>>
   class AppointmentSlots <<value object>>
-  class StaffStatus <<value object>> {
-    ACTIVE, INACTIVE
-  }
   class DeactivateTime <<value object>>
 }
 
@@ -118,6 +112,9 @@ class Slot <<value object>>
 class Specialization <<value object>> {
   ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
 }
+class Status <<value object>> {
+  ACTIVE, INACTIVE
+}
 
 class Admin
 note right of Admin: conceptual class
@@ -157,7 +154,7 @@ Patient "1" --- "1" ContactInformation : > has
 Patient "0..*" --- "0..*" MedicalCondition : > can have
 Patient "*" ---"1" EmergencyContact : > has
 Patient "*" --- "1" AppointmentHistory : > has
-'Patient "1" -- "1" PatientStatus : > has
+'Patient "*" -- "1" Status : > has
 Patient "*" -- "1" DeletionLog : > has
 
 Staff "*" -- "1" FullName : > has
@@ -167,7 +164,7 @@ Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
 Staff "1" -- "*" AvailabilitySlots : > has
 Staff "1" -- "*" AppointmentSlots : > has
-Staff "*" -- "1" StaffStatus : > has
+Staff "*" -- "1" Status : > has
 
 OperationRequest "1" -- "1" RequestID : > identified by
 OperationRequest "*" -- "1" Patient : > has
@@ -181,6 +178,7 @@ OperationType "1" -- "1" OperationTypeName : > has
 OperationType "1" -- "*" RequiredStaff : > needs
 OperationType "*" -- "1" Specialization : > has
 OperationType "1" -- "1..*" OperationPhaseDetails : > has
+OperationType "*" -- "1" Status : > has
 RequiredStaff "1" -- "1" Role : > has
 RequiredStaff "1" -- "1" Specialization : > has
 RequiredStaff "1" -- "1" Quantity : > has
