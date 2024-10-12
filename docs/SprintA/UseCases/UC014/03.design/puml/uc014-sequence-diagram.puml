@@ -8,7 +8,7 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC014
 
 participant ":Routing" as Routing
-participant ":StaffProfileController" as Controller
+participant ":DeactivateStaffController" as Controller
 participant ":StaffService" as Service
 database ":StaffRepository" as Repository
 database ":IStaffRepository" as IRepository

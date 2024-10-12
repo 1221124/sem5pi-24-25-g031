@@ -46,7 +46,7 @@ enum StaffStatus {
 }
 
 enum Specialization{
-    CARDIOLOGY, ORTHOPEDICS
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
 }
 
 class ContactInformation{
