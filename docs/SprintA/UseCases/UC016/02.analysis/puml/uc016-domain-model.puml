@@ -24,15 +24,8 @@ note left of UserAggregate: managed using an IAM\n(external to the system)
 
 package PatientAggregate #LightSalmon {
   class Patient <<root entity>>
-  class DateOfBirth <<value object>>
-  class Gender <<value object>> {
-    MALE, FEMALE
-  }
   class MedicalRecordNumber <<value object>>
   note right of MedicalRecordNumber: unique identifier
-  class MedicalCondition <<value object>>
-  note right of MedicalCondition: optional
-  class EmergencyContact <<value object>>
   class AppointmentHistory <<value object>>
 }
 
@@ -43,9 +36,6 @@ package StaffAggregate #Pink {
   class Specialization <<value object>> {
     CARDIOLOGY, ORTHOPEDICS
   }
-  'TODO: REVIEW STAFF AVAILABILITY RELATED CLASSES
-  class AvailabilitySlots <<value object>>
-  class AppointmentSlots <<value object>>
 }
 
 package OperationRequestAggregate #LightGoldenRodYellow {
@@ -62,36 +52,16 @@ package OperationTypeAggregate #PaleGreen {
   class OperationType <<root entity>>
   class OperationTypeID <<value object>>
   note bottom of OperationTypeID: unique identifier
-  class OperationTypeName <<value object>>
-  class RequiredStaff <<value object>>
-  class OperationPhaseDetails <<value object>>
-  class OperationPhase <<value object>> {
-    ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
-  }
 }
 
-class FullName <<value object>>
-class FirstName <<value object>>
-class LastName <<value object>>
-class ContactInformation <<value object>>
-class PhoneNumber <<value object>>
-class Email <<value object>>
 class DateTime <<value object>>
 class Date <<value object>>
 class Time <<value object>>
-class Slot <<value object>>
 
-FullName "1" -- "1" FirstName : > has
-FullName "1" -- "1" LastName : > has
-ContactInformation "1" -- "1" PhoneNumber : > has
-ContactInformation "1" -- "1" Email : > has
-EmergencyContact "1" -- "1" PhoneNumber : > has
+
+
 DateTime "1" -- "1" Date : > has
 DateTime "1" -- "1" Time : > has
-Slot "1" -- "2" DateTime : > consists of
-RequiredStaff "1" -- "1..*" Staff : > has
-AvailabilitySlots "1" -- "1..*" Slot : > has
-AppointmentSlots "1" -- "1..*" Slot : > has
 
 User "1" -- "1" Username : > identified by
 User "1" -- "1" Email : > has
@@ -100,16 +70,8 @@ User "*" -- "1" Role : > has assigned
 User "0..1" <-- "0..1" Staff : < references
 User "0..1" <-- "1" Patient : < references
 
-Patient "1..*" --- "1" FullName : > has
-Patient "*" --- "1" DateOfBirth : > born on
-Patient "*" --- "1" Gender : > has
-Patient "1" --- "1" MedicalRecordNumber : > identified by
-Patient "1" --- "1" ContactInformation : > has
-Patient "0..*" --- "0..*" MedicalCondition : > can have
-Patient "*" ---"1" EmergencyContact : > has
 Patient "1" --- "1" AppointmentHistory : > has
 
-Staff "*" -- "1" FullName : > has
 Staff "1" -- "1" LicenseNumber : > identified by
 Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
