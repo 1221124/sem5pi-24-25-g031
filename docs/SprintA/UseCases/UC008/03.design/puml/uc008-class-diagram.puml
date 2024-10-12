@@ -4,13 +4,13 @@ skinparam shadowing false
 
 title Class Diagram for UC008
 
-class CreatePatientController {
-  +CreatePatient(CreatingPatientDto dto): ActionResult<PatientDTO>
+class PatientController {
+  +CreatePatient(CreatingPatientDto dto): Task<ActionResult<PatientDto>>
 }
 
 
 class PatientService {
-  +AddAsync(CreatingPatientDto dto): PatientDto
+  +AddAsync(CreatingPatientDto dto): Task<PatientDto>
 }
 
 class CreatePatientDTO {
@@ -53,11 +53,12 @@ class Patient {
     'TODO: Review AppointmentHistory type and Medical Conditions
 }
 
-class PatientRepository {
-  + AddAsync(Patient patient): void
+class IPatientRepository {
+  
 }
 
-interface IPatientRepository {
+interface IRepository {
+  + AddAsync(Patient patient): void
 }
 
 
@@ -65,13 +66,16 @@ interface IPatientRepository {
 '  + save(Patient patient): void
 '}
 
-CreatePatientDTO --> CreatePatientController : uses
-CreatePatientController --> PatientService : uses
+CreatePatientDTO --> PatientController : uses
+PatientController --> PatientService : uses
 PatientService --> Patient : creates
-IPatientRepository --> PatientService : depends on
-PatientRepository --> IPatientRepository : implements
+PatientService --> IPatientRepository : adds patient to
+IPatientRepository --> IRepository : implements
 Patient --> ContactInformation : has
 Patient --> FullName : has
 Patient --> Gender : has
+CreatePatientDTO --> ContactInformation : has
+CreatePatientDTO --> FullName : has
+CreatePatientDTO --> Gender : has
 
 @enduml
