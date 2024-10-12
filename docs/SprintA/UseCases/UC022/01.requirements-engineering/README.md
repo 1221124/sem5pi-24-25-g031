@@ -46,7 +46,7 @@ Operation Type "A" is defined as taking 30 minutes preparation, 1h surgery and 3
 **Input Data:**
 
 - Typed data: operation name, estimated duration (for each phase).
-- Selected data: specialization, required staff (quantity for each role).
+- Selected data: specialization, required staff (role, specialization and quantity).
 _Note_: Only changed what admin wants to edit.
 
 **Output Data:**

@@ -1,8 +1,8 @@
-# UC022 - As an Admin, I want to remove obsolete or no longer performed operation types, so that the system stays current with hospital practices
+# UC021 - As an Admin, I want to edit existing operation types, so that I can update or correct information about the procedure
 
 ## 1. Context
 
-> The system allows the Admin to delete existing types of operations so that the system is up-to-date with the available medical procedures.
+> The system allows the Admin to edit existing types of operations so that the system is up-to-date with the available medical procedures.
 > Admin users can add, edit, delete and list/search operations, ensuring that the system reflects the current medical procedures available at the hospital.
 
 ## 2. Requirements

@@ -1,0 +1,54 @@
+@startuml uc021-system-sequence-diagram
+
+title System Sequence Diagram (SSD) - UC021
+actor Admin as Adm
+participant ":System" as System
+
+activate Adm
+
+    Adm -> System: Edit existing operation type
+    activate System
+    
+        System --> Adm: Ask for new name
+    deactivate System
+
+    Adm -> System: Provide new operation's name
+    activate System
+
+        System --> Adm: Ask for new operation's anesthesia/preparation phase estimated duration
+    deactivate System
+
+    Adm -> System: Provide new operation's anesthesia/preparation phase estimated duration
+    activate System
+
+        System --> Adm: Ask for new operation's surgery phase estimated duration
+    deactivate System
+
+    Adm -> System: Provide new operation's surgery phase estimated duration
+    activate System
+
+        System --> Adm: Ask for new operation's cleaning phase estimated duration
+    deactivate System
+
+    Adm -> System: Provide new operation's cleaning phase estimated duration
+    activate System
+
+        System --> Adm: Ask for new operation's specialization
+    deactivate System
+
+    Adm -> System: Provide new operation's specialization
+    activate System
+
+        System --> Adm: Ask for new operation's required staff (role, specialization and quantity)
+    deactivate System
+
+    Adm -> System: Provide new operation's required staff (role, specialization and quantity)
+    activate System
+
+        System -> System: Save edited operation type, making it available for schedulling
+
+        System --> Adm: Save edited operation type, making it available for schedulling
+    deactivate System
+deactivate Adm
+
+@enduml

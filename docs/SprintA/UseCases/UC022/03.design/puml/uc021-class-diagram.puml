@@ -35,11 +35,11 @@ class OperationType {
     +Id: OperationTypeID
     +Name: Name
     +Specialization: Specialization
-    +RequiredStaff: RequiredStaff
+    +RequiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
     +ChangeName(name: Name): void
     +ChangeSpecialization(specialization: Specialization): void
-    +ChangeRequiredStaff(requiredStaff: RequiredStaff): void
+    +ChangeRequiredStaff(requiredStaff: List<RequiredStaff>): void
     +ChangePhasesDuration(phasesDuration: PhasesDuration): void
 }
 
@@ -47,7 +47,7 @@ class OperationTypeDto {
     +Id: OperationTypeID
     +Name: Name
     +Specialization: Specialization
-    +RequiredStaff: RequiredStaff
+    +RequiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
 }
 
@@ -58,10 +58,10 @@ note right of RequiredStaff
     Role can only be a staff role: Doctor, Nurse or Assistant
 end note
 
-class StaffQuantity {
+class Quantity {
     +Quantity: int
 }
-note right of StaffQuantity
+note right of Quantity
     Quantity must be greater than 0
 end note
 
@@ -112,11 +112,12 @@ OperationType --> PhasesDuration : > has
 OperationTypeDto --> OperationTypeID : > has
 OperationTypeDto --> Name : > has
 OperationTypeDto --> Specialization : > has
-OperationTypeDto --> RequiredStaff : > has
+OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has
 
 RequiredStaff --> Role: has
-RequiredStaff --> StaffQuantity : > has
+RequiredStaff --> Specialization : > has
+RequiredStaff --> Quantity : > has
 
 PhasesDuration --> Phase : > has
 PhasesDuration --> Duration : > has
