@@ -11,33 +11,36 @@ top to bottom direction
 title Class Diagram (CD) - UC022
 
 class OperationTypeController {
-    +GetById(name: Name): Task<ActionResult<OperationTypeDto>>
-    +Update(dto: OperationTypeDto): Task<ActionResult<OperationTypeDto>>
+    +GetAll(): Task<ActionResult<IEnumerable<OperationTypeDto>>>
+    +SoftDelete(id: Guid): Task<ActionResult<OperationTypeDto>>
 }
 
 class OperationTypeService {
-    +GetByNameAsync(name: Name): Task<OperationTypeDto>
-    +ValidateOperationTypeName(name: Name): Task<bool>
-    +UpdateAsync(dto: OperationTypeDto): Task<OperationTypeDto>
+    +GetAllAsync(): Task<List<OperationTypeDto>>
+    +InactivateAsync(id: OperationTypeId): Task<OperationTypeDto>
 }
 
 class OperationTypeRepository {
-    +GetByNameAsync(name: Name): Task<OperationType>
-    +UpdateAsync(dto: OperationTypeDto): Task<OperationType>
+    +GetByIdAsync(id: OperationTypeId): Task<OperationType>
+    +GetAllAsync(): Task<List<OperationType>>
+    +InactivateAsync(id: OperationTypeId): Task<OperationType>
 }
 
 interface IOperationTypeRepository {
-    +GetByNameAsync(name: Name): Task<OperationType>
-    +UpdateAsync(dto: OperationTypeDto): Task<OperationType>
+    +GetByIdAsync(id: OperationTypeId): Task<OperationType>
+    +GetAllAsync(): Task<List<OperationType>>
+    +InactivateAsync(id: OperationTypeId): Task<OperationType>
 }
 
 class OperationType {
     +Id: OperationTypeID
     +Name: Name
+    +Status: Status
     +Specialization: Specialization
     +RequiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
     +ChangeName(name: Name): void
+    +MarkAsInactive(): void
     +ChangeSpecialization(specialization: Specialization): void
     +ChangeRequiredStaff(requiredStaff: List<RequiredStaff>): void
     +ChangePhasesDuration(phasesDuration: PhasesDuration): void
@@ -46,6 +49,7 @@ class OperationType {
 class OperationTypeDto {
     +Id: OperationTypeID
     +Name: Name
+    +Status: Status
     +Specialization: Specialization
     +RequiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
@@ -93,6 +97,10 @@ enum Role {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
 }
 
+enum Status {
+    ACTIVE, INACTIVE
+}
+
 OperationTypeController .> OperationTypeService : > uses
 OperationTypeController ----> OperationTypeDto : > returns
 
@@ -105,12 +113,14 @@ OperationTypeRepository --> OperationType : > saves in database
 
 OperationType --> OperationTypeID : > has
 OperationType --> Name : > has
+OperationType --> Status : > has
 OperationType --> Specialization : > has
 OperationType --> RequiredStaff : > has
 OperationType --> PhasesDuration : > has
 
 OperationTypeDto --> OperationTypeID : > has
 OperationTypeDto --> Name : > has
+OperationTypeDto --> Status : > has
 OperationTypeDto --> Specialization : > has
 OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has
