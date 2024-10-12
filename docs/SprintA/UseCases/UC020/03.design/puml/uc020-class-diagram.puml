@@ -49,6 +49,7 @@ class CreatingOperationTypeDto {
 class OperationType {
     +Id: OperationTypeID
     +Name: Name
+    +Status: Status
     +Specialization: Specialization
     - _requiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
@@ -57,6 +58,7 @@ class OperationType {
 class OperationTypeDto {
     +Id: OperationTypeID
     +Name: Name
+    +Status: Status
     +Specialization: Specialization
     - _requiredStaff: List<RequiredStaff>
     +PhasesDuration: PhasesDuration
@@ -106,6 +108,10 @@ note right of Role
     In this Use Case, role can only be a staff role: Doctor, Nurse or Technician
 end note
 
+enum Status {
+    ACTIVE, INACTIVE
+}
+
 OperationTypeController .> OperationTypeService : > uses
 OperationTypeController ----> CreatingOperationTypeDto : > receives
 OperationTypeController ----> OperationTypeDto : > returns
@@ -127,12 +133,14 @@ CreatingOperationTypeDto --> PhasesDuration : > has
 
 OperationType --> OperationTypeID : > has
 OperationType --> Name : > has
+OperationType --> Status : > has
 OperationType --> Specialization : > has
 OperationType --> RequiredStaff : > has
 OperationType --> PhasesDuration : > has
 
 OperationTypeDto --> OperationTypeID : > has
 OperationTypeDto --> Name : > has
+OperationTypeDto --> Status : > has
 OperationTypeDto --> Specialization : > has
 OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has

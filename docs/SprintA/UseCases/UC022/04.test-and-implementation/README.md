@@ -118,7 +118,7 @@ void sendEmail() {
 }
 ```
 
-# 5. Construction (Implementation)
+## 5. Construction (Implementation)
 
 To help achieve this Use Case's requirements, some EAPLI framework classes were used.
 
@@ -262,10 +262,10 @@ public boolean sendEmail(JobOpening jobOpening, Status status){
 }
 ```
 
-# 6. Integration and Demo
+## 6. Integration and Demo
 
 * This functionality has been integrated with the job opening management feature for opening/closing job vacancies.
 
-# 7. Observations
+## 7. Observations
 
 * To run this Use Case, check the Integration and Demonstration section in this Use Case [Read Me](../README.md) file.

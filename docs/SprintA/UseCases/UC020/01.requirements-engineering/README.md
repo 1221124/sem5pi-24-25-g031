@@ -76,3 +76,4 @@ Can we assume while creating a new operation type, that the surgery must always 
 
 - The system must ensure that the operation ID is unique and automatically assigned.
 - The system must store the time spent on each phase of the surgery.
+- The system must make the new operation type available for scheduling immediately after creation (status = active).

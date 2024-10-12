@@ -37,7 +37,7 @@ Operation Type "A" is defined as taking 30 minutes preparation, 1h surgery and 3
 
 - This Use Case is relative to US5.1.21, which is related to the operation types management functionality.
 - It relates to the following Use Case(s) as well:
-  - [UC021 (US5.1.20)](../UC020/README.md) - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system.
+  - [UC020 (US5.1.20)](../UC020/README.md) - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system.
   - [UC022 (US5.1.22)](../UC022/README.md) - As an Admin, I want to remove obsolete or no longer performed operation types, so that the system stays current with hospital practices.
   - [UC023 (US5.1.23)](../UC023/README.md) - As an Admin, I want to list/search operation types, so that I can see the details, edit and remove operation types.
 
@@ -61,3 +61,4 @@ _Note_: Only changed what admin wants to edit.
 
 - The system must ensure that the new operation name is unique.
 - The system must store the time spent on each phase of the surgery.
+- The operation type must be available for scheduling immediately after the changes are saved (status = active).

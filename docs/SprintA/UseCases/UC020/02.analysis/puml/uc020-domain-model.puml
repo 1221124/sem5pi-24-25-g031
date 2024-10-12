@@ -35,6 +35,9 @@ enum Role {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT 
 }
 note right of Role: in this Use Case, only Staff roles are considered (DOCTOR, NURSE, TECHNICIAN)
+enum Status <<value object>> {
+    ACTIVE, INACTIVE
+}
 
 Admin "1" -- "*" OperationType : creates >
 
@@ -43,6 +46,7 @@ OperationType "1" -- "1" Name : > has
 OperationType "*" -- "1" Specialization : > has
 OperationType "1" -- "*" RequiredStaff : > needs
 OperationType "1" -- "1..*" PhaseDetails : > has
+OperationType "*" -- "1" Status : > has
 RequiredStaff "1" -- "1" Role : > has
 RequiredStaff "1" -- "1" Specialization : > has
 RequiredStaff "1" -- "1" Quantity : > this many

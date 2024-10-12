@@ -93,6 +93,10 @@ enum Role {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
 }
 
+enum Status {
+    ACTIVE, INACTIVE
+}
+
 OperationTypeController .> OperationTypeService : > uses
 OperationTypeController ----> OperationTypeDto : > returns
 
@@ -105,12 +109,14 @@ OperationTypeRepository --> OperationType : > saves in database
 
 OperationType --> OperationTypeID : > has
 OperationType --> Name : > has
+OperationType --> Status : > has
 OperationType --> Specialization : > has
 OperationType --> RequiredStaff : > has
 OperationType --> PhasesDuration : > has
 
 OperationTypeDto --> OperationTypeID : > has
 OperationTypeDto --> Name : > has
+OperationTypeDto --> Status : > has
 OperationTypeDto --> Specialization : > has
 OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has

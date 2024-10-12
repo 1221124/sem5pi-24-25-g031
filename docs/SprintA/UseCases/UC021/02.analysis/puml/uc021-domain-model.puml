@@ -33,11 +33,16 @@ class Role <<value object>> {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
 }
 note right of Role: in this Use Case, only Staff roles are considered (DOCTOR, NURSE, TECHNICIAN)
+class Status <<value object>> {
+    ACTIVE, INACTIVE
+}
 
 Admin "1" -- "*" OperationType : edits >
 
 OperationType "1" -- "1" OperationTypeID : > identified by
 OperationType "1" -- "1" Name : > has
+OperationType "*" -- "1" Status : > has
+OperationType "*" -- "1" Specialization : > has
 OperationType "1" -- "1" RequiredStaff : > needs
 OperationType "1" -- "1..*" PhaseDetails : > has
 RequiredStaff "*" -- "1" Role : > has
