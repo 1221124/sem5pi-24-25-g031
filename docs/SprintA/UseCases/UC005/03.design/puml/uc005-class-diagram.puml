@@ -1,0 +1,71 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC005
+
+class PatientController {
+  + DeletePatient(Guid id): Task<ActionResult<PatientDto>>
+}
+
+
+class PatientService {
+  + DeleteAsync(PatientId id): Task<PatientDto>
+}
+
+class PatientDTO {
+  - FullName: FullName
+  - ContactInformation: ContactInformation
+  - DateOfBirth: SystemDate
+  - Gender: Gender
+  - MedicalCondition: MedicalCondition
+  - ContactInformation: ContactInformation
+  - EmergencyContact: int
+  - AppointmentHistory: AppointmentHistory 
+  'TODO: Review AppointmentHistory type
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+enum Gender {
+  Male, Female
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+interface IPatientRepository {
+
+}
+
+interface IRepository {
+  GetByIdAsync(Guid id): Task<List<TEntity>>
+  RemovePatient(patient): void
+}
+
+class EmailService {
+  + SendEmailAsync(string email, string subject, string message): void
+}
+
+
+'class Database {
+'  + save(Patient patient): void
+'}
+
+PatientService --> EmailService : uses
+PatientService --> PatientDTO : uses
+PatientController --> PatientService : uses
+PatientService --> IPatientRepository : removes patient from
+IPatientRepository --> IRepository : implements
+PatientDTO --> ContactInformation : has
+PatientDTO --> FullName : has
+PatientDTO --> Gender : has
+
+@enduml
