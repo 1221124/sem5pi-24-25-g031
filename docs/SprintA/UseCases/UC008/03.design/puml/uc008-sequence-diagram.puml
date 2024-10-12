@@ -11,7 +11,7 @@ participant ":PatientController" as Controller
 participant ":PatientService" as Service
 participant "Patient" as Patient 
 participant "IPatientRepository" as IPatientRepositry
-participant "PatientRepository" as PatientRepository
+participant "IRepository" as IRepository
 participant "PatientDTO" as PatientDTO
 database "Database" as Database
 
@@ -33,7 +33,7 @@ activate Routing
             Service -> IPatientRepositry: addAsync(patient)
             activate IPatientRepositry
 
-                IPatientRepositry -> PatientRepository: addAsync(patient)
+                IPatientRepositry -> IRepository: addAsync(patient)
             deactivate IPatientRepositry
 
             Service -> PatientDTO**: create(atributes)
