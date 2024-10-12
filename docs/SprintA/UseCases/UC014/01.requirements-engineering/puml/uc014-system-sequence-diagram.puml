@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC014
+actor Admin as Admin
+participant ":System" as System
+
+activate Admin
+
+    Admin -> System: Search for staff profile
+
+    activate System
+        System --> Admin: List of staff
+    deactivate System
+
+    Admin -> System: Select staff profile to deactivate
+
+    activate System
+        System --> Admin: Display staff profile
+    deactivate System
+
+    Admin -> System: Set inactive status in staff profile
+
+    activate System
+        System -> System: Validate changes
+        
+        System --> Admin: Confirm changes
+
+        alt If confirm deactivation
+            System -> System: Deactivate staff profile
+            System -> System: Record the action for audit purposes
+            System --> Admin: Staff profile deactivated
+        else
+            System --> Admin: Staff profile not deactivated
+        end
+
+    deactivate System
+
+deactivate Admin
+
+@enduml
