@@ -1,4 +1,4 @@
-@startuml uc021-domain-model
+@startuml uc022-domain-model
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -11,7 +11,7 @@ left to right direction
 hide circle
 hide methods
 
-title Domain Model (DM) - UC021
+title Domain Model (DM) - UC022
 
 package "OperationTypeAggregate" {
     class OperationType <<root entity>>

@@ -30,25 +30,26 @@
 
 - This Use Case is relative to US5.1.21, which is related to the operation types management functionality.
 - It relates to the following Use Case(s) as well:
-  - [UC021 (US5.1.20)](../UC020/README.md) - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system.
-  - [UC022 (US5.1.22)](../UC022/README.md) - As an Admin, I want to remove obsolete or no longer performed operation types, so that the system stays current with hospital practices.
+  - [UC020 (US5.1.20)](../UC020/README.md) - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system.
+  - [UC021 (US5.1.21)](../UC022/README.md) - As an Admin, I want to edit existing operation types, so that I can update or correct information about the procedure.
   - [UC023 (US5.1.23)](../UC023/README.md) - As an Admin, I want to list/search operation types, so that I can see the details, edit and remove operation types.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Typed data: operation name, estimated duration (for each phase).
-- Selected data: specialization, required staff (role, specialization and quantity).
-_Note_: Only changed what admin wants to edit.
+- Typed data: N.A.
+- Selected data: operation type to be deactivated, confirmation.
 
 **Output Data:**
 
-- (In)sucess message.
+- List of operation types.
+- Confirmation prompt.
+- (In)success message.
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/uc021-system-sequence-diagram.svg)
+![System Sequence Diagram](svg/uc022-system-sequence-diagram.svg)
 
 ### 1.7 Other Relevant Remarks
 

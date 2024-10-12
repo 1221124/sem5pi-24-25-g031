@@ -1,4 +1,4 @@
-@startuml uc021-class-diagram
+@startuml uc022-class-diagram
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -8,10 +8,10 @@ skinparam linetype ortho
 left to right direction
 top to bottom direction
 
-title Class Diagram (CD) - UC021
+title Class Diagram (CD) - UC022
 
 class OperationTypeController {
-    +GetByName(name: Name): Task<ActionResult<OperationTypeDto>>
+    +GetById(name: Name): Task<ActionResult<OperationTypeDto>>
     +Update(dto: OperationTypeDto): Task<ActionResult<OperationTypeDto>>
 }
 
