@@ -42,6 +42,7 @@ package PatientAggregate #LightSalmon {
 '    ACTIVE, INACTIVE
 '  }
   class DeletionLog <<value object>>
+  class InactivityTime <<value object>>
 }
 
 package StaffAggregate #Pink {
