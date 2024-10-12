@@ -45,12 +45,12 @@ class Patient {
   - ContactInformation: ContactInformation
   - DateOfBirth: SystemDate
   - Gender: Gender
-  - MedicalCondition: String
-  - MedicalRecordNumber: int
+  - MedicalCondition: MedicalCondition
+  - MedicalRecordNumber: String
   - ContactInformation: ContactInformation
   - EmergencyContact: int
   - AppointmentHistory: AppointmentHistory
-    'TODO: Review AppointmentHistory type
+    'TODO: Review AppointmentHistory type and Medical Conditions
 }
 
 class PatientRepository {

@@ -46,33 +46,14 @@ activate ADM
 
         FE -> FE: validates email and phone number
 
-    opt
-        FE --> ADM: asks to insert Allergies/Medical Conditions \nof the patient
-        deactivate FE
-
-        ADM -> FE: insert required field
-        activate FE
-
-    end opt
-        
     FE --> ADM: ask to insert emergency contact
     deactivate FE
 
     ADM -> FE: insert required field
     activate FE
 
-    opt
-
-        FE --> ADM: asks to insert the previus or upcaming \nappointment history
-        deactivate FE
-
-        ADM -> FE: insert required field
-        activate FE
-
-    end opt
-
-        FE --> FE: generate unique patient ID
-        FE --> FE: creates patient profile
+        FE -> FE: generate unique patient ID
+        FE -> FE: creates patient profile
         FE --> ADM: show operation success/error
     deactivate FE
 
