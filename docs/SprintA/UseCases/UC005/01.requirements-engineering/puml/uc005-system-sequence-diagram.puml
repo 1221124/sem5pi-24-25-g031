@@ -3,7 +3,7 @@ skinparam monochrome true
 skinparam packageStyle rectangle
 skinparam shadowing false
 
-title System Sequence Diagram (SSD) - UC030
+title System Sequence Diagram (SSD) - UC005
 actor Patient as P
 participant ":System" as System
 
