@@ -1,0 +1,45 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC014
+
+participant ":Routing" as Routing
+participant ":StaffProfileController" as Controller
+participant ":StaffService" as Service
+database ":StaffRepository" as Repository
+database ":IStaffRepository" as IRepository
+participant IStaffRepository as InterfaceStaffRepository <<interface>>
+
+-> Routing: POST /api/Staff
+activate Routing
+
+Routing -> Controller: SoftDelete(StaffID)
+activate Controller
+
+    Controller -> Service: InactivateAsync(staff)
+    activate Service
+
+        Service -> Repository: InactivateAsync(staff)
+        activate Repository
+
+            Repository -> InterfaceStaffRepository: InactivateAsync(staff)
+            activate InterfaceStaffRepository
+            deactivate InterfaceStaffRepository
+
+        Repository --> Service: staff
+        deactivate Repository
+
+    Service --> Controller: staff
+    deactivate Service
+
+Controller --> Routing: response 
+deactivate Controller
+
+<- Routing: response
+deactivate Routing
+
+@enduml
