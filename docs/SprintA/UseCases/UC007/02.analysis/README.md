@@ -1,55 +1,50 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC007 - As Patient, I want to log in to the healthcare system using my external IAM credentials
 
 ## 2. Analysis
-
 ### 2.1. Relevant Domain Model Excerpt
 
-The following diagram was extracted from the EAPLI framework (provided by the course's teachers).
-
-![UC030 - Domain Model](svg/uc030-domain-model.svg)
+![UC007 - Domain Model](svg/uc007-domain-model.svg)
 
 ### 2.2. Process Specification
 
 #### 2.2.1. Normal Flow
-1. **Authenticate Admin**: Verify that the Customer Manager is logged in with appropriate permissions.
-2. **Access User Management Interface**: Navigates to the job opening management section of the backoffice.
-3. **Select Job Opening**: Choose the specific job opening for which phases need to be closed.
-4. **Close Phrases**: Customer Manager closes the desired phases of the job opening.
-5. **Update Phrases**: When closing a phase, the next phase is automatically opened.
-6. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing operation.
-7. **Notify Candidates**: The system sends an email to the candidates informing them of the result of the verification process.
-8. **Record Notification**: Record that the notification has been made for process management purposes.
-9. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing and notification operation.
+1. **Authenticate Patient**: The system verifies that the patient is logged in with valid IAM credentials.
+2. **Redirect to IAM Provider**: The system redirects the patient to the external IAM provider (Google, Facebook, hospital SSO).
+3. **Provide Credentials**: The patient provides IAM credentials (username, password) to the IAM provider.
+4. **IAM Authentication**: The IAM provider authenticates the patient and returns a token to the healthcare system.
+5. **Token Validation**: The healthcare system validates the token with the IAM provider.
+6. **Create Session**: The system creates a session for the patient, enabling access to appointments and medical records.
+7. **Access Features**: The patient accesses appointments, medical records, and other features securely.
+8. **Session Expiry**: After a period of inactivity, the session expires, and the patient must reauthenticate.
 
 #### 2.2.2. Exceptional Flows
-- **EF030.1**: If the email is not sent, the system must notify the Customer Manager and log the error.
+- **EF007.1**: If the IAM provider fails to authenticate the patient, an error message is displayed, and the login process is aborted.
 
 ### 2.3. Functional Requirements Reevaluation
-- **FR030.1**: The system shall notify candidates by email about the results of the verification process.
-- **FR030.2**: The system shall record that the notification has been made. 
-- **FR030.3**: The system shall provide feedback to the Customer Manager on the success or failure of the phase closure and notification process.
+- **FR007.1**: The system shall authenticate patients using external IAM providers.
+- **FR007.2**: The system shall validate IAM tokens before granting access to patient data.
+- **FR007.3**: The system shall terminate sessions after a predefined period of inactivity.
 
 ### 2.4. Non-functional Requirements Specification
-- **Security**: Implement access control mechanisms to ensure that only authorized Customer Managers can send notifications.
-- **Performance**: Ensure the notification process completes within acceptable time limits to maintain system responsiveness.
-- **Usability**: Interface should be intuitive, guiding the Customer Manager smoothly through the notification process with clear instructions and error handling.
+- **Security**: Implement access control mechanisms to ensure that only authenticated patients can access the system.
+- **Performance**: The token validation process should complete within acceptable time limits to ensure system responsiveness.
+- **Usability**: The interface should guide the patient through the IAM login process with clear instructions and feedback.
 
 ### 2.5. Data Integrity and Security
-- Data integrity measures should ensure that notification actions are accurately recorded and reflected in the system without compromising data consistency.
-- Security measures should prevent unauthorized access to notification functionality and protect sensitive candidate data.
+- Data integrity measures should ensure that only valid IAM tokens are accepted, and patient data is securely transmitted and accessed.
+- Security measures should prevent unauthorized access to sensitive patient information.
 
 ### 2.6. Interface Design
-- The interface will follow the EAPLI framework's design patterns, providing a user-friendly experience for the Customer Manager.
-- The interface should provide an intuitive and efficient workflow for selecting candidates and sending notifications, with clear indications of success or failure.
+- The login interface will follow the EAPLI framework's design patterns, providing a user-friendly experience.
+- The interface will clearly indicate success or failure of the authentication process.
 
 ### 2.7. Risk Analysis
-- **R030.1**: System Error During Notification
-    - **Mitigation**: Implement error handling mechanisms to notify the Customer Manager of any system failures and provide guidance on how to proceed.
-- **R030.2**: Unauthorized Access to Notification Functionality
-  - **Mitigation**: Implement secure encryption standards for storing and transmitting user credentials to prevent unauthorized access.
+- **R007.1**: System Error During Token Validation
+    - **Mitigation**: Implement error handling mechanisms that notify patients if the token validation process fails.
+- **R007.2**: Unauthorized Access
+    - **Mitigation**: Implement encryption standards for IAM token transmission and storage.
 
 ### 2.8. Decisions
-- **D030.1**: Use role-based access control for notification functionality, restricting access to authorized Customer Managers only.
-- **D030.2**: Utilize the system's email notification service to send updates to candidates.
-- **D030.3**: Implement a logging mechanism to record the success or failure of email notifications for audit purposes.
-- **D030.4**: Use the provided domain model as a reference for implementing notification functionality.
+- **D007.1**: Use AZURE IAM provider for Patient authentication.
+- **D007.2**: Use a session management system to handle patient access after successful authentication.
+- **D007.3**: Implement a logging mechanism to track login attempts and session expiries.
