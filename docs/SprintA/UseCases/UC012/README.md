@@ -1,12 +1,9 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC012 - As an Admin, I want to create a new staff profile, so that I can add them to the hospital’s roster
 
 ## 1. Context
 
-> The backoffice system enables the Customer Manager to manage job openings 
-> and notify candidates of the results of the verification process. 
-> This use case focuses on sending email notifications to candidates, informing them of the outcome of their job application.
-
-> Part of the requirements needed to implement this use case are fulfilled by the EAPLI framework provided by the course.
+> This use case allows an Admin to add a new staff profile into the hospital's system, ensuring that essential staff information is securely stored and that the staff member can be assigned to surgeries and other medical tasks.
+> The process includes the creation of unique identifiers and ensures the profile aligns with hospital data management policies.
 
 ## 2. Requirements
 
@@ -15,7 +12,7 @@
 ## 3. Analysis
 
 * The analysis related to this use case can be found in the [Analysis](02.analysis/README.md) file.
- 
+
 ## 4. Design
 
 * The design related to this use case can be found in the [Design](03.design/README.md) file.
@@ -26,11 +23,8 @@
 
 ## 6. Integration/Demonstration
 
-* To run this Use Case, the customer manager must have access to the backoffice system.
-* It is necessary to change the status (from Screening to Interview) for the email to be sent.
+* To run this Use Case, the Admin must have access to the backoffice system.
 
 ## 7. Observations
 
-* The notification system is essential for keeping candidates informed about the status of their job applications.
-* The notification system follows the EAPLI framework provided by the course.
-* The notification system is implemented in the backoffice system.
+n/a
