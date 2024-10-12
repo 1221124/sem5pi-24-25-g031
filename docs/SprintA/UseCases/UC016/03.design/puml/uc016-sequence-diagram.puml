@@ -12,11 +12,11 @@ participant OperationRequestService as Service <<persistence>>
 participant OperationRequestDTO as DTO <<data>>
 participant OperationRequest as Domain <<domain>>
 database OperationRequestRepository as OperationRequestRepository <<repository>>
-participant IOperationRequestRepository as InterfaceOperationRequestRepository <<interface>>
+participant InterfaceOperationRequestRepository as InterfaceOperationRequestRepository <<interface>>
 database PatientRepository as PatientRepository <<repository>>
-participant IPatientRepository as InterfacePatientRepository <<interface>>
+participant InterfacePatientRepository as InterfacePatientRepository <<interface>>
 
---> Controller :  POST /api/operation-request\nBody: {doctorId, patientId, operationType, priority, suggestedDeadline}
+--> Controller : POST /api/operation-request\nBody: {doctorId, patientId, operationType, priority, suggestedDeadline}
 activate Controller
 
     Controller -> Service: AddAsync(dto)
@@ -48,7 +48,7 @@ activate Controller
             PatientRepository --> Service: patient
             deactivate PatientRepository
 
-        Service -> PatientRepository: UpdateAsync(patient.addOperationRequestToMedicalHistory(operationRequest.ToString()))
+        Service -> PatientRepository: UpdateAsync(patient.AddOperationRequestToMedicalHistory(operationRequest.ToString()))
         activate PatientRepository
 
             PatientRepository -> InterfacePatientRepository: UpdateAsync(patient)
@@ -58,7 +58,7 @@ activate Controller
             PatientRepository --> Service: patient
             deactivate PatientRepository
 
-        Service --> Controller: new OperationRequestDto(operationRequest.getId(),\noperationRequest.getDoctorId(), operationRequest.getPatientId(),\noperationRequest.getOperationType(), operationRequest.getPriority(),\noperationRequest.getSuggestedDeadline())
+        Service --> Controller: new OperationRequestDto(operationRequest.getId())
         deactivate Service
 
     <-- Controller : 201 Created

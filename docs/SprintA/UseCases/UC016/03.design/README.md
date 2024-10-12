@@ -1,40 +1,40 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC016 - As a Doctor, I want to request an operation, so that the Patient has access to the necessary healthcare
 
 ## 3. Design - Use Case Realization
 
 ### 3.1. Rationale
 
-| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
-|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+| Interaction ID                                       | Question: Which class is responsible for...                  | Answer                               | Justification (with patterns)                                                                                                        |
+|:-----------------------------------------------------|:-------------------------------------------------------------|:-------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
+| Step 1: Receive Operation Request                    | ... receiving the operation request data?                     | OperationRequestController           | Controller: OperationRequestController is responsible for receiving and handling the operation request from the doctor.              |
+|                                                      | ... validating the operation request data?                    | OperationRequestService              | Service: OperationRequestService is responsible for validating the operation request, ensuring the operation type matches specialization.|
+|                                                      | ... creating the operation request entity?                    | OperationRequest                     | Domain: OperationRequest is the entity responsible for encapsulating the operation request details.                                   |
+| Step 2: Persist Operation Request                    | ... persisting the operation request?                         | OperationRequestRepository           | Repository: OperationRequestRepository handles the saving of the operation request entity to the database.                            |
+| Step 3: Retrieve Patient Information                 | ... retrieving the patient's medical record?                  | PatientRepository                    | Repository: PatientRepository is responsible for fetching the patient details from the database.                                      |
+| Step 4: Update Patient's Medical History             | ... updating the patient’s medical history with the request?  | Patient                              | Domain: Patient holds the medical history and updates it with the new operation request.                                              |
+|                                                      | ... saving the updated patient record?                        | PatientRepository                    | Repository: PatientRepository saves the updated patient data, including the new operation request.                                    |
+| Step 5: Confirm Operation Request                    | ... confirming the successful submission?                     | OperationRequestController           | Controller: OperationRequestController sends the confirmation message to the doctor, indicating successful request creation.         |
 
-### Systematization ##
+### Systematization
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+- **OperationRequest**
+- **Patient**
+- **OperationType**
+- **Priority**
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
+- **OperationRequestController**
+- **OperationRequestService**
+- **OperationRequestRepository**
+- **PatientRepository**
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+![uc016-sequence-diagram.svg](svg/uc016-sequence-diagram.svg)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc016-class-diagram.svg](svg/uc016-class-diagram.svg)

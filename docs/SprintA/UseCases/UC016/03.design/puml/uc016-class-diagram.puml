@@ -4,29 +4,73 @@ skinparam shadowing false
 
 skinparam classAttributeIconSize 0
 
-title Class Diagram (CD) - UC030
+title Class Diagram (CD) - UC016
 
-class ResultProcessNotificationUI <<interface>>
+class OperationRequestController {
+    + AddAsync(dto: OperationRequestDTO): Task
+}
 
-class ResultProcessNotificationController <<controller>>
+class OperationRequestService {
+    + AddAsync(dto: OperationRequestDTO): Task
+}
 
-class JobOpeningManagementService <<service>>
+class OperationRequestDTO {
+    + getDoctorId(): Guid
+    + getPatientId(): Guid
+    + getOperationType(): OperationType
+    + getPriority(): Priority
+    + getSuggestedDeadline(): DateTime
+}
 
-class JobOpeningRepository <<repository>>
+class OperationRequest {
+    + OperationRequest(doctorId: Guid, patientId: Guid, operationType: OperationType, priority: Priority, suggestedDeadline: DateTime)
+    + ToString(): string
+}
 
-class StatusEmail <<value>>
+class OperationRequestRepository {
+    + AddAsync(operationRequest: OperationRequest): Task<OperationRequest>
+}
 
-class SMTP <<service>>
+class InterfaceOperationRequestRepository {
+    + AddAsync(operationRequest: OperationRequest): Task<OperationRequest>
+}
 
+class Patient {
+    + AddOperationRequestToMedicalHistory(operationRequest.ToString()): void
+}
 
-ResultProcessNotificationUI ..> ResultProcessNotificationController
+class PatientRepository {
+    + GetAsync(patientId: Guid): Task<Patient>
+    + UpdateAsync(patient: Patient): Task<Patient>
+}
 
-ResultProcessNotificationController ..> JobOpeningManagementService : uses >
-ResultProcessNotificationController ..> JobOpeningRepository : accesses >
+class InterfacePatientRepository {
+    + GetAsync(patientId: Guid): Task<Patient>
+    + UpdateAsync(patient: Patient): Task<Patient>
+}
 
-JobOpeningRepository <.. RepositoryFactory : creates <
-JobOpeningRepository ..> StatusEmail : saves in database >
+class OperationType {
+    + OperationType(operationTypeID: Guid)
+}
 
-JobOpeningManagementService ..> SMTP : sends email >
+enum Priority {
+    + ELECTIVE
+    + URGENT
+    + EMERGENCY
+}
+
+OperationRequestController "1" -- "1" OperationRequestService : > uses
+OperationRequestService "1" -- "1" OperationRequest : > uses
+OperationRequestService "1" -- "1" OperationRequestRepository : > uses
+OperationRequestService "1" -- "1" OperationRequestDTO : > uses
+OperationRequestRepository "1" -- "1" InterfaceOperationRequestRepository : > uses
+OperationRequestService "1" -- "1" PatientRepository : > uses
+PatientRepository "1" -- "1" InterfacePatientRepository : > uses
+OperationRequest "1" -- "1" OperationType : > uses
+OperationRequest "1" -- "1" Priority : > uses
+Patient "1" -- "1" OperationRequest : > uses
+Patient "1" -- "1" PatientRepository : > uses
+Patient "1" -- "1" InterfacePatientRepository : > uses
+
 
 @enduml
