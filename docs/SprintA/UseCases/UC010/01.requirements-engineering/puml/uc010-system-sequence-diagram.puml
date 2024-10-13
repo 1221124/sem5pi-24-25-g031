@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC010
+actor Admin as Admin
+participant ":System" as System
+
+activate Admin
+
+        Admin -> System: I want to delete a patient profile
+    activate System
+
+        System --> Admin: shows list of patients
+    deactivate System
+
+    opt search by attributes
+        Admin -> System: input search attributes
+        activate System
+
+            System --> Admin: shows list of patients
+        deactivate System
+    end
+
+    Admin -> System: select patient to delete
+    activate System
+    
+            System --> Admin: ask for confirmation
+    deactivate System
+
+    Admin -> System: confirm/denies deletion
+    activate System
+
+        System -> System: logs deletion on system
+        System --> Admin: shows success message
+    deactivate System
+
+deactivate Admin
+
+@enduml
