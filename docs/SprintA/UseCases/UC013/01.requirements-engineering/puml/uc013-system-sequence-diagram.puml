@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC013
+actor Admin as Admin
+participant ":System" as System
+
+activate Admin
+
+       Admin -> System: Search for staff profile
+
+       activate System
+         System --> Admin: List of staff
+       deactivate System
+
+       Admin -> System: Select staff profile to edit
+
+       activate System
+         System --> Admin: Display staff profile
+       deactivate System
+
+       Admin -> System: Edit fields in staff profile
+
+       activate System
+         System -> System: Validate changes
+         System -> System: Log profile changes
+
+         alt If contact information is updated
+           System --> Admin: Email sent to staff member
+         else
+           System --> Admin: No email sent
+         end
+
+         System --> Admin: Staff profile updated
+       deactivate System
+
+deactivate Admin
+
+@enduml
