@@ -24,8 +24,7 @@ According to the taken rationale, the conceptual classes promoted to software cl
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* StaffController
-* StaffProfileController
+* CreateStaffController
 * IStaffRepository
 * StaffService
 * StaffDTO
