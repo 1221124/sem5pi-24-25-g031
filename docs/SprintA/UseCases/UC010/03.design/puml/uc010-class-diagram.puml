@@ -1,0 +1,67 @@
+@startuml
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+class PatientController {
+  + GetByCriteria(searchCriteria): List<PatientDto>
+  + GetGetById(id): PatientDto
+}
+
+
+class PatientService {
+  + GetByCriteriaAsync(searchCriteria): List<Patient>
+  + GetByIdAsync(id): Patient
+}
+
+class PatientDTO {
+  - FullName: FullName
+  - ContactInformation: ContactInformation
+  - DateOfBirth: SystemDate
+  - Gender: Gender
+  - MedicalCondition: MedicalCondition
+  - ContactInformation: ContactInformation
+  - EmergencyContact: int
+  - AppointmentHistory: AppointmentHistory 
+  'TODO: Review AppointmentHistory type
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+enum Gender {
+  Male, Female
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+interface IPatientRepository {
+  
+}
+
+interface IRepository {
+  + GetByIdAsync(id): Task<TEntity>
+}
+
+
+'class Database {
+'  + save(Patient patient): void
+'}
+
+PatientService --> EmailService : uses
+PatientService --> PatientDTO : uses
+PatientController --> PatientService : uses
+PatientService --> IPatientRepository : removes patient from
+IPatientRepository --> IRepository : implements
+PatientDTO --> ContactInformation : has
+PatientDTO --> FullName : has
+PatientDTO --> Gender : has
+
+@enduml
