@@ -12,21 +12,24 @@
 
 **From the specifications document:**
 
-- Backoffice users divide themselves into two categories: admins and staff; staff is further divided into doctors, nurses, and technicians, all with a different set of permissions and feautures.
+- Backoffice users divide themselves into two categories: admins and staff; staff is further divided into doctors, nurses, and technicians, all with a different set of permissions and features.
 - Admins are responsible for managing the system and the staff.
-- The account is only activated after the user sets their password.
-- Strong password requirements are enforced.
 
 **From the client clarifications:**
 
 > **Question:** Can you please clarify if backoffice users registration uses the IAM system? And if the IAM system is the out-of-band process?
-> **Answer:** What this means is that backoffice users can not self-register in the system like the patients do. The admin must register the backoffice user. If you are using an external IAM (e.g., Google, Azzure, Linkedin, ...) the backoffice user must first create their account in the IAM provider and then pass the credential info to the admin so that the user account in the system is "linked" with the external identity provider.
+> **Answer:** What this means is that backoffice users can not self-register in the system like the patients do. The admin must register the backoffice user. If you are using an external IAM (e.g., Google, Azzure, Linkedin, ...), the backoffice user must first create their account in the IAM provider and then pass the credential info to the admin so that the user account in the system is "linked" with the external identity provider.
 >
 > **Question:** Can you clarify the username and email requirements?
 > **Answer:** The username is the "official" email address of the user. For backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "<D180023@myhospital.com>". The system must allow for an easy configuration of the DNS domain (e.g., environment variable).
 For patients, the username is the email address provided in the patient record and used as identity in the external IAM. For instance, patient Carlos Silva has provided his email <csilva98@gmail.com> the first time he entered the hospital. That email address will be his username when he self-registers in the system.
+>
+> **Question:** There are 2 separate use cases regarding backoffice users: one for the creation of the user account and another one for the creation of the staff's profile. Is there a fixed order for these operations to take place? Does the admin always create the profile first or can he create the user first aswell? If the profile is created first, for example, should the user be created automaticaly or should the admin create the user afterwards, having to do 2 distinct operations?
+> **Answer:** Recommended Flow:
 
----
+  1. Order of operations: The system should support profile first. The admin should then create the user account. The account and user profile are linked by the professional email address or username (depending on the IAM provider).
+  2. Distinct Operations: The operations should remain distinct, even if they are performed in quick succession. This ensures that each step (creating user credentials and creating a staff profile) is carefully tracked and managed.
+  3. Validation: The system should ensure that a staff profile and user account are both created and linked before the staff member can access the system.
 
 ### 1.3. Acceptance Criteria
 
@@ -45,17 +48,18 @@ account.
 - This Use Case is relative to US5.1.1, which is related to the backoffice management functionality.
 - It relates to the following Use Case(s) as well:
   - [UC006 (US5.1.6)](../../UC006/README.md) - As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials, so that I can access the backoffice features according to my assigned role.
+  - [UC012 (US5.1.12)](../../UC012/README.md) - As Admin, I want to create a new staff profile, so that I can add them to the hospital’s roster.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Typed data: username and email
+- Typed data: username/email
 - Selected data: user's role (i.e.: Admin, Doctor, Nurse, Technician)
 
 **Output Data:**
 
-- Email notification to the user with a one-time setup link to set their password and activate their account.
+- (In)sucess message
 
 ### 1.6. System Sequence Diagram (SSD)
 
@@ -63,4 +67,4 @@ account.
 
 ### 1.7 Other Relevant Remarks
 
-- An IAM system (OAuth) must be chosen and integrated with the system.
+- An IAM system must be chosen and integrated with the system.

@@ -2,35 +2,43 @@
 
 title System Sequence Diagram (SSD) - UC001
 actor Admin as Adm
-participant ":IAM" as IAM
+participant ":System" as System
 
 activate Adm
 
-    Adm -> IAM: Register Backoffice User
-    activate IAM
+    Adm -> System: Register Backoffice User
+
+    activate System
     
-        IAM --> Adm: Ask for new user's username
-    deactivate IAM
+        System --> Adm: Ask for new user's username/email
+        note right: The username is the user's email address
 
-    Adm -> IAM: Provide new user's username
-    activate IAM
+    deactivate System
 
-        IAM --> Adm: Ask for new user's email
-    deactivate IAM
+    Adm -> System: Provide new user's username/email
 
-    Adm -> IAM: Provide new user's email
-    activate IAM
+    activate System
 
-        IAM --> Adm: Ask for new user's role, giving a set of options\nto choose from (Admin, Doctor, Nurse, Technician)
-    deactivate IAM
+        System --> Adm: Ask for new user's role, giving a set of options\nto choose from (Admin, Doctor, Nurse, Technician)
 
-    Adm -> IAM: Select new user's role
-    activate IAM
+    deactivate System
 
-        IAM -> IAM: Send user confirmation email in order for them to set their password\nand activate their account
+    Adm -> System: Select new user's role
+
+    activate System
+
+'        System -> System: Send user confirmation email in order for them to set their password\nand activate their account
         
-        IAM --> Adm: User confirmation email sent
-    deactivate IAM
+'        System --> Adm: User confirmation email sent
+
+        System -> System: Verify staff's profile is created
+
+        System -> System: Link staff's profile to user's account
+        
+        System --> Adm: User registered successfully
+
+    deactivate System
+
 deactivate Adm
 
 @enduml
