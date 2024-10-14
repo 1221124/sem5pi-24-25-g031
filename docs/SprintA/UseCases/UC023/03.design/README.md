@@ -1,4 +1,4 @@
-# UC021 - As an Admin, I want to edit existing operation types, so that I can update or correct information about the procedure
+# UC023 - As an Admin, I want to list/search operation types, so that I can see the details, edit and remove operation types
 
 ## 3. Design - Use Case Realization
 

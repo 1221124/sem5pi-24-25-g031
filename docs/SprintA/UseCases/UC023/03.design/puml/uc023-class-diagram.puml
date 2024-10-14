@@ -1,4 +1,4 @@
-@startuml uc022-class-diagram
+@startuml uc023-class-diagram
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -8,28 +8,34 @@ skinparam linetype ortho
 left to right direction
 top to bottom direction
 
-title Class Diagram (CD) - UC022
+title Class Diagram (CD) - UC023
 
 class OperationTypeController {
     +GetAll(): Task<ActionResult<IEnumerable<OperationTypeDto>>>
-    +SoftDelete(id: Guid): Task<ActionResult<OperationTypeDto>>
+    +GetByName(name: Name): Task<ActionResult<OperationTypeDto>>
+    +GetBySpecialization(specialization: Specialization): Task<ActionResult<IEnumerable<OperationTypeDto>>>
+    +GetByStatus(status: bool): Task<ActionResult<IEnumerable<OperationTypeDto>>>
 }
 
 class OperationTypeService {
     +GetAllAsync(): Task<List<OperationTypeDto>>
-    +InactivateAsync(id: OperationTypeId): Task<OperationTypeDto>
+    +GetByNameAsync(name: Name): Task<OperationTypeDto>
+    +GetBySpecializationAsync(specialization: Specialization): Task<List<OperationTypeDto>>
+    +GetByStatusAsync(status: bool): Task<List<OperationTypeDto>>
 }
 
 class OperationTypeRepository {
-    +GetByIdAsync(id: OperationTypeId): Task<OperationType>
     +GetAllAsync(): Task<List<OperationType>>
-    +InactivateAsync(id: OperationTypeId): Task<OperationType>
+    +GetByNameAsync(name: Name): Task<OperationType>
+    +GetBySpecializationAsync(specialization: Specialization): Task<List<OperationType>>
+    +GetByStatusAsync(status: bool): Task<List<OperationType>>
 }
 
 interface IOperationTypeRepository {
-    +GetByIdAsync(id: OperationTypeId): Task<OperationType>
     +GetAllAsync(): Task<List<OperationType>>
-    +InactivateAsync(id: OperationTypeId): Task<OperationType>
+    +GetByNameAsync(name: Name): Task<OperationType>
+    +GetBySpecializationAsync(specialization: Specialization): Task<List<OperationType>>
+    +GetByStatusAsync(status: bool): Task<List<OperationType>>
 }
 
 class OperationType {
@@ -56,7 +62,9 @@ class OperationTypeDto {
 }
 
 class RequiredStaff {
-    - _staff: Dictionary<Role, StaffQuantity>
+    +Role: Role
+    +Specialization: Specialization
+    +Quantity: Quantity
 }
 note right of RequiredStaff
     Role can only be a staff role: Doctor, Nurse or Assistant
@@ -115,7 +123,6 @@ OperationType --> PhasesDuration : > has
 
 OperationTypeDto --> OperationTypeID : > has
 OperationTypeDto --> Name : > has
-OperationTypeDto --> Status : > has
 OperationTypeDto --> Specialization : > has
 OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has
