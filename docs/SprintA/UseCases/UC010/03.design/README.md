@@ -1,40 +1,39 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC010 - As an Admin, I want to delete a patient profile, so that I can remove patients who are no longer under care
 
 ## 3. Design - Use Case Realization
 
 ### 3.1. Rationale
+| Interaction ID                                       | Question: Which class is responsible for...                    | Answer                          | Justification (with patterns)                                                                                     |
+|:-----------------------------------------------------|:---------------------------------------------------------------|:--------------------------------|:------------------------------------------------------------------------------------------------------------------|
+| Step 1: Receive search request                       | ... triggering the search process?                             | Routing                         | Controller: Routing is responsible for receiving the search request and initiating the process.                   |
+|                                                      | ... passing the search criteria to the controller?              | Routing                         | Controller: Routing passes the search criteria to the appropriate controller.                                      |
+| Step 2: Get matching patients by criteria            | ... handling the business logic for retrieving patients?        | PatientService                  | Service: PatientService processes the search criteria and interacts with repositories to retrieve patients.        |
+|                                                      | ... fetching patients from the repository based on criteria?    | IPatientRepository              | Information Expert: IPatientRepository accesses patient data based on the search criteria.                        |
+|                                                      | ... querying the database for patient information?              | IRepository                     | Information Expert: IRepository interacts with the database to execute the search query based on criteria.         |
+| Step 3: Filter and return distinct results           | ... removing duplicate patients from the result list?           | PatientService                  | Service: PatientService filters the result list to remove duplicates before returning the final data.              |
+| Step 4: Retrieve specific patient by ID              | ... handling the business logic for retrieving patient by ID?   | PatientService                  | Service: PatientService processes the ID-based retrieval logic.                                                    |
+|                                                      | ... fetching a patient by ID from the repository?               | IPatientRepository              | Information Expert: IPatientRepository accesses the patient data based on the patient ID.                          |
+|                                                      | ... querying the database for patient by ID?                    | IRepository                     | Information Expert: IRepository queries the database to retrieve the patient based on the ID.                      |
+| Step 5: Return search results                        | ... returning the patient(s) to the client?                     | Routing                         | Controller: Routing returns the final list of matching patients or patient details to the client.                  |
 
-| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
-|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+### Systematization
 
-### Systematization ##
+According to the rationale, the conceptual classes promoted to software classes are:
 
-According to the taken rationale, the conceptual classes promoted to software classes are:
+* PatientDTO
+* IPatientRepository
+* IRepository
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+Other software classes (i.e., Pure Fabrication) identified:
 
-Other software classes (i.e. Pure Fabrication) identified:
+* Routing
+* PatientService
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+![uc010-sequence-diagram.png](png/uc010-sequence-diagram.png)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc010-class-diagram.png](png/uc010-class-diagram.png)
