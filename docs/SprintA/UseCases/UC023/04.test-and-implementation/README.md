@@ -1,6 +1,6 @@
-# UC020 - As an Admin, I want to add new types of operations, so that I can reflect the available medical procedures in the system
+# UC023 - As an Admin, I want to list/search operation types, so that I can see the details, edit and remove operation types
 
-# 4. Tests 
+## 4. Tests
 
 In this project, a Test-Driven Development (TDD) approach was used.
 
@@ -118,11 +118,12 @@ void sendEmail() {
 }
 ```
 
-# 5. Construction (Implementation)
+## 5. Construction (Implementation)
 
 To help achieve this Use Case's requirements, some EAPLI framework classes were used.
 
 ## Class CloseOpenPhasesJobOpeningUI
+
 ```java
 public boolean show() {
 
@@ -224,6 +225,7 @@ public boolean show() {
 ```
 
 ## Class ResultProcessNotificationController
+
 ```java
 public void sendEmail(Phase phase, JobOpening jobOpening, Status status) {
     jobOpeningSvc.sendEmail(phase, jobOpening, status);
@@ -231,6 +233,7 @@ public void sendEmail(Phase phase, JobOpening jobOpening, Status status) {
 ```
 
 ## Class EmailServiceTest
+
 ```java
 public boolean sendNotification(String destination, String subject, String message){
 
@@ -259,10 +262,10 @@ public boolean sendEmail(JobOpening jobOpening, Status status){
 }
 ```
 
-# 6. Integration and Demo 
+## 6. Integration and Demo
 
 * This functionality has been integrated with the job opening management feature for opening/closing job vacancies.
 
-# 7. Observations
+## 7. Observations
 
 * To run this Use Case, check the Integration and Demonstration section in this Use Case [Read Me](../README.md) file.
