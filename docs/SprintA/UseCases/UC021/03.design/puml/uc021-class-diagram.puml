@@ -11,12 +11,12 @@ top to bottom direction
 title Class Diagram (CD) - UC021
 
 class OperationTypeController {
-    +GetByName(name: Name): Task<ActionResult<OperationTypeDto>>
+    +GetByName(name: string): Task<ActionResult<OperationTypeDto>>
     +Update(dto: OperationTypeDto): Task<ActionResult<OperationTypeDto>>
 }
 
 class OperationTypeService {
-    +GetByNameAsync(name: Name): Task<OperationTypeDto>
+    +GetByNameAsync(name: string): Task<OperationTypeDto>
     +ValidateOperationTypeName(name: Name): Task<bool>
     +UpdateAsync(dto: OperationTypeDto): Task<OperationTypeDto>
 }
