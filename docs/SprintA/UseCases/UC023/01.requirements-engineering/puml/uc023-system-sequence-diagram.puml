@@ -1,0 +1,35 @@
+@startuml uc023-system-sequence-diagram
+
+title System Sequence Diagram (SSD) - UC023
+actor Admin as Adm
+participant ":System" as System
+
+activate Adm
+
+    Adm -> System: List existing operation types
+
+    activate System
+
+        System -> System: Retrieve operation types
+
+        System --> Adm: Show operation types
+
+    deactivate System
+
+    opt Admin wants to filter operation types
+        
+        Adm -> System: Filter operation types (by name, specialization or status - active/inactive)
+        
+        activate System
+
+            System -> System: Retrieve filtered operation types
+
+            System --> Adm: Show filtered operation types
+
+        deactivate System
+   
+    end
+
+deactivate Adm
+
+@enduml
