@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC015
+actor Admin as Admin
+participant ":System" as System
+
+activate Admin
+
+    Admin -> System: Want to list/search staff profiles
+
+    activate System
+
+    opt search by keyword
+
+        Admin -> System: Input search keyword
+
+        System --> Admin: Shows list of staff profiles
+
+    end
+
+    opt select staff profile from list to view, edit, or deactivate
+
+        Admin -> System: Select staff profile
+
+        System --> Admin: Shows staff profile details
+
+    end
+
+        System --> Admin: Display staff profiles
+    
+    deactivate System
+
+deactivate Admin
+
+@enduml
