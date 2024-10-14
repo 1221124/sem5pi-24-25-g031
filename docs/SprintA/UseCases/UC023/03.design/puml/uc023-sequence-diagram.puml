@@ -33,58 +33,124 @@ activate Controller
 
             deactivate IRepo
 
-            Repository --> Service: operationTypes
+            Repository --> Service: operationTypesDtoList
 
         deactivate Repository
 
-        Service -> Service: ValidateOperationTypeName(name)
-
-        Service -> Repository: GetByNameAsync(name)
-
-        activate Repository
-
-            Repository -> IRepo: GetByNameAsync(name)
-            
-            activate IRepo
-
-                IRepo --> Repository: null
-
-            deactivate IRepo
-
-            Repository --> Service: null
-
-        deactivate Repository
-
-        Service -> Domain: new OperationType(dto.getName(), dto.getSpecialization(), dto.getRequiredStaff(), dto.getPhasesDuration())
-
-        activate Domain
-
-            Domain --> Service: operationType
-
-        deactivate Domain
-
-        Service -> Repository: UpdateAsync(operationType)
-
-        activate Repository
-
-            Repository -> IRepo: UpdateAsync(operationType)
-
-            activate IRepo
-
-                IRepo --> Repository: dto
-
-            deactivate IRepo
-
-            Repository --> Service: dto
-
-        deactivate Repository
-
-        Service --> Controller: dto
+        Service --> Controller: operationTypesDtoList
 
     deactivate Service
 
-    <-- Controller : dto
+    <-- Controller: operationTypesDtoList
 
 deactivate Controller
+
+opt Admin wants to filter by name
+
+    -> Controller: GET /api/operationtype?filter=filter
+
+    activate Controller
+
+        Controller -> Service: GetByName(name)
+        
+        activate Service
+
+            Service -> Repository: GetByNameAsync(name)
+
+            activate Repository
+
+                Repository -> IRepo: GetByNameAsync(name)
+                
+                activate IRepo
+
+                    IRepo --> Repository: operationType
+
+                deactivate IRepo
+
+                Repository --> Service: dto
+
+            deactivate Repository
+
+            Service --> Controller: dto
+
+        deactivate Service
+
+        <-- Controller: dto
+
+    deactivate Controller
+
+end
+
+opt Admin wants to filter by Specialization
+
+    -> Controller: GET /api/operationtype?filter=filter
+
+    activate Controller
+
+        Controller -> Service: GetBySpecialization(specialization)
+        
+        activate Service
+
+            Service -> Repository: GetBySpecializationAsync(specialization)
+
+            activate Repository
+
+                Repository -> IRepo: GetBySpecializationAsync(specialization)
+                
+                activate IRepo
+
+                    IRepo --> Repository: operationTypes
+
+                deactivate IRepo
+
+                Repository --> Service: operationTypesDtoList
+
+            deactivate Repository
+
+            Service --> Controller: operationTypesDtoList
+
+        deactivate Service
+
+        <-- Controller: operationTypesDtoList
+
+    deactivate Controller
+
+end
+
+opt Admin wants to filter by Status (active/inactive)
+
+    -> Controller: GET /api/operationtype?filter=filter
+
+    activate Controller
+
+        Controller -> Service: GetByStatus(status)
+        
+        activate Service
+
+            Service -> Repository: GetByStatusAsync(status)
+
+            activate Repository
+
+                Repository -> IRepo: GetByStatusAsync(status)
+                
+                activate IRepo
+
+                    IRepo --> Repository: operationTypes
+
+                deactivate IRepo
+
+                Repository --> Service: operationTypesDtoList
+
+            deactivate Repository
+
+            Service --> Controller: operationTypesDtoList
+
+        deactivate Service
+
+        <-- Controller: operationTypesDtoList
+
+    deactivate Controller
+
+end
 
 @enduml
