@@ -1,0 +1,69 @@
+@startuml uc015-domain-model
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+hide methods
+hide circle
+
+title Domain Model (DM) - UC015
+
+package UserAggregate {
+  class User <<root entity>>
+  class Username <<value object>>
+  class Email <<value object>>
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+  class UserStatus <<value object>> {
+    ACTIVE, INACTIVE, PENDING, BLOCKED
+  }
+}
+note top of UserAggregate: managed using an IAM\n(external to the system)
+
+package StaffAggregate {
+  class Staff <<root entity>>
+  class StaffID <<value object>>
+  class LicenseNumber <<value object>>
+  note right of LicenseNumber: unique identifier
+  class Status <<value object>> {
+    ACTIVE, INACTIVE
+  }
+  note right of Status: represented as a bool value
+  class Specialization <<value object>> {
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+  }
+  class DeactivateTime <<value object>>
+  class FullName <<value object>>
+  class FirstName <<value object>>
+  class LastName <<value object>>
+}
+
+class ContactInformation <<value object>>
+
+
+FullName "1" -- "1" FirstName : > has
+FullName "1" -- "1" LastName : > has
+ContactInformation "1" --- "1" Email : > has
+
+User "1" -- "1" Username : > has
+User "1" -- "1" Email : > identified by
+User "*" -- "1" Role : > has assigned
+User "*" -- "1" UserStatus : > has
+
+User "0..1" <-- "0..1" Staff : < references
+
+Staff "1" -- "1" StaffID : > identified by
+Staff "*" -- "1" FullName : > has
+Staff "1" -- "1" LicenseNumber : > identified by
+Staff "*" -- "1" Specialization : > has
+Staff "1" -- "1" ContactInformation : > has
+Staff "*" -- "1" DeactivateTime : > has
+Staff "*" -- "1" Status : > has
+
+
+@enduml

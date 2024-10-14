@@ -1,55 +1,61 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC015 - As an Admin, I want to list/search staff profiles, so that I can see the details, edit, and remove staff profiles
 
 ## 2. Analysis
 
 ### 2.1. Relevant Domain Model Excerpt
 
-The following diagram was extracted from the EAPLI framework (provided by the course's teachers).
-
-![UC030 - Domain Model](svg/uc030-domain-model.svg)
+![UC015 - Domain Model](svg/uc015-domain-model.svg)
 
 ### 2.2. Process Specification
 
 #### 2.2.1. Normal Flow
-1. **Authenticate Admin**: Verify that the Customer Manager is logged in with appropriate permissions.
-2. **Access User Management Interface**: Navigates to the job opening management section of the backoffice.
-3. **Select Job Opening**: Choose the specific job opening for which phases need to be closed.
-4. **Close Phrases**: Customer Manager closes the desired phases of the job opening.
-5. **Update Phrases**: When closing a phase, the next phase is automatically opened.
-6. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing operation.
-7. **Notify Candidates**: The system sends an email to the candidates informing them of the result of the verification process.
-8. **Record Notification**: Record that the notification has been made for process management purposes.
-9. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing and notification operation.
+
+1. **Authenticate Admin**: Verify that the Admin is logged in with the appropriate permissions.
+2. **Access Staff Management Interface**: Admin navigates to the staff profile management section in the back office.
+3. **Enter Search Criteria**: Admin inputs the search criteria (name, email, specialization).
+4. **Display Search Results**: The system displays a list of staff profiles that match the search criteria.
+5. **Select Staff Profile**: Admin selects a staff profile from the list of results.
+6. **View Staff Profile Details**: The system displays the full details of the selected staff profile.
+7. **Edit or Deactivate Profile**: Admin can update the profile information or deactivate the staff profile.
+8. **Confirm Action**: The system provides feedback to the Admin on the success or failure of the edit/deactivation operation.
+9. **Record Action**: The system logs the operation (edit or deactivation) for auditing and management purposes.
 
 #### 2.2.2. Exceptional Flows
-- **EF030.1**: If the email is not sent, the system must notify the Customer Manager and log the error.
+
+- **EF015.1**: If an error occurs when attempting to deactivate or edit the profile, the system must notify the Admin and log the error in the system.
 
 ### 2.3. Functional Requirements Reevaluation
-- **FR030.1**: The system shall notify candidates by email about the results of the verification process.
-- **FR030.2**: The system shall record that the notification has been made. 
-- **FR030.3**: The system shall provide feedback to the Customer Manager on the success or failure of the phase closure and notification process.
+
+- **FR015.1**: The system shall allow admins to search staff profiles by name, email, or specialization.
+- **FR015.2**: The system shall display the search results in a paginated list, showing key staff information.
+- **FR015.3**: The system shall allow the Admin to view, edit, or deactivate staff profiles directly from the search results.
+- **FR015.4**: The system shall provide filtering and pagination options to refine the search results.
 
 ### 2.4. Non-functional Requirements Specification
-- **Security**: Implement access control mechanisms to ensure that only authorized Customer Managers can send notifications.
-- **Performance**: Ensure the notification process completes within acceptable time limits to maintain system responsiveness.
-- **Usability**: Interface should be intuitive, guiding the Customer Manager smoothly through the notification process with clear instructions and error handling.
+
+- **Security**: Implement role-based access control to ensure only authorized admins can edit or deactivate staff profiles.
+- **Performance**: Ensure that the search and display of results are performed within acceptable time limits, even with large data volumes.
+- **Usability**: The interface should be intuitive, guiding the Admin through the search and editing/deactivation process efficiently.
 
 ### 2.5. Data Integrity and Security
-- Data integrity measures should ensure that notification actions are accurately recorded and reflected in the system without compromising data consistency.
-- Security measures should prevent unauthorized access to notification functionality and protect sensitive candidate data.
+
+- Data integrity measures should ensure that search, edit, and deactivation operations are accurately reflected in the system without compromising data consistency.
+- Security measures should prevent unauthorized access to staff profile management functions and protect sensitive staff data.
 
 ### 2.6. Interface Design
-- The interface will follow the EAPLI framework's design patterns, providing a user-friendly experience for the Customer Manager.
-- The interface should provide an intuitive and efficient workflow for selecting candidates and sending notifications, with clear indications of success or failure.
+
+- The interface should support an efficient workflow for searching staff profiles with clear filtering and pagination options.
 
 ### 2.7. Risk Analysis
-- **R030.1**: System Error During Notification
-    - **Mitigation**: Implement error handling mechanisms to notify the Customer Manager of any system failures and provide guidance on how to proceed.
-- **R030.2**: Unauthorized Access to Notification Functionality
-  - **Mitigation**: Implement secure encryption standards for storing and transmitting user credentials to prevent unauthorized access.
+
+- **R015.1**: System error during deactivation or profile editing
+  - **Mitigation**: Implement error handling mechanisms to notify the Admin of failures and provide guidance on how to proceed.
+- **R015.2**: Unauthorized access to staff profile management functionality
+  - **Mitigation**: Implement encryption standards for storing and transmitting user credentials to prevent unauthorized access.
 
 ### 2.8. Decisions
-- **D030.1**: Use role-based access control for notification functionality, restricting access to authorized Customer Managers only.
-- **D030.2**: Utilize the system's email notification service to send updates to candidates.
-- **D030.3**: Implement a logging mechanism to record the success or failure of email notifications for audit purposes.
-- **D030.4**: Use the provided domain model as a reference for implementing notification functionality.
+
+- **D030.1**: Use role-based access control to restrict access to the edit and deactivate functionalities for staff profiles.
+- **D030.2**: Implement pagination to enhance usability when displaying large search result sets.
+- **D030.3**: Implement a logging mechanism to record operations (edit or deactivation) for audit purposes.
+- **D030.4**: Use the provided domain model as a reference for implementing the staff profile search and management functionalities.
