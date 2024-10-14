@@ -1,4 +1,4 @@
-@startuml uc021-domain-model
+@startuml uc023-domain-model
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -11,7 +11,7 @@ left to right direction
 hide circle
 hide methods
 
-title Domain Model (DM) - UC021
+title Domain Model (DM) - UC023
 
 package "OperationTypeAggregate" {
     class OperationType <<root entity>>
@@ -34,7 +34,7 @@ class Role <<value object>> {
 }
 note right of Role: in this Use Case, only Staff roles are considered (DOCTOR, NURSE, TECHNICIAN)
 
-Admin "1" -- "*" OperationType : edits >
+Admin "1" -- "*" OperationType : lists >
 
 OperationType "1" -- "1" OperationTypeID : > identified by
 OperationType "1" -- "1" Name : > has
