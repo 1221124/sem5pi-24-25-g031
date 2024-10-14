@@ -38,8 +38,6 @@ package PatientAggregate #LightSalmon {
   note right of MedicalCondition: optional (free text)
   class EmergencyContact <<value object>>
   class AppointmentHistory <<value object>>
-  class DeletionLog <<value object>>
-  class InactivityTime <<value object>>
 }
 
 package StaffAggregate #Pink {
@@ -48,10 +46,6 @@ package StaffAggregate #Pink {
   note right of StaffID: unique identifier
   class LicenseNumber <<value object>>
   note left of LicenseNumber: unique
-  'TODO: REVIEW STAFF AVAILABILITY RELATED CLASSES
-  class AvailabilitySlots <<value object>>
-  class AppointmentSlots <<value object>>
-  class DeactivateTime <<value object>>
 }
 
 package OperationRequestAggregate #LightGoldenRodYellow {
@@ -99,7 +93,20 @@ package SurgeryRoomAggregate #LightBlue {
   class RoomStatus <<value object>> {
     AVAILABLE, OCCUPIED, UNDER_MAINTENANCE
   }
-  class MaintenanceSlots <<value object>>
+}
+
+package LogAggregate #LightGray {
+  class Log <<root entity>>
+  class LogID <<value object>>
+  note right of LogID: unique identifier
+  class LogType <<value object>> {
+    DELETION, UPDATE, CREATION
+  }
+  class EntityType <<value object>> {
+    PATIENT, STAFF, OPERATION_TYPE
+  }
+  class EntityID <<value object>>
+  note right of EntityID: Guid
 }
 
 class FullName <<value object>>
@@ -116,6 +123,7 @@ class Specialization <<value object>> {
 class Status <<value object>> {
   ACTIVE, INACTIVE
 }
+note right of Status: represented as a bool value
 
 class Admin
 note right of Admin: conceptual class
@@ -134,10 +142,6 @@ EmergencyContact "1" -- "1" PhoneNumber : > has
 DateTime "1" -- "1" Date : > has
 DateTime "1" -- "1" Time : > has
 Slot "1" -- "2" DateTime : > consists of
-RequiredStaff "1" -- "1..*" Staff : > has
-MaintenanceSlots "1" -- "1..*" Slot : > has
-AvailabilitySlots "1" -- "1..*" Slot : > has
-AppointmentSlots "1" -- "1..*" Slot : > has
 
 User "1" -- "1" Username : > identified by
 User "1" -- "1" Email : > has
@@ -155,16 +159,14 @@ Patient "1" --- "1" ContactInformation : > has
 Patient "0..*" --- "0..*" MedicalCondition : > can have
 Patient "*" ---"1" EmergencyContact : > has
 Patient "*" --- "1" AppointmentHistory : > has
-'Patient "*" -- "1" Status : > has
-Patient "*" -- "1" DeletionLog : > has
 
 Staff "*" -- "1" FullName : > has
 Staff "1" -- "1" StaffID : > identified by
 Staff "1" -- "1" LicenseNumber : > has
 Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
-Staff "1" -- "*" AvailabilitySlots : > has
-Staff "1" -- "*" AppointmentSlots : > has
+Staff "*" -- "*" Slot : > has
+Staff "*" -- "*" Slot : > has
 Staff "*" -- "1" Status : > has
 
 OperationRequest "1" -- "1" RequestID : > identified by
@@ -197,13 +199,19 @@ SurgeryRoom "*" -- "1" RoomType : > is
 SurgeryRoom "*" -- "1" RoomCapacity : > has
 SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
 SurgeryRoom "*" -- "1" RoomStatus : > has
-SurgeryRoom "*" -- "*" MaintenanceSlots : > has 
+SurgeryRoom "*" -- "*" Slot : > has 
 
-Admin "1" --> "1" User : > references
+Log "1" - "1" LogID : > identified by
+Log "*" -- "1" LogType : > has
+Log "*" -- "1" EntityType : > has
+Log "*" -- "1" EntityID : > has
+Log "*" -- "1" DateTime : > has
+
 Doctor "1" -- "1" Staff : > is
 Nurse "1" -- "1" Staff : > is
 Technician "1" -- "1" Staff : > is
 
+Admin "1" -- "*" User : > manages
 Admin "1" -- "*" Staff : > manages
 Admin "1" -- "*" Patient : > manages
 
