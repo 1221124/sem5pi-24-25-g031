@@ -1,4 +1,4 @@
-@startuml uc001-sequence-diagram
+@startuml uc003-sequence-diagram
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -6,7 +6,7 @@ skinparam linetype polyline
 
 skinparam classAttributeIconSize 0
 
-title Sequence Diagram (SD) - UC001
+title Sequence Diagram (SD) - UC003
 
 participant UserController as Controller <<application>>
 participant UserService as Service <<persistence>>

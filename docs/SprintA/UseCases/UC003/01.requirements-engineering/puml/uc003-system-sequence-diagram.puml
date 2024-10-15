@@ -1,6 +1,6 @@
-@startuml uc001-system-sequence-diagram
+@startuml uc003-system-sequence-diagram
 
-title System Sequence Diagram (SSD) - UC001
+title System Sequence Diagram (SSD) - UC003
 actor Admin as Adm
 participant ":System" as System
 
@@ -26,10 +26,6 @@ activate Adm
     Adm -> System: Select new user's role
 
     activate System
-
-'        System -> System: Send user confirmation email in order for them to set their password\nand activate their account
-        
-'        System --> Adm: User confirmation email sent
 
         System -> System: Verify staff's profile is created
 

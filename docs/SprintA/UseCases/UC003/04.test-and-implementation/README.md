@@ -1,4 +1,4 @@
-# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
+# UC003 - As a Patient, I want to register for the healthcare application, so that I can create a user profile and book appointments online
 
 ## 4. Tests
 

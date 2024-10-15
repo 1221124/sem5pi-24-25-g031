@@ -1,4 +1,4 @@
-# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
+# UC003 - As a Patient, I want to register for the healthcare application, so that I can create a user profile and book appointments online
 
 ## 1. Requirements Engineering
 
@@ -26,7 +26,6 @@ For patients, the username is the email address provided in the patient record a
 >
 > **Question:** There are 2 separate use cases regarding backoffice users: one for the creation of the user account and another one for the creation of the staff's profile. Is there a fixed order for these operations to take place? Does the admin always create the profile first or can he create the user first aswell? If the profile is created first, for example, should the user be created automaticaly or should the admin create the user afterwards, having to do 2 distinct operations?
 > **Answer:** Recommended Flow:
-
   1. Order of operations: The system should support profile first. The admin should then create the user account. The account and user profile are linked by the professional email address or username (depending on the IAM provider).
   2. Distinct Operations: The operations should remain distinct, even if they are performed in quick succession. This ensures that each step (creating user credentials and creating a staff profile) is carefully tracked and managed.
   3. Validation: The system should ensure that a staff profile and user account are both created and linked before the staff member can access the system.

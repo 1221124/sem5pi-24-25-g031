@@ -1,11 +1,11 @@
-# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
+# UC003 - As a Patient, I want to register for the healthcare application, so that I can create a user profile and book appointments online
 
 ## 1. Context
 
-> The backoffice system is a web application that allows admins to manage users, patients, and staff.
-> Admins can create, edit, and deactivate user profiles, ensuring that the right people have access to the system.
-> This use case focuses on the registration of new backoffice users, such as doctors, nurses, technicians and other admins.
-> The registration process is done via an out-of-band process using an IAM, meaning that the admin must manually create the user profile and assign the appropriate role. After that, the admin must regist the user in the backoffice system, associating it with the appropriate IAM credentials.
+> The healthcare application is a system that allows patients to register, edit their user profile and book appointments online.
+> The system is accessed through a web interface and provides a user-friendly experience for patients to manage their healthcare needs.
+> Patients can register in an IAM using their email address and creating a secure password to access the system.
+> Once registered, patients can edit their patient profile and view their medical history, schedule appointments, among other features.
 
 ## 2. Requirements
 
@@ -25,7 +25,7 @@
 
 ## 6. Integration/Demonstration
 
-* To run this Use Case, the authenticated user must have admin permissions.
+* To run this Use Case, the patient must click on the "Register" button on the home page and fill in the required information.
 
 ## 7. Observations
 
