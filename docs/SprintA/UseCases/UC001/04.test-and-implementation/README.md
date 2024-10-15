@@ -1,6 +1,6 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
 
-# 4. Tests 
+## 4. Tests
 
 In this project, a Test-Driven Development (TDD) approach was used.
 
@@ -118,11 +118,12 @@ void sendEmail() {
 }
 ```
 
-# 5. Construction (Implementation)
+## 5. Construction (Implementation)
 
 To help achieve this Use Case's requirements, some EAPLI framework classes were used.
 
-## Class CloseOpenPhasesJobOpeningUI
+### Class CloseOpenPhasesJobOpeningUI
+
 ```java
 public boolean show() {
 
@@ -223,14 +224,16 @@ public boolean show() {
 }
 ```
 
-## Class ResultProcessNotificationController
+### Class ResultProcessNotificationController
+
 ```java
 public void sendEmail(Phase phase, JobOpening jobOpening, Status status) {
     jobOpeningSvc.sendEmail(phase, jobOpening, status);
 }
 ```
 
-## Class EmailServiceTest
+### Class EmailServiceTest
+
 ```java
 public boolean sendNotification(String destination, String subject, String message){
 
@@ -259,10 +262,10 @@ public boolean sendEmail(JobOpening jobOpening, Status status){
 }
 ```
 
-# 6. Integration and Demo 
+## 6. Integration and Demo
 
 * This functionality has been integrated with the job opening management feature for opening/closing job vacancies.
 
-# 7. Observations
+## 7. Observations
 
 * To run this Use Case, check the Integration and Demonstration section in this Use Case [Read Me](../README.md) file.
