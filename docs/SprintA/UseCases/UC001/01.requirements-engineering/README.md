@@ -30,6 +30,9 @@ For patients, the username is the email address provided in the patient record a
   1. Order of operations: The system should support profile first. The admin should then create the user account. The account and user profile are linked by the professional email address or username (depending on the IAM provider).
   2. Distinct Operations: The operations should remain distinct, even if they are performed in quick succession. This ensures that each step (creating user credentials and creating a staff profile) is carefully tracked and managed.
   3. Validation: The system should ensure that a staff profile and user account are both created and linked before the staff member can access the system.
+>
+> **Question:** One of the Acceptance Criteria of US5.1.1 is "Registered users receive a one-time setup link via email to set their password and activate their account". In previous answers you said "If you are using an external IAM (e.g., Google, Azzure, Linkedin, ...) the backoffice user must first create their account in the IAM provider and then pass the credential info to the admin so that the user account in the system is "linked" with the external identity provider". Can you please clarify this process? Is there a confirmation email? Or, if the backoffice user is already registered in the IAM before being registered in the system, should we forget this AC?
+> **Answer:** This requirement (AC from US5.1.1) applies only if you are using an internal IAM. Please consider only the phrasing "Backoffice users are registered by the admin in the IAM through an out-of-band process".
 
 ### 1.3. Acceptance Criteria
 
@@ -41,7 +44,7 @@ account.
 > AC001.4: The system enforces strong password requirements for security.
 > AC001.5: A confirmation email is sent to verify the user’s registration.
 
----
+_Note_: As referenced in section 1.2, the AC001.3 is not applicable if an external IAM system is used.
 
 ### 1.4. Found out Dependencies
 
