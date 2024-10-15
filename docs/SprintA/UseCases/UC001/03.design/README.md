@@ -1,4 +1,4 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC001 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
 
 ## 3. Design - Use Case Realization
 
@@ -15,7 +15,7 @@
 | Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
 | Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
 
-### Systematization ##
+### Systematization
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
