@@ -1,0 +1,44 @@
+@startuml uc001-system-sequence-diagram
+
+title System Sequence Diagram (SSD) - UC001
+actor Admin as Adm
+participant ":System" as System
+
+activate Adm
+
+    Adm -> System: Register Backoffice User
+
+    activate System
+    
+        System --> Adm: Ask for new user's username/email
+        note right: The username is the user's email address
+
+    deactivate System
+
+    Adm -> System: Provide new user's username/email
+
+    activate System
+
+        System --> Adm: Ask for new user's role, giving a set of options\nto choose from (Admin, Doctor, Nurse, Technician)
+
+    deactivate System
+
+    Adm -> System: Select new user's role
+
+    activate System
+
+'        System -> System: Send user confirmation email in order for them to set their password\nand activate their account
+        
+'        System --> Adm: User confirmation email sent
+
+        System -> System: Verify staff's profile is created
+
+        System -> System: Link staff's profile to user's account
+        
+        System --> Adm: User registered successfully
+
+    deactivate System
+
+deactivate Adm
+
+@enduml

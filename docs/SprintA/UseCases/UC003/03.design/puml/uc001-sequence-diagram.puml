@@ -1,0 +1,72 @@
+@startuml uc001-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC001
+
+participant UserController as Controller <<application>>
+participant UserService as Service <<persistence>>
+database UserRepository as Repository <<repository>>
+participant IUserRepository as IRepo <<persistence>>
+
+-> Controller: POST /api/user
+
+activate Controller
+
+    Controller -> Service: AddAsync(dto)
+
+    activate Service
+
+        Service -> Service: ValidateUsernameAndEmail(email)
+
+        Service -> Repository: GetByUsernameAsync(username)
+        
+        activate Repository
+
+            Repository -> Repository: FindByUsername(username)
+            
+            Repository --> Service: null
+
+        deactivate Repository
+
+        Service -> Repository: GetByEmailAsync(email)
+        
+        activate Repository
+
+            Repository -> Repository: FindByEmail(email)
+            
+            Repository --> Service: null
+
+        deactivate Repository
+
+        Service -> Repository: AddAsync(dto)
+
+        activate Repository
+
+            Repository -> IRepository: AddAsync(dto)
+            
+            activate IRepo
+
+                IRepo --> Repository: user
+
+            deactivate IRepo
+            
+            Repository --> Service: user
+
+        deactivate Repository
+
+        Service -> Service: SendConfirmationEmail(email)
+
+        Service --> Controller: dto
+
+    deactivate Service
+
+    <-- Controller: dto
+
+deactivate Controller
+
+@enduml

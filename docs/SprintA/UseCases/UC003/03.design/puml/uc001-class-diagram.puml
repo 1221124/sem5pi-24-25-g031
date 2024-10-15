@@ -1,0 +1,51 @@
+@startuml uc001-class-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC001
+
+class User {
+    +Username: Username
+    +Email: Email
+    +Role: Role
+    +UserStatus: UserStatus
+}
+
+class Username {
+    +value: String
+}
+
+class Email {
+    +address: String
+}
+
+enum Role {
+    ADMIN
+    DOCTOR
+    NURSE
+    TECHNICIAN
+    PATIENT
+}
+note right of Role: in this Use Case, only Backoffice Roles are considered (ADMIN, DOCTOR, NURSE, TECHNICIAN)
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    PENDING
+    BLOCKED
+}
+note right of UserStatus: when a backoffice user is created, its status is PENDING
+
+class Admin <<conceptual class>>
+
+Admin "1" -> "*" User: creates >
+
+User "1" --> "1" Username: has >
+User "1" --> "1" Email: has >
+User "*" --> "1" Role: has >
+User "*" --> "1" UserStatus: has >
+
+@enduml

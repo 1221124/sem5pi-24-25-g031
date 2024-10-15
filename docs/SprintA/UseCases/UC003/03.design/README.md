@@ -1,4 +1,4 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC001 - As Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions
 
 ## 3. Design - Use Case Realization
 
@@ -6,35 +6,33 @@
 
 | Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
 |:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+| Step 1: Validate Username and Email                  | ... validating the uniqueness of the input username and email? | UserService                         | Service: UserService receives the input username and email from the admin, then checks the repository to ensure they are unique.      |
+| Step 2: Create User                                  | ... creating and storing the user data?             | UserService                         | Service: UserService manages the process of user creation and interaction with the repository.                                       |
+| Step 3: Store User                                   | ... saving the new user to the database?            | UserRepository                      | Information Expert: UserRepository is responsible for storing and retrieving user data from the database.                            |
+| Step 4: Assign Role                                  | ... assigning a role to the new user?               | UserService                         | Service: UserService handles assigning the correct role (e.g., Doctor, Nurse) to the user based on input from the admin.             |
+| Step 5: Send Confirmation Email                      | ... sending the email to the user?                  | UserService                         | Service: UserService is responsible for triggering the email confirmation process after user creation.                               |
+| Step 6: Notify Admin                                 | ... notifying the admin of the operation success?   | UserController                      | Controller: UserController is responsible for sending feedback to the admin about the success or failure of the user creation.       |
 
-### Systematization ##
+### Systematization
 
-According to the taken rationale, the conceptual classes promoted to software classes are:
+According to the rationale above, the conceptual classes promoted to software classes are:
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+* User
+* Username
+* Email
+* Role
+* UserStatus
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
+* UserService
+* UserRepository
+* UserController
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+![uc001-sequence-diagram.svg](svg/uc001-sequence-diagram.svg)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc001-class-diagram.svg](svg/uc001-class-diagram.svg)
