@@ -1,4 +1,4 @@
-# 3rd Week Meeting - Software Architectural Representation
+# 3rd Week Meeting - Software Architectural Design Finalization and IAM Decision
 
 **Date**: Monday, October 14, 2024  
 **Time**: 14:00h
@@ -9,7 +9,8 @@
 1. **Progress Review**: Review the progress made by each team member on their assigned use cases.
 2. **Domain Model Review**: Review the domain model for the backoffice module.
 3. **Components Diagram Review**: Review the components diagram for the project.
-4. **Next Steps**: Define immediate tasks for each team member.
+4. **IAM Decision**: Decide on the IAM system to be used in the project.
+5. **Next Steps**: Define immediate tasks for each team member.
 
 ## Discussion Summary
 
@@ -27,7 +28,11 @@
 
 - The team finalized the components diagram, ensuring that all components are correctly identified and that the relationships between them are well defined.
 
-### 4. Next Steps
+### 4. IAM Decision
+
+- The team discussed the IAM decision and decided to use an external IAM system - Azure AD - to manage users authentication.
+
+### 5. Next Steps
 
 - Each team member will continue working on their assigned use cases, focusing on the requirements engineering, analysis of the acceptance criteria, design considerations and test planning.
 - The team will meet again on Monday, October 21, 2024, to review the progress and discuss any issues encountered.
