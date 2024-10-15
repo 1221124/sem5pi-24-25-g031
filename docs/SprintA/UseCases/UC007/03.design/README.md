@@ -1,40 +1,40 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC007 - As a Patient, I want to log in to the healthcare system using my external IAM credentials
 
 ## 3. Design - Use Case Realization
 
 ### 3.1. Rationale
 
-| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
-|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+| Interaction ID                                       | Question: Which class is responsible for...               | Answer                              | Justification (with patterns)                                                                                                      |
+|:-----------------------------------------------------|:----------------------------------------------------------|:------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------|
+| Step 1: Login                                        | ... triggering the login process?                         | PatientController                   | Controller: PatientController is responsible for controlling the flow of the login process.                                        |
+|                                                      | ... validating the external IAM token?                    | IAMService                          | Service: IAMService is responsible for validating the external IAM token.                                                          |
+|                                                      | ... creating the user token from the IAM token?           | UserToken                           | Information Expert: UserToken is responsible for representing and holding token-related information.                              |
+| Step 2: Fetch Patient Data                           | ... fetching the patient role?                            | PatientRepository                   | Information Expert: PatientRepository provides access to patient-related data, including their role.                               |
+|                                                      | ... providing the patient data?                           | PatientDTO                          | Information Expert: PatientDTO is responsible for holding and transferring patient-related data.                                   |
+| Step 3: Show Token Validation Result                 | ... showing the token validation result?                  | PatientController                   | Pure Fabrication: PatientController is responsible for sending the response (success or failure) of the login process.             |
+| Step 4: Access Secure Data                           | ... accessing the patient's secure data (appointments, etc.)? | PatientService                    | Service: PatientService handles the secure access to patient data based on the validated session.                                  |
 
-### Systematization ##
+### Systematization
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+* PatientDTO
+* UserToken
+* DateTime
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
+* PatientController
+* PatientService
+* IAMService
+* PatientRepository
+* InterfacePatientRepository
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+![uc007-sequence-diagram_token-valid.svg](svg/uc007-sequence-diagram_token-valid.svg)
+![uc007-sequence-diagram_token-invalid.svg](svg/uc007-sequence-diagram_token-invalid.svg)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc007-class-diagram.svg](svg/uc007-class-diagram.svg)
