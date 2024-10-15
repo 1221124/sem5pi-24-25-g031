@@ -1,89 +1,72 @@
-@startuml
+@startuml uc001-sequence-diagram
+
 skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam linetype polyline
 
 skinparam classAttributeIconSize 0
 
-title Sequence Diagram (SD) - UC030
+title Sequence Diagram (SD) - UC001
 
-actor CustomerManager as CM
-participant ResultProcessNotificationUI as UI <<presentation>>
-participant ResultProcessNotificationController as Controller <<application>>
-participant JobOpeningManagementService as Service <<persistence>>
-database JobOpeningRepository as Repository <<repository>>
+participant UserController as Controller <<application>>
+participant UserService as Service <<persistence>>
+database UserRepository as Repository <<repository>>
+participant IUserRepository as IRepo <<persistence>>
 
-activate CM
+-> Controller: POST /api/user
 
-CM -> UI: Send Email
+activate Controller
 
-activate UI
+    Controller -> Service: AddAsync(dto)
 
-    UI -> Controller: updatedJobOpeningAndStatus()
+    activate Service
 
-    activate Controller
+        Service -> Service: ValidateUsernameAndEmail(email)
 
-        Controller -> Service: updatedJobOpeningAndStatus()
+        Service -> Repository: GetByUsernameAsync(username)
+        
+        activate Repository
 
-        activate Service
+            Repository -> Repository: FindByUsername(username)
+            
+            Repository --> Service: null
 
-            Service --> Service: return new Pair<>(updatedJobOpening, updatedStatus)
+        deactivate Repository
 
-            Service --> Controller : return new Pair<>(updatedJobOpening, updatedStatus)
+        Service -> Repository: GetByEmailAsync(email)
+        
+        activate Repository
 
-        deactivate Service
+            Repository -> Repository: FindByEmail(email)
+            
+            Repository --> Service: null
 
-        Controller -> UI : return new Pair<>(updatedJobOpening, updatedStatus)
+        deactivate Repository
 
-    deactivate Controller
+        Service -> Repository: AddAsync(dto)
 
-        alt if Phase.SCREENING = Status.COMPLETED
+        activate Repository
 
-            UI -> Controller : sendEmail()
+            Repository -> IRepository: AddAsync(dto)
+            
+            activate IRepo
 
-            activate Controller
+                IRepo --> Repository: user
 
-                Controller -> Service : sendEmail()
-                activate Service
+            deactivate IRepo
+            
+            Repository --> Service: user
 
-                    Service --> Service : sendNotification()
+        deactivate Repository
 
-                    activate Service
+        Service -> Service: SendConfirmationEmail(email)
 
+        Service --> Controller: dto
 
-                    alt if send email with success
+    deactivate Service
 
-                        Service -> Repository : save(jobOpening)
-                    deactivate Service
+    <-- Controller: dto
 
-                        activate Repository
-
-                            Repository --> Service :  Job opening successfully saved in the repository
-
-                        deactivate Repository
-
-                    Service --> Controller : Email successfully sent and notification record saved
-
-                deactivate Service
-
-                Controller --> UI : Email successfully sent and notification record saved
-
-
-
-        else
-
-            Controller --> UI : Email not sent and notification record not saved
-
-            deactivate Controller
-
-        end alt
-
-            UI --> CM : Email successfully sent and notification record saved
-
-        end alt
-
-deactivate UI
-
-deactivate CM
+deactivate Controller
 
 @enduml
