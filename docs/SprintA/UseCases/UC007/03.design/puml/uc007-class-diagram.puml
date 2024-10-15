@@ -1,0 +1,85 @@
+@startuml "uc007-class-diagram"
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC007
+
+class PatientController{
+    +Login(token: String): PatientDTO
+}
+
+class PatientService {
+    +Login(token: String): PatientDTO
+    +AccessData(patientDTO: PatientDTO): void
+}
+
+class IAMService {
+    +ValidatePatientToken(token: String): UserToken
+}
+
+class UserToken {
+    -id: String
+    -expiredDate: DateTime
+    -message: TokenStatus
+    +TokenValid(token: UserToken) void
+    +TokenInvalid(token: UserToken) void
+}
+
+class PatientDTO {
+    -id: String
+    -role: Role
+}
+
+
+class PatientRepository {
+    +FindRoleByID(id: String): Role
+    +FindPatientByID(id: String): PatientDTO
+}
+
+class InterfacePatientRepository {
+    +FindRoleByID(id: String): Role
+    +FindPatientByID(id: String): PatientDTO
+}
+
+class DateTime{
+    -date: Date
+    -time: Time
+}
+
+class Date{
+    -day: Integer
+    -month: Integer
+    -year: Integer
+}
+
+class Time{
+    -hour: Integer
+    -minute: Integer
+    -second: Integer
+}
+
+enum TokenStatus{
+    - VALID("User authorized.")
+    - INVALID("User not-authorized.")
+}
+
+PatientController --> PatientService: <<use>>
+
+PatientService --> IAMService: <<use>>
+PatientService --> PatientDTO: <<create>>
+PatientService --> PatientRepository: <<use>>
+
+PatientRepository --> InterfacePatientRepository: <<implements>>
+
+IAMService --> UserToken: <<use>>
+
+UserToken --> DateTime: <<has>>
+UserToken --> TokenStatus: <<has>>
+
+DateTime --> Date: <<use>>
+DateTime --> Time: <<use>>
+
+
+@enduml
