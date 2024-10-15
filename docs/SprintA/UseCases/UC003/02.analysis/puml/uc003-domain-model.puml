@@ -1,4 +1,4 @@
-@startuml uc001-domain-model
+@startuml uc003-domain-model
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -11,7 +11,7 @@ left to right direction
 hide circle
 hide methods
 
-title Domain Model (DM) - UC001
+title Domain Model (DM) - UC003
 
 package "User Aggregate" {
     class User <<root entity>>

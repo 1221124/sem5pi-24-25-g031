@@ -1,40 +1,52 @@
 @startuml uc003-system-sequence-diagram
 
 title System Sequence Diagram (SSD) - UC003
-actor Admin as Adm
+actor Patient as Patient
 participant ":System" as System
+participant ":IAM" as IAM
 
-activate Adm
+activate Patient
 
-    Adm -> System: Register Backoffice User
+    Patient -> System: Self-register
 
     activate System
+
+        System --> Patient: Redirect to IAM
+
+    deactivate System
+
+    Patient -> IAM: Register
+
+    activate IAM
+
+        IAM --> Patient: Ask for email
+
+    deactivate IAM
+
+    Patient -> IAM: Input email
+
+    activate IAM
+
+        IAM --> Patient: Ask for password
+
+    deactivate IAM
+
+    Patient -> IAM: Input password
+
+    activate IAM
+
+        IAM --> Patient: Confirm registration
+
+        IAM --> System: User email
     
-        System --> Adm: Ask for new user's username/email
-        note right: The username is the user's email address
-
-    deactivate System
-
-    Adm -> System: Provide new user's username/email
+    deactivate IAM
 
     activate System
 
-        System --> Adm: Ask for new user's role, giving a set of options\nto choose from (Admin, Doctor, Nurse, Technician)
+        System --> Patient: Redirect to Patient UI
 
     deactivate System
 
-    Adm -> System: Select new user's role
-
-    activate System
-
-        System -> System: Verify staff's profile is created
-
-        System -> System: Link staff's profile to user's account
-        
-        System --> Adm: User registered successfully
-
-    deactivate System
-
-deactivate Adm
+deactivate Patient
 
 @enduml
