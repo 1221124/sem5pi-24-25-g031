@@ -9,9 +9,12 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC003
 
 participant UserController as Controller <<application>>
-participant UserService as Service <<persistence>>
-database UserRepository as Repository <<repository>>
-participant IUserRepository as IRepo <<persistence>>
+participant UserService as Service <<service>>
+database PatientRepository as PRepository <<repository>>
+participant IPatientRepository as IPRepo <<persistence>>
+database UserRepository as URepository <<repository>>
+participant IUserRepository as IURepo <<persistence>>
+participant IAMService as IAMService <<service>>
 
 -> Controller: POST /api/user
 
@@ -21,51 +24,71 @@ activate Controller
 
     activate Service
 
-        Service -> Service: ValidateUsernameAndEmail(email)
+        Service -> Service: ValidatePatientRecord(email)
 
-        Service -> Repository: GetByUsernameAsync(username)
+        Service -> PRepository: GetByEmailAsync(email)
+
+        activate PRepository
+
+            PRepository -> IPRepo: GetByEmailAsync(email)
+
+            activate IPRepo
+
+                IPRepo --> PRepository: patient
+
+            deactivate IPRepo
+
+            PRepository --> Service: patient
+
+        deactivate PRepository
+
+        Service -> URepository: GetByEmailAsync(email)
         
-        activate Repository
+        activate URepository
 
-            Repository -> Repository: FindByUsername(username)
-            
-            Repository --> Service: null
+            URepository -> IURepo: GetByEmailAsync(email)
 
-        deactivate Repository
+            activate IURepo
 
-        Service -> Repository: GetByEmailAsync(email)
-        
-        activate Repository
+                IURepo --> URepository: user
 
-            Repository -> Repository: FindByEmail(email)
-            
-            Repository --> Service: null
+            deactivate IURepo
 
-        deactivate Repository
+            URepository --> Service: user
 
-        Service -> Repository: AddAsync(dto)
+        deactivate URepository
 
-        activate Repository
+        Service --> IAMService: RegisterUser(email)
 
-            Repository -> IRepository: AddAsync(dto)
-            
-            activate IRepo
+        note right: IAMService is a third-party service\nthat manages user accounts
 
-                IRepo --> Repository: user
+        activate IAMService
 
-            deactivate IRepo
-            
-            Repository --> Service: user
+            IAMService --> Service: true
 
-        deactivate Repository
+        deactivate IAMService
 
-        Service -> Service: SendConfirmationEmail(email)
+        Service -> URepository: AddAsync(dto)
+
+        activate URepository
+
+            URepository -> IURepo: AddAsync(dto)
+
+            activate IURepo
+
+                IURepo --> URepository: user
+
+            deactivate IURepo
+
+            URepository --> Service: user
+
+        deactivate URepository
 
         Service --> Controller: dto
 
     deactivate Service
 
-    <-- Controller: dto
+    <-- Controller: 201 Created
 
 deactivate Controller
 
