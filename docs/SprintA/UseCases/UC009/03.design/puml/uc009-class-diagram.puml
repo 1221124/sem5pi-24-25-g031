@@ -1,0 +1,81 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram - UC009
+
+class PatientController {
+    + Update(Guid id, PatientDTO dto): ActionResult
+}
+
+class PatientService {
+    + UpdateAsync(PatientDTO dto): Task<PatientDTO>
+    - verifiesSensitivity(PatientDTO dto): boolean
+}
+
+interface IPatientRepository {
+    
+}
+
+interface IRepository {
+    + GetByIdAsync(PatientID id): Task<Patient>
+    + AddAsync(Patient patient): void
+}
+
+class EmailService {
+    + SendEmailAsync(email: string, subject: string, body: string): void
+}
+
+class Patient {
+  - FullName: FullName
+  - ContactInformation: ContactInformation
+  - DateOfBirth: SystemDate
+  - Gender: Gender
+  - MedicalCondition: MedicalCondition
+  - MedicalRecordNumber: String
+  - ContactInformation: ContactInformation
+  - EmergencyContact: int
+  - AppointmentHistory: AppointmentHistory
+    'TODO: Review AppointmentHistory type and Medical Conditions
+}
+
+
+class PatientDTO {
+  - FullName: FullName
+  - ContactInformation: ContactInformation
+  - DateOfBirth: SystemDate
+  - Gender: Gender
+  - MedicalCondition: MedicalCondition
+  - ContactInformation: ContactInformation
+  - EmergencyContact: int
+  - AppointmentHistory: AppointmentHistory 
+  'TODO: Review AppointmentHistory type
+}
+
+class Log {
+    + LogChangesAsync(action: string, entity: string): Task
+}
+
+class PatientID {
+
+}
+
+PatientService --> EmailService : uses
+PatientService --> PatientDTO : uses
+PatientService --> Patient : uses 
+PatientService --> Log : uses
+PatientController --> PatientService : uses
+PatientService --> IPatientRepository : removes patient from
+IPatientRepository --> IRepository : implements
+PatientDTO --> ContactInformation : has
+PatientDTO --> FullName : has
+PatientDTO --> Gender : has
+Patient --> ContactInformation : has
+Patient --> FullName : has
+Patient --> Gender : has
+Patient --> PatientID: has
+
+@enduml
