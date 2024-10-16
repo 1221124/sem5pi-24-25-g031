@@ -1,40 +1,40 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC004 -As a Patient, I want to update my user profile, so that I can change my personal details and preferences.
 
 ## 3. Design - Use Case Realization
 
 ### 3.1. Rationale
 
-| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
-|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+| Interaction ID                                       | Question: Which class is responsible for...                 | Answer                          | Justification (with patterns)                                                                                                     |
+|:-----------------------------------------------------|:------------------------------------------------------------|:--------------------------------|:----------------------------------------------------------------------------------------------------------------------------------|
+| Step 1: Update Patient                               | ... receiving the update request?                            | Routing                         | Controller: Routing is responsible for receiving the update request from the client.                                               |
+|                                                      | ... handling the update process?                             | PatientController               | Controller: PatientController is responsible for initiating the update process.                                                    |
+|                                                      | ... verifying sensitive data changes?                        | PatientService                  | Service: PatientService processes the update and verifies whether the data is sensitive.                                           |
+| Step 2: Notify Patient                               | ... sending email to the patient?                            | EmailService                    | Service: EmailService handles sending an email to the patient when sensitive data is changed.                                      |
+| Step 3: Update Database                              | ... updating patient information in the database?            | IPatientRepository              | Information Expert: IPatientRepository is responsible for updating the patient’s information in the database.                     |
+|                                                      | ... logging the changes made to the patient?                 | Log                             | Pure Fabrication: Log is responsible for logging the changes made to the patient’s information.                                    |
+| Step 4: Return the result                            | ... returning the updated patient details to the client?     | PatientController               | Controller: PatientController returns the updated patient information to the client.                                               |
 
-### Systematization ##
+### Systematization
 
-According to the taken rationale, the conceptual classes promoted to software classes are:
+According to the rationale, the conceptual classes promoted to software classes are:
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+* Patient
+* PatientID
+* IPatientRepository
+* IRepository
 
-Other software classes (i.e. Pure Fabrication) identified:
+Other software classes (i.e., Pure Fabrication) identified:
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
+* Routing
+* PatientController
+* PatientService
+* EmailService
+* Log
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+![uc004-sequence-diagram.png](png/uc004-sequence-diagram.png)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc004-class-diagram.png](png/uc004-class-diagram.png)
