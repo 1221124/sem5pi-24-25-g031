@@ -166,7 +166,6 @@ Staff "1" -- "1" LicenseNumber : > has
 Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
 Staff "*" -- "*" Slot : > has
-Staff "*" -- "*" Slot : > has
 Staff "*" -- "1" Status : > has
 
 OperationRequest "1" -- "1" RequestID : > identified by
