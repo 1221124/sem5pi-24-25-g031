@@ -5,7 +5,7 @@ skinparam linetype polyline
 
 skinparam classAttributeIconSize 0
 
-title Sequence Diagram (SD) - UC030
+title Sequence Diagram (SD) - UC004
 
 participant "Routing" as Routing
 participant "PatientController" as Controller
@@ -17,6 +17,7 @@ participant "EmailService" as EmailService
 participant "Patient" as Patient
 participant "PatientDTO" as PatientDTO
 participant "Log" as Log
+
 
 -> Routing: PUT/Patient/{id}
 activate Routing
@@ -52,27 +53,16 @@ activate Routing
                 Service -> EmailService: SendEmailAsync(patient.Email, "Updates Profile", "Confirm if you want to change these information.")
 
             end
+            loop for each new attribute in the DTO
+                Service -> Patient: Update"Attribute"(dto."atribute")
+                activate Patient
+                    note right of Patient : Update the patient with the attribute that the Patient inserted in the DTO
 
-            Service -> Patient: Update"Attribute"(dto."atribute")
-            activate Patient
-                note right of Patient : Update the patient with the that the Patient inserted in the DTO
+                    Patient --> Service: patient updated
+                deactivate Patient    
+            end
 
-                Patient --> Service: patient updated
-            deactivate Patient    
-
-            Service -> IPatientRepository: AddAsync(category)
-            activate IPatientRepository
-
-                IPatientRepository -> IRepository:  AddAsync(category)
-                activate IRepository
-
-                    IRepository --> IPatientRepository: Task<TEntity>
-                deactivate IPatientRepository
-
-                IPatientRepository --> Service: Task<TEntity>
-            deactivate IRepository
-
-            Service -> PatientDTO**: new PatientDTO(patient description) 
+            Service -> PatientDTO**: new PatientDTO(patient attributes) 
             activate PatientDTO
 
                 PatientDTO --> Service: patientDTO
@@ -88,8 +78,6 @@ activate Routing
 
     <-- Routing: response
 deactivate Routing
-
-
 
 
 
