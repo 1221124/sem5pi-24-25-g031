@@ -1,19 +1,11 @@
 @startuml
 skinparam packageStyle rectangle
 skinparam shadowing false
-
-skinparam classAttributeIconSize 0
-
-title Class Diagram (CD) - UC030
-
-@startuml
-skinparam packageStyle rectangle
-skinparam shadowing false
 skinparam linetype polyline
 
 skinparam classAttributeIconSize 0
 
-title Class Diagram - UC030
+title Class Diagram - UC004
 
 class PatientController {
     + Update(Guid id, PatientDTO dto): ActionResult
