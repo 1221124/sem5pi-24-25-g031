@@ -1,0 +1,58 @@
+@startuml "uc017-sequence-diagram_priority"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SSD) - UC017\nUpdating Priority
+participant OperationrRequestController as Controller <<controller>>
+participant OperationRequestService as Service <<service>>
+participant OperationRequestDTO as DTO <<dto>>
+participant OperationRequest as OperationRequest <<domain>>
+database StaffRepository as StaffRepository <<repository>>
+participant StaffRepositoryInterface as StaffRepositoryInterface <<interface>>
+database OperationRequestRepository as OpRepository <<repo>>
+participant OperationRequestInterface as OpRepositoryInterface <<interface>>
+
+--> Controller: PUSH /api/staff/operation-request/update/priority\nBody: {doctorID,operationID,priority}
+
+activate Controller
+
+    Controller -> Service: UpdateAsync(operationRequestDTO)
+    activate Service
+
+        Service -> OpRepository: GetOperationAsync(operationRequestDTO.operationId)
+        activate OpRepository
+            OpRepository -> OpRepositoryInterface: GetOperationAsync(operationRequestDTO.operationId)
+            activate OpRepositoryInterface
+                deactivate OpRepositoryInterface
+            OpRepository --> Service: operation
+            deactivate OpRepository
+        
+        Service -> Service: new Priority(operationRequestDTO.priority)
+        activate Service
+            Service --> Service: newPriority
+            deactivate Service
+
+        Service -> OperationRequest: UpdatePriority(newPriority)
+        activate OperationRequest
+            deactivate OperationRequest
+
+        Service -> OpRepository: SaveChangesAsync(operation)
+        activate OpRepository
+            OpRepository -> OpRepositoryInterface: SaveChangesAsync(operation)
+            activate OpRepositoryInterface
+                deactivate OpRepositoryInterface
+            OpRepository --> Service: operation
+            deactivate OpRepository
+        
+        Service -> DTO: new OperationRequestDTO(operation.operationID, operation.priority)
+        activate DTO
+            DTO --> Service: operationRequestDTO
+            deactivate DTO
+
+        Service --> Controller: operationRequestDTO
+        deactivate Service
+
+        <-- Controller : 200 OK  
+    deactivate Controller
+@enduml
