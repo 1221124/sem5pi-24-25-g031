@@ -1,0 +1,80 @@
+@startuml "uc017-system-sequence-diagram"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC017
+actor Doctor as Doctor
+participant ":System" as System
+
+activate Doctor
+
+    Doctor -> System: Requests to update an Operation Request
+
+    activate System
+        System -> System: Find all Doctor's Operation Requests
+        activate System
+            deactivate System
+
+        System --> Doctor: Display all Doctor's Operation Requests
+        deactivate System 
+
+    Doctor -> System: Select an Operation Request
+    activate System
+        System --> Doctor: Display options do update the Operation Request
+        note right
+            OPTIONS:
+            -operation type;
+            -suggested deadline;
+            -priority.
+        end note
+        deactivate System
+
+        alt option == operation type
+            Doctor -> System: Selects 'update operation type'
+            activate System
+                System -> System: find Doctor's Role
+                activate System
+                    deactivate System
+                System -> System: Obtain all operation types\nrelated to that role
+                activate System
+                    deactivate System
+
+                System --> Doctor: Display all operation types related to that role
+                deactivate System
+
+                Doctor -> System: Select an operation type
+                activate System
+                    System -> System: Update 'operation type'
+                    activate System
+                        deactivate System
+                System --> Doctor: Operation type updated
+                deactivate System
+        else option == suggested deadline
+            Doctor -> System: Selects to 'update suggested deadline'
+            activate System
+                System --> Doctor: Requests new suggested deadline  
+                deactivate System
+            
+            Doctor -> System: Types a new suggested deadline
+            activate System
+                System -> System: Update 'suggested deadline'
+                activate System
+                    deactivate System
+            System --> Doctor: Suggested deadline updated
+            deactivate System
+        else option == priority
+            Doctor -> System: Selects to 'update priority'
+            activate System
+                System --> Doctor: Display operations' priority
+                deactivate System
+
+            Doctor -> System: Select an operation's priority
+            activate System
+                System -> System: Update 'priority'
+                activate System
+                    deactivate System
+                System --> Doctor: Priority updated
+                deactivate System
+        end
+@enduml
