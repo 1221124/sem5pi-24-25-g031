@@ -1,55 +1,58 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC017 - As Doctor, I want to update an operation requisition, so that the Patient has access to the necessary healthcare
 
 ## 2. Analysis
 
 ### 2.1. Relevant Domain Model Excerpt
 
-The following diagram was extracted from the EAPLI framework (provided by the course's teachers).
+The following diagram was created based on the EAPLI framework, adapted for this user story:
 
-![UC030 - Domain Model](svg/uc030-domain-model.svg)
+![UC017 - Domain Model](svg/uc017-domain-model.svg)
 
 ### 2.2. Process Specification
 
 #### 2.2.1. Normal Flow
-1. **Authenticate Admin**: Verify that the Customer Manager is logged in with appropriate permissions.
-2. **Access User Management Interface**: Navigates to the job opening management section of the backoffice.
-3. **Select Job Opening**: Choose the specific job opening for which phases need to be closed.
-4. **Close Phrases**: Customer Manager closes the desired phases of the job opening.
-5. **Update Phrases**: When closing a phase, the next phase is automatically opened.
-6. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing operation.
-7. **Notify Candidates**: The system sends an email to the candidates informing them of the result of the verification process.
-8. **Record Notification**: Record that the notification has been made for process management purposes.
-9. **Feedback**: The system provides feedback to the Customer Manager on the success or failure of the phase closing and notification operation.
+1. **Authenticate Doctor**: Verify that the user is logged in as a Doctor with appropriate permissions.
+2. **Access Operation Requests Interface**: The Doctor navigates to the operation requests management section of the system.
+3. **Select Operation Request**: The Doctor chooses the specific operation request they want to update.
+4. **Update Operation Request**: The Doctor can update different aspects of the request, such as the operation type, the suggested deadline, or the priority.
+    - **Operation Type**: The Doctor selects a new operation type from a list of those related to their role.
+    - **Suggested Deadline**: The Doctor inputs a new suggested deadline for the operation.
+    - **Priority**: The Doctor changes the priority level of the operation.
+5. **Log Changes**: The system logs all updates made to the operation request.
+6. **Notify Planning Module**: Once the update is made, the system notifies the Planning Module of the change.
+7. **Feedback**: The system provides feedback to the Doctor on the success or failure of the update operation.
 
 #### 2.2.2. Exceptional Flows
-- **EF030.1**: If the email is not sent, the system must notify the Customer Manager and log the error.
+- **EF017.1**: If the system cannot find the operation request, it must notify the Doctor and log the error.
+- **EF017.2**: If the update cannot be processed, the system must notify the Doctor and log the error.
 
 ### 2.3. Functional Requirements Reevaluation
-- **FR030.1**: The system shall notify candidates by email about the results of the verification process.
-- **FR030.2**: The system shall record that the notification has been made. 
-- **FR030.3**: The system shall provide feedback to the Customer Manager on the success or failure of the phase closure and notification process.
+- **FR017.1**: The system shall allow doctors to update the operation requests they created.
+- **FR017.2**: The system shall ensure only the requesting doctor can update the operation request.
+- **FR017.3**: The system shall log all updates to the operation request.
+- **FR017.4**: The system shall notify the Planning Module of any updates.
 
 ### 2.4. Non-functional Requirements Specification
-- **Security**: Implement access control mechanisms to ensure that only authorized Customer Managers can send notifications.
-- **Performance**: Ensure the notification process completes within acceptable time limits to maintain system responsiveness.
-- **Usability**: Interface should be intuitive, guiding the Customer Manager smoothly through the notification process with clear instructions and error handling.
+- **Security**: The system must ensure that only the requesting doctor can access and modify their own operation requests.
+- **Performance**: Updates to operation requests should be processed and reflected in the system immediately.
+- **Usability**: The interface must clearly present the options for updating the operation request and provide feedback on the success or failure of the update.
 
 ### 2.5. Data Integrity and Security
-- Data integrity measures should ensure that notification actions are accurately recorded and reflected in the system without compromising data consistency.
-- Security measures should prevent unauthorized access to notification functionality and protect sensitive candidate data.
+- The system must ensure the accuracy of all data related to operation request updates and protect the integrity of this data.
+- Security measures should prevent unauthorized access to operation request updates.
 
 ### 2.6. Interface Design
-- The interface will follow the EAPLI framework's design patterns, providing a user-friendly experience for the Customer Manager.
-- The interface should provide an intuitive and efficient workflow for selecting candidates and sending notifications, with clear indications of success or failure.
+- The interface will follow the EAPLI framework's design patterns, providing a user-friendly experience for the Doctor.
+- The interface should guide the Doctor through selecting and updating an operation request, with options clearly displayed and success/failure feedback provided.
 
 ### 2.7. Risk Analysis
-- **R030.1**: System Error During Notification
-    - **Mitigation**: Implement error handling mechanisms to notify the Customer Manager of any system failures and provide guidance on how to proceed.
-- **R030.2**: Unauthorized Access to Notification Functionality
-  - **Mitigation**: Implement secure encryption standards for storing and transmitting user credentials to prevent unauthorized access.
+- **R017.1**: Unauthorized Access to Operation Requests
+    - **Mitigation**: Implement access control to ensure only the requesting doctor can update the operation request.
+- **R017.2**: System Error During Update
+    - **Mitigation**: Implement error handling mechanisms to notify the Doctor of any system failures and provide guidance on how to proceed.
 
 ### 2.8. Decisions
-- **D030.1**: Use role-based access control for notification functionality, restricting access to authorized Customer Managers only.
-- **D030.2**: Utilize the system's email notification service to send updates to candidates.
-- **D030.3**: Implement a logging mechanism to record the success or failure of email notifications for audit purposes.
-- **D030.4**: Use the provided domain model as a reference for implementing notification functionality.
+- **D017.1**: Use role-based access control for operation request updates, restricting access to the requesting doctor only.
+- **D017.2**: Use the system's logging functionality to record all changes made to operation requests.
+- **D017.3**: Notify the Planning Module of any updates to operation requests.
+- **D017.4**: Use the provided domain model as a reference for implementing the operation request update functionality.
