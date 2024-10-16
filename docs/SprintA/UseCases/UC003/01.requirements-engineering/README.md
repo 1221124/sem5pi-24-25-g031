@@ -4,7 +4,7 @@
 
 ### 1.1. Use Case Description
 
-> As Admin, I want to register new backoffice users.
+> As Patient, I want to self-register in the system.
 
 ---
 
@@ -12,53 +12,52 @@
 
 **From the specifications document:**
 
-- Backoffice users divide themselves into two categories: admins and staff; staff is further divided into doctors, nurses, and technicians, all with a different set of permissions and features.
-- Admins are responsible for managing the system and the staff.
+- Patients should provide email and phone number.
+- Only patients with an already existing record in the hospital can register to access the system.
+- Patients should be able to book appointments.
+- Patients should be able to edit their profile.
 
 **From the client clarifications:**
 
-> **Question:** Can you please clarify if backoffice users registration uses the IAM system? And if the IAM system is the out-of-band process?
-> **Answer:** What this means is that backoffice users can not self-register in the system like the patients do. The admin must register the backoffice user. If you are using an external IAM (e.g., Google, Azzure, Linkedin, ...), the backoffice user must first create their account in the IAM provider and then pass the credential info to the admin so that the user account in the system is "linked" with the external identity provider.
+> **Question:** Can the same user have both a patient and a healthcare profile?
+> **Answer:** No.
 >
-> **Question:** Can you clarify the username and email requirements?
-> **Answer:** The username is the "official" email address of the user. For backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "<D180023@myhospital.com>". The system must allow for an easy configuration of the DNS domain (e.g., environment variable).
-For patients, the username is the email address provided in the patient record and used as identity in the external IAM. For instance, patient Carlos Silva has provided his email <csilva98@gmail.com> the first time he entered the hospital. That email address will be his username when he self-registers in the system.
+> **Question:** If a patient registers themselves but an admin already created a profile for them, does it get assigned based on the email or how does it work?
+> **Answer:** Yes. So the overall flow is the following: an administrator must first create the patient record so you cannot self-register and say "I am a patient". You will already have your patient record created. What you can do afterwards is create your online profile, so that you can afterwards access the system to check your appointments. But you first need to be known in the system. So, basically, this will have a two-factor authentication.
 >
-> **Question:** There are 2 separate use cases regarding backoffice users: one for the creation of the user account and another one for the creation of the staff's profile. Is there a fixed order for these operations to take place? Does the admin always create the profile first or can he create the user first aswell? If the profile is created first, for example, should the user be created automaticaly or should the admin create the user afterwards, having to do 2 distinct operations?
-> **Answer:** Recommended Flow:
-
-  1. Order of operations: The system should support profile first. The admin should then create the user account. The account and user profile are linked by the professional email address or username (depending on the IAM provider).
-  2. Distinct Operations: The operations should remain distinct, even if they are performed in quick succession. This ensures that each step (creating user credentials and creating a staff profile) is carefully tracked and managed.
-  3. Validation: The system should ensure that a staff profile and user account are both created and linked before the staff member can access the system.
+> **Question:** Do we always need to create an associated user when recording a patient profile in a medical facility?
+> **Answer:** No. A patient profile can be created without an associated user unless it's easier technically to create an inactive user.
 >
-> **Question:** One of the Acceptance Criteria of US5.1.1 is "Registered users receive a one-time setup link via email to set their password and activate their account". In previous answers you said "If you are using an external IAM (e.g., Google, Azzure, Linkedin, ...) the backoffice user must first create their account in the IAM provider and then pass the credential info to the admin so that the user account in the system is "linked" with the external identity provider". Can you please clarify this process? Is there a confirmation email? Or, if the backoffice user is already registered in the IAM before being registered in the system, should we forget this AC?
-> **Answer:** This requirement (AC from US5.1.1) applies only if you are using an internal IAM. Please consider only the phrasing "Backoffice users are registered by the admin in the IAM through an out-of-band process".
+> **Question:** Can patients update both their user and patient profile information?
+> **Answer:** Patients can update contact information but not medical details. Changes must be verified and validated.
+>
+> **Question:** In order for a patient to register himself in the IAM (assuming an external IAM is being used), is it necessary to already exist a patient profile (with name, email, medical record number, ...) in the system? If so, the patient profile will already be created, right? I'm asking this because of US5.1.3's description: "As a Patient, I want to register for the healthcare application, so that I can create a user profile and book appointments online". What info is already on the system when the patient registers himself and what info does he need to give after registering in the IAM?
+> **Answer:** Generally speaking, the Admin will create the patient record and only afterwards the patient can self register. That action will link the patient record and the patient account profile. When registering, the patient will provide the email and phone number for the system to cross-check with the patient record.
 
 ### 1.3. Acceptance Criteria
 
-> AC001.1: Backoffice users (e.g., doctors, nurses, technicians) are registered by an Admin via an internal
-process, not via self-registration.
-> AC001.2: Admin assigns roles (e.g., Doctor, Nurse, Technician) during the registration process.
-> AC001.3: Registered users receive a one-time setup link via email to set their password and activate their
-account.
-> AC001.4: The system enforces strong password requirements for security.
-> AC001.5: A confirmation email is sent to verify the user’s registration.
+> AC003.1: Patients can self-register using the external IAM system.
+> AC003.2: During registration, patients provide personal details (e.g., name, email, phone) and create a profile.
+> AC003.3: The system validates the email address by sending a verification email with a confirmation link.
+> AC003.4: Patients cannot list their appointments without completing the registration process.
 
-_Note_: As referenced in section 1.2, the AC001.3 is not applicable if an external IAM system is used.
+_Note_: AC003.3 is not applicable if an external IAM system is used.
 
 ### 1.4. Found out Dependencies
 
-- This Use Case is relative to US5.1.1, which is related to the backoffice management functionality.
+- This Use Case is relative to US5.1.3, which is related to the patient management functionality.
 - It relates to the following Use Case(s) as well:
-  - [UC006 (US5.1.6)](../../UC006/README.md) - As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials, so that I can access the backoffice features according to my assigned role.
-  - [UC012 (US5.1.12)](../../UC012/README.md) - As Admin, I want to create a new staff profile, so that I can add them to the hospital’s roster.
+  - [UC006 (US5.1.7)](../../UC007/README.md) - As a Patient, I want to log in to the healthcare system using my external IAM credentials, so that I can access my appointments, medical records, and other features securely.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Typed data: username/email
-- Selected data: user's role (i.e.: Admin, Doctor, Nurse, Technician)
+- Typed data:
+  - Username/Email
+  - Password (IAM)
+  - Phone number
+- Selected data: N/A
 
 **Output Data:**
 
@@ -66,7 +65,7 @@ _Note_: As referenced in section 1.2, the AC001.3 is not applicable if an extern
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/uc001-system-sequence-diagram.svg)
+![System Sequence Diagram](svg/uc003-system-sequence-diagram.svg)
 
 ### 1.7 Other Relevant Remarks
 

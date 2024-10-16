@@ -11,41 +11,37 @@ activate Patient
 
     activate System
 
-        System --> Patient: Redirect to IAM
+        System --> Patient: Ask for email
 
     deactivate System
 
-    Patient -> IAM: Register
+    Patient -> System: Provide email
 
-    activate IAM
+    alt Exists patient record with email
 
-        IAM --> Patient: Ask for email
+        activate System
 
-    deactivate IAM
+            System --> Patient: Redirect to IAM
 
-    Patient -> IAM: Input email
+        deactivate System
 
-    activate IAM
+        Patient -> IAM: Provide credentials (email, password)
 
-        IAM --> Patient: Ask for password
+        activate IAM
 
-    deactivate IAM
+            IAM --> Patient: Redirect to System
 
-    Patient -> IAM: Input password
+        deactivate IAM
 
-    activate IAM
+    else No patient record with email
 
-        IAM --> Patient: Confirm registration
+        activate System
 
-        IAM --> System: User email
-    
-    deactivate IAM
+            System --> Patient: Inform that email is not registered as patient and so cannot self-register
 
-    activate System
+        deactivate System
 
-        System --> Patient: Redirect to Patient UI
-
-    deactivate System
+    end
 
 deactivate Patient
 
