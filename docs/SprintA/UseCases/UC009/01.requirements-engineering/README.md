@@ -1,70 +1,53 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
-
+# UC009 - As an Admin, I want to edit an existing patient profile, so that I can update their information when needed.
 
 ## 1. Requirements Engineering
 
 ### 1.1. Use Case Description
 
-> As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process.
+> As an Admin, I want to edit an existing patient profile, so that I can update their information when needed.
 
 ---
 
 ### 1.2. Customer Specifications and Clarifications
 
-**From the specifications document:**
-
-- The solution should be deployed using several network nodes. It is expected that, at least, the relational
-  database server and the Follow Up Server be deployed in nodes diferent from localhost, preferably in the cloud. The e-mail notification
-  tasks must be executed in background by the Follow Up Server.
-
 **From the client clarifications:**
 
-> **Question:** Relativamente ao envio das notificações por email, é necessário guardar que esse envio foi feito?
+> **Question:** In this US an admin can edit a user profile. Does the system display a list of all users or the admin searchs by ID? Or both?
 > 
-> **Answer:** No documento nada de explicito é dito sobre este assunto. No entanto, do ponto de vista de gestão do processo da jobs4u parece-me adequado que essa informação fique registada.
+> **Answer:** This requirement is for the editing of the user profile. from a usability point of view, the user should be able to start this feature either by searching for a specific user or listing all users and selecting one. Note that we are not doing the user interface of the system in this sprint.
 
-> **Question:** "As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process" qual é o processo através do qual essa notificação é gerada? Após a avaliação do Requirement Specification module, este gera um resultado "Aprovado" ou "Rejeitado". Este resultado despoleta automaticamente uma notificação para o candidato ou é o Customer Manager que tem a responsabilidade de informar o candidato através do sistema do resultado da verificação (ex. depois de um resultado negativo ser gerado, o Customer Manager vai no sistema rejeitar o candidato para que seja enviado o email)?
->  
-> **Answer:** É a segunda opção que apresenta. A US1015 permite que o Customer Manager invoque o processo de verificação de requisitos. Depois disso todas as candidaturas devem estar aceites ou recusadas. É então possível ao Customer Manager invocar a notificação através da US1016.
-
-> **Question:** About the Us1016 wich states: "As Customer Manager, I want the system to notify candidates, by email, of the result of verification process". I want to know when the client says "verification process" is the same about the screening phase.
+> **Question:** Regarding the editing of patient information, is contact information the only sensitive data? Is it the only data that triggers an email notification?
 > 
-> **Answer:** Yes.
-
-> **Question:** This user story has a functional dependency with 1015. I would like to know if an error occurs, do I need to delete what happened in US 1015, as if it were a transaction?
-> 
-> **Answer:** The process of notification (US1016) must be done after the verification (US1015) but an error in the notification does not invalidate the “results” of the verification process.
+> **Answer:** faz parte das vossas responsabilidades no âmbito do módulo de proteçãod e dados e de acordo com a politica que venham a definir
 
 ---
 
 ### 1.3. Acceptance Criteria
 
-> AC030.1: When moving from the screening phase to the interview phase, the system must send an email to all candidates who passed the screening phase, informing them that they have advanced to the interview phase.
+- **AC01:** Admins can search for and select a patient profile to edit.
+- **AC02:** Editable fields include name, contact information, medical history, and allergies.
+- **AC03:**  Changes to sensitive data (e.g., contact information) trigger an email notification to the patient.
+- **AC04:** The system logs all profile changes for auditing purposes.
 ---
 
 ### 1.4. Found out Dependencies
 
-* This Use Case is relative to US 1010, which is related to the backoffice job opening management functionality.
+* This Use Case is relative to UC009, which is related to an Admin edits a patient profile
 * It relates to the following Use Cases as well:
-  - [UC026](../../UC002/README.md) - As Customer Manager, I want to open phases of the process for a job opening
-  - [UC027](../../UC002/README.md) - As Customer Manager, I want to close phases of the process for a job opening
-
+  - [UC011](../../UC011/README.md) - As an Admin, I want to list/search patient profiles by different attributes, so that I can view the details, edit, and remove patient profiles.
 
 ### 1.5 Input and Output Data
 
 **Input Data:**
 
-- Automatic data:
-	- send email
+- search criteria
+- selected patient
+- selected attribute
+- new value 
 
 **Output Data:**
-- Send email with the result of the verification process
+- Send email to warn the patient
 
 ### 1.6. System Sequence Diagram (SSD)
 
-![System Sequence Diagram](svg/uc001-system-sequence-diagram.svg)
-
-### 1.7 Other Relevant Remarks
-
-- The email notification functionality depends on the system's ability to authenticate users and manage job openings and candidate data appropriately.
-- To notify by email, it is necessary to connect to the VPN.
+![System Sequence Diagram](png/uc009-system-sequence-diagram.png)

@@ -1,0 +1,58 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC009
+actor Admin as Admin
+participant ":System" as System
+
+activate Admin
+    Admin -> System: I want to edit an existing patient profile
+    activate System
+
+        System --> Admin: list of patients are displayed
+
+    opt if admin wants to seacrh
+
+        loop number of search criteria
+                System --> Admin: asks for search criteria
+            deactivate System
+
+            Admin --> System: gives search criteria
+            activate System
+        end
+
+            System --> Admin: list of searched patients are displayed
+        deactivate System
+
+    end
+
+    Admin -> System: selects a patient
+    activate System
+
+        System --> Admin: patient data is displayed and asks \nto select one attribute to change
+    deactivate System
+
+    Admin -> System: selects an attribute
+    activate System
+
+        System --> Admin: asks for new value
+    deactivate System
+
+    Admin -> System: gives new value
+    activate System
+
+    opt if data is sensitive 
+        System --> System: send email to the patient to warn them
+
+    end
+
+        System --> Admin: patient data is updated
+
+        System -> System: log the action
+    deactivate System
+
+deactivate Admin
+
+@enduml
