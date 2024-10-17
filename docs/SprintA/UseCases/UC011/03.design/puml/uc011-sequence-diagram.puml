@@ -9,60 +9,53 @@ title Sequence Diagram (SD) - UC011
 
 
 participant "Routing" as Routing 
-participant "PtientController" as Controller
-participant "PatientService" as Service
-participant "IPatientRepository" as IPatientRepository
-participant "IRepository" as IRepository
-participant "Patient" as Patient
+participant "PatientController" as Controller <<controller>>
+participant ":PatientService" as Service <<service>>
+participant ":IPatientRepository" as IPatientRepository <<interface>>
+participant "PatientDTO" as PatientDTO <<dto>>
 
 loop for each search criteria
 
   note right of Routing
-    the "searchCriteria" can be any of the following: name, email, 
+    the "criteria" can be any of the following: name, email, 
     phone number, medical record number, date of birth, gender.
     The method "GetByCriteria" will be called for each search criteria.
     "searchCriteria" is from the type e.g "Name"
   end note
 
-  -> Routing: GET/Patients/{searchCriteria}
+  -> Routing: GET/Patients/?searchCriteria=criteria
   activate Routing
 
-    Routing -> Controller: GetByCriteria(searchCriteria)
+    Routing -> Controller: GetByCriteria(criteria)
     activate Controller
 
-      Controller -> Service: GetByCriteriaAsync(searchCriteria)
+      Controller -> Service: GetByCriteriaAsync(criteria)
       activate Service
 
-        Service -> IPatientRepository: GetByCriteriaAsync(searchCriteria)
+        Service -> IPatientRepository: GetByCriteriaAsync(criteria)
         activate IPatientRepository
 
-          IPatientRepository -> IRepository: GetByCriteriaAsync(searchCriteria)
-          activate IRepository
-
-              IRepository --> IPatientRepository: Task<List<TEntity>>
-          deactivate IRepository
-
-          IPatientRepository --> Service: Task<List<Patient>>
+          IPatientRepository --> Service: List<Patient>
         deactivate IPatientRepository
 
-        Service -> Patient**: create new List<Patient>
-        activate Patient
+        Service -> PatientDTO**: create new List<PatientDTO>
+        activate PatientDTO
   
-          Patient -> Service: patientList
-        deactivate Patient  
+          PatientDTO -> Service: patientDtoList
+        deactivate PatientDTO  
 
-        Service -> Service: List<Patient> patientList.addAll(List<Patient>)
+        Service -> Service: List<PatientDTO> patientDtoList.addAll(List<PatientDto>)
 end
 
-        Service -> Service: patientList.Distinct()
+        Service -> Service: patientDtoList.Distinct()
 
-        Service --> Controller: patientList
+        Service --> Controller: patientDtoList
       deactivate Service
 
-      Controller --> Routing: patientList
+      Controller --> Routing: patientDtoList
     deactivate Controller
 
-    <- Routing : patientList
+    <- Routing : response
   deactivate Routing
 
 
