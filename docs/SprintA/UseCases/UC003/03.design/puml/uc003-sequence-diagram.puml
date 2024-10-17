@@ -9,60 +9,110 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC003
 
 participant ":UserController" as Controller <<application>>
-participant ":UserService" as Service <<service>>
-participant ":IPatientRepository" as IPRepo <<persistence>>
-participant ":IUserRepository" as IURepo <<persistence>>
-participant ":IAMService" as IAMService <<service>>
+participant "IAMService" as IAM <<Service>>
+participant ":UserService" as Service <<Service>>
+participant "dto:UserDto" as Dto <<domain>>
+participant ":IPatientRepository" as PatRepo <<persistence>>
+participant ":IUserRepository" as UserRepo <<persistence>>
+participant "user:User" as User <<domain>>
+participant "UserMapper" as Mapper <<application>>
+participant "patient:Patient" as Patient <<domain>>
 
 -> Controller: POST /api/user
 
 activate Controller
 
+    Controller -> IAM: Redirect()
+
+    activate IAM
+
+        IAM --> Controller: token
+
+    deactivate IAM
+
     Controller -> Service: AddAsync(dto)
 
     activate Service
 
-        Service -> Service: ValidatePatientRecord(email)
+        Service -> Dto: GetRole()
 
-        Service -> IPRepo: GetByEmailAsync(email)
+        activate Dto
 
-        activate IPRepo
+            Dto --> Service: PATIENT
 
-            IPRepo --> Service: patient
+        deactivate Dto
 
-        deactivate IPRepo
+        Service -> Dto: GetEmail()
 
-        Service -> IURepo: GetByEmailAsync(email)
-        
-        activate IURepo
+        activate Dto
 
-            IURepo --> Service: user
+            Dto --> Service: email
 
-        deactivate IURepo
+        deactivate Dto
 
-        Service -> IAMService: RegisterUser(email)
+        Service -> PatRepo: GetByEmailAsync(email)
 
-        activate IAMService
+        activate PatRepo
 
-            IAMService --> Service: true
+            PatRepo --> Service: patient
 
-        deactivate IAMService
+        deactivate PatRepo
 
-        Service -> URepository: AddAsync(dto)
+        Service -> Mapper: ToUser(dto)
 
-        activate URepository
+        activate Mapper
 
-            URepository -> IURepo: AddAsync(dto)
+            Mapper -> User: new User(dto)
 
-            activate IURepo
+            activate User
 
-                IURepo --> URepository: user
+                User --> Mapper: user
 
-            deactivate IURepo
+            deactivate User
 
-            URepository --> Service: user
+            Mapper --> Service: user
 
-        deactivate URepository
+        deactivate Mapper
+
+        Service -> UserRepo: AddAsync(user)
+
+        activate UserRepo
+
+            UserRepo --> Service: user
+
+        deactivate UserRepo
+
+        Service -> Patient: SetUserId(userId)
+
+        activate Patient
+
+            Patient --> Service: void
+
+        deactivate Patient
+
+        Service -> PatRepo: UpdateAsync(patient)
+
+        activate PatRepo
+
+            PatRepo --> Service: patient
+
+        deactivate PatRepo
+
+        Service -> Mapper: ToDto(user)
+
+        activate Mapper
+
+            Mapper -> Dto: new UserDto(user)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
 
         Service --> Controller: dto
 
