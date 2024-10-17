@@ -12,9 +12,6 @@ title Class Diagram (CD) - UC023
 
 class OperationTypeController {
     +GetAll(): Task<ActionResult<IEnumerable<OperationTypeDto>>>
-    +GetByName(name: Name): Task<ActionResult<OperationTypeDto>>
-    +GetBySpecialization(specialization: Specialization): Task<ActionResult<IEnumerable<OperationTypeDto>>>
-    +GetByStatus(status: bool): Task<ActionResult<IEnumerable<OperationTypeDto>>>
 }
 
 class OperationTypeService {
@@ -22,13 +19,6 @@ class OperationTypeService {
     +GetByNameAsync(name: Name): Task<OperationTypeDto>
     +GetBySpecializationAsync(specialization: Specialization): Task<List<OperationTypeDto>>
     +GetByStatusAsync(status: bool): Task<List<OperationTypeDto>>
-}
-
-class OperationTypeRepository {
-    +GetAllAsync(): Task<List<OperationType>>
-    +GetByNameAsync(name: Name): Task<OperationType>
-    +GetBySpecializationAsync(specialization: Specialization): Task<List<OperationType>>
-    +GetByStatusAsync(status: bool): Task<List<OperationType>>
 }
 
 interface IOperationTypeRepository {
@@ -93,37 +83,36 @@ class Duration {
     +Minutes: int
 }
 
-class Name {
-    +Name: string
-}
+' class Name {
+'     +Name: string
+' }
 
-class OperationTypeID {
-    +Id: Guid
-}
+' class OperationTypeID {
+'     +Id: Guid
+' }
 
-enum Role {
-    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
-}
+' enum Role {
+'     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+' }
 
 OperationTypeController .> OperationTypeService : > uses
 OperationTypeController ----> OperationTypeDto : > returns
 
-OperationTypeService -> OperationTypeRepository : > uses
+OperationTypeService -> IOperationTypeRepository : > uses
 OperationTypeService ---> OperationType : > updates
 OperationTypeService ---> OperationTypeDto : > creates
 
-OperationTypeRepository --> IOperationTypeRepository : > implements
-OperationTypeRepository --> OperationType : > saves in database
+IOperationTypeRepository --> OperationType : > saves in database
 
-OperationType --> OperationTypeID : > has
-OperationType --> Name : > has
-OperationType --> Specialization : > has
+' OperationType --> OperationTypeID : > has
+' OperationType --> Name : > has
+' OperationType --> Specialization : > has
 OperationType --> RequiredStaff : > has
 OperationType --> PhasesDuration : > has
 
-OperationTypeDto --> OperationTypeID : > has
-OperationTypeDto --> Name : > has
-OperationTypeDto --> Specialization : > has
+' OperationTypeDto --> OperationTypeID : > has
+' OperationTypeDto --> Name : > has
+' OperationTypeDto --> Specialization : > has
 OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has
 
