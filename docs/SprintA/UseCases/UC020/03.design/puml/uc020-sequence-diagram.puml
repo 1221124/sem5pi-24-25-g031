@@ -7,40 +7,39 @@ skinparam classAttributeIconSize 0
 
 title Sequence Diagram (SD) - UC020
 
-participant "OperationTypeController" as Controller
-participant "OperationTypeService" as Service
-participant "OperationType" as Domain
-participant "OperationTypeRepository" as Repository
-participant "IOperationTypeRepository" as IRepo
-participant "CreatingOperationTypeDto" as Dto
+participant ":OperationTypeController" as Controller
+participant ":OperationTypeService" as Service
+participant "creatingDto:CreatingOperationTypeDto" as CreatingDto
+participant ":IOperationTypeRepository" as IRepo
+participant "operationType:OperationType" as Domain
+participant "OperationTypeMapper" as Mapper
+participant "dto:OperationTypeDto" as Dto
 
 -> Controller: POST /api/operationtype
 
 activate Controller
 
-    Controller -> Service: AddAsync(dto)
+    Controller -> Service: AddAsync(creatingDto)
 
     activate Service
 
-        Service -> Service: ValidateOperationTypeName(name)
+        Service -> CreatingDto: getName()
 
-        Service -> Repository: GetByNameAsync(name)
+        activate CreatingDto
 
-        activate Repository
+            CreatingDto --> Service: name
 
-            Repository -> IRepo: GetByNameAsync(name)
-            
-            activate IRepo
+        deactivate CreatingDto
 
-                IRepo --> Repository: null
+        Service -> IRepo: GetByNameAsync(name)
 
-            deactivate IRepo
+        activate IRepo
 
-            Repository --> Service: null
+            IRepo --> Service: null
 
-        deactivate Repository
+        deactivate IRepo
 
-        Service -> Domain: new OperationType(dto.getName(), dto.getSpecialization(), dto.getRequiredStaff(), dto.getPhasesDuration())
+        Service -> Domain: new OperationType(creatingDto.Name, creatingDto.Specialization, creatingDto.RequiredStaff, creatingDto.PhasesDuration)
 
         activate Domain
 
@@ -48,27 +47,27 @@ activate Controller
 
         deactivate Domain
 
-        Service -> Repository: AddAsync(operationType)
+        Service -> IRepo: AddAsync(operationType)
 
-        activate Repository
+        activate IRepo
 
-            Repository -> IRepo: AddAsync(operationType)
+            IRepo --> Service: operationType
 
-            activate IRepo
+        deactivate IRepo
 
-                IRepo --> Repository: dto
+        Service -> Mapper: ToDto(operationType)
 
-            deactivate IRepo
+        activate Mapper
 
-            Repository --> Service: dto
+            Mapper --> Service: dto
 
-        deactivate Repository
+        deactivate Mapper
 
         Service --> Controller: dto
 
     deactivate Service
 
-    <-- Controller : dto
+    <-- Controller: 201 Created
 
 deactivate Controller
 
