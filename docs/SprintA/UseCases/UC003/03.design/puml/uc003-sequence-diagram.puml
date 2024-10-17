@@ -8,13 +8,11 @@ skinparam classAttributeIconSize 0
 
 title Sequence Diagram (SD) - UC003
 
-participant UserController as Controller <<application>>
-participant UserService as Service <<service>>
-database PatientRepository as PRepository <<repository>>
-participant IPatientRepository as IPRepo <<persistence>>
-database UserRepository as URepository <<repository>>
-participant IUserRepository as IURepo <<persistence>>
-participant IAMService as IAMService <<service>>
+participant ":UserController" as Controller <<application>>
+participant ":UserService" as Service <<service>>
+participant ":IPatientRepository" as IPRepo <<persistence>>
+participant ":IUserRepository" as IURepo <<persistence>>
+participant ":IAMService" as IAMService <<service>>
 
 -> Controller: POST /api/user
 
@@ -26,41 +24,23 @@ activate Controller
 
         Service -> Service: ValidatePatientRecord(email)
 
-        Service -> PRepository: GetByEmailAsync(email)
+        Service -> IPRepo: GetByEmailAsync(email)
 
-        activate PRepository
+        activate IPRepo
 
-            PRepository -> IPRepo: GetByEmailAsync(email)
+            IPRepo --> Service: patient
 
-            activate IPRepo
+        deactivate IPRepo
 
-                IPRepo --> PRepository: patient
-
-            deactivate IPRepo
-
-            PRepository --> Service: patient
-
-        deactivate PRepository
-
-        Service -> URepository: GetByEmailAsync(email)
+        Service -> IURepo: GetByEmailAsync(email)
         
-        activate URepository
+        activate IURepo
 
-            URepository -> IURepo: GetByEmailAsync(email)
+            IURepo --> Service: user
 
-            activate IURepo
+        deactivate IURepo
 
-                IURepo --> URepository: user
-
-            deactivate IURepo
-
-            URepository --> Service: user
-
-        deactivate URepository
-
-        Service --> IAMService: RegisterUser(email)
-
-        note right: IAMService is a third-party service\nthat manages user accounts
+        Service -> IAMService: RegisterUser(email)
 
         activate IAMService
 
