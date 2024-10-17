@@ -9,13 +9,13 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC003
 
 participant ":UserController" as Controller <<application>>
-participant "IAMService" as IAM <<Service>>
-participant ":UserService" as Service <<Service>>
+participant "IAMService" as IAM <<service>>
+participant ":UserService" as Service <<service>>
 participant "dto:UserDto" as Dto <<domain>>
 participant ":IPatientRepository" as PatRepo <<persistence>>
-participant ":IUserRepository" as UserRepo <<persistence>>
+participant "UserMapper" as Mapper <<domain>>
 participant "user:User" as User <<domain>>
-participant "UserMapper" as Mapper <<application>>
+participant ":IUserRepository" as UserRepo <<persistence>>
 participant "patient:Patient" as Patient <<domain>>
 
 -> Controller: POST /api/user
