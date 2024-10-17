@@ -11,16 +11,6 @@ activate Patient
 
     activate System
 
-        System --> Patient: Ask for email to check for patient's record existence
-
-    deactivate System
-
-    Patient -> System: Input email
-
-    activate System
-
-        System -> System: Check if patient's record with provided email exists
-
         System --> Patient: Redirect to IAM
 
     deactivate System
@@ -45,23 +35,17 @@ activate Patient
 
     activate IAM
 
-        IAM --> Patient: Registration successful
+        IAM -> System: Send user information as a token (email and role)
 
     deactivate IAM
 
-    Patient -> System: Return to system
-
     activate System
 
-        System --> Patient: Ask for phone number
+        System -> System: Verify patient's profile is created
 
-    deactivate System
+        System -> System: Link patient's profile to user's account
 
-    Patient -> System: Input phone number
-
-    activate System
-
-        System --> Patient: Validate user registration
+        System --> Patient: Show success message
 
     deactivate System
 
