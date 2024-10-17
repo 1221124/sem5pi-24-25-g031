@@ -16,9 +16,10 @@
 
 **From the client clarifications:**
 
-> **Question:** 
+> **Question:** Hello Mr. Client, you want to log all updates to the operation request. Do you plan to have this info available in the app or is this just for audit purposes ?
 > 
-> **Answer:** 
+> **Answer:** the history of the operation type definition is part of the application's data. if the user needs to view the details of an operation that was performed last year, they need to be able to see the operation configuration that was in place at that time
+
 ---
 
 ### 1.3. Acceptance Criteria
@@ -35,6 +36,8 @@
 * This Use Case is relative to US 5.1.17, which is related to the operation request management functionality.
 * It relates to the following Use Cases as well:
   - [UC016](../../UC016/README.md) - As a Doctor, I want to request an operation, so that the Patient has access to the necessary healthcare.
+  - [UC018](../../UC018/READEME.md) - As a Doctor, I want to remove an operation requisition, so that the healthcare activities are provided as necessary.
+  - [UC019](../../UC019/README.md) -  As a Doctor, I want to list/search operation requisitions, so that I see the details, edit, and remove operation requisitions.
 
 
 ### 1.5 Input and Output Data
