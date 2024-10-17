@@ -33,6 +33,24 @@
 >
 > **Question:** In order for a patient to register himself in the IAM (assuming an external IAM is being used), is it necessary to already exist a patient profile (with name, email, medical record number, ...) in the system? If so, the patient profile will already be created, right? I'm asking this because of US5.1.3's description: "As a Patient, I want to register for the healthcare application, so that I can create a user profile and book appointments online". What info is already on the system when the patient registers himself and what info does he need to give after registering in the IAM?
 > **Answer:** Generally speaking, the Admin will create the patient record and only afterwards the patient can self register. That action will link the patient record and the patient account profile. When registering, the patient will provide the email and phone number for the system to cross-check with the patient record.
+>
+> **Question:** In user story 5.1.3, there is an acceptance criterion that caused me some doubts: "The system validates the email address by sending a verification email with a confirmation link."
+
+I understand the relevance of this acceptance criterion when not using an external IAM (Identity and Access Management) system. It ensures that users can't claim someone else's email address, as they would need to access the email to confirm their registration (for example, by clicking a unique link sent to the email).
+
+However, there is another acceptance criterion stating: "Patients can self-register using the external IAM system." In this case, with an external IAM, wouldn't it be possible to bypass the step of sending a confirmation link to validate the email?
+
+Would the following approach be considered correct?
+
+An unauthenticated user tries to log in/access a patient area/register.
+The unauthenticated user submits their credentials through the external IAM login (proving ownership of the email in the process).
+The system receives this user's information (email), and if there is no corresponding user in the system, it asks for registration details (such as name and phone number).
+The user submits the registration details, completing the registration as a patient in the system.
+Advantages of this approach:
+
+Improved user experience: It simplifies the registration process by reducing steps, making it quicker and more convenient for users.
+Efficiency: By relying on the external IAM for email validation, you avoid duplicating validation mechanisms and streamline the process.
+This approach ensures that the email belongs to the patient without the need to send a confirmation email. Do you think this is a good solution, even though it doesn't comply with one of the acceptance criteria?
 
 ### 1.3. Acceptance Criteria
 

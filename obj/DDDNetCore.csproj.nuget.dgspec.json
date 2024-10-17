@@ -1,37 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\dddnetcore\\DDDNetCore.csproj": {}
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj": {}
   },
   "projects": {
-    "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\dddnetcore\\DDDNetCore.csproj": {
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\dddnetcore\\DDDNetCore.csproj",
+        "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\dddnetcore\\DDDNetCore.csproj",
-        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\dddnetcore\\obj\\",
+        "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj",
+        "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp5.0"
+          "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "netcoreapp5.0",
+          "net7.0": {
+            "targetAlias": "net7.0",
             "projectReferences": {}
           }
         },
@@ -47,9 +40,13 @@
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "netcoreapp5.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "dependencies": {
+            "FirebaseAdmin": {
+              "target": "Package",
+              "version": "[3.0.1, )"
+            },
             "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",
               "version": "[5.0.0, )"
@@ -73,7 +70,7 @@
             },
             "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[12.0.3, )"
+              "version": "[13.0.3, )"
             }
           },
           "imports": [
@@ -90,19 +87,19 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[5.0.0, 5.0.0]"
+              "version": "[7.0.20, 7.0.20]"
             },
             {
               "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[5.0.17, 5.0.17]"
+              "version": "[7.0.20, 7.0.20]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[5.0.0, 5.0.0]"
+              "version": "[7.0.20, 7.0.20]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[5.0.0, 5.0.0]"
+              "version": "[7.0.20, 7.0.20]"
             }
           ],
           "frameworkReferences": {

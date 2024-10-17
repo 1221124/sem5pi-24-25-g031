@@ -7,13 +7,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using DDDSample1.Infrastructure;
 using DDDSample1.Infrastructure.Categories;
-using DDDSample1.Infrastructure.Products;
-using DDDSample1.Infrastructure.Families;
 using DDDSample1.Infrastructure.Shared;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Categories;
-using DDDSample1.Domain.Products;
-using DDDSample1.Domain.Families;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 namespace DDDSample1
 {
@@ -22,6 +20,11 @@ namespace DDDSample1
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile("sem5-pi-24-25-g061-firebase-adminsdk-wo55l-834164845b.json"),
+            });
         }
 
         public IConfiguration Configuration { get; }
@@ -70,12 +73,6 @@ namespace DDDSample1
 
             services.AddTransient<ICategoryRepository,CategoryRepository>();
             services.AddTransient<CategoryService>();
-
-            services.AddTransient<IProductRepository,ProductRepository>();
-            services.AddTransient<ProductService>();
-
-            services.AddTransient<IFamilyRepository,FamilyRepository>();
-            services.AddTransient<FamilyService>();
         }
     }
 }

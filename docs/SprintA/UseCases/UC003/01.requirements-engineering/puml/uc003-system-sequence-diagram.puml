@@ -61,7 +61,7 @@ activate Patient
 
     activate System
 
-        System --> Patient: Ask for name
+        System --> Patient: Validate user registration
 
     deactivate System
 
