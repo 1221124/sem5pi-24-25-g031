@@ -1,4 +1,4 @@
-@startuml uc001-sequence-diagram
+@startuml uc003-sequence-diagram
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -6,69 +6,112 @@ skinparam linetype polyline
 
 skinparam classAttributeIconSize 0
 
-title Sequence Diagram (SD) - UC001
+title Sequence Diagram (SD) - UC003
 
-participant ":UserController" as Controller
-participant ":UserService" as Service
-participant ":IUserRepository" as Repository <<interface>>
-participant "user:User" as Domain
-participant "dto:UserDto" as Dto
+participant ":UserController" as Controller <<application>>
+participant "IAMService" as IAM <<Service>>
+participant ":UserService" as Service <<Service>>
+participant "UserMapper" as Mapper <<application>>
+participant "user:User" as User <<domain>>
+participant "creatingDto:CreatingUserDto" as Creating <<domain>>
+participant ":IUserRepository" as UserRepo <<persistence>>
+participant "staff:Staff" as Staff <<domain>>
+participant ":IStaffRepository" as StRepo <<persistence>>
+participant "dto:UserDto" as Dto <<domain>>
 
 -> Controller: POST /api/user
 
 activate Controller
 
-    Controller -> Service: AddAsync(creatingUserDto)
+    Controller -> IAM: Redirect()
+
+    activate IAM
+
+        IAM --> Controller: token
+
+    deactivate IAM
+
+    Controller -> Service: AddAsync(dto)
 
     activate Service
 
-        Service -> Service: ValidateUsernameAndEmail(email)
+        Service -> Mapper: ToUser(dto)
 
-        Service -> Repository: GetByUsernameAsync(email)
-        
-        activate Repository
+        activate Mapper
 
-            Repository --> Service: user
+            Mapper -> User: new User(dto)
 
-        deactivate Repository
+            activate User
 
-        Service -> Repository: GetByEmailAsync(email)
-        
-        activate Repository
+                User --> Mapper: user
 
-            Repository --> Service: user
+            deactivate User
 
-        deactivate Repository
+            Mapper --> Service: user
 
-        Service -> Domain: new User(email, role)
+        deactivate Mapper
 
-        activate Domain
+        Service -> Creating: GetRole()
 
-            Domain --> Service: user
+        activate Creating
 
-        deactivate Domain
+            Creating --> Service: role
 
-        Service -> Repository: AddAsync(user)
+        deactivate Creating
 
-        activate Repository
+        Service -> User: SetRole(role)
 
-            Repository --> Service: user
+        activate User
 
-        deactivate Repository
+            User --> Service: void
 
-        Service -> Dto: new UserDto(user)
+        deactivate User
 
-        activate Dto
+        Service -> UserRepo: AddAsync(user)
 
-            Dto --> Service: dto
+        activate UserRepo
 
-        deactivate Dto
+            UserRepo --> Service: user
+
+        deactivate UserRepo
+
+        Service -> Staff: SetUserId(userId)
+
+        activate Staff
+
+            Staff --> Service: void
+
+        deactivate Staff
+
+        Service -> StRepo: UpdateAsync(Staff)
+
+        activate StRepo
+
+            StRepo --> Service: Staff
+
+        deactivate StRepo
+
+        Service -> Mapper: ToDto(user)
+
+        activate Mapper
+
+            Mapper -> Dto: new UserDto(user)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
 
         Service --> Controller: dto
 
     deactivate Service
 
-    <-- Controller :201 Created
+    <-- Controller: 201 Created
 
 deactivate Controller
 
