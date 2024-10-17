@@ -1,0 +1,98 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC015
+
+class StaffController {
+    + GetAll(): List<Staff>
+    + GetById(StaffId): StaffDTO
+    + Update(StaffId, StaffDTO): StaffDTO
+    + SoftDelete(StaffId): StaffDTO
+}
+
+class StaffService {
+    + GetAllStaff(): List<Staff>
+    + GetByIdAsync(staffId: int): Staff
+    + UpdateAsync(staffDTO): Staff
+    + InactivateAsync(staffId: int): Staff
+}
+
+class StaffDTO {
+    + FullName: FullName
+    + ContactInformation: ContactInformation
+    + Specialization: Specialization
+    + LicenseNumber: int
+    + StaffID: int
+    + Status: StaffStatus
+    + DeactivateTime: dateTime
+    + AppointmentSlots: Appointment
+}
+
+class Staff {
+    + FullName: FullName
+    + ContactInformation: ContactInformation
+    + Specialization: Specialization
+    + LicenseNumber: int
+    + StaffID: int
+    + Status: StaffStatus
+    + DeactivateTime: dateTime
+    + AppointmentSlots: Appointment
+}
+
+class Appointment {
+    + AppointmentID: int
+    + AppointmentStatus: AppointmentStatus
+}
+
+enum AppointmentStatus{
+    SCHEDULED, COMPLETED, CANCELED
+}
+
+enum StaffStatus {
+    ACTIVE, INACTIVE
+}
+
+enum Specialization{
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+interface IStaffRepository {
+    + GetAllStaff(): List<Staff>
+    + GetByIdAsync(staffId: int): Staff
+    + UpdateAsync(staffDTO): Staff
+    + InactivateAsync(staffId: int): Staff
+}
+
+class StaffRepository {
+    + GetAllStaff(): List<Staff>
+    + GetByIdAsync(staffId: int): Staff
+    + UpdateAsync(staffDTO): Staff
+    + InactivateAsync(staffId: int): Staff
+}
+
+StaffDTO --> StaffController : uses
+StaffController --> StaffService : uses
+StaffService --> Staff : creates
+StaffService --> IStaffRepository : depends on
+StaffRepository --> IStaffRepository : implements
+Staff --> ContactInformation : has
+Staff --> FullName : has
+Staff --> StaffStatus : records
+Staff --> Specialization : records
+Staff --> Appointment : has
+Appointment --> AppointmentStatus : has
+
+@enduml
