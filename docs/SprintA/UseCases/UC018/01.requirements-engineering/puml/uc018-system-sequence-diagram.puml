@@ -1,0 +1,26 @@
+@startuml "uc018-system-sequence-diagram"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC018
+actor Doctor as Doctor
+participant ":System" as System
+
+activate Doctor
+Doctor -> System: Requests to delete a Operation Request
+activate System
+    System -> System: Obtains doctor's operation requests
+    activate System 
+        System --> Doctor: Display operation requests 
+        deactivate System
+    
+    Doctor -> System: Selects an operation request to delete
+    activate System
+        System -> System: Deletes the selected operation request
+        activate System
+            deactivate System
+        System --> Doctor: Confirms the deletion
+        deactivate System
+    deactivate Doctor
+@enduml
