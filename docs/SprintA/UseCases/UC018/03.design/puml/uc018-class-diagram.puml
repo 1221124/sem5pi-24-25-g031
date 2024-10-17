@@ -1,0 +1,59 @@
+@startuml "uc018-class-diagram"
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC018
+
+class OperationRequestController {
+    -OperationRequestService operationRequestService
+    +OperationRequestController(OperationRequestService operationRequestService)
+    +DeleteAsync(operationRequestDTO: OperationRequestDTO): Task
+}
+
+class OperationRequestService {
+    -OperationRequestRepository operationRequestRepository
+    -StaffRepository staffRepository
+    +OperationRequestService(OperationRequestRepository operationRequestRepository, StaffRepository staffRepository)
+    +DeleteAsync(operationRequestID: string): Task
+}
+
+class OperationRequestDTO {
+    -operationRequestID: string
+    +OperationRequestDTO(operationRequestID: string)
+}
+
+class OperationRequestRepository {
+    +GetOperationRequestAsync(staff: Staff): Task<OperationRequest>
+    +DeleteAsync(operationRequest: OperationRequest): Task
+}
+
+class StaffRepository {
+    +GetStaffAsync(staffId: string): Task<Staff>
+}
+
+class Staff {
+    -staffId: string
+    +Staff(staffId: string)
+}
+
+class OperationRequest {
+    -operationRequestID: string
+    +OperationRequest(operationRequestID: string)
+}
+
+class AuthenticationService {
+    +AuthenticateAsync(staffId: string): Task
+}
+
+OperationRequestController --> OperationRequestService: <<uses>>
+OperationRequestController --> AuthenticationService  : <<uses>>
+OperationRequestService --> OperationRequestRepository: <<uses>>
+OperationRequestService --> StaffRepository: <<uses>>
+OperationRequestService --> OperationRequestDTO: <<uses>>
+OperationRequestRepository --> Staff: <<uses>>
+OperationRequestRepository --> OperationRequest: <<uses>>
+StaffRepository --> Staff: <<uses>>
+
+@enduml
