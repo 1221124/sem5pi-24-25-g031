@@ -15,6 +15,8 @@ title Domain Model - Backoffice Module
 
 package UserAggregate #MediumAquaMarine {
   class User <<root entity>>
+  class UserId <<value object>>
+  note right of UserId: unique identifier
   class Username <<value object>>
   note right of Username: same as the user's email
   class Role <<value object>> {
@@ -27,6 +29,7 @@ package UserAggregate #MediumAquaMarine {
 
 package PatientAggregate #LightSalmon {
   class Patient <<root entity>>
+  class PatientId <<value object>>
   class DateOfBirth <<value object>>
   note right of DateOfBirth: format: system date
   class Gender <<value object>> {
@@ -143,7 +146,8 @@ DateTime "1" -- "1" Date : > has
 DateTime "1" -- "1" Time : > has
 Slot "1" -- "2" DateTime : > consists of
 
-User "1" -- "1" Username : > identified by
+User "1" -- "1" UserId : > identified by
+User "1" -- "1" Username : > has
 User "1" -- "1" Email : > has
 User "*" -- "1" Role : > has assigned
 User "*" -- "1" UserStatus : > has
@@ -151,17 +155,18 @@ User "*" -- "1" UserStatus : > has
 User "0..1" <-- "0..1" Staff : < references
 User "0..1" <-- "1" Patient : < references
 
+Patient "1" -- "1" PatientId : > identified by
 Patient "1..*" --- "1" FullName : > has
 Patient "*" --- "1" DateOfBirth : > born on
 Patient "*" --- "1" Gender : > has
-Patient "1" --- "1" MedicalRecordNumber : > identified by
+Patient "1" --- "1" MedicalRecordNumber : > has
 Patient "1" --- "1" ContactInformation : > has
 Patient "0..*" --- "0..*" MedicalCondition : > can have
 Patient "*" ---"1" EmergencyContact : > has
 Patient "*" --- "1" AppointmentHistory : > has
 
-Staff "*" -- "1" FullName : > has
 Staff "1" -- "1" StaffID : > identified by
+Staff "*" -- "1" FullName : > has
 Staff "1" -- "1" LicenseNumber : > has
 Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
