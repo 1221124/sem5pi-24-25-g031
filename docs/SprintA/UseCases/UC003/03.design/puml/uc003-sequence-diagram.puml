@@ -74,6 +74,14 @@ activate Controller
 
         deactivate Mapper
 
+        Service -> User: SetRole(PATIENT)
+
+        activate User
+
+            User --> Service: void
+
+        deactivate User
+
         Service -> UserRepo: AddAsync(user)
 
         activate UserRepo
