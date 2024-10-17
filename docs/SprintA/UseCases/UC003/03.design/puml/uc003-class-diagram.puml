@@ -21,7 +21,7 @@ class IAMService {
 
 class RegisterToken {
     +Email: Email
-    +Role: Role
+    ' +Role: Role
 }
 
 interface IPatientRepository {
