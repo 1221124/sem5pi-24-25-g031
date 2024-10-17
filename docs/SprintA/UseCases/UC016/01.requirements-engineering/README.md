@@ -44,7 +44,9 @@
 
 * This Use Case is relative to US 5.1.16, which is related to the operation request made by a Doctor.
 * It relates to the following Use Cases as well:
-n/a
+  - [UC017](../../UC017/README.md) - As a Doctor, I want to update an operation requisition, so that the Patient has access to the necessary healthcare.
+  - [UC018](../../UC018/READEME.md) - As a Doctor, I want to remove an operation requisition, so that the healthcare activities are provided as necessary.
+  - [UC019](../../UC019/README.md) -  As a Doctor, I want to list/search operation requisitions, so that I see the details, edit, and remove operation requisitions.
 
 
 ### 1.5 Input and Output Data
