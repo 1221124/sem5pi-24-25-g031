@@ -7,11 +7,12 @@ skinparam classAttributeIconSize 0
 
 title Sequence Diagram (SD) - UC021
 
-participant "OperationTypeController" as Controller
-participant "OperationTypeService" as Service
-participant "OperationType" as Domain
-participant "OperationTypeRepository" as Repository
-participant "IOperationTypeRepository" as IRepo
+participant ":OperationTypeController" as Controller
+participant ":OperationTypeService" as Service
+participant "dto: OperationTypeDto" as Dto
+participant ":IOperationTypeRepository" as IRepo
+participant "operationType:OperationType" as Domain
+participant "Mapper" as Mapper
 
 -> Controller: PUT /api/operationtype
 
@@ -21,69 +22,115 @@ activate Controller
 
     activate Service
 
-        Service -> Repository: GetByIdAsync(id)
+        Service -> Dto: GetId()
 
-        activate Repository
+        activate Dto
 
-            Repository -> IRepo: GetByIdAsync(id)
-            
-            activate IRepo
+            Dto --> Service: id
 
-                IRepo --> Repository: dto
+        deactivate Dto
 
-            deactivate IRepo
+        Service -> IRepo: GetByIdAsync(id)
 
-            Repository --> Service: dto
+        activate IRepo
 
-        deactivate Repository
+            IRepo --> Service: operationType
 
-        Service -> Service: ValidateOperationTypeName(name)
+        deactivate IRepo
 
-        Service -> Repository: GetByNameAsync(name)
+        Service -> Dto: GetName()
 
-        activate Repository
+        activate Dto
 
-            Repository -> IRepo: GetByNameAsync(name)
-            
-            activate IRepo
+            Dto --> Service: name
 
-                IRepo --> Repository: null
+        deactivate Dto
 
-            deactivate IRepo
+        Service -> Dto: GetSpecialization()
 
-            Repository --> Service: null
+        activate Dto
 
-        deactivate Repository
+            Dto --> Service: specialization
 
-        Service -> Domain: new OperationType(dto.getName(), dto.getSpecialization(), dto.getRequiredStaff(), dto.getPhasesDuration())
+        deactivate Dto
+
+        Service -> Dto: GetRequiredStaff()
+
+        activate Dto
+
+            Dto --> Service: requiredStaff
+
+        deactivate Dto
+
+        Service -> Dto: GetPhasesDuration()
+
+        activate Dto
+
+            Dto --> Service: phasesDuration
+
+        deactivate Dto
+
+        Service -> Domain: SetName(name)
 
         activate Domain
 
-            Domain --> Service: operationType
+            Domain --> Service: void
 
         deactivate Domain
 
-        Service -> Repository: UpdateAsync(operationType)
+        Service -> Domain: SetSpecialization(specialization)
 
-        activate Repository
+        activate Domain
 
-            Repository -> IRepo: UpdateAsync(operationType)
+            Domain --> Service: void
 
-            activate IRepo
+        deactivate Domain
 
-                IRepo --> Repository: dto
+        Service -> Domain: SetRequiredStaff(requiredStaff)
 
-            deactivate IRepo
+        activate Domain
 
-            Repository --> Service: dto
+            Domain --> Service: void
 
-        deactivate Repository
+        deactivate Domain
+
+        Service -> Domain: SetPhasesDuration(phasesDuration)
+
+        activate Domain
+
+            Domain --> Service: void
+
+        deactivate Domain
+
+        Service -> IRepo: UpdateAsync(operationType)
+
+        activate IRepo
+
+            IRepo --> Service: operationType
+
+        deactivate IRepo
+
+        Service -> Mapper: ToDto(operationType)
+
+        activate Mapper
+
+            Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Specialization, operationType.RequiredStaff, operationType.PhasesDuration)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
 
         Service --> Controller: dto
 
     deactivate Service
 
-    <-- Controller : dto
+    <-- Controller : 200 OK
 
 deactivate Controller
 
