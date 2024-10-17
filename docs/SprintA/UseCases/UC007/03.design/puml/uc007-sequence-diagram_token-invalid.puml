@@ -10,8 +10,7 @@ participant PatientService as Service <<service>>
 participant IAMService as IAM <<service>>
 participant UserToken as Token <<domain>>
 participant PatientDTO as DTO <<dto>>
-database PatientRepository as Repository <<repository>>
-participant InterfacePatientRepository as Interface <<interface>>
+participant PatientRepository as Repository <<interface>>
 
 --> Controller: POST /api/patient/login\nBody={token}
     activate Controller
@@ -29,11 +28,6 @@ participant InterfacePatientRepository as Interface <<interface>>
                 alt try
                 IAM -> Repository: FindRoleByID(patientToken.id)
                 activate Repository
-                
-                    Repository -> Interface: FindRoleByID(patientToken.id)
-                    activate Interface
-                        deactivate Interface
-
                     Repository --> IAM: role
                     deactivate Repository
 
