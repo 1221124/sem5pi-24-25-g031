@@ -7,11 +7,12 @@ skinparam classAttributeIconSize 0
 
 title Sequence Diagram (SD) - UC022
 
-participant "OperationTypeController" as Controller
-participant "OperationTypeService" as Service
-participant "OperationType" as Domain
-participant "OperationTypeRepository" as Repository
-participant "IOperationTypeRepository" as IRepo
+participant ":OperationTypeController" as Controller
+participant ":OperationTypeService" as Service
+participant ":IOperationTypeRepository" as IRepo
+participant "operationType:OperationType" as Domain
+participant "Mapper" as Mapper
+participant "dto: OperationTypeDto" as Dto
 
 -> Controller: DELETE /api/operationtype
 
@@ -21,23 +22,15 @@ activate Controller
 
     activate Service
 
-        Service -> Repository: GetByIdAsync(id)
+        Service -> IRepo: GetByIdAsync(id)
 
-        activate Repository
+        activate IRepo
 
-            Repository -> IRepo: GetByIdAsync(id)
-            
-            activate IRepo
+            IRepo --> Service: operationType
 
-                IRepo --> Repository: operationType
+        deactivate IRepo
 
-            deactivate IRepo
-
-            Repository --> Service: operationType
-
-        deactivate Repository
-
-        Service -> Domain: MarkAsInactive()
+        Service -> Domain: SetStatus(INACTIVE)
         
         activate Domain
 
@@ -45,13 +38,27 @@ activate Controller
 
         deactivate Domain
 
-        Service -> Service: new OperationTypeDto(name, status, specialization, requiredStaff, phasesDuration)
+        Service -> Mapper: ToDto(operationType)
+
+        activate Mapper
+
+            Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Status, operationType.Specialization, operationType.RequiredStaff, operationType.PhasesDuration)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
 
         Service --> Controller: dto
 
     deactivate Service
 
-    <-- Controller: dto
+    <-- Controller: 200 OK
 
 deactivate Controller
 
