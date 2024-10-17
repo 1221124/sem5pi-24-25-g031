@@ -1,0 +1,47 @@
+@startuml "uc019-system-sequence-diagram_search-priority"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC019\nSearch by Priority
+participant OperationRequestController as Controller <<controller>>
+participant ":AuthService" as AuthService <<service>>
+participant OperationRequestService as Service <<service>>
+participant OperationRequestDTO as DTO <<dto>>
+database ":OperationRequestRepository" as Repository <<interface>>
+database ":StaffRepository" as StaffRepository <<interface>>
+
+--> Controller: GET /api/staff/operation-requests/search/?staffId={{staffId}}&priority={{priority}}
+activate Controller
+    Controller -> AuthService: AuthenticateAsync(operationRequestDTO.staffId)
+    activate AuthService
+        AuthService --> Controller: IsAuthenticated
+        deactivate AuthService
+
+    Controller -> Service: SearchByPriorityAsync(operationRequestDTO)
+    activate Service 
+        Service -> StaffRepository: GetStaffAsync(operationRequestDTO.staffId)
+        activate StaffRepository
+            StaffRepository --> Service: staff
+            deactivate StaffRepository 
+
+        Service -> Repository: GetPriorityAsync(staff, operationRequestDTO.priority)
+        activate Repository
+            Repository --> Service: lisDTO = new List<OperationRequest>
+            deactivate Repository
+            loop through all list
+                Service -> DTO: new OperationRequestDTO(operationRequest[i].operationRequestID,\noperationRequest[i].patientName, operationRequest[i].priority, operationRequest[i].status)
+                activate DTO
+                    DTO --> Service: operationRequestDTO
+                    deactivate DTO
+                Service -> Service: listDTO.Add(operationRequestDTO)
+                activate Service
+                    deactivate Service
+            end
+        Service --> Controller: listDTO
+        deactivate Service
+
+    <-- Controller: return 200 OK={message} 
+    deactivate Controller
+
+@enduml
