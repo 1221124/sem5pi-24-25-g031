@@ -11,19 +11,11 @@ top to bottom direction
 title Class Diagram (CD) - UC021
 
 class OperationTypeController {
-    +GetByName(name: string): Task<ActionResult<OperationTypeDto>>
     +Update(dto: OperationTypeDto): Task<ActionResult<OperationTypeDto>>
 }
 
 class OperationTypeService {
-    +GetByNameAsync(name: string): Task<OperationTypeDto>
-    +ValidateOperationTypeName(name: Name): Task<bool>
     +UpdateAsync(dto: OperationTypeDto): Task<OperationTypeDto>
-}
-
-class OperationTypeRepository {
-    +GetByNameAsync(name: Name): Task<OperationType>
-    +UpdateAsync(dto: OperationTypeDto): Task<OperationType>
 }
 
 interface IOperationTypeRepository {
@@ -81,43 +73,42 @@ class Duration {
     +Minutes: int
 }
 
-class Name {
-    +Name: string
-}
+' class Name {
+'     +Name: string
+' }
 
-class OperationTypeID {
-    +Id: Guid
-}
+' class OperationTypeID {
+'     +Id: Guid
+' }
 
-enum Role {
-    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
-}
+' enum Role {
+'     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+' }
 
-enum Status {
-    ACTIVE, INACTIVE
-}
+' enum Status {
+'     ACTIVE, INACTIVE
+' }
 
 OperationTypeController .> OperationTypeService : > uses
 OperationTypeController ----> OperationTypeDto : > returns
 
-OperationTypeService -> OperationTypeRepository : > uses
+OperationTypeService -> IOperationTypeRepository : > uses
 OperationTypeService ---> OperationType : > updates
 OperationTypeService ---> OperationTypeDto : > creates
 
-OperationTypeRepository --> IOperationTypeRepository : > implements
-OperationTypeRepository --> OperationType : > saves in database
+IOperationTypeRepository --> OperationType : > saves in database
 
-OperationType --> OperationTypeID : > has
-OperationType --> Name : > has
-OperationType --> Status : > has
-OperationType --> Specialization : > has
+' OperationType --> OperationTypeID : > has
+' OperationType --> Name : > has
+' OperationType --> Status : > has
+' OperationType --> Specialization : > has
 OperationType --> RequiredStaff : > has
 OperationType --> PhasesDuration : > has
 
-OperationTypeDto --> OperationTypeID : > has
-OperationTypeDto --> Name : > has
-OperationTypeDto --> Status : > has
-OperationTypeDto --> Specialization : > has
+' OperationTypeDto --> OperationTypeID : > has
+' OperationTypeDto --> Name : > has
+' OperationTypeDto --> Status : > has
+' OperationTypeDto --> Specialization : > has
 OperationTypeDto --> RequiredStaff : > has several
 OperationTypeDto --> PhasesDuration : > has
 
