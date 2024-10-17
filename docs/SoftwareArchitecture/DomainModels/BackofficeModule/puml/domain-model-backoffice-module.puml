@@ -50,8 +50,8 @@ package StaffAggregate #Pink {
 
 package OperationRequestAggregate #LightGoldenRodYellow {
   class OperationRequest <<root entity>>
-  class RequestID <<value object>>
-  note right of RequestID: unique identifier
+  class OperationRequestID <<value object>>
+  note right of OperationRequestID: unique identifier
   class DeadlineDate <<value object>>
   class OperationPriority <<value object>> {
     ELECTIVE, URGENT, EMERGENCY
@@ -110,6 +110,7 @@ package LogAggregate #LightGray {
 }
 
 class FullName <<value object>>
+class Name <<value object>>
 class ContactInformation <<value object>>
 class PhoneNumber <<value object>>
 class Email <<value object>>
@@ -134,8 +135,7 @@ note top of Nurse: conceptual class
 class Technician
 note right of Technician: conceptual class
 
-FullName "1" -- "1" FirstName : > has
-FullName "1" -- "1" LastName : > has
+FullName "1" -- "2" Name : > has
 ContactInformation "1" -- "1" PhoneNumber : > has
 ContactInformation "1" -- "1" Email : > has
 EmergencyContact "1" -- "1" PhoneNumber : > has
