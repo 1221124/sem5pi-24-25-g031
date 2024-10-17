@@ -35,13 +35,15 @@ activate Patient
 
     activate IAM
 
-        IAM -> System: Send user information as a token (email and role)
+        IAM -> System: Send user email as token
 
     deactivate IAM
 
     activate System
 
         System -> System: Verify patient's profile is created
+
+        System -> System: Assign patient role to user
 
         System -> System: Link patient's profile to user's account
 
