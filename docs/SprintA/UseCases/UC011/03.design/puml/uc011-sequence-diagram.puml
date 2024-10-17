@@ -21,6 +21,7 @@ loop for each search criteria
     phone number, medical record number, date of birth, gender.
     The method "GetByCriteria" will be called for each search criteria.
     "searchCriteria" is from the type e.g "Name"
+    Exemplo:"Name=Guilherme&email=1220786@isep.ipp.pt"
   end note
 
   -> Routing: GET/Patients/?searchCriteria=criteria
