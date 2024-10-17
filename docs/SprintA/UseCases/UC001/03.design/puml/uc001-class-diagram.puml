@@ -8,6 +8,7 @@ skinparam classAttributeIconSize 0
 title Class Diagram (CD) - UC001
 
 class User {
+    +UserId: Guid
     +Username: Username
     +Email: Email
     +Role: Role
@@ -43,6 +44,7 @@ class Admin <<conceptual class>>
 
 Admin "1" -> "*" User: creates >
 
+User "1" --> "1" UserId: has >
 User "1" --> "1" Username: has >
 User "1" --> "1" Email: has >
 User "*" --> "1" Role: has >

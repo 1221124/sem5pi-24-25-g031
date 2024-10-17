@@ -8,28 +8,27 @@ skinparam classAttributeIconSize 0
 
 title Sequence Diagram (SD) - UC001
 
-participant UserController as Controller <<application>>
-participant UserService as Service <<persistence>>
-database UserRepository as Repository <<repository>>
-participant IUserRepository as IRepo <<persistence>>
+participant ":UserController" as Controller
+participant ":UserService" as Service
+participant ":IUserRepository" as Repository <<interface>>
+participant "user:User" as Domain
+participant "dto:UserDto" as Dto
 
 -> Controller: POST /api/user
 
 activate Controller
 
-    Controller -> Service: AddAsync(dto)
+    Controller -> Service: AddAsync(creatingUserDto)
 
     activate Service
 
         Service -> Service: ValidateUsernameAndEmail(email)
 
-        Service -> Repository: GetByUsernameAsync(username)
+        Service -> Repository: GetByUsernameAsync(email)
         
         activate Repository
 
-            Repository -> Repository: FindByUsername(username)
-            
-            Repository --> Service: null
+            Repository --> Service: user
 
         deactivate Repository
 
@@ -37,35 +36,39 @@ activate Controller
         
         activate Repository
 
-            Repository -> Repository: FindByEmail(email)
-            
-            Repository --> Service: null
-
-        deactivate Repository
-
-        Service -> Repository: AddAsync(dto)
-
-        activate Repository
-
-            Repository -> IRepository: AddAsync(dto)
-            
-            activate IRepo
-
-                IRepo --> Repository: user
-
-            deactivate IRepo
-            
             Repository --> Service: user
 
         deactivate Repository
 
-        Service -> Service: SendConfirmationEmail(email)
+        Service -> Domain: new User(email, role)
+
+        activate Domain
+
+            Domain --> Service: user
+
+        deactivate Domain
+
+        Service -> Repository: AddAsync(user)
+
+        activate Repository
+
+            Repository --> Service: user
+
+        deactivate Repository
+
+        Service -> Dto: new UserDto(user)
+
+        activate Dto
+
+            Dto --> Service: dto
+
+        deactivate Dto
 
         Service --> Controller: dto
 
     deactivate Service
 
-    <-- Controller: dto
+    <-- Controller :201 Created
 
 deactivate Controller
 
