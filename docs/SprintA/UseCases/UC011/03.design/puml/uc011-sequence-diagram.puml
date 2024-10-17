@@ -7,8 +7,6 @@ skinparam classAttributeIconSize 0
 
 title Sequence Diagram (SD) - UC011
 
-
-participant "Routing" as Routing 
 participant "PatientController" as Controller <<controller>>
 participant ":PatientService" as Service <<service>>
 participant ":IPatientRepository" as IPatientRepository <<interface>>
@@ -16,7 +14,7 @@ participant "PatientDTO" as PatientDTO <<dto>>
 
 loop for each search criteria
 
-  note right of Routing
+  note left of Controller
     the "criteria" can be any of the following: name, email, 
     phone number, medical record number, date of birth, gender.
     The method "GetByCriteria" will be called for each search criteria.
@@ -24,11 +22,8 @@ loop for each search criteria
     Exemplo:"Name=Guilherme&email=1220786@isep.ipp.pt"
   end note
 
-  -> Routing: GET/Patients/?searchCriteria=criteria
-  activate Routing
-
-    Routing -> Controller: GetByCriteria(criteria)
-    activate Controller
+  -> Controller: GET/Patients/?searchCriteria=criteria\nGetByCriteria(criteria)
+  activate Controller
 
       Controller -> Service: GetByCriteriaAsync(criteria)
       activate Service
@@ -53,11 +48,8 @@ end
         Service --> Controller: patientDtoList
       deactivate Service
 
-      Controller --> Routing: patientDtoList
-    deactivate Controller
-
-    <- Routing : response
-  deactivate Routing
+    <-- Controller : response
+  deactivate Controller
 
 
 
