@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.OperationTypes;
 
-namespace Infrastructure.Categories
+namespace Infrastructure.TEMPLATE
 {
     internal class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<OperationType>
     {

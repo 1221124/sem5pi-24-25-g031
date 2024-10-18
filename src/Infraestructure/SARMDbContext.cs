@@ -4,11 +4,11 @@ using Infrastructure.OperationTypes;
 
 namespace Infrastructure
 {
-    public class DDDSample1DbContext : DbContext
+    public class SARMDbContext : DbContext
     {
         public DbSet<OperationType> OperationTypes { get; set; }
 
-        public DDDSample1DbContext(DbContextOptions options) : base(options)
+        public SARMDbContext (DbContextOptions options) : base(options)
         {
 
         }

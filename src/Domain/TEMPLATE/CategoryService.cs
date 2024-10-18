@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using DDDSample1.Domain.Shared;
+using Domain.Shared;
 
-namespace DDDSample1.Domain.Categories
+namespace Domain.TEMPLATE
 {
     public class CategoryService
     {

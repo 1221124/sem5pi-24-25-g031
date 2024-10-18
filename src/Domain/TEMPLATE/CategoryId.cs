@@ -1,8 +1,8 @@
 using System;
-using DDDSample1.Domain.Shared;
+using Domain.Shared;
 using Newtonsoft.Json;
 
-namespace DDDSample1.Domain.Categories
+namespace Domain.TEMPLATE
 {
     public class CategoryId : EntityId
     {

@@ -1,4 +1,4 @@
-namespace DDDSample1.Domain.Categories
+namespace Domain.TEMPLATE
 {
     public class CreatingCategoryDto
     {

@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.Categories;
+using Domain.Shared;
+using Domain.TEMPLATE;
 
-namespace DDDSample1.Controllers
+namespace Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
