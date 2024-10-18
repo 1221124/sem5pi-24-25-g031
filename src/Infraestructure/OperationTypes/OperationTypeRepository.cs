@@ -1,7 +1,7 @@
 using Domain.OperationTypes;
 using Infrastructure.Shared;
 
-namespace Infrastructure.Categories
+namespace Infrastructure.OperationTypes
 {
     public class OperationTypeRepository : BaseRepository<OperationType, OperationTypeId>, IOperationTypeRepository
     {

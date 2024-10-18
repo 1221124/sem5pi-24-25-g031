@@ -1,29 +1,15 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Shared;
-using Domain.OperationTypes;
-using Google.Cloud.Firestore;
-using System;
 
-namespace Domain.IAM
+namespace Domain.OperationTypes
 {
-    public class IAMService
+    public class OperationTypeService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationTypeRepository _repo;
-        
-        private FirestoreDb _firestoreDb;
 
-        public IAMService()
-        {
-            string pathToServiceAccountKey = "../../../sem5-pi-24-25-g061-firebase-adminsdk-wo55l-834164845b.json";
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToServiceAccountKey);
-            
-            _firestoreDb = FirestoreDb.Create("sem5-pi-24-25-g061"); //TODO: Review this
-        }
-
-
-        public IAMService(IUnitOfWork unitOfWork, IOperationTypeRepository repo)
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repo)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;

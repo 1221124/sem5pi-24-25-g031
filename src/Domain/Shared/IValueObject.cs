@@ -1,4 +1,4 @@
-namespace DDDSample1.Domain.Shared
+namespace Domain.Shared
 {
     public interface IValueObject
     {

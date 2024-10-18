@@ -1,53 +1,67 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using DDDSample1.Domain.Shared;
+using Domain.Shared;
+using Domain.OperationTypes;
+using Google.Cloud.Firestore;
+using System;
 
-namespace DDDSample1.Domain.Categories
+namespace Domain.IAM
 {
-    public class CategoryService
+    public class UserToken
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICategoryRepository _repo;
+        private readonly IOperationTypeRepository _repo;
+        
+        private FirestoreDb _firestoreDb;
 
-        public CategoryService(IUnitOfWork unitOfWork, ICategoryRepository repo)
+        public UserToken()
+        {
+            string pathToServiceAccountKey = "../../../sem5-pi-24-25-g061-firebase-adminsdk-wo55l-834164845b.json";
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToServiceAccountKey);
+            
+            _firestoreDb = FirestoreDb.Create("sem5-pi-24-25-g061"); //TODO: Review this
+        }
+
+
+        public UserToken(IUnitOfWork unitOfWork, IOperationTypeRepository repo)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
         }
 
-        public async Task<List<CategoryDto>> GetAllAsync()
+        public async Task<List<OperationTypeDto>> GetAllAsync()
         {
             var list = await this._repo.GetAllAsync();
             
-            List<CategoryDto> listDto = list.ConvertAll<CategoryDto>(cat => new CategoryDto{Id = cat.Id.AsGuid(), Description = cat.Description});
+            List<OperationTypeDto> listDto = list.ConvertAll<OperationTypeDto>(cat => new OperationTypeDto{Id = cat.Id.AsGuid(), Description = cat.Description});
 
             return listDto;
         }
 
-        public async Task<CategoryDto> GetByIdAsync(CategoryId id)
+        public async Task<OperationTypeDto> GetByIdAsync(OperationTypeId id)
         {
             var cat = await this._repo.GetByIdAsync(id);
             
             if(cat == null)
                 return null;
 
-            return new CategoryDto{Id = cat.Id.AsGuid(), Description = cat.Description};
+            return new OperationTypeDto{Id = cat.Id.AsGuid(), Description = cat.Description};
         }
 
-        public async Task<CategoryDto> AddAsync(CreatingCategoryDto dto)
+        public async Task<OperationTypeDto> AddAsync(CreatingOperationTypeDto dto)
         {
-            var category = new Category(dto.Description);
+            var category = new OperationType(dto.Description);
 
             await this._repo.AddAsync(category);
 
             await this._unitOfWork.CommitAsync();
 
-            return new CategoryDto { Id = category.Id.AsGuid(), Description = category.Description };
+            return new OperationTypeDto { Id = category.Id.AsGuid(), Description = category.Description };
         }
 
-        public async Task<CategoryDto> UpdateAsync(CategoryDto dto)
+        public async Task<OperationTypeDto> UpdateAsync(OperationTypeDto dto)
         {
-            var category = await this._repo.GetByIdAsync(new CategoryId(dto.Id)); 
+            var category = await this._repo.GetByIdAsync(new OperationTypeId(dto.Id)); 
 
             if (category == null)
                 return null;   
@@ -57,10 +71,10 @@ namespace DDDSample1.Domain.Categories
             
             await this._unitOfWork.CommitAsync();
 
-            return new CategoryDto { Id = category.Id.AsGuid(), Description = category.Description };
+            return new OperationTypeDto { Id = category.Id.AsGuid(), Description = category.Description };
         }
 
-        public async Task<CategoryDto> InactivateAsync(CategoryId id)
+        public async Task<OperationTypeDto> InactivateAsync(OperationTypeId id)
         {
             var category = await this._repo.GetByIdAsync(id); 
 
@@ -72,10 +86,10 @@ namespace DDDSample1.Domain.Categories
             
             await this._unitOfWork.CommitAsync();
 
-            return new CategoryDto { Id = category.Id.AsGuid(), Description = category.Description };
+            return new OperationTypeDto { Id = category.Id.AsGuid(), Description = category.Description };
         }
 
-         public async Task<CategoryDto> DeleteAsync(CategoryId id)
+         public async Task<OperationTypeDto> DeleteAsync(OperationTypeId id)
         {
             var category = await this._repo.GetByIdAsync(id); 
 
@@ -88,7 +102,7 @@ namespace DDDSample1.Domain.Categories
             this._repo.Remove(category);
             await this._unitOfWork.CommitAsync();
 
-            return new CategoryDto { Id = category.Id.AsGuid(), Description = category.Description };
+            return new OperationTypeDto { Id = category.Id.AsGuid(), Description = category.Description };
         }
     }
 }

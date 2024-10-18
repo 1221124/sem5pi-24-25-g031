@@ -2,9 +2,9 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using DDDSample1.Domain.Shared;
+using Domain.Shared;
 
-namespace DDDSample1.Infrastructure.Shared
+namespace Infrastructure.Shared
 {
     /// <summary>
     /// Based on https://andrewlock.net/strongly-typed-ids-in-ef-core-using-strongly-typed-entity-ids-to-avoid-primitive-obsession-part-4/
