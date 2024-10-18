@@ -1,36 +1,33 @@
 using System;
+using System.Collections.Generic;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
 {
     public class OperationType : Entity<OperationTypeId>, IAggregateRoot
     {
-     
-        public string Description { get;  private set; }
+        public Name Name { get; set; }
 
-        public bool Active{ get;  private set; }
+        public Specialization Specialization { get; set; }
 
-        private OperationType()
+        public List<RequiredStaff> _requiredStaff { get; set; }
+
+        public PhasesDuration PhasesDuration { get; set; }
+
+        public OperationType(Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
         {
-            this.Active = true;
+            Name = name;
+            Specialization = specialization;
+            _requiredStaff = requiredStaff;
+            PhasesDuration = phasesDuration;
         }
 
-        public OperationType(string description)
+        public OperationType(string name, string specialization, string requiredStaff, string phasesDuration)
         {
-            this.Id = new OperationTypeId(Guid.NewGuid());
-            this.Description = description;
-            this.Active = true;
-        }
-
-        public void ChangeDescription(string description)
-        {
-            if (!this.Active)
-                throw new BusinessRuleValidationException("It is not possible to change the description to an inactive category.");
-            this.Description = description;
-        }
-        public void MarkAsInative()
-        {
-            this.Active = false;
+            Name = name;
+            Specialization = SpecializationUtils.FromString(specialization);
+            _requiredStaff = RequiredStaff.FromString(requiredStaff);
+            PhasesDuration = phasesDuration;
         }
     }
 }

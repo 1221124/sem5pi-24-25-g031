@@ -6,7 +6,7 @@ namespace Domain.Shared
         CARDIOLOGY,
         ORTHOPAEDICS
     }
-    public static class SpecializationUtils
+    public class SpecializationUtils
     {
         public static Specialization FromString(string specialization)
         {
