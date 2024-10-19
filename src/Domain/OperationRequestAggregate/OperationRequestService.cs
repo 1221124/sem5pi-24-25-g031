@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Shared;
-using Domain.OperationRequestAggregate;
+using Domain.OperationTypes;
+using Log;
+using System;
 
 namespace Domain.OperationRequestAggregate
 {
@@ -9,6 +11,9 @@ namespace Domain.OperationRequestAggregate
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationRequestRepository _repo;
+        private readonly IOperationTypeRepository _operationTypeRepository;
+        /*private readonly IPatientRepository _patientRepository;
+        private readonly IStaffRepository _staffRepository;*/
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo)
         {
@@ -20,33 +25,57 @@ namespace Domain.OperationRequestAggregate
         {
             var list = await this._repo.GetAllAsync();
             
-            List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(cat => new OperationRequestDto{});
+            List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(
+                cat => new OperationRequestDto{ 
+                    Id = cat.Id.AsGuid(), OperationTypeId = cat.operationTypeId, DeadlineDate = cat.deadlineDate, Priority = cat.priority
+                    }
+                );
 
             return listDto;
         }
-        public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto dto)
+        public async Task<OperationRequestDto> AddAsync(OperationRequestDto dto)
         {
-            var category = new OperationRequestDto(dto.OperationTypeId, dto.DeadlineDate, dto.Priority);
+            
+            var category = new OperationRequest(/*dto.doctorId, dto.patientId,*/dto.OperationTypeId, dto.DeadlineDate, dto.Priority);
 
             await this._repo.AddAsync(category);
 
             await this._unitOfWork.CommitAsync();
 
-            return new OperationRequestDto {id = category.Id.AsGuid(), operationTypeId = category.operationTypeId, deadlineDate = category.deadlineDate, priority = category.priority};
+            return new OperationRequestDto {
+                Id = category.Id.AsGuid(), OperationTypeId = category.operationTypeId, DeadlineDate = category.deadlineDate, Priority = category.priority
+                };
         }
 
-        public async Task<OperationRequestDto> UpdateAsync(OperationRequestDto dto)
+        public async Task<OperationRequestDto> UpdateAsync(OperationRequestDto dto, UpdateType update)
         {
-            var category = await this._repo.GetByIdAsync(new OperationRequestId(dto.id)); 
+            var category = await this._repo.GetByIdAsync(new OperationRequestId(dto.Id)); 
 
             if (category == null)
-                return null;   
+                return null;
 
-            // change all field
-            
+            switch (update)
+            {
+                case UpdateType.OPERATION_TYPE_ID:
+                    category.operationTypeId = dto.OperationTypeId;
+                    break;
+                case UpdateType.DEADLINE_DATE:
+                    category.deadlineDate = dto.DeadlineDate;
+                    break;
+                case UpdateType.PRIORITY:
+                    category.priority = dto.Priority;
+                    break;
+                default:
+                    throw new ArgumentException("Error: Invalid update type.");
+            }
+
+            await this._repo.UpdateAsync(category);
+
             await this._unitOfWork.CommitAsync();
 
-            return new OperationRequestDto {id = category.Id.AsGuid(), operationTypeId = category.operationTypeId, deadlineDate = category.deadlineDate, priority = category.priority};
+            return new OperationRequestDto {
+                Id = category.Id.AsGuid(), OperationTypeId = category.operationTypeId, DeadlineDate = category.deadlineDate, Priority = category.priority
+                };
         }
 
          public async Task<OperationRequestDto> DeleteAsync(OperationRequestId id)
@@ -55,14 +84,11 @@ namespace Domain.OperationRequestAggregate
 
             if (category == null)
                 return null;   
-
-            // if (category.Active)
-            //     throw new BusinessRuleValidationException("It is not possible to delete an active category.");
             
             this._repo.Remove(category);
             await this._unitOfWork.CommitAsync();
 
-            return new OperationRequestDto {id = category.Id.AsGuid()};
+            return new OperationRequestDto {Id = category.Id.AsGuid()};
         }
     }
 }

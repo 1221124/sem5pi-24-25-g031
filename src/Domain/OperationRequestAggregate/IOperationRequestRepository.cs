@@ -6,11 +6,9 @@ namespace Domain.OperationRequestAggregate
     public interface IOperationRequestRepository : IRepository<OperationRequest, OperationRequestId>
     {
         Task AddAllAsync(OperationRequest category);
-        Task AddAsync(OperationRequestDto category);
-        Task UpdateAsync(OperationRequestDto category);
+        new Task AddAsync(OperationRequest category);
+        Task UpdateAsync(OperationRequest category);
         Task DeleteAsync(OperationRequestId id);
         Task GetTaskByIdAsync(OperationRequestId id);
-
-        
     }
 }
