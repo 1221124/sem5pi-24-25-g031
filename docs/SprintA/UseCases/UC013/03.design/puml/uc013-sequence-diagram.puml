@@ -10,6 +10,8 @@ title Sequence Diagram (SD) - UC013
 participant ":Routing" as Routing
 participant ":StaffController" as Controller <<controller>>
 participant ":StaffService" as Service <<service>>
+participant ":LogService" as LogService <<service>>
+participant ":EmailService" as EmailService <<service>>
 participant "Staff" as Staff <<entity>>
 participant "StaffMapper" as Mapper <<mapper>>
 participant ":IStaffRepository" as IRepository <<interface>>
@@ -68,8 +70,18 @@ activate Service
         Mapper --> Service: dto
     deactivate Mapper
 
-    Service --> Controller: 200 OK
+    Service --> Controller: 200 OK 
 deactivate Service
+
+Controller -> LogService: LogChanges(staff)
+activate LogService
+    LogService --> Controller: void
+deactivate LogService
+
+Controller -> EmailService: SendConfirmationEmail(staff)
+activate EmailService
+    EmailService --> Controller: void
+deactivate EmailService
 
 Controller --> Routing: 200 OK
 deactivate Controller

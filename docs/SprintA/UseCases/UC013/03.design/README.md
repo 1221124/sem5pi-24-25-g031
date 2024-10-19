@@ -1,40 +1,41 @@
-# UC030 - As Customer Manager, I want the system to notify candidates, by email, of the result of the verification process
+# UC013 -  As an Admin, I want to edit a staff’s profile, so that I can update their information
 
 ## 3. Design - Use Case Realization
 
 ### 3.1. Rationale
 
-| Interaction ID                                       | Question: Which class is responsible for...         | Answer                              | Justification (with patterns)                                                                                                        |
-|:-----------------------------------------------------|:----------------------------------------------------|:------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
-| Step 1: Notify Candidates                            | ... triggering the notification process?            | ResultProcessNotificationController | Controller: ResultProcessNotificationController is responsible for controlling the flow of the notification process.                 |
-|                                                      | ... searching information about candidate?          | JobApplication                      | Information Expert: JobApplication is responsible for holding and providing candidate information.                                   |
-|                                                      | ... fetching the list of candidates?                | JobApplicationRepository            | Information Expert: JobApplicationRepository provides access to job application data, including candidate details.                   |
-| Step 2: Send Email                                   | ... sending the email to candidates?                | JobOpeningManagementService         | Service: JobOpeningManagementService provides the service of sending emails to candidates.                                           |
-|                                                      | ... creating the email content?                     | JobOpeningManagementService         | Service: JobOpeningManagementService is responsible for generating the email content.                                                |
-|                                                      | ... providing information for the email content?    | Phase and JobOpening                | Information Expert: Phase and JobOpening provide the necessary information for creating the email content.                           |
-| Step 3: Save Notification Record                     | ... saving the notification record in the database? | JobApplicationRepository            | Information Expert: JobApplicationRepository is responsible for saving notification records in the database.                         |
-| Step 4: Show (in)success of the operation's message  | ... showing the notification (in)success message?   | ResultProcessNotificationUI         | Pure Fabrication: ResultProcessNotificationUI is responsible for showing the success or failure message of the notification process. |
+| Interaction ID                                                      | Question: Which class is responsible for...            | Answer               | Justification (with patterns)                                                                                                                                                             |
+|:--------------------------------------------------------------------|:-------------------------------------------------------|:---------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Step 1: Admin submits a request to edit a staff profile.            | ... triggering the update process?                     | **StaffController**  | The **StaffController** handles the Admin's request to edit staff profiles, ensuring proper communication between the UI and the underlying business logic, in line with the MVC pattern. |
+| Step 2: Create a DTO to encapsulate updated staff data.             | ... prepare the staff profile data for the controller? | **StaffDto**         | The **StaffDto** encapsulates the updated data for the staff profile to be transferred between layers, ensuring only the necessary information is passed along.                           |
+| Step 3: Retrieve all staff profiles from the service.               | ... retrieve all staff profiles from the service?      | **StaffService**     | The **StaffService** contains the business logic for retrieving staff profiles from the repository, ensuring that only valid and consistent data is processed.                            |
+| Step 4: Return the staff profiles to the service.                   | ... return the staff profiles to the service?          | **StaffRepository**  | The **StaffRepository** is responsible for fetching staff profile data from the database, adhering to the Repository pattern to separate data access logic from business logic.           |
+| Step 5: Access the repository to fetch data.                        | ... Repository                                         | **IStaffRepository** | The **IStaffRepository** defines the contract for data access methods, ensuring that different implementations of data sources can be used without affecting the business logic.          |
+| Step 6: Update the staff profile with new data.                     | ... Controller                                         | **StaffController**  | The **StaffController** sends the updated staff profile back to the Admin after processing, completing the request-response cycle in the MVC structure.                                   |
+| Step 7: Log all profile changes.                                    | ... logging changes                                    | **LogService**       | The **LogService** records all changes made to the staff profile, ensuring an audit trail for accountability and review.                                                                  |
+| Step 8: Trigger confirmation email for contact information changes. | ... notify staff                                       | **EmailService**     | The **EmailService** sends a confirmation email to the staff member when their contact information is updated, ensuring they are informed of changes to their profile.                    |
+| Step 9: Update edited data in real-time across the system.          | ... reflect updates                                    | **StaffService**     | The **StaffService** ensures that any changes to staff profiles are reflected in real-time across the system, maintaining data consistency and immediacy for all users.                   |
 
 ### Systematization ##
 
 According to the taken rationale, the conceptual classes promoted to software classes are:
 
-* Phase
-* JobApplication
-* JobOpening
-* Status
+* **StaffController**: Responsible for managing HTTP requests, handling the search process for staff profiles, and ensuring proper communication between the UI and the underlying business logic.
+* **StaffDto**: Data Transfer Object that encapsulates the employee profile data to be transferred between the layers of the system.
+* **StaffService**: Contains the business logic for retrieving staff profiles from the repository, ensuring that only valid and consistent data is processed. Ensures that any changes to staff profiles are updated in real-time across the system.
+* **StaffRepository**: Responsible for fetching staff profile data from the database, adhering to the Repository pattern to separate data access logic from business logic.
+* **IStaffRepository**: Interface that defines the contract for data access methods, ensuring that different implementations of data sources can be used without affecting the business logic.
+* **LogService**: Responsible for logging all changes made to staff profiles, creating an audit trail for accountability.
+* **EmailService**: Handles the sending of confirmation emails to staff members whenever their contact information is updated.
 
 Other software classes (i.e. Pure Fabrication) identified:
 
-* ResultProcessNotificationController
-* JobApplicationRepository
-* JobOpeningManagementService
-* ResultProcessNotificationUI
+* **StaffProfile**: Represents the staff profile entity, containing the necessary attributes and methods to manage staff profile data.
 
 ## 3.2. Sequence Diagram (SD)
 
-![uc030-sequence-diagram.svg](svg/uc030-sequence-diagram.svg)
+![uc013-sequence-diagram.svg](svg/uc013-sequence-diagram.svg)
 
 ## 3.3. Class Diagram (CD)
 
-![uc030-class-diagram.svg](svg/uc030-class-diagram.svg)
+![uc013-class-diagram.svg](svg/uc013-class-diagram.svg)
