@@ -1,0 +1,114 @@
+@startuml uc013-domain-model
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+hide methods
+hide circle
+
+title Domain Model (DM) - UC013
+
+package UserAggregate {
+  class User <<root entity>>
+  class UserId <<value object>> 
+  note right of UserId: unique identifier
+  class Username <<value object>> 
+  note right of Username: same as the user's email
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+  class UserStatus <<value object>> {
+    ACTIVE, INACTIVE, PENDING, BLOCKED
+  }
+}
+
+package StaffAggregate {
+  class Staff <<root entity>>
+  class StaffID <<value object>> 
+  note right of StaffID: unique identifier
+  class LicenseNumber <<value object>> 
+  note left of LicenseNumber: unique
+  class FullName <<value object>>
+  class Name <<value object>>
+  class Specialization <<value object>> {
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+  }
+  class Status <<value object>> {
+    ACTIVE, INACTIVE
+  }
+  note right of Status: represented as a bool value
+}
+
+package LogAggregate {
+  class Log <<root entity>>
+  class LogID <<value object>> 
+  note right of LogID: unique identifier
+  class LogType <<value object>> {
+    DELETION, UPDATE, CREATION
+  }
+  class EntityType <<value object>> {
+    PATIENT, STAFF, OPERATION_TYPE
+  }
+  class EntityID <<value object>> 
+  note right of EntityID: Guid
+}
+
+class ContactInformation <<value object>>
+class PhoneNumber <<value object>>
+class Email <<value object>>
+class DateTime <<value object>>
+class Date <<value object>>
+class Time <<value object>>
+class Slot <<value object>>
+
+class Admin
+note right of Admin: conceptual class
+class Doctor
+note right of Doctor: conceptual class
+class Nurse
+note top of Nurse: conceptual class
+class Technician
+note right of Technician: conceptual class
+
+Doctor "1" -- "1" Staff : > is
+Nurse "1" -- "1" Staff : > is
+Technician "1" -- "1" Staff : > is
+
+Admin "1" -- "*" User : > manages
+Admin "1" -- "*" Staff : > manages
+
+User "1" -- "1" UserId : > identified by
+User "1" -- "1" Username : > has
+User "1" -- "1" Email : > has
+User "*" -- "1" Role : > has assigned
+User "*" -- "1" UserStatus : > has
+
+User "0..1" <-- "0..1" Staff : < references
+
+Staff "1" -- "1" StaffID : > identified by
+Staff "*" -- "1" FullName : > has
+Staff "1" -- "1" LicenseNumber : > has
+Staff "*" -- "1" Specialization : > has
+Staff "1" -- "1" ContactInformation : > has
+Staff "*" -- "*" Slot : > has
+Staff "*" -- "1" Status : > has
+
+Log "1" -- "1" LogID : > identified by
+Log "*" -- "1" LogType : > has
+Log "*" -- "1" EntityType : > has
+Log "*" -- "1" EntityID : > has
+Log "*" -- "1" DateTime : > has
+
+DateTime "1" -- "1" Date : > has
+DateTime "1" -- "1" Time : > has
+Slot "1" -- "2" DateTime : > consists of
+
+FullName "1" -- "2" Name : > has
+ContactInformation "1" -- "1" PhoneNumber : > has
+ContactInformation "1" -- "1" Email : > has
+
+@enduml
