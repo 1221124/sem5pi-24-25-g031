@@ -4,21 +4,22 @@ skinparam shadowing false
 skinparam linetype polyline
 skinparam classAttributeIconSize 0
 
-title Sequence Diagram (SD) - UC015
+title Diagrama de Sequência (SD) - UC015
 
 participant ":Routing" as Routing
-participant ":DeactivateStaffController" as Controller <<controller>>
+participant ":StaffController" as Controller <<controller>>
 participant ":StaffService" as Service <<service>>
+participant "StaffMapper" as Mapper <<mapper>>
 participant ":IStaffRepository" as IRepository <<interface>>
 participant "StaffDTO" as StaffDTO <<dto>>
 
-loop for each search criteria
+loop para cada critério de busca
 
   note right of Routing
-    the "searchCriteria" can be any of the following: name, email and specialization.
-    The method "GetByCriteria" will be called for each search criteria.
-    "searchCriteria" is from the type e.g "Name"
-    Exemplo:"Name=Beatriz&email=1200347@isep.ipp.pt"
+    o "searchCriteria" pode ser qualquer um dos seguintes: nome, e-mail e especialização.
+    O método "GetByCriteria" será chamado para cada critério de busca.
+    "searchCriteria" é do tipo, por exemplo, "Name"
+    Exemplo: "Name=Beatriz&email=1200347@isep.ipp.pt"
   end note
 
   -> Routing: GET /Staff/?searchCriteria=criteria
@@ -26,32 +27,38 @@ loop for each search criteria
 
   Routing -> Controller: GetAll(StaffID)
   activate Controller
-
-    Controller -> Service: GetAllAsync(staff)
+    
+    Controller -> Service: GetByCriteriaAsync(criteria)
     activate Service
 
-      Service -> IRepository: GetAllAsync(staff)
+      Service -> IRepository: GetByCriteriaAsync(criteria)
       activate IRepository
 
-      IRepository --> Service: List<Staff>
+        IRepository --> Service: staff
       deactivate IRepository
 
-      Service -> StaffDTO: create new List<StaffDTO>
-      activate StaffDTO
+      Service -> Mapper: ToDto(staff)
+      activate Mapper
 
-      StaffDTO -> Service: staffDtoList
-      deactivate StaffDTO
+        Mapper -> StaffDTO: new StaffDTO(staff.Name, staff.Status, staff.Email, staff.Phone, staff.Role, staff.Department, staff.CreatedAt, staff.UpdatedAt)
+        activate StaffDTO
 
-      Service -> Service: List<PatientDTO> patientDtoList.addAll(List<PatientDto>)
+          StaffDTO --> Mapper: dto
+        deactivate StaffDTO
 
-    Service -> Service: patientDtoList.Distinct()
-    Service --> Controller: patientDtoList
+        Mapper --> Service: dto
+      deactivate Mapper
+
+    Service --> Controller: dto
+
     deactivate Service
 
-  Controller --> Routing: patientDtoList
-  deactivate Controller
+  Controller --> Routing: 200 OK
 
-  <- Routing : response
+  
+    deactivate Controller
+
+  <- Routing : 200 OK
   deactivate Routing
 
 end loop
