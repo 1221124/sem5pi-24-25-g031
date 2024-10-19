@@ -6,7 +6,7 @@ skinparam classAttributeIconSize 0
 
 title Class Diagram (CD) - UC014
 
-class DeactivateStaffController {
+class StaffController {
     + SoftDelete(StaffId): Staff
     + GetAllStaff(): List<Staff>
 }
@@ -16,7 +16,7 @@ class StaffService {
     + GetAllStaff(): List<Staff>
 }
 
-class DeactivateStaffDTO {
+class StaffDTO {
     + FullName: FullName
     + ContactInformation: ContactInformation
 }

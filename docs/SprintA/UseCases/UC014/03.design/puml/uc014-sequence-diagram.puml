@@ -8,38 +8,58 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC014
 
 participant ":Routing" as Routing
-participant ":DeactivateStaffController" as Controller
-participant ":StaffService" as Service
-database ":StaffRepository" as Repository
-database ":IStaffRepository" as IRepository
-participant IStaffRepository as InterfaceStaffRepository <<interface>>
+participant ":StaffController" as Controller <<controller>>
+participant ":StaffService" as Service <<service>>
+participant ":LogService" as LogService <<service>>
+participant "Staff" as Staff <<entity>>
+participant "StaffMapper" as Mapper <<mapper>>
+participant ":IStaffRepository" as IRepository <<interface>>
+participant "StaffDTO" as StaffDTO <<dto>>
 
--> Routing: POST /api/Staff
+-> Routing: DELETE /api/staff
 activate Routing
 
-Routing -> Controller: SoftDelete(StaffID)
+Routing -> Controller: SoftDelete(staffID)
 activate Controller
 
-    Controller -> Service: InactivateAsync(staff)
+    Controller -> Service: InactivateAsync(staffID)
     activate Service
 
-        Service -> Repository: InactivateAsync(staff)
-        activate Repository
+        Service -> IRepository: GetByIdAsync(staffID)
+        activate IRepository
 
-            Repository -> InterfaceStaffRepository: InactivateAsync(staff)
-            activate InterfaceStaffRepository
-            deactivate InterfaceStaffRepository
+            IRepository --> Service: staff
 
-        Repository --> Service: staff
-        deactivate Repository
+        deactivate IRepository
 
-    Service --> Controller: staff
+        Service -> Staff: SetStatus(INACTIVE)
+        activate Staff
+            Staff --> Service: void
+        deactivate Staff
+
+        Service -> Mapper: ToDto(staff)
+        activate Mapper
+
+            Mapper -> StaffDTO: new StaffDTO(staff.Name, staff.Status, staff.Email, staff.Phone, staff.Role, staff.Department, staff.CreatedAt, staff.UpdatedAt)
+            activate StaffDTO
+                StaffDTO --> Mapper: dto
+            deactivate StaffDTO
+
+            Mapper --> Service: dto
+        deactivate Mapper
+
+    Service --> Controller: dto
     deactivate Service
 
-Controller --> Routing: response 
+    Controller -> LogService: LogChanges(staff)
+    activate LogService
+        LogService --> Controller: void
+    deactivate LogService
+
+Controller --> Routing: 200 OK 
 deactivate Controller
 
-<- Routing: response
+<- Routing: 200 OK
 deactivate Routing
 
 @enduml
