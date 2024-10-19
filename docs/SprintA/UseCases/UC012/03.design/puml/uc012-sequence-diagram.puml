@@ -8,45 +8,44 @@ skinparam classAttributeIconSize 0
 title Sequence Diagram (SD) - UC012
 
 participant ":Routing" as Routing
-participant ":StaffProfileController" as Controller
-participant ":StaffService" as Service
-database ":StaffRepository" as Repository
-database ":IStaffRepository" as IRepository
-participant ":StaffDTO" as StaffDTO
-participant ":Staff" as Domain
-participant IStaffRepository as InterfaceStaffRepository <<interface>>
+participant ":StaffController" as Controller <<controller>>
+participant ":StaffService" as Service <<service>>
+participant "Staff" as Staff <<entity>>
+participant ":IStaffRepository" as IRepository <<interface>>
+participant "StaffMapper" as Mapper <<mapper>>
+participant "StaffDTO" as StaffDTO <<dto>>
 
--> Routing: POST /api/Staff
+-> Routing: POST /api/operationtype
 activate Routing
 
-Routing -> Controller: CreateStaff(staffDTO)
+Routing -> Controller: Create(staffDTO)
 activate Controller
 
     Controller -> Service: AddAsync(staffDTO)
     activate Service
 
-        Service -> Domain: new Staff(staffDTO.FullName, staffDTO.ContactInformation, staffDTO.Specialization)
-        activate Domain
-            Domain --> Service: staff
-        deactivate Domain
+        Service -> Staff: new Staff(staffDTO.FullName, staffDTO.ContactInformation, staffDTO.Specialization)
+        activate Staff
+            Staff --> Service: staff
+        deactivate Staff
 
-        Service -> Repository: AddAsync(staff)
-        activate Repository
+        Service -> IRepository: AddAsync(staff)
+        activate IRepository
+            IRepository --> Service: staff
+        deactivate IRepository
 
-            Repository -> InterfaceStaffRepository: AddAsync(staff)
-            activate InterfaceStaffRepository
-            deactivate InterfaceStaffRepository
+        Service -> Mapper: ToDto(staff) 
+        activate Mapper
+            Mapper --> Service: dto
+        deactivate Mapper
 
-        Repository --> Service: staff
-        deactivate Repository
-
-    Service --> Controller: staff
+        Service --> Controller: dto
     deactivate Service
 
-Controller --> Routing: response 
+Controller --> Routing: 201 Created 
 deactivate Controller
 
-<- Routing: response
+<- Routing: 201 Created
 deactivate Routing
 
 @enduml
