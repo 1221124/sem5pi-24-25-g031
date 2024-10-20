@@ -12,6 +12,8 @@ using Domain.Shared;
 using Domain.OperationTypes;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Infrastructure.OperationRequestAggregate;
+using Domain.OperationRequestAggregate;
 
 public class Startup
 {
@@ -71,5 +73,7 @@ public class Startup
 
         services.AddTransient<IOperationTypeRepository,OperationTypeRepository>();
         services.AddTransient<OperationTypeService>();
+        services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
+        services.AddTransient<OperationRequestService>();
     }
 }
