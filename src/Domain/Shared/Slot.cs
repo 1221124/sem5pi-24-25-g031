@@ -1,3 +1,5 @@
+using System;
+
 namespace Domain.Shared
 {
     public class Slot : IValueObject

@@ -1,4 +1,4 @@
-using DDDNetCore.src.Domain.Shared;
+using Domain.Shared;
 
 namespace Domain.Patient
 {

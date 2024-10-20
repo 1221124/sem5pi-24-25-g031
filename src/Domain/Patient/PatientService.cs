@@ -19,7 +19,7 @@ namespace Domain.Patient
         {
             var list = await this._repo.GetAllAsync();
             
-            List<PatientDto> listDto = list.ConvertAll<PatientDto>(patient => new PatientDto{Id = patient.Id.AsGuid(), FullName = patient.FullName, Name = patient.Name, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact});
+            List<PatientDto> listDto = list.ConvertAll<PatientDto>(static patient => new PatientDto{Id = patient.Id.AsGuid(), FullName = patient.FullName, Name = patient.Name, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact});
 
             return listDto;
         }

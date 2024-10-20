@@ -1,5 +1,5 @@
 using System;
-using DDDNetCore.src.Domain.Shared;
+using System.Collections.Generic;
 using Domain.Shared;
 
 namespace Domain.Staff

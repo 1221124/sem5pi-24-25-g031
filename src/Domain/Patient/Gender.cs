@@ -1,3 +1,5 @@
+using System;
+
 namespace Domain.Patient
 {
   public enum Gender

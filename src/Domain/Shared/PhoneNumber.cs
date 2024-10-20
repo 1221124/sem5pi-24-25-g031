@@ -1,6 +1,6 @@
-using Domain.Shared;
+using System;
 
-namespace DDDNetCore.src.Domain.Shared
+namespace Domain.Shared
 {
     public class PhoneNumber: IValueObject
     {
@@ -13,7 +13,7 @@ namespace DDDNetCore.src.Domain.Shared
                 throw new ArgumentException("Phone number cannot be empty");
             }
 
-            Value = value;
+            Value = int.Parse(value);
         }
     }
 }

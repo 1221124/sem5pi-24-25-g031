@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Domain.Shared;
 
 namespace Domain.Patient
@@ -15,7 +17,7 @@ namespace Domain.Patient
         public EmergencyContact EmergencyContact { get; set; }
         //public AppointmentHistory AppointementHistory { get; set; }
 
-        public Patient(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, MedicalConditions medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
+        public PatientDto(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
         {
             FullName = fullName;
             Name = name;
@@ -28,12 +30,15 @@ namespace Domain.Patient
             //AppointmentHistory = appointmentHistory;
         }
 
+        public PatientDto(){
+        }
+
         public PatientDto(Guid guid){
             Id = guid;
         }
 
         public PatientDto(PatientId id){
-            Id = id.asGuid();
+            Id = id.AsGuid();
         }
     }
 }

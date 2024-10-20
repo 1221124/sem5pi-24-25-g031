@@ -1,6 +1,6 @@
-using Domain.Shared;
+using System;
 
-namespace DDDNetCore.src.Domain.Shared
+namespace Domain.Shared
 {
     public class Email: IValueObject
     {

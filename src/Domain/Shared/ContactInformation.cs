@@ -1,6 +1,4 @@
-using Domain.Shared;
-
-namespace DDDNetCore.src.Domain.Shared
+namespace Domain.Shared
 {
     public class ContactInformation: IValueObject
     {

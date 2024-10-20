@@ -1,6 +1,6 @@
-using Domain.Staff;
+using Domain.Shared;
 
-namespace Staff.Domain
+namespace Domain.Staff
 {
     public interface IStaffRepository : IRepository<Staff, StaffId>
     {

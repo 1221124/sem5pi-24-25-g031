@@ -1,21 +1,34 @@
 using System;
+using Domain.Shared;
+using Newtonsoft.Json;
 
-namespace Domain.Patient{
-    public class PatientId{
-        public Guid Value { get; }
-
-        public PatientId(Guid value)
+namespace Domain.Patient
+{
+    public class PatientId : EntityId
+    {
+        [JsonConstructor]
+        public PatientId(Guid value) : base(value)
         {
-            if (value == default)
-            {
-                throw new ArgumentNullException(nameof(value), "Patient id cannot be empty");
-            }
-
-            Value = value;
         }
 
-        public static implicit operator Guid(PatientId self) => self.Value;
-        public static implicit operator PatientId(Guid value) => new PatientId(value);
-        public override string ToString() => Value.ToString();
+        public PatientId(String value) : base(value)
+        {
+        }
+
+        override
+        protected  Object createFromString(String text){
+            return new Guid(text);
+        }
+
+        override
+        public String AsString(){
+            Guid obj = (Guid) base.ObjValue;
+            return obj.ToString();
+        }
+        
+       
+        public Guid AsGuid(){
+            return (Guid) base.ObjValue;
+        }
     }
 }

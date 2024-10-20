@@ -1,3 +1,4 @@
+using System;
 using Domain.Shared;
 
 namespace Domain.Staff
