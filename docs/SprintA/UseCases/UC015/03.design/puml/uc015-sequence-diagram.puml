@@ -22,7 +22,7 @@ loop para cada critério de busca
     Exemplo: "Name=Beatriz&email=1200347@isep.ipp.pt"
   end note
 
-  -> Routing: GET /Staff/?searchCriteria=criteria
+  -> Routing: GET /Staff/{id}/?searchCriteria=criteria
   activate Routing
 
   Routing -> Controller: GetAll(StaffID)

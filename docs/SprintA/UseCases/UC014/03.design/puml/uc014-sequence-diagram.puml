@@ -16,7 +16,7 @@ participant "StaffMapper" as Mapper <<mapper>>
 participant ":IStaffRepository" as IRepository <<interface>>
 participant "StaffDTO" as StaffDTO <<dto>>
 
--> Routing: DELETE /api/staff
+-> Routing: DELETE /api/staff/{id}
 activate Routing
 
 Routing -> Controller: SoftDelete(staffID)
