@@ -1,11 +1,13 @@
+using Domain.Shared;
+
 namespace DDDNetCore.src.Domain.Shared
 {
-    public class ContactInformation
+    public class ContactInformation: IValueObject
     {
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public Email Email { get; set; }
+        public PhoneNumber PhoneNumber { get; set; }
 
-        public ContactInformation(string email, string phoneNumber)
+        public ContactInformation(Email email, PhoneNumber phoneNumber)
         {
             Email = email;
             PhoneNumber = phoneNumber;
