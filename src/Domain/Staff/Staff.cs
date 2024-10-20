@@ -14,15 +14,19 @@ namespace Domain.Staff
 
         public ContactInformation ContactInformation { get; set; }
 
-        public Status status { get; set; }
+        public Status Status { get; set; }
 
-        public Staff(FullName fullName, int licenseNumber, Specialization specialization, ContactInformation contactInformation, Status status)
+        public List<Slot> Slot { get; set; }
+
+        public Staff(FullName fullName, int licenseNumber, Specialization specialization, ContactInformation contactInformation, Status status, List<Slot> slot)
         {
             FullName = fullName;
             LicenseNumber = licenseNumber;
             Specialization = specialization;
             ContactInformation = contactInformation;
-            this.status = status;
+            Status = status;
+            Slot = slot;
         }
+
     }
 }

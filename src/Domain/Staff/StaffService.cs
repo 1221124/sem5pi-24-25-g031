@@ -16,97 +16,81 @@ namespace Staff.Domain
 
         public async Task<List<StaffDto>> GetAllAsync()
         {
-            var staffs = await _repo.GetAllAsync();
+            var list = await this._repo.GetAllAsync();
 
-            List<StaffDto> listDto = list.ConvertAll<StaffDto>(staff => new StaffDto { Id = staff.Id.AsGuid(), Name = staff.Name, Email = staff.Email, Phone = staff.Phone, Role = staff.Role, Active = staff.Active });
+            List<StaffDto> listDto = list.ConvertAll<StaffDto>(staff => new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot });
 
             return listDto;
         }
 
         public async Task<StaffDto> GetByIdAsync(StaffId id)
         {
-            var staff = await _repo.GetByIdAsync(id);
+            var staff = await this._repo.GetByIdAsync(id);
 
             if (staff == null)
                 return null;
 
-            return new StaffDto { Id = staff.Id.AsGuid(), Name = staff.Name, Email = staff.Email, Phone = staff.Phone, Role = staff.Role, Active = staff.Active };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
         }
 
         public async Task<StaffDto> AddAsync(CreatingStaffDto dto)
         {
-            var staff = new Staff(dto.Name, dto.Email, dto.Phone, dto.Role, dto.Active);
+            var staff = new Staff(dto.FullName, dto.ContactInformation, dto.LicenseNumber, dto.Specialization, dto.Status, dto.Slot);
 
-            await _repo.AddAsync(staff);
+            await this._repo.AddAsync(staff);
 
-            await _unitOfWork.CommitAsync();
+            await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), Name = staff.Name, Email = staff.Email, Phone = staff.Phone, Role = staff.Role, Active = staff.Active };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
         }
 
         public async Task<StaffDto> UpdateAsync(StaffDto dto)
         {
-            var staff = await _repo.GetByIdAsync(new StaffId(dto.Id));
+            var staff = await this._repo.GetByIdAsync(new StaffId(dto.Id));
 
             if (staff == null)
                 return null;
 
-            staff.ChangeName(dto.Name);
-            staff.ChangeContactInformation(dto.Email, dto.Phone);
-            staff.ChangeRole(dto.Role);
+            // change all field
+            staff.ChangeFullName(dto.FullName);
+            staff.ChangeContactInformation(dto.ContactInformation);
+            staff.ChangeLicenseNumber(dto.LicenseNumber);
             staff.ChangeSpecialization(dto.Specialization);
+            staff.ChangeStatus(dto.Status);
             staff.ChangeSlot(dto.Slot);
-            staff.ChangeActive(dto.Active);
 
-            await _unitOfWork.CommitAsync();
+            await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), Name = staff.Name, Email = staff.Email, Phone = staff.Phone, Role = staff.Role, Specialization = staff.Specialization, Slot = staff.Slot, Active = staff.Active };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
         }
 
         public async Task<StaffDto> InactivateAsync(StaffId id)
         {
-            var staff = await _repo.GetByIdAsync(id);
+            var staff = await this._repo.GetByIdAsync(id);
 
             if (staff == null)
                 return null;
 
-            staff.Inactivate();
+            // change all fields
+            staff.MarkAsInative();
 
-            await _unitOfWork.CommitAsync();
+            await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), Name = staff.Name, Email = staff.Email, Phone = staff.Phone, Role = staff.Role, Active = staff.Active };
-        }
-
-        public async Task<StaffDto> InactiveAsync(StaffId id)
-        {
-            var staff = await _repo.GetByIdAsync(id);
-
-            if (staff == null)
-                return null;
-
-            staff.Inactive();
-
-            await _unitOfWork.CommitAsync();
-
-            return new StaffDto { Id = staff.Id.AsGuid(), Name = staff.Name, Email = staff.Email, Phone = staff.Phone, Role = staff.Role, Active = staff.Active };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
         }
 
         public async Task<StaffDto> DeleteAsync(StaffId id)
         {
-            var staff = await _repo.GetByIdAsync(id);
+            var staff = await this._repo.GetByIdAsync(id);
 
             if (staff == null)
                 return null;
 
-            if (staff.Active)
-                return null;
+            await this._repo.DeleteAsync(staff);
 
-            await _repo.DeleteAsync(staff);
+            await this._unitOfWork.CommitAsync();
 
-            await _unitOfWork.CommitAsync();
-
-            return new StaffDto { Id = staff.Id.AsGuid(), Name = staff.Name, Email = staff.Email, Phone = staff.Phone, Role = staff.Role, Active = staff.Active };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
         }
-
     }
 }

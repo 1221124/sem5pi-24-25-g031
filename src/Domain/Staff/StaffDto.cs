@@ -1,4 +1,5 @@
 using System;
+using DDDNetCore.src.Domain.Shared;
 using Domain.Shared;
 
 namespace Domain.Staff
@@ -6,13 +7,22 @@ namespace Domain.Staff
     public class StaffDto
     {
         public Guid Id { get; set; }
-
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string Role { get; set; }
-        public string Specialization { get; set; }
+        public FullName FullName { get; set; }
+        public ContactInformation ContactInformation { get; set; }
+        public string LicenseNumber { get; set; }
+        public Specialization Specialization { get; set; }
+        public Status Status { get; set; }
         public List<Slot> Slot { get; set; }
-        public bool Active { get; set; }
+
+        public StaffDto(Guid id, FullName fullName, ContactInformation contactInformation, string licenseNumber, Specialization specialization, Status status, List<Slot> slot)
+        {
+            Id = id;
+            FullName = fullName;
+            ContactInformation = contactInformation;
+            LicenseNumber = licenseNumber;
+            Specialization = specialization;
+            Status = status;
+            Slot = slot;
+        }
     }
 }
