@@ -31,7 +31,7 @@ n/a
 
 ### 1.4. Found out Dependencies
 
-- This Use Case is relative to UC002, which is related to the backoffice job opening management functionality.
+- This Use Case is relative to US 5.1.2, which is related to the backoffice management functionality.
 - It relates to the following Use Cases as well:
   - [UC001](../../UC001/README.md) - As an Admin, I want to register new backoffice users (e.g., doctors, nurses, technicians, admins) via an out-of-band process, so that they can access the backoffice system with appropriate permissions.
 
@@ -56,3 +56,4 @@ n/a
 
 - The password reset process must adhere to GDPR rules for data protection, ensuring secure handling of user data.
 - Logging the email notifications for auditing purposes is recommended.
+- An IAM system must be chosen and integrated with the system.
