@@ -21,8 +21,8 @@ class Staff {
     + ContactInformation: ContactInformation    
     + Specialization: Specialization
     + Status: StaffStatus
-    + ChangeContactInformation(contactInformation: ContactInformation): void
-    + ChangeSpecialization(specialization: Specialization): void
+    + SetContactInformation(contactInformation: ContactInformation): void
+    + SetSpecialization(specialization: Specialization): void
 }
 
 class Log{

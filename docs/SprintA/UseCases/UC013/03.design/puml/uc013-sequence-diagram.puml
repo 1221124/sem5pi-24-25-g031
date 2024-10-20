@@ -17,7 +17,7 @@ participant "StaffMapper" as Mapper <<mapper>>
 participant ":IStaffRepository" as IRepository <<interface>>
 participant "StaffDTO" as StaffDTO <<dto>>
 
--> Routing: PUT /api/staff
+-> Routing: PUT /api/staff/{id}
 activate Routing
 
 Routing -> Controller: Update(staffDTO)
