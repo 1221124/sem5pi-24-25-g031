@@ -1,9 +1,12 @@
 namespace Log{
     public enum UpdateType
     {
-        OPERATION_TYPE_ID,
+        PATIENT_NAME,
+        PATIENT_MEDICAL_RECORD_NUMBER,
+        STATUS,
         DEADLINE_DATE,
-        PRIORITY
+        PRIORITY,
+        DATE_RANGE
     }
 
     public class UpdateTypeName
@@ -12,12 +15,18 @@ namespace Log{
         {
             switch (type)
             {
-                case UpdateType.OPERATION_TYPE_ID:
-                    return "Operation Type Id";
+                case UpdateType.PATIENT_NAME:
+                    return "Patient Name";
+                case UpdateType.PATIENT_MEDICAL_RECORD_NUMBER:
+                    return "Patient Medical Record Number";
+                case UpdateType.STATUS:
+                    return "Status";
                 case UpdateType.DEADLINE_DATE:
                     return "Deadline Date";
                 case UpdateType.PRIORITY:
                     return "Priority";
+                case UpdateType.DATE_RANGE:
+                    return "Date Range";
                 default:
                     return "Invalid.";
             }

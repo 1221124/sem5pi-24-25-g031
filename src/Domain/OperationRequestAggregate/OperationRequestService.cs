@@ -21,6 +21,8 @@ namespace Domain.OperationRequestAggregate
             this._repo = repo;
         }
 
+        
+
         public async Task<List<OperationRequestDto>> GetAllAsync()
         {
             var list = await this._repo.GetAllAsync();
@@ -33,7 +35,7 @@ namespace Domain.OperationRequestAggregate
 
             return listDto;
         }
-        public async Task<OperationRequestDto> AddAsync(OperationRequestDto dto)
+        public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto dto)
         {
             
             var category = new OperationRequest(/*dto.doctorId, dto.patientId,*/dto.OperationTypeId, dto.DeadlineDate, dto.Priority);
@@ -56,8 +58,8 @@ namespace Domain.OperationRequestAggregate
 
             switch (update)
             {
-                case UpdateType.OPERATION_TYPE_ID:
-                    category.operationTypeId = dto.OperationTypeId;
+                case UpdateType.STATUS:
+                    category.Status = dto.Status;
                     break;
                 case UpdateType.DEADLINE_DATE:
                     category.deadlineDate = dto.DeadlineDate;
@@ -88,7 +90,21 @@ namespace Domain.OperationRequestAggregate
             this._repo.Remove(category);
             await this._unitOfWork.CommitAsync();
 
-            return new OperationRequestDto {Id = category.Id.AsGuid()};
+            return new OperationRequestDto {
+                Id = category.Id.AsGuid()                };
         }
+
+        public async Task<OperationRequestDto> GetByIdAsync(OperationRequestId id)
+        {
+            var category = await this._repo.GetByIdAsync(id); 
+
+            if (category == null)
+                return null;
+
+            return new OperationRequestDto {
+                Id = category.Id.AsGuid(), OperationTypeId = category.operationTypeId, DeadlineDate = category.deadlineDate, Priority = category.priority
+                };
+        }
+
     }
 }
