@@ -1,0 +1,90 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC002
+
+class UserController {
+    + Update(userDto: userDto): Task<UserDTO>
+}
+
+class UserService {
+    + UpdateAsync(userDto: userDto): Task<UserDTO>
+}
+
+class IAMService{
+    + ValidateToken(): Task<bool>
+}
+
+class UserMapper {
+    + ToDto(user: User): StaffDTO
+}
+
+class User {
+    + UserId: int
+    + Username: FullName
+    + Role: Role
+    + UserStatus: UserStatus 
+    + ValidateCurrentPassword(password: string): bool  
+    + SetNewPassword(specialization: Specialization): void 
+}
+
+enum Role{
+     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+}
+
+enum UserStatus{
+    ACTIVE, INACTIVE, PENDING, BLOCKED
+}
+
+class UserDTO {
+    + UserId: int
+    + Username: FullName
+    + Role: Role
+    + UserStatus: UserStatus
+}
+
+interface IUserRepository {
+    + GetByIDAsync(id: int): Task<User>
+    + UpdateAsync(dto: UserDto): Task<User>
+}
+
+class UserRepository implements IUserRepository { 
+    + GetByIDAsync(id: int): Task<User>
+    + UpdateAsync(dto: UserDto): Task<User>
+}
+
+class Staff {
+    + StaffID: int
+    + FullName: FullName
+    + LicenseNumber: int
+    + ContactInformation: ContactInformation    
+    + Specialization: Specialization
+    + Status: StaffStatus
+    + SetContactInformation(contactInformation: ContactInformation): void
+    + SetSpecialization(specialization: Specialization): void
+}
+
+User <|-- Staff : < inherits from
+
+User --> UserId : > identified by
+User --> Username : > has
+User --> Email : > has
+User --> Role: > has assigned
+User --> UserStatus: > has
+
+UserDTO --> UserController : uses
+UserController --> UserService : uses
+UserService --> User : creates
+UserService --> IUserRepository : depends on
+UserRepository --> IUserRepository : implements
+
+UserService --> UserMapper : uses
+UserMapper --> User : converts to
+UserMapper --> UserDto : converts from
+
+UserController --> IAMService : uses
+
+@enduml

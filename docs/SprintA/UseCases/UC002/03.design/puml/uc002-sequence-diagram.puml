@@ -1,0 +1,71 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC002
+
+participant ":Routing" as Routing
+participant ":UserController" as Controller <<application>>
+participant "IAMService" as IAM <<Service>>
+participant ":UserService" as Service <<Service>>
+participant "UserMapper" as Mapper <<application>>
+participant "user:User" as User <<domain>>
+participant ":ChangePasswordDto" as DTO <<domain>>
+participant ":IUserRepository" as UserRepo <<persistence>>
+
+-> Routing: PUT /api/staff/change-password
+activate Routing
+
+    Routing -> Controller: Update(changePasswordDto)
+    activate Controller
+
+        Controller -> IAM: ValidateToken()
+        activate IAM
+            IAM --> Controller: token valid
+        deactivate IAM
+
+        Controller -> Service: ChangePasswordAsync(changePasswordDto)
+        activate Service
+
+            Service -> UserRepo: FindById(id)
+            activate UserRepo
+                UserRepo --> Service: user
+            deactivate UserRepo
+
+            Service -> User: ValidateCurrentPassword(changePasswordDto.currentPassword)
+            activate User
+                User --> Service: password valid
+            deactivate User
+
+            Service -> User: SetNewPassword(changePasswordDto.newPassword)
+            activate User
+                User --> Service: void
+            deactivate User
+
+            Service -> UserRepo: UpdateAsync(user)
+            activate UserRepo
+                UserRepo --> Service: user updated
+            deactivate UserRepo
+
+            Service -> Mapper: ToDto(user)
+            activate Mapper
+                Mapper -> DTO: new UserDto(user)
+                activate DTO
+                    DTO --> Mapper: dto
+                deactivate DTO
+                Mapper --> Service: dto
+            deactivate Mapper
+
+            Service --> Controller: dto
+        deactivate Service
+
+        Controller --> Routing: 200 OK
+    deactivate Controller
+
+    <-- Routing: 200 OK
+deactivate Routing
+
+@enduml
