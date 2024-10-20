@@ -4,7 +4,6 @@ using Domain.OperationTypes;
 using Domain.OperationRequestAggregate;
 
 using Infrastructure.OperationTypes;
-using Infrastructure.OperationRequestAggregate;
 
 namespace Infrastructure
 {
@@ -15,7 +14,7 @@ namespace Infrastructure
 
         public SARMDbContext (DbContextOptions options) : base(options)
         {
-
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
