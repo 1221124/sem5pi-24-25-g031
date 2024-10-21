@@ -15,5 +15,15 @@ namespace Domain.Shared
 
             Value = value;
         }
+
+        public static implicit operator Email(string value)
+        {
+            return new Email(value);
+        }
+
+        public static implicit operator string(Email email)
+        {
+            return email.Value;
+        }
     }
 }
