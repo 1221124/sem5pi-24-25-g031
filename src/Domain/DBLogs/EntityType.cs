@@ -1,7 +1,7 @@
 
 using System;
 
-namespace Domain.Log
+namespace Domain.DBLogs
 {
     public enum EntityType{
         USER,
@@ -10,7 +10,8 @@ namespace Domain.Log
         OPERATION_REQUEST,
         OPERATION_TYPE,
         APPOINTMENT,
-        SURGERY_ROOM
+        SURGERY_ROOM,
+        LOG
     }
 
     public class EntityTypeName{

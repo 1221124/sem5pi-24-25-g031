@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Domain.Log
+namespace Domain.DBLogs
 {
-    public class LogService : ILogService
-    {
-        private readonly ILogRepository _logRepository;
+    public class DBLogService{
+    
+        private readonly IDBLogRepository _logRepository;
 
-        public LogService(ILogRepository logRepository)
+        public LogService(IDBLogRepository logRepository)
         {
             _logRepository = logRepository;
         }
@@ -22,7 +22,7 @@ namespace Domain.Log
             return await _logRepository.GetLogAsync(id);
         }
 
-        public async Task<Log> CreateLogAsync(Log log)
+        public async Task<Log> CreateLogAsync(DBLog log)
         {
             return await _logRepository.CreateLogAsync(log);
         }
