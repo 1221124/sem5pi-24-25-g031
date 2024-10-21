@@ -19,7 +19,7 @@ namespace Domain.Patients
         {
             var list = await this._repo.GetAllAsync();
             
-            List<PatientDto> listDto = list.ConvertAll<PatientDto>(static patient => new PatientDto{Id = patient.Id.AsGuid(), FullName = patient.FullName, Name = patient.Name, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact});
+            List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto{Id = patient.Id.AsGuid(), FullName = patient.FullName, Name = patient.Name, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact});
 
             return listDto;
         }
@@ -36,13 +36,16 @@ namespace Domain.Patients
 
         public async Task<PatientDto> AddAsync(CreatingPatientDto dto)
         {
-            var patient = new Patient(dto.FullName, dto.Name, dto.DateOfBirth, dto.Gender, dto.MedicalRecordNumber, dto.ContactInformation, dto.MedicalConditions, dto.EmergencyContact);
+            if(_repo.getByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
+                return null;
+            
+            var patient = new Patient(dto.FullName, dto.Name, dto.DateOfBirth, dto.ContactInformation);
 
             await this._repo.AddAsync(patient);
 
             await this._unitOfWork.CommitAsync();
 
-            return new PatientDto { Id = patient.Id.AsGuid(), FullName = patient.FullName, Name = patient.Name, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact };
+            return new PatientDto { Id = patient.Id.AsGuid(), FullName = patient.FullName, Name = patient.Name, DateOfBirth = patient.DateOfBirth, ContactInformation = patient.ContactInformation};
         }
 
         public async Task<PatientDto> UpdateAsync(PatientDto dto)

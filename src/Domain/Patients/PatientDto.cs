@@ -29,6 +29,14 @@ namespace Domain.Patients
             EmergencyContact = emergencyContact;
             //AppointmentHistory = appointmentHistory;
         }
+        
+        public PatientDto (FullName fullName, Name name, DateTime dateOfBirth, ContactInformation contactInformation)
+        {
+            FullName = fullName;
+            Name = name;
+            DateOfBirth = dateOfBirth; 
+            ContactInformation = contactInformation;
+        }
 
         public PatientDto(){
         }

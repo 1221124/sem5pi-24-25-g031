@@ -8,27 +8,34 @@ namespace Domain.Patients
   {
     public FullName FullName { get; set; }
     public Name Name { get; set; }
-    public DateTime DateOfbirth { get; set; }
+    public DateTime DateOfBirth { get; set; }
     public Gender Gender { get; set; }
     public MedicalRecordNumber MedicalRecordNumber { get; set; }
     public ContactInformation ContactInformation { get; set; }
     public List<MedicalConditions> MedicalConditions { get; set; }
     public EmergencyContact EmergencyContact { get; set; }
-        public DateTime DateOfBirth { get; internal set; }
 
-        //public AppointmentHistory AppointementHistory { get; set; }
-
-        public Patient(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
+    public Patient(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
     {
+      Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
       Name = name;
-      DateOfbirth = dateOfBirth; 
+      DateOfBirth = dateOfBirth; 
       Gender = gender;
       MedicalRecordNumber = medicalRecordNumber;
       ContactInformation = contactInformation;
       MedicalConditions = medicalConditions;
       EmergencyContact = emergencyContact;
       //AppointmentHistory = appointmentHistory;
+    }
+        
+    public Patient (FullName fullName, Name name, DateTime dateOfBirth, ContactInformation contactInformation)
+    {
+      Id = new PatientId(Guid.NewGuid());
+      FullName = fullName;
+      Name = name;
+      DateOfBirth = dateOfBirth; 
+      ContactInformation = contactInformation;
     }
 
     public void ChangeFullName(FullName fullName)
@@ -43,7 +50,7 @@ namespace Domain.Patients
 
     public void ChangeDateOfBirth(DateTime dateOfBirth)
     {
-      this.DateOfbirth = dateOfBirth;
+      this.DateOfBirth = dateOfBirth;
     }
 
     public void ChangeGender(Gender gender)
