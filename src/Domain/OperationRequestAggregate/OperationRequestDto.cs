@@ -4,9 +4,9 @@ using Domain.Shared;
 
 namespace Domain.OperationRequestAggregate
 {
-    public class OperationRequestDto : Entity<OperationRequestId>, IAggregateRoot
+    public class OperationRequestDto
     {
-        public new Guid Id { get; set; }
+        public Guid Id { get; set; }
 
         /*public PatientId patientId { get; set; }
 
@@ -15,10 +15,11 @@ namespace Domain.OperationRequestAggregate
         public OperationTypeId OperationTypeId { get; set; }
         public DateTime DeadlineDate { get; set; }
         public Priority Priority { get; set; }
+        public RequestStatus Status {get; set;}
         
-        public OperationRequestDto(OperationRequestId id, /*PatientId patientId, DoctorId doctorId,*/ OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority)
+        public OperationRequestDto(Guid id, /*PatientId patientId, DoctorId doctorId,*/ OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority)
         {
-            Id = id.AsGuid();
+            Id = id;
             /*this.patientId = patientId;
             this.doctorId = doctorId;*/
             OperationTypeId = operationTypeId;
@@ -26,9 +27,9 @@ namespace Domain.OperationRequestAggregate
             Priority = priority;
         }
 
-        public OperationRequestDto(OperationRequestId id)
+        public OperationRequestDto(Guid id)
         {
-            Id = id.AsGuid();
+            Id = id;
         }
 
         public OperationRequestDto()

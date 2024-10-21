@@ -10,7 +10,7 @@ namespace Domain.OperationTypes
 
         public PhasesDuration(Dictionary<Phase, Quantity> phases)
         {
-            if (!phases.ContainsKey(Phase.Anesthesia_Preparation) || !phases.ContainsKey(Phase.Surgery) || !phases.ContainsKey(Phase.Cleaning))
+            if (!phases.ContainsKey(Phase.Preparation) || !phases.ContainsKey(Phase.Surgery) || !phases.ContainsKey(Phase.Cleaning))
             {
                 throw new BusinessRuleValidationException("Operation type must contain all three phases (anesthesia, surgery, and cleaning).");
             }
@@ -21,7 +21,7 @@ namespace Domain.OperationTypes
         {
             Phases = new Dictionary<Phase, Quantity>
             {
-                { Phase.Anesthesia_Preparation, new Quantity(0) },
+                { Phase.Preparation, new Quantity(0) },
                 { Phase.Surgery, new Quantity(0) },
                 { Phase.Cleaning, new Quantity(0) }
             };
@@ -46,20 +46,23 @@ namespace Domain.OperationTypes
                     throw new ArgumentException("Input string must be in the format 'Phase:Quantity'.");
                 }
 
-                if (!Enum.TryParse(keyValue[0], out Phase phase))
-                {
-                    throw new ArgumentException($"Invalid Phase value: {keyValue[0]}.");
-                }
+                // if (!Enum.TryParse(keyValue[0], out Phase phase))
+                // {
+                //     throw new ArgumentException($"Invalid Phase value: {keyValue[0]}.");
+                // }
 
-                if (!int.TryParse(keyValue[1], out int quantityValue))
-                {
-                    throw new ArgumentException($"Invalid Quantity value for phase {keyValue[0]}.");
-                }
+                // if (!int.TryParse(keyValue[1], out int quantityValue))
+                // {
+                //     throw new ArgumentException($"Invalid Quantity value for phase {keyValue[0]}.");
+                // }
 
-                phasesDictionary[phase] = new Quantity(quantityValue);
+                var phase = PhaseUtils.FromString(keyValue[0]);
+                var quantityValue = new Quantity(int.Parse(keyValue[1]));
+
+                phasesDictionary[phase] = quantityValue;
             }
 
-            if (!phasesDictionary.ContainsKey(Phase.Anesthesia_Preparation) || 
+            if (!phasesDictionary.ContainsKey(Phase.Preparation) || 
                 !phasesDictionary.ContainsKey(Phase.Surgery) || 
                 !phasesDictionary.ContainsKey(Phase.Cleaning))
             {
@@ -72,8 +75,41 @@ namespace Domain.OperationTypes
 
     public enum Phase
     {
-        Anesthesia_Preparation,
+        Preparation,
         Surgery,
         Cleaning
+    }
+
+    public class PhaseUtils
+    {
+        public static Phase FromString(string phase)
+        {
+            switch (phase)
+            {
+                case "Preparation":
+                    return Phase.Preparation;
+                case "Surgery":
+                    return Phase.Surgery;
+                case "Cleaning":
+                    return Phase.Cleaning;
+                default:
+                    throw new ArgumentException("Invalid Phase value", phase);
+            }
+        }
+
+        public static string ToString(Phase phase)
+        {
+            switch (phase)
+            {
+                case Phase.Preparation:
+                    return "Preparation";
+                case Phase.Surgery:
+                    return "Surgery";
+                case Phase.Cleaning:
+                    return "Cleaning";
+                default:
+                    throw new ArgumentException("Invalid Phase value", phase.ToString());
+            }
+        }
     }
 }

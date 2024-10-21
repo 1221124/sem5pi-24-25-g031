@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g061/DDDNetCore.csproj": {}
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj": {}
   },
   "projects": {
-    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g061/DDDNetCore.csproj": {
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g061/DDDNetCore.csproj",
+        "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g061/DDDNetCore.csproj",
-        "packagesPath": "/Users/GuilhermeCastroRibeiro/.nuget/packages/",
-        "outputPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g061/obj/",
+        "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj",
+        "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/GuilhermeCastroRibeiro/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -89,11 +89,15 @@
               "version": "[7.0.20, 7.0.20]"
             },
             {
-              "name": "Microsoft.NETCore.App.Host.osx-arm64",
+              "name": "Microsoft.NETCore.App.Host.win-x64",
               "version": "[7.0.20, 7.0.20]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
               "version": "[7.0.20, 7.0.20]"
             }
           ],
@@ -105,7 +109,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.401/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

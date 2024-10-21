@@ -6,24 +6,35 @@ namespace Domain.OperationRequestAggregate
 {
     public class OperationRequest : Entity<OperationRequestId>, IAggregateRoot
     {
-        public Guid id { get; set; }
+        public OperationRequestId OperationRequestId { get; set; }
 
-        /*public PatientId patientId { get; set; }
+        /*public PatientId PatientId { get; set; }
 
-        public StaffId doctorId { get; set; }*/
+        public StaffId DoctorId { get; set; }*/
 
-        public OperationTypeId operationTypeId { get; set; }
-        public DateTime deadlineDate { get; set; }
-        public Priority priority { get; set; }
+        public OperationTypeId OperationTypeId { get; set; }
+        public DateTime DeadlineDate { get; set; }
+        public Priority Priority { get; set; }
+        public RequestStatus Status {get; set;}
         
         
-        public OperationRequest(/*PatientId patientId, DoctorId doctorId,*/ OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority)
+        public OperationRequest(OperationRequestId id, /*PatientId patientId, DoctorId doctorId,*/ OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
         {
-            /*this.patientId = patientId;
-            this.doctorId = doctorId;*/
-            this.operationTypeId = operationTypeId;
-            this.deadlineDate = deadlineDate;
-            this.priority = priority;
+            OperationRequestId = id;
+            /*PatientId = patientId;
+            DoctorId = doctorId;*/
+            OperationTypeId = operationTypeId;
+            DeadlineDate = deadlineDate;
+            Priority = priority;
+            Status = status;
+        }
+
+        public OperationRequest(OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
+        {
+            OperationTypeId = operationTypeId;
+            DeadlineDate = deadlineDate;
+            Priority = priority;
+            Status = status;
         }
     }
 }
