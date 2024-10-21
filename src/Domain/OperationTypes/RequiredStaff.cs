@@ -31,22 +31,24 @@ namespace Domain.OperationTypes
                 throw new ArgumentException("Input string must be in the format 'Role,Specialization,Quantity'.");
             }
 
-            if (!Enum.TryParse(parts[0], out Role role))
-            {
-                throw new ArgumentException("Invalid Role value.");
-            }
+            // if (!Enum.TryParse(parts[0], out Role role))
+            // {
+            //     throw new ArgumentException("Invalid Role value.");
+            // }
 
-            if (!Enum.TryParse(parts[1], out Specialization specialization))
-            {
-                throw new ArgumentException("Invalid Specialization value.");
-            }
+            // if (!Enum.TryParse(parts[1], out Specialization specialization))
+            // {
+            //     throw new ArgumentException("Invalid Specialization value.");
+            // }
 
-            if (!int.TryParse(parts[2], out int quantityValue))
-            {
-                throw new ArgumentException("Invalid Quantity value.");
-            }
+            // if (!int.TryParse(parts[2], out int quantityValue))
+            // {
+            //     throw new ArgumentException("Invalid Quantity value.");
+            // }
 
-            var quantity = new Quantity(quantityValue);
+            var role = RoleUtils.FromString(parts[0]);
+            var specialization = SpecializationUtils.FromString(parts[1]);
+            var quantity = new Quantity(int.Parse(parts[2]));
 
             return new RequiredStaff(role, specialization, quantity);
         }

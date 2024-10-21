@@ -1,6 +1,6 @@
-using DDDNetCore.src.Domain.Shared;
+using Domain.Shared;
 
-namespace Domain.Patient
+namespace Domain.Patients
 {
   public class EmergencyContact: IValueObject
   {

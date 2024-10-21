@@ -14,20 +14,26 @@ namespace Domain.OperationTypes
 
         public PhasesDuration PhasesDuration { get; set; }
 
+        public Status Status { get; set; }
+
         public OperationType(Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
         {
+            Id = new OperationTypeId(Guid.NewGuid());
             Name = name;
             Specialization = specialization;
             _requiredStaff = requiredStaff;
             PhasesDuration = phasesDuration;
+            Status = Status.Active;
         }
 
         public OperationType(string name, string specialization, string requiredStaff, string phasesDuration)
         {
+            Id = new OperationTypeId(Guid.NewGuid());
             Name = name;
             Specialization = SpecializationUtils.FromString(specialization);
             _requiredStaff = RequiredStaff.FromString(requiredStaff);
             PhasesDuration = phasesDuration;
+            Status = Status.Active;
         }
     }
 }

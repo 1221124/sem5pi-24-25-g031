@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.OperationTypes;
+using Domain.Patients;
 // using Domain.Shared;
 
-namespace Infrastructure.OperationTypes
+namespace Infrastructure.Patients
 {
-    internal class OperationTypeEntityTypeConfiguration : IEntityTypeConfiguration<OperationType>
+    internal class PatientEntityTypeConfiguration : IEntityTypeConfiguration<Patient>
     {
-        public void Configure(EntityTypeBuilder<OperationType> builder)
+        public void Configure(EntityTypeBuilder<Patient> builder)
         {
             // cf. https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
             

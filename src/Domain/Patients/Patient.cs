@@ -1,7 +1,8 @@
 using Domain.Shared;
 using System;
+using System.Collections.Generic;
 
-namespace Domain.Patient
+namespace Domain.Patients
 {
   public class Patient : Entity<PatientId>, IAggregateRoot
   {
@@ -13,9 +14,11 @@ namespace Domain.Patient
     public ContactInformation ContactInformation { get; set; }
     public List<MedicalConditions> MedicalConditions { get; set; }
     public EmergencyContact EmergencyContact { get; set; }
-    //public AppointmentHistory AppointementHistory { get; set; }
+        public DateTime DateOfBirth { get; internal set; }
 
-    public Patient(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, MedicalConditions medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
+        //public AppointmentHistory AppointementHistory { get; set; }
+
+        public Patient(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
     {
       FullName = fullName;
       Name = name;

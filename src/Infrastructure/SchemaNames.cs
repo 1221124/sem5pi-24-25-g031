@@ -2,6 +2,6 @@ namespace Infrastructure
 {
     internal class SchemaNames
     {
-        internal const string DDDSample1 = "ddd";
+        internal const string g031 = "g031";
     }
 }

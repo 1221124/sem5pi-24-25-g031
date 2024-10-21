@@ -1,4 +1,7 @@
-namespace Domain.Patient
+using System;
+using Domain.Shared;
+
+namespace Domain.Patients
 {
   public class MedicalRecordNumber: IValueObject
   {
@@ -6,9 +9,9 @@ namespace Domain.Patient
 
     public MedicalRecordNumber(int value)
     {
-      if (string.IsNullOrWhiteSpace(value))
+      if (value <= 0)
         {
-            throw new ArgumentException("Medical Record Number cannot be empty");
+            throw new ArgumentException("Medical Record Number must be greater than zero");
         }
       Value = value;
     }

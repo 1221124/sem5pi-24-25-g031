@@ -1,16 +1,16 @@
 using System;
 using Domain.Shared;
 
-namespace Domain.Staff
+namespace Domain.Users
 {
 
-    public class StaffId : EntityId
+    public class UserId : EntityId
     {
-        public StaffId(Guid value) : base(value)
+        public UserId(Guid value) : base(value)
         {
         }
 
-        public StaffId(string value) : base(value)
+        public UserId(string value) : base(value)
         {
         }
 

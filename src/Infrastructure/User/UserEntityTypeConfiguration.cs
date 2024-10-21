@@ -1,17 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.OperationTypes;
-// using Domain.Shared;
+using Domain.Users;
 
-namespace Infrastructure.OperationTypes
+namespace Infrastructure.Users
 {
-    internal class OperationTypeEntityTypeConfiguration : IEntityTypeConfiguration<OperationType>
+    internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<OperationType> builder)
+        public void Configure(EntityTypeBuilder<User> builder)
         {
             // cf. https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
             
-            // builder.ToTable("OperationType", SchemaNames.g031);
+            // builder.ToTable("User", SchemaNames.g031);
             builder.HasKey(b => b.Id);
             // builder.Property<Status>("Status").HasColumnName("Active").IsRequired();
         }
