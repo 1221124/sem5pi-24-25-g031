@@ -1,6 +1,8 @@
-using Domain.Staff;
+using System;
+using System.Threading.Tasks;
+using Domain.Shared;
 
-namespace Staff.Domain
+namespace Domain.Staff
 {
     public class StaffService
     {
@@ -26,6 +28,16 @@ namespace Staff.Domain
         public async Task<StaffDto> GetByIdAsync(StaffId id)
         {
             var staff = await this._repo.GetByIdAsync(id);
+
+            if (staff == null)
+                return null;
+
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
+        }
+
+        public async Task<StaffDto> GetByEmailAsync(Email email)
+        {
+            var staff = await this._repo.GetByEmailAsync(email);
 
             if (staff == null)
                 return null;
@@ -92,5 +104,6 @@ namespace Staff.Domain
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
         }
+
     }
 }
