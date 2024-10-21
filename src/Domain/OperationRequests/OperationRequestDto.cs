@@ -1,27 +1,29 @@
 using System;
 using Domain.OperationTypes;
+using Domain.Patients;
+using Domain.Staff;
 using Domain.Shared;
 
-namespace Domain.OperationRequestAggregate
+namespace Domain.OperationRequests
 {
     public class OperationRequestDto
     {
         public Guid Id { get; set; }
 
-        /*public PatientId patientId { get; set; }
+        public PatientId PatientId { get; set; }
 
-        public UserId userId { get; set; }*/
+        public StaffId DoctorId { get; set; }
 
         public OperationTypeId OperationTypeId { get; set; }
         public DateTime DeadlineDate { get; set; }
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
         
-        public OperationRequestDto(Guid id, /*PatientId patientId, DoctorId doctorId,*/ OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority)
+        public OperationRequestDto(Guid id, PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority)
         {
             Id = id;
-            /*this.patientId = patientId;
-            this.doctorId = doctorId;*/
+            PatientId = patientId;
+            DoctorId = doctorId;
             OperationTypeId = operationTypeId;
             DeadlineDate = deadlineDate;
             Priority = priority;

@@ -2,7 +2,7 @@ using System;
 using Domain.Shared;
 using Newtonsoft.Json;
 
-namespace Domain.OperationRequestAggregate
+namespace Domain.OperationRequests
 {
     public class OperationRequestId : EntityId
     {
@@ -30,5 +30,17 @@ namespace Domain.OperationRequestAggregate
         public Guid AsGuid(){
             return (Guid) base.ObjValue;
         }
+
+
+        public static implicit operator OperationRequestId(Guid value)
+            => new OperationRequestId(value);
+
+        public static implicit operator OperationRequestId(string value)
+            => new OperationRequestId(value);
+
+        public static implicit operator Guid(OperationRequestId id)
+            => id.AsGuid();
+
+            
     }
 }

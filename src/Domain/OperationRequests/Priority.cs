@@ -1,4 +1,4 @@
-namespace Domain.OperationRequestAggregate
+namespace Domain.OperationRequests
 {
     public enum Priority
     {
