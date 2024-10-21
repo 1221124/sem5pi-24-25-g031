@@ -1,4 +1,4 @@
-namespace Log{
+namespace DBLogs {
     public enum UpdateType
     {
         PATIENT_NAME,

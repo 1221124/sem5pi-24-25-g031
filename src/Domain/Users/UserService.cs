@@ -86,7 +86,7 @@ namespace Domain.Users
             if (User == null)
                 return null;   
 
-            User.UserStatus = UserStatus.Blocked;
+            User.UserStatus = UserStatus.Inactive;
             
             await this._unitOfWork.CommitAsync();
 

@@ -4,7 +4,6 @@ using System;
 using System.Threading.Tasks;
 using Domain.Shared;
 using Domain.OperationTypes;
-using Domain.IAM;
 
 namespace Controllers
 {
@@ -13,12 +12,10 @@ namespace Controllers
     public class OperationTypesController : ControllerBase
     {
         private readonly OperationTypeService _service;
-        private readonly IAMService _iamService;
 
-        public OperationTypesController(OperationTypeService service, IAMService iAMService)
+        public OperationTypesController(OperationTypeService service)
         {
             _service = service;
-            _iamService = iAMService;
         }
 
         // GET: api/OperationTypes
