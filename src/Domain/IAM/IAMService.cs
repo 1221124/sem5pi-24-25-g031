@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Shared;
-using Domain.TEMPLATE;
 using Google.Cloud.Firestore;
 using System;
 using Infrastructure;
@@ -29,6 +28,19 @@ namespace Domain.IAM
         //     // _dbContext = dbContext;
         // }
 
+        public async Task<Email> GetEmailFromToken(string token)
+        {
+            try
+            {
+                var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                return new Email(decodedToken.Claims["email"]?.ToString());
+            }
+            catch (FirebaseAuthException ex)
+            {
+                throw new Exception("Invalid token.", ex);
+            }
+        }
+        
         public async Task<UserDto> RegisterUser(CreatingUserDto dto)
         {
             var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(new UserRecordArgs()

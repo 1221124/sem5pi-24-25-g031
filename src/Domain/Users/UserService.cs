@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Shared;
+using FirebaseAdmin.Auth;
 
 namespace Domain.Users
 {
@@ -13,6 +14,24 @@ namespace Domain.Users
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
+        }
+
+        public async Task<bool> IsAuthorized(Email email, List<Role> roles)
+        {
+            // var email = await GetEmailFromToken();
+            var loggedUser = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email.Value);
+            var user = _repo.GetByEmailAsync(loggedUser.Email).Result;
+            
+            if (user == null)
+                return false;
+
+            for (int i = 0; i < roles.Count; i++)
+            {
+                if (user.Role == roles[i])
+                    return true;
+            }
+
+            return false;
         }
 
         public async Task<List<UserDto>> GetAllAsync()
