@@ -24,6 +24,14 @@ namespace Infrastructure
             
         }
 
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     if (!optionsBuilder.IsConfigured)
+        //     {
+        //         optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+        //     }
+        // }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());

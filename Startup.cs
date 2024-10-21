@@ -4,10 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Infrastructure;
 using Infrastructure.OperationTypes;
-using Infrastructure.Shared;
 using Domain.Shared;
 using Domain.OperationTypes;
 using FirebaseAdmin;
@@ -16,7 +14,6 @@ using Infrastructure.OperationRequestAggregate;
 using Domain.OperationRequestAggregate;
 using Domain.Users;
 using Infrastructure.Users;
-using Domain.Patient;
 
 public class Startup
 {
@@ -35,13 +32,15 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContext<SARMDbContext>(opt =>
-            opt.UseInMemoryDatabase("SARMDB")
-            .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+        // services.AddDbContext<SARMDbContext>(opt =>
+        //     opt.UseInMemoryDatabase("SARMDB")
+        //     .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+
+        services.AddDbContext<SARMDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         ConfigureMyServices(services);
         
-
         services.AddControllers().AddNewtonsoftJson();
     }
 
@@ -82,12 +81,5 @@ public class Startup
         
         services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
         services.AddTransient<OperationRequestService>();
-
-        services.AddTransient<IPatientRepository, PatientRepository>();
-        services.AddTransient<PatientService>();
-
-        services.AddTransient<IStaffRepository, StaffRepository>();
-        services.AddTransient<StaffService>();
-
     }
 }
