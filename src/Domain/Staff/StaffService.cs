@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Shared;
+
 
 namespace Domain.Staff
 {
@@ -20,7 +22,7 @@ namespace Domain.Staff
         {
             var list = await this._repo.GetAllAsync();
 
-            List<StaffDto> listDto = list.ConvertAll<StaffDto>(staff => new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot });
+            List<StaffDto> listDto = list.ConvertAll<StaffDto>(staff => new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability });
 
             return listDto;
         }
@@ -32,7 +34,7 @@ namespace Domain.Staff
             if (staff == null)
                 return null;
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> GetByEmailAsync(Email email)
@@ -42,7 +44,7 @@ namespace Domain.Staff
             if (staff == null)
                 return null;
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> AddAsync(CreatingStaffDto dto)
@@ -53,7 +55,7 @@ namespace Domain.Staff
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> UpdateAsync(StaffDto dto)
@@ -64,16 +66,13 @@ namespace Domain.Staff
                 return null;
 
             // change all field
-            staff.ChangeFullName(dto.FullName);
             staff.ChangeContactInformation(dto.ContactInformation);
-            staff.ChangeLicenseNumber(dto.LicenseNumber);
+            staff.ChangeSlotAvailability(dto.SlotAvailability);
             staff.ChangeSpecialization(dto.Specialization);
-            staff.ChangeStatus(dto.Status);
-            staff.ChangeSlot(dto.Slot);
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> InactivateAsync(StaffId id)
@@ -88,7 +87,7 @@ namespace Domain.Staff
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> DeleteAsync(StaffId id)
@@ -98,11 +97,14 @@ namespace Domain.Staff
             if (staff == null)
                 return null;
 
-            await this._repo.DeleteAsync(staff);
+            if (staff.Status.IsActive())
+                throw new BusinessRuleValidationException("It is not possible to delete an active category.");
+
+            this._repo.Remove(staff);
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, Slot = staff.Slot };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
     }

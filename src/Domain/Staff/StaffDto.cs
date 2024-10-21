@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Domain.Shared;
 using Domain.Users;
 
@@ -11,12 +12,17 @@ namespace Domain.Staff
         public UserId UserId { get; set; }
         public FullName FullName { get; set; }
         public ContactInformation ContactInformation { get; set; }
-        public string LicenseNumber { get; set; }
+        public LicenseNumber LicenseNumber { get; set; }
         public Specialization Specialization { get; set; }
         public Status Status { get; set; }
-        public List<Slot> Slot { get; set; }
+        public List<Slot> SlotAppointement { get; set; }
+        public List<Slot> SlotAvailability { get; set; }
 
-        public StaffDto(Guid id, UserId userId, FullName fullName, ContactInformation contactInformation, string licenseNumber, Specialization specialization, Status status, List<Slot> slot)
+        public StaffDto()
+        {
+        }
+
+        public StaffDto(Guid id, UserId userId, FullName fullName, ContactInformation contactInformation, LicenseNumber licenseNumber, Specialization specialization, Status status, List<Slot> slot)
         {
             Id = id;
             UserId = userId;
@@ -25,7 +31,8 @@ namespace Domain.Staff
             LicenseNumber = licenseNumber;
             Specialization = specialization;
             Status = status;
-            Slot = slot;
+            SlotAppointement = slot;
+            SlotAvailability = slot;
         }
     }
 }
