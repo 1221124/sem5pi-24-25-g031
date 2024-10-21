@@ -7,6 +7,6 @@ namespace Domain.DBLogs
 {
     public interface IDBLogRepository : IRepository<DBLog, DBLogId>
     {
-        new Task<DBLog> AddAsync(DBLog log);
+        Task<DBLog> GetByIdAsync(object value);
     }
 }

@@ -7,24 +7,24 @@ namespace Domain.DBLogs
     
         private readonly IDBLogRepository _logRepository;
 
-        public LogService(IDBLogRepository logRepository)
+        public DBLogService(IDBLogRepository logRepository)
         {
             _logRepository = logRepository;
         }
 
-        public async Task<IEnumerable<Log>> GetLogsAsync()
+        public async Task<IEnumerable<DBLog>> GetLogsAsync()
         {
-            return await _logRepository.GetLogsAsync();
+            return await _logRepository.GetAllAsync();
         }
 
-        public async Task<Log> GetLogAsync(int id)
+        public async Task<DBLog> GetLogAsync(int id)
         {
-            return await _logRepository.GetLogAsync(id);
+            return await _logRepository.GetByIdAsync(id);
         }
 
-        public async Task<Log> CreateLogAsync(DBLog log)
+        public async Task<DBLog> CreateLogAsync(DBLog log)
         {
-            return await _logRepository.CreateLogAsync(log);
+            return await _logRepository.AddAsync(log);
         }
     }
 }
