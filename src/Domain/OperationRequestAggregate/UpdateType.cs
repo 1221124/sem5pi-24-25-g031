@@ -11,7 +11,7 @@ namespace Log{
 
     public class UpdateTypeName
     {
-        public static string GetName(UpdateType type)
+        public static string ToString(UpdateType type)
         {
             switch (type)
             {

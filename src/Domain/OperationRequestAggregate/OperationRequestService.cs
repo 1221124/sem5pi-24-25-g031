@@ -29,7 +29,7 @@ namespace Domain.OperationRequestAggregate
             
             List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(
                 cat => new OperationRequestDto{ 
-                    Id = cat.Id.AsGuid(), OperationTypeId = cat.operationTypeId, DeadlineDate = cat.deadlineDate, Priority = cat.priority
+                    Id = cat.Id.AsGuid(), OperationTypeId = cat.OperationTypeId, DeadlineDate = cat.DeadlineDate, Priority = cat.Priority
                     }
                 );
 
@@ -38,14 +38,14 @@ namespace Domain.OperationRequestAggregate
         public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto dto)
         {
             
-            var category = new OperationRequest(/*dto.doctorId, dto.patientId,*/dto.OperationTypeId, dto.DeadlineDate, dto.Priority);
+            var category = new OperationRequest(/*dto.doctorId, dto.patientId,*/dto.OperationTypeId, dto.DeadlineDate, dto.Priority, RequestStatus.PENDING);
 
             await this._repo.AddAsync(category);
 
             await this._unitOfWork.CommitAsync();
 
             return new OperationRequestDto {
-                Id = category.Id.AsGuid(), OperationTypeId = category.operationTypeId, DeadlineDate = category.deadlineDate, Priority = category.priority
+                Id = category.Id.AsGuid(), OperationTypeId = category.OperationTypeId, DeadlineDate = category.DeadlineDate, Priority = category.Priority
                 };
         }
 
@@ -62,10 +62,10 @@ namespace Domain.OperationRequestAggregate
                     category.Status = dto.Status;
                     break;
                 case UpdateType.DEADLINE_DATE:
-                    category.deadlineDate = dto.DeadlineDate;
+                    category.DeadlineDate = dto.DeadlineDate;
                     break;
                 case UpdateType.PRIORITY:
-                    category.priority = dto.Priority;
+                    category.Priority = dto.Priority;
                     break;
                 default:
                     throw new ArgumentException("Error: Invalid update type.");
@@ -76,7 +76,7 @@ namespace Domain.OperationRequestAggregate
             await this._unitOfWork.CommitAsync();
 
             return new OperationRequestDto {
-                Id = category.Id.AsGuid(), OperationTypeId = category.operationTypeId, DeadlineDate = category.deadlineDate, Priority = category.priority
+                Id = category.Id.AsGuid(), OperationTypeId = category.OperationTypeId, DeadlineDate = category.DeadlineDate, Priority = category.Priority
                 };
         }
 
@@ -91,7 +91,8 @@ namespace Domain.OperationRequestAggregate
             await this._unitOfWork.CommitAsync();
 
             return new OperationRequestDto {
-                Id = category.Id.AsGuid()                };
+                Id = category.Id.AsGuid()
+                };
         }
 
         public async Task<OperationRequestDto> GetByIdAsync(OperationRequestId id)
@@ -102,7 +103,8 @@ namespace Domain.OperationRequestAggregate
                 return null;
 
             return new OperationRequestDto {
-                Id = category.Id.AsGuid(), OperationTypeId = category.operationTypeId, DeadlineDate = category.deadlineDate, Priority = category.priority
+                Id = category.Id.AsGuid(), OperationTypeId = category.OperationTypeId, 
+                DeadlineDate = category.DeadlineDate, Priority = category.Priority, Status = category.Status
                 };
         }
 
