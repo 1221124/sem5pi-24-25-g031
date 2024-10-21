@@ -9,11 +9,11 @@ namespace Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OperationTypeController : ControllerBase
+    public class OperationTypesController : ControllerBase
     {
         private readonly OperationTypeService _service;
 
-        public OperationTypeController(OperationTypeService service)
+        public OperationTypesController(OperationTypeService service)
         {
             _service = service;
         }
@@ -41,7 +41,7 @@ namespace Controllers
 
         // POST: api/OperationType
         [HttpPost]
-        public async Task<ActionResult<OperationTypeDto>> Create(CreatingOperationTypeDto dto)
+        public async Task<ActionResult<OperationTypeDto>> Create([FromBody] CreatingOperationTypeDto dto)
         {
             var operationType = await _service.AddAsync(dto);
 
