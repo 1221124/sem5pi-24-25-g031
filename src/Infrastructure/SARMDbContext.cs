@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 
 using Domain.OperationTypes;
-using Domain.OperationRequestAggregate;
+using Domain.OperationRequests;
 using Domain.Patients;
 
 using Infrastructure.OperationTypes;
-using Infrastructure.OperationRequestAggregate;
+using Infrastructure.OperationRequests;
 using Infrastructure.Users;
 using Domain.Users;
 using Infrastructure.Patients;

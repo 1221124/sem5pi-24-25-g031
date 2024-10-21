@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.OperationRequestAggregate;
+using Domain.OperationRequests;
 
-namespace Infrastructure.OperationRequestAggregate
+namespace Infrastructure.OperationRequests
 {
     internal class OperationRequestEntityTypeConfiguration : IEntityTypeConfiguration<OperationRequest>
     {

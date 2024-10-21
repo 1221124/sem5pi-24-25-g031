@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Domain.Shared;
+using Domain.OperationRequests;
 
 namespace Infrastructure.Shared
 {
@@ -12,11 +13,18 @@ namespace Infrastructure.Shared
     where TEntityId : EntityId
     {
         private readonly DbSet<TEntity> _objs;
-        
+
+        public DbSet<OperationRequest> OperationRequests { get; }
+
         public BaseRepository(DbSet<TEntity> objs)
         {
             this._objs = objs ?? throw new ArgumentNullException(nameof(objs));
         
+        }
+
+        public BaseRepository(DbSet<OperationRequest> operationRequests)
+        {
+            OperationRequests = operationRequests;
         }
 
         public async Task<List<TEntity>> GetAllAsync()
