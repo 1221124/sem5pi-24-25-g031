@@ -75,6 +75,8 @@ public class Startup
 
     public void ConfigureMyServices(IServiceCollection services)
     {
+        services.AddControllers();
+        
         services.AddTransient<IUnitOfWork,UnitOfWork>();
 
         services.AddTransient<IOperationTypeRepository,OperationTypeRepository>();
