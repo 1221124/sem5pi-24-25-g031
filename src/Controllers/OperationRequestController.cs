@@ -76,9 +76,8 @@ namespace Controllers
             if (id == null)
                 return BadRequest("Operation request data is required.");
 
-            OperationRequestDto request = new OperationRequestDto
-        {
-                Id = id.AsGuid()
+            OperationRequestDto request = new OperationRequestDto{
+                OperationRequestId = id
             }; 
 
             // Handle different update types based on the route parameter
