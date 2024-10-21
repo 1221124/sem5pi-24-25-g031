@@ -18,6 +18,7 @@ using Domain.Patients;
 using Infrastructure.Patients;
 using Domain.Staff;
 using Domain.IAM;
+using Infrastructure.StaffRepository;
 
 public class Startup
 {
@@ -65,7 +66,7 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseAuthorization();
+        // app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {

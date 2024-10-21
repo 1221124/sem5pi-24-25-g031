@@ -18,14 +18,14 @@ namespace Controllers
             _service = service;
         }
 
-        // GET: api/OperationType
+        // GET: api/OperationTypes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
         {
             return await _service.GetAllAsync();
         }
 
-        // GET: api/OperationType/5
+        // GET: api/OperationTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
         {
@@ -39,17 +39,18 @@ namespace Controllers
             return operationType;
         }
 
-        // POST: api/OperationType
+        // POST: api/OperationTypes
         [HttpPost]
         public async Task<ActionResult<OperationTypeDto>> Create([FromBody] CreatingOperationTypeDto dto)
         {
             var operationType = await _service.AddAsync(dto);
 
-            return CreatedAtAction(nameof(GetById), new { name = operationType.Name }, operationType);
+            // return CreatedAtAction(nameof(GetById), new { name = operationType.Name }, operationType);
+            return Ok(operationType);
         }
 
         
-        // PUT: api/OperationType/5
+        // PUT: api/OperationTypes/5
         [HttpPut("{id}")]
         public async Task<ActionResult<OperationTypeDto>> Update(OperationTypeDto dto)
         {
@@ -70,7 +71,7 @@ namespace Controllers
             }
         }
 
-        // Inactivate: api/OperationType/5
+        // Inactivate: api/OperationTypes/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
         {
@@ -84,7 +85,7 @@ namespace Controllers
             return Ok(operationType);
         }
         
-        // DELETE: api/OperationType/5
+        // DELETE: api/OperationTypes/5
         [HttpDelete("{id}/hard")]
         public async Task<ActionResult<OperationTypeDto>> HardDelete(Guid id)
         {
