@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Domain.OperationTypes;
 using Domain.OperationRequestAggregate;
+using Domain.Patients;
 
 using Infrastructure.OperationTypes;
 using Infrastructure.OperationRequestAggregate;
@@ -15,6 +16,7 @@ namespace Infrastructure
         public DbSet<OperationType> OperationTypes { get; set; }
         public DbSet<OperationRequest> OperationRequests { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Patient> Patients { get; set; }
 
         public SARMDbContext (DbContextOptions options) : base(options)
         {
