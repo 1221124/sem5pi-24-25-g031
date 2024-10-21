@@ -14,6 +14,9 @@ using Infrastructure.OperationRequestAggregate;
 using Domain.OperationRequestAggregate;
 using Domain.Users;
 using Infrastructure.Users;
+using Domain.Patients;
+using Infrastructure.Patients;
+using Domain.Staff;
 
 public class Startup
 {
@@ -81,5 +84,11 @@ public class Startup
         
         services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
         services.AddTransient<OperationRequestService>();
+
+        services.AddTransient<IPatientRepository, PatientRepository>();
+        services.AddTransient<PatientService>();
+
+        services.AddTransient<IStaffRepository, StaffRepository>();
+        services.AddTransient<StaffService>();
     }
 }
