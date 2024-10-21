@@ -5,6 +5,6 @@ namespace Domain.Staff
 {
     public interface IStaffRepository : IRepository<Staff, StaffId>
     {
-        Task<Staff> GetByEmailAsync(Email email);
+        //Task<Staff> GetByEmailAsync(Email email);
     }
 }

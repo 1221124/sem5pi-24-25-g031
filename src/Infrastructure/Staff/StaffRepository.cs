@@ -17,11 +17,10 @@ namespace Infrastructure.StaffRepository
             this._objs = context.Staffs;
         }
 
-        public async Task<List<Staff>> GetByEmailAsync(Email email)
+        /* public async Task<Staff> GetByEmailAsync(Email email)
         {
-            return await this._objs
-                .AsQueryable().Where(x => email.Equals(x.Email)).ToListAsync();
-        }
+             return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.Email == email);
+        }*/
     }
 
 }
