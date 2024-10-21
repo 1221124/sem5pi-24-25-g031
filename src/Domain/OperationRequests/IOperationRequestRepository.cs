@@ -5,5 +5,7 @@ namespace Domain.OperationRequests
 {
     public interface IOperationRequestRepository : IRepository<OperationRequest, OperationRequestId>
     {
+        //update
+        Task UpdateAsync(OperationRequest operationRequest);
     }
 }

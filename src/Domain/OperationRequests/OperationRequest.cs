@@ -37,5 +37,32 @@ namespace Domain.OperationRequests
             Priority = priority;
             Status = status;
         }
+
+        internal void Update(PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
+        {
+            if(PatientId != patientId){
+                PatientId = patientId;
+            }
+
+            if(DoctorId != doctorId){
+                DoctorId = doctorId;
+            }
+
+            if(OperationTypeId != operationTypeId){
+                OperationTypeId = operationTypeId;
+            }
+
+            if(DeadlineDate != deadlineDate){
+                DeadlineDate = deadlineDate;
+            }
+
+            if(Priority != priority){
+                Priority = priority;
+            }
+
+            if(Status != status){
+                Status = status;
+            }
+        }
     }
 }

@@ -54,21 +54,6 @@ namespace Domain.OperationRequests
             } else return Task.FromResult(output);
         }   
 
-        public async Task<List<OperationRequestDto>> GetAllAsync()
-        {
-            var list = await this._repo.GetAllAsync();
-            
-            List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(
-                cat => new OperationRequestDto{ 
-                    Id = cat.Id.AsGuid(), 
-                    OperationTypeId = cat.OperationTypeId, 
-                    DeadlineDate = cat.DeadlineDate, 
-                    Priority = cat.Priority
-                    }
-                );
-
-            return listDto;
-        }
         public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto dto)
         {
             try{
@@ -105,37 +90,76 @@ namespace Domain.OperationRequests
             }
         }
 
+
+        public async Task<List<OperationRequestDto>> GetAllAsync()
+        {
+            var list = await this._repo.GetAllAsync();
+            
+            List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(
+                cat => new OperationRequestDto{ 
+                    Id = cat.Id.AsGuid(), 
+                    OperationTypeId = cat.OperationTypeId, 
+                    DeadlineDate = cat.DeadlineDate, 
+                    Priority = cat.Priority
+                    }
+                );
+
+            return listDto;
+        }
+
+        public async Task<OperationRequestDto> GetByIdAsync(string id)
+        {
+
+            try{
+                OperationRequestId operationRequestId = new(id);
+            
+                var category = await this._repo.GetByIdAsync(id); 
+
+                if (category == null)
+                    return null;
+
+                return new OperationRequestDto {
+                    Id = category.Id.AsGuid(), OperationTypeId = category.OperationTypeId, 
+                    DeadlineDate = category.DeadlineDate, Priority = category.Priority, Status = category.Status
+                };
+            }
+            catch(Exception e){
+                var logEntry = _logRepository.AddAsync(new DBLog(e.ToString()));
+                return new OperationRequestDto{};
+            }
+        }
+
+
         public async Task<OperationRequestDto> UpdateAsync(OperationRequestDto dto)
         {
             try{
                 OperationRequestId operationRequestId = new(dto.Id.ToString());
 
-                var category = await this._repo.GetByIdAsync(operationRequestId);
+                var category = await this._repo.GetByIdAsync(dto.Id.ToString()); 
 
-                
                 if (category == null)
                     return null;
 
-                if (category.Status != null)
-                    category.Status = dto.Status;
-
-                if (category.Priority != null)
-                    category.Priority = dto.Priority;
-
-                if (category.DeadlineDate != null)  
-                    category.DeadlineDate = dto.DeadlineDate;    
+                category.Update(
+                    dto.PatientId, dto.DoctorId, dto.OperationTypeId, dto.DeadlineDate, dto.Priority, dto.Status 
+                    );
 
                 await this._repo.UpdateAsync(category);
-
                 await this._unitOfWork.CommitAsync();
+
+                var logEntry = new DBLog(
+                    EntityType.OPERATION_REQUEST, DBLogType.UPDATE, DateTime.Now, new UserId(Guid.NewGuid()), category.Id.AsGuid()
+                    );
+
+                await _logRepository.AddAsync(logEntry);
 
                 return new OperationRequestDto {
                     Id = category.Id.AsGuid()
                 };
 
             }catch(Exception e){
-                Log.Error(e.Message);
-                return null;
+                var logEntry = _logRepository.AddAsync(new DBLog(e.ToString()));
+                return new OperationRequestDto{};
             }
         }
 
@@ -158,32 +182,9 @@ namespace Domain.OperationRequests
                 };
 
             }catch (Exception e){
-                Log.Error(e.Message);
+                var logEntry = _logRepository.AddAsync(new DBLog(e.ToString()));
                 return null;
             }
-        }
-
-        public async Task<OperationRequestDto> GetByIdAsync(string id)
-        {
-
-            try{
-
-            }
-            catch(Exception e){
-                Log.Error(e.Message);
-                return null;
-            }
-            
-            var category = await this._repo.GetByIdAsync(id); 
-
-            if (category == null)
-                return null;
-
-            return new OperationRequestDto {
-                Id = category.Id.AsGuid(), OperationTypeId = category.OperationTypeId, 
-                DeadlineDate = category.DeadlineDate, Priority = category.Priority, Status = category.Status
-                };
-        }
-
+        }  
     }
 }
