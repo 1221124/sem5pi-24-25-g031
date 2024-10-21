@@ -2,7 +2,7 @@ using Domain.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Patient
+namespace Domain.Patients
 {
   public class Patient : Entity<PatientId>, IAggregateRoot
   {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Domain.Shared;
 
-namespace Domain.Patient
+namespace Domain.Patients
 {
     public class PatientDto
     {

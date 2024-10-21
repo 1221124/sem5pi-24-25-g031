@@ -1,6 +1,6 @@
 using System;
 
-namespace Domain.Patient
+namespace Domain.Patients
 {
   public enum Gender
   {

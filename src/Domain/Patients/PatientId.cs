@@ -2,7 +2,7 @@ using System;
 using Domain.Shared;
 using Newtonsoft.Json;
 
-namespace Domain.Patient
+namespace Domain.Patients
 {
     public class PatientId : EntityId
     {

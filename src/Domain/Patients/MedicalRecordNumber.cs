@@ -1,7 +1,7 @@
 using System;
 using Domain.Shared;
 
-namespace Domain.Patient
+namespace Domain.Patients
 {
   public class MedicalRecordNumber: IValueObject
   {
