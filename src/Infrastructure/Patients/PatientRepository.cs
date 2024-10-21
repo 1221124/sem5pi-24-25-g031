@@ -16,5 +16,11 @@ namespace Infrastructure.Patients
         {
             this._objs = context.Patients;
         }
+
+        public async Task<Patient> getByPhoneNumberAsync(PhoneNumber phoneNumber)
+        {
+            return await _objs.
+                FirstOrDefaultAsync(p => p.ContactInformation.PhoneNumber == phoneNumber);
+        }
     }
 }
