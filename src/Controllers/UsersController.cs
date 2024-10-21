@@ -17,9 +17,11 @@ namespace Controllers
         private readonly StaffService _staffService;
         private readonly IAMService _iamService;
 
-        public UsersController(UserService service)
+        public UsersController(UserService service, StaffService staffService, IAMService iAMService)
         {
             _service = service;
+            _staffService = staffService;
+            _iamService = iAMService;
         }
 
         // GET: api/User

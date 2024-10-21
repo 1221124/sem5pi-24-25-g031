@@ -8,6 +8,7 @@ using Infrastructure.OperationTypes;
 using Infrastructure.OperationRequestAggregate;
 using Infrastructure.Users;
 using Domain.Users;
+using Infrastructure.Patients;
 
 namespace Infrastructure
 {
@@ -28,6 +29,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationRequestEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
         }
     }
 }

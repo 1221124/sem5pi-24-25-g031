@@ -71,6 +71,24 @@ namespace Domain.OperationTypes
 
             return new PhasesDuration(phasesDictionary);
         }
+
+        public static implicit operator string(PhasesDuration value)
+        {
+            if (value == null || !value.Phases.ContainsKey(Phase.Preparation) || !value.Phases.ContainsKey(Phase.Surgery) || !value.Phases.ContainsKey(Phase.Cleaning))
+            {
+                throw new InvalidOperationException("PhasesDuration is not properly initialized.");
+            }
+
+            var phaseStrings = new List<string>();
+
+            foreach (var entry in value.Phases)
+            {
+                var phaseString = $"{PhaseUtils.ToString(entry.Key)}:{entry.Value.Value}";
+                phaseStrings.Add(phaseString);
+            }
+
+            return string.Join(",", phaseStrings);
+        }
     }
 
     public enum Phase

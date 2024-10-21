@@ -53,6 +53,23 @@ namespace Domain.OperationTypes
             return new RequiredStaff(role, specialization, quantity);
         }
 
+        public static string ToString(List<RequiredStaff> staff)
+        {
+            if (staff == null || staff.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var staffStrings = new List<string>();
+
+            foreach (var staffMember in staff)
+            {
+                staffStrings.Add($"{staffMember.Role},{staffMember.Specialization},{staffMember.Quantity}");
+            }
+
+            return string.Join(";", staffStrings);
+        }
+
         public static List<RequiredStaff> FromString(string value)
         {
             if (string.IsNullOrWhiteSpace(value))

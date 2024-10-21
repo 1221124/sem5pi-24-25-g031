@@ -1,19 +1,55 @@
+using Domain.OperationTypes;
+using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.OperationTypes;
-// using Domain.Shared;
 
 namespace Infrastructure.OperationTypes
 {
-    internal class OperationTypeEntityTypeConfiguration : IEntityTypeConfiguration<OperationType>
+    public class OperationTypeEntityTypeConfiguration : IEntityTypeConfiguration<OperationType>
     {
         public void Configure(EntityTypeBuilder<OperationType> builder)
         {
-            // cf. https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
-            
-            // builder.ToTable("OperationType", SchemaNames.g031);
-            builder.HasKey(b => b.Id);
-            // builder.Property<Status>("Status").HasColumnName("Active").IsRequired();
+            builder.HasKey(o => o.Id);
+
+            builder.OwnsOne(o => o.Name, name =>
+            {
+                name.Property(n => n.Value)
+                    .HasColumnName("Name")
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
+            builder.Property(o => o.Specialization)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasConversion(
+                    v => SpecializationUtils.ToString(v),
+                    v => SpecializationUtils.FromString(v)
+                );
+
+            builder.Property(o => o._requiredStaff)
+                .IsRequired()
+                .HasConversion(
+                    v => RequiredStaff.ToString(v),
+                    v => RequiredStaff.FromString(v)
+                )
+                .HasColumnName("RequiredStaff");
+
+            builder.Property(o => o.PhasesDuration)
+                .IsRequired()
+                .HasConversion(
+                    v => (string)v,
+                    v => (PhasesDuration)v
+                )
+                .HasColumnName("PhasesDuration");
+
+            builder.Property(o => o.Status)
+                .IsRequired()
+                .HasConversion(
+                    v => StatusUtils.ToString(v),
+                    v => StatusUtils.FromString(v)
+                )
+                .HasColumnName("Status");
         }
     }
 }

@@ -12,9 +12,9 @@ namespace Domain.IAM
 {
     public class IAMService
     {
-        private readonly SARMDbContext _dbContext;
+        // private readonly SARMDbContext _dbContext;
         
-        private FirestoreDb _firestoreDb;
+        // private FirestoreDb _firestoreDb;
 
         // public IAMService()
         // {
@@ -24,10 +24,10 @@ namespace Domain.IAM
         //     _firestoreDb = FirestoreDb.Create("sem5-pi-24-25-g061"); //TODO: Review this
         // }
 
-        public IAMService(SARMDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        // public IAMService(SARMDbContext dbContext)
+        // {
+        //     // _dbContext = dbContext;
+        // }
 
         public async Task<UserDto> RegisterUser(CreatingUserDto dto)
         {
@@ -40,7 +40,7 @@ namespace Domain.IAM
                 Disabled = false
             });
 
-            var user = new User(dto.Email, dto.Role);
+            var user = new User(userRecord.Email, dto.Role);
 
             return UserMapper.ToDto(user);
         }
