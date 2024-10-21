@@ -44,6 +44,11 @@ namespace src.Controllers
         public async Task<ActionResult<PatientDto>> Create(CreatingPatientDto dto)
         {
             var patient = await _service.AddAsync(dto);
+            
+            if (patient == null)
+            {
+                return BadRequest(new {Message = "Phone number already exists"});
+            }
 
             return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
         }
