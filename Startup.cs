@@ -17,6 +17,7 @@ using Infrastructure.Users;
 using Domain.Patients;
 using Infrastructure.Patients;
 using Domain.Staff;
+using Domain.IAM;
 
 public class Startup
 {
@@ -90,5 +91,7 @@ public class Startup
 
         services.AddTransient<IStaffRepository, StaffRepository>();
         services.AddTransient<StaffService>();
+
+        services.AddTransient<IAMService>();
     }
 }
