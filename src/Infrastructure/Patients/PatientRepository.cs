@@ -16,14 +16,5 @@ namespace Infrastructure.Patients
         {
             this._objs = context.Patients;
         }
-
-        public void Configure(EntityTypeBuilder<Patient> builder)
-        {
-            // cf. https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
-            
-            //builder.ToTable("Categories", SchemaNames.DDDSample1);
-            builder.HasKey(b => b.Id);
-            //builder.Property<bool>("_active").HasColumnName("Active");
-        }
     }
 }
