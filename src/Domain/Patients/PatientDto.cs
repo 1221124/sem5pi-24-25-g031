@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Domain.Shared;
+using Domain.Users;
 
 namespace Domain.Patients
 {
@@ -14,10 +15,11 @@ namespace Domain.Patients
         public ContactInformation ContactInformation { get; set; }
         public List<MedicalConditions> MedicalConditions { get; set; }
         public EmergencyContact EmergencyContact { get; set; }
-        //public AppointmentHistory AppointementHistory { get; set; }
+        public UserId UserId { get; set; }
 
-        public PatientDto(FullName fullName, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
+        public PatientDto(Guid id,FullName fullName, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, UserId userId)
         {
+            Id = id; 
             FullName = fullName;
             DateOfBirth = dateOfBirth; 
             Gender = gender;
@@ -26,17 +28,19 @@ namespace Domain.Patients
             MedicalConditions = medicalConditions;
             EmergencyContact = emergencyContact;
             //AppointmentHistory = appointmentHistory;
+            UserId = userId;
         }
         
-        public PatientDto (FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation)
+        public PatientDto (Guid id, FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation, UserId userId)
         {
+            Id = id;
             FullName = fullName;
             DateOfBirth = dateOfBirth; 
             ContactInformation = contactInformation;
+            UserId = userId;
         }
 
-        public PatientDto(){
-        }
+        
 
         public PatientDto(Guid guid){
             Id = guid;
@@ -45,5 +49,11 @@ namespace Domain.Patients
         public PatientDto(PatientId id){
             Id = id.AsGuid();
         }
+        /*
+        public PatientDto()
+        {
+            
+        }
+        */
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Domain.DBLogs;
 using Domain.Users;
 using Domain.OperationRequests;
+using Domain.Patients;
 using Domain.Staffs;
 
 namespace Domain.DBLogs
@@ -13,6 +14,7 @@ namespace Domain.DBLogs
         private readonly IDBLogRepository _logRepository;
         private readonly IUserRepository _userRepository;
         private readonly IStaffRepository _staffRepository; 
+        private readonly IPatientRepository _patientRepository;
 
         public DBLogService(IDBLogRepository logRepository, IUserRepository userRepository)
         {
@@ -26,8 +28,7 @@ namespace Domain.DBLogs
 
             await CreateLogAsync(log);
         }
-
-
+        
         public async void LogAction(EntityType entityType, DBLogType logType, OperationRequest category)
         {
 
@@ -37,6 +38,17 @@ namespace Domain.DBLogs
 
             await CreateLogAsync(log);
         }
+        
+        public async void LogAction(EntityType entityType, DBLogType logType, PatientId id)
+        {
+
+            var patient = await _patientRepository.GetByIdAsync(id);
+
+            var log = new DBLog(entityType, logType, patient.UserId, patient.Id.AsGuid());
+
+            await CreateLogAsync(log);
+        }
+        
 
         public async Task<IEnumerable<DBLog>> GetLogsAsync()
         {

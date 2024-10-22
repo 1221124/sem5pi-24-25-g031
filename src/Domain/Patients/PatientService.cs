@@ -1,7 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Domain.DBLogs;
 using Domain.Shared;
+using FirebaseAdmin.Auth;
 
 namespace Domain.Patients
 {
@@ -9,6 +11,7 @@ namespace Domain.Patients
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
+        private readonly DBLogService _dbLogService;
 
         public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo)
         {
@@ -20,7 +23,7 @@ namespace Domain.Patients
         {
             var list = await this._repo.GetAllAsync();
             
-            List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto{Id = patient.Id.AsGuid(), FullName = patient.FullName, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact});
+            List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId ));
 
             return listDto;
         }
@@ -32,7 +35,7 @@ namespace Domain.Patients
             if(patient == null)
                 return null;
 
-            return new PatientDto{Id = patient.Id.AsGuid(), FullName = patient.FullName, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact};
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
         public async Task<PatientDto> AddAsync(CreatingPatientDto dto)
@@ -46,13 +49,16 @@ namespace Domain.Patients
             
             MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
             
-            var patient = new Patient(dto.FullName, dto.DateOfBirth, medicalRecordNumber, dto.ContactInformation);
-
+            var patient = new Patient(dto.FullName, dto.DateOfBirth, medicalRecordNumber, dto.ContactInformation, dto.UserId);
+            
+            
             await this._repo.AddAsync(patient);
 
             await this._unitOfWork.CommitAsync();
+            
+            _dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, patient.Id );
 
-            return new PatientDto { Id = patient.Id.AsGuid(), FullName = patient.FullName, DateOfBirth = patient.DateOfBirth, ContactInformation = patient.ContactInformation};
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
         public async Task<PatientDto> UpdateAsync(PatientDto dto)
@@ -66,14 +72,13 @@ namespace Domain.Patients
             patient.ChangeFullName(dto.FullName);
             patient.ChangeDateOfBirth(dto.DateOfBirth);
             patient.ChangeGender(dto.Gender);
-            //patient.ChangeMedicalRecordNumber(dto.MedicalRecordNumber);
             patient.ChangeContactInformation(dto.ContactInformation);
             patient.ChangeMedicalConditions(dto.MedicalConditions);
             patient.ChangeEmergencyContact(dto.EmergencyContact);
 
             await this._unitOfWork.CommitAsync();
 
-            return new PatientDto { Id = patient.Id.AsGuid(), FullName = patient.FullName, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact };
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
         public async Task<PatientDto> DeleteAsync(PatientId id)
@@ -86,7 +91,7 @@ namespace Domain.Patients
             this._repo.Remove(patient);
             await this._unitOfWork.CommitAsync();
 
-            return new PatientDto { Id = patient.Id.AsGuid(), FullName = patient.FullName, DateOfBirth = patient.DateOfBirth, Gender = patient.Gender, ContactInformation = patient.ContactInformation, MedicalConditions = patient.MedicalConditions, EmergencyContact = patient.EmergencyContact };
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }    
     }
 }

@@ -2,6 +2,7 @@ using Domain.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Users;
 
 namespace Domain.Patients
 {
@@ -14,10 +15,11 @@ namespace Domain.Patients
     public ContactInformation ContactInformation { get; set; }
     public List<MedicalConditions> MedicalConditions { get; set; }
     public EmergencyContact EmergencyContact { get; set; }
+    public UserId UserId { get; }
 
     public Patient() { }
     
-    public Patient(FullName fullName, DateTime dateOfBirth, Gender gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
+    public Patient(FullName fullName, DateTime dateOfBirth, Gender gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, UserId userId)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
@@ -27,16 +29,17 @@ namespace Domain.Patients
       ContactInformation = contactInformation;
       MedicalConditions = medicalConditions;
       EmergencyContact = emergencyContact;
-      //AppointmentHistory = appointmentHistory;
+      UserId = userId;
     }
         
-    public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
+    public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, UserId userId)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
       DateOfBirth = dateOfBirth; 
       MedicalRecordNumber = medicalRecordNumber;
       ContactInformation = contactInformation;
+      UserId = userId;
     }
     
     public override string ToString()
@@ -59,13 +62,6 @@ namespace Domain.Patients
     {
       this.Gender = gender;
     }
-  
-    /*
-    public void ChangeMedicalRecordNumber(MedicalRecordNumber medicalRecordNumber)
-    {
-      this.MedicalRecordNumber = medicalRecordNumber;
-    }
-    */
 
     public void ChangeContactInformation(ContactInformation contactInformation)
     {
