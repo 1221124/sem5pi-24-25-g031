@@ -4,19 +4,23 @@ using Domain.Users;
 using System.Threading.Tasks;
 using Domain.Shared;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Users
 {
     public class UserServiceTest
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly UserService _userService;
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly DbContextOptions<SARMDbContext> _options;
 
         public UserServiceTest()
         {
+            _options = new DbContextOptionsBuilder<SARMDbContext>()
+                .UseInMemoryDatabase("TestDatabase")
+                .Options;
             _userRepositoryMock = new Mock<IUserRepository>();
-            _userService = new UserService(_unitOfWork, _userRepositoryMock.Object);
+            _userService = new UserService(new UnitOfWork(new SARMDbContext(_options)), _userRepositoryMock.Object);
         }
 
         [Fact]
