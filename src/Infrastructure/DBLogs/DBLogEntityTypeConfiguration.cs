@@ -9,11 +9,24 @@ namespace Infrastructure.DBLogs
     {
         public void Configure(EntityTypeBuilder<DBLog> builder)
         {
-            // cf. https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
-            
-            //builder.ToTable("OperationType", SchemaNames.DDDSample1);
             builder.HasKey(b => b.Id);
-            //builder.Property<bool>("_active").HasColumnName("Active");
+
+            builder.Property(p => p.EntityType)
+                .IsRequired()
+                .HasColumnName("EntityType");
+
+            builder.Property(p => p.LogType)
+                .IsRequired()
+                .HasColumnName("LogType");
+
+            builder.Property(p => p.PerformedBy)
+                .HasColumnName("PerformedBy");
+            
+            builder.Property(p => p.Affected)
+                .HasColumnName("Affected");
+
+            builder.Property(p => p.Message)
+                .HasColumnName("Message");
         }
     }
 }
