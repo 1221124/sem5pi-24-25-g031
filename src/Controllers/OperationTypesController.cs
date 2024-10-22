@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
 using Domain.Shared;
 using Domain.OperationTypes;
 
@@ -45,8 +42,7 @@ namespace Controllers
         {
             var operationType = await _service.AddAsync(dto);
 
-            // return CreatedAtAction(nameof(GetById), new { name = operationType.Name }, operationType);
-            return Ok(operationType);
+            return CreatedAtAction(nameof(GetById), new { name = operationType.Name }, operationType);
         }
 
         
