@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
 using Domain.Shared;
-using Domain.Staff;
+using Domain.Staffs;
 using Infrastructure;
 using System.Threading.Tasks;
 
-namespace src.Controllers
+namespace Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

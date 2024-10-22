@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Domain.Shared;
 using Domain.Users;
 using Domain.IAM;
-using Domain.Staff;
+using Domain.Staffs;
 
 namespace Controllers
 {
