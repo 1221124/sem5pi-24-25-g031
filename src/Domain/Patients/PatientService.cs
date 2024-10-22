@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Shared;
@@ -39,7 +40,13 @@ namespace Domain.Patients
             if(_repo.getByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
                 return null;
             
-            var patient = new Patient(dto.FullName, dto.DateOfBirth, dto.ContactInformation);
+            var numberPatients = _repo.GetAllAsync().Result.Count;
+            string formattedDate = DateTime.Now.ToString("yyyyMM");
+            string combinedString = $"{formattedDate}{numberPatients:D6}";  // Combine the date and zero-padded number
+            
+            MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
+            
+            var patient = new Patient(dto.FullName, dto.DateOfBirth, medicalRecordNumber, dto.ContactInformation);
 
             await this._repo.AddAsync(patient);
 

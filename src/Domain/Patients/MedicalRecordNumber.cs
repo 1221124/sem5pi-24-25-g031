@@ -5,25 +5,20 @@ namespace Domain.Patients
 {
   public class MedicalRecordNumber: IValueObject
   {
-    public int Value { get; private set; }
+    public String Value { get; private set; }
 
-    public MedicalRecordNumber(int value)
+    public MedicalRecordNumber(String value)
     {
-      if (value <= 0)
-        {
-            throw new ArgumentException("Medical Record Number must be greater than zero");
-        }
+      if (string.IsNullOrWhiteSpace(value))
+      {
+        throw new ArgumentException("Medical Record Number cannot be empty");
+      }
       Value = value;
     }
 
     public static implicit operator int(MedicalRecordNumber medicalRecordNumber)
     {
-      return medicalRecordNumber.Value;
-    }
-
-    public static implicit operator MedicalRecordNumber(int value)
-    {
-      return new MedicalRecordNumber(value);
+      return medicalRecordNumber;
     }
     
   }

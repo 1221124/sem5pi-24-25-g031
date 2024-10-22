@@ -10,32 +10,32 @@ namespace Domain.Patients
     public FullName FullName { get; set; }
     public DateTime DateOfBirth { get; set; }
     public Gender Gender { get; set; }
-    //public MedicalRecordNumber MedicalRecordNumber { get; set; }
+    public MedicalRecordNumber MedicalRecordNumber { get; set; }
     public ContactInformation ContactInformation { get; set; }
     public List<MedicalConditions> MedicalConditions { get; set; }
     public EmergencyContact EmergencyContact { get; set; }
 
     public Patient() { }
     
-    public Patient(FullName fullName, DateTime dateOfBirth, Gender gender/*,MedicalRecordNumber medicalRecordNumber*/, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
+    public Patient(FullName fullName, DateTime dateOfBirth, Gender gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
       DateOfBirth = dateOfBirth; 
       Gender = gender;
-      //MedicalRecordNumber = medicalRecordNumber;
+      MedicalRecordNumber = medicalRecordNumber;
       ContactInformation = contactInformation;
       MedicalConditions = medicalConditions;
       EmergencyContact = emergencyContact;
       //AppointmentHistory = appointmentHistory;
     }
         
-    public Patient (FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation)
+    public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
     {
       Id = new PatientId(Guid.NewGuid());
-      
       FullName = fullName;
       DateOfBirth = dateOfBirth; 
+      MedicalRecordNumber = medicalRecordNumber;
       ContactInformation = contactInformation;
     }
     
