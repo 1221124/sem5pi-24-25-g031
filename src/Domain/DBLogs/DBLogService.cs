@@ -20,20 +20,20 @@ namespace Domain.DBLogs
             _userRepository = userRepository;
         }
 
-        public async void LogError(string message)
+        public async void LogError(EntityType entityType, string message)
         {
-            var log = new DBLog(EntityType.OPERATION_REQUEST, DBLogType.ERROR, message);
+            var log = new DBLog(entityType, DBLogType.ERROR, message);
 
             await CreateLogAsync(log);
         }
 
 
-        public async void LogAction(DBLogType logType, OperationRequest category)
+        public async void LogAction(EntityType entityType, DBLogType logType, OperationRequest category)
         {
 
             var staff = await _staffRepository.GetByIdAsync(category.DoctorId);
 
-            var log = new DBLog(EntityType.OPERATION_REQUEST, logType, staff.UserId, category.Id.AsGuid());
+            var log = new DBLog(entityType, logType, staff.UserId, category.Id.AsGuid());
 
             await CreateLogAsync(log);
         }

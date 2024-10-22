@@ -96,7 +96,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(e.ToString());
+                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
                 return new OperationRequestDto { };
             }
         }
@@ -124,7 +124,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(e.ToString());
+                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
                 return new List<OperationRequestDto> { };
             }
         }
@@ -152,7 +152,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(e.ToString());
+                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
                 return new OperationRequestDto { };
             }
         }
@@ -185,7 +185,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(e.ToString());
+                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
                 return new OperationRequestDto { };
             }
         }
@@ -214,7 +214,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(e.ToString());
+                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
                 return null;
             }
         }
