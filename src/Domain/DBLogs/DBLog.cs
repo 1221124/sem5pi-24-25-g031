@@ -13,8 +13,7 @@ namespace Domain.DBLogs
         public Guid Affected { get; }
         public string Message { get; }
 
-        public DBLog() { }
-        
+            
         public DBLog(EntityType entityType, DBLogType logType, UserId performedBy, Guid affected)
         {
             Id = new DBLogId(Guid.NewGuid());
@@ -25,8 +24,9 @@ namespace Domain.DBLogs
             Affected = affected;
         }
 
-        public DBLog(string message){
+        public DBLog(EntityType entityType, DBLogType logType, string message){
             Id = new DBLogId(Guid.NewGuid());
+            EntityType = entityType;
             LogType = DBLogType.ERROR;
             TimeStamp = DateTime.Now;
             Message = message;
