@@ -41,12 +41,12 @@ public class Startup
     {
         AppSettings.Initialize(Configuration);
         
-        services.AddDbContext<SARMDbContext>(opt =>
-            opt.UseInMemoryDatabase("SARMDB")
-            .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+        // services.AddDbContext<SARMDbContext>(opt =>
+        //     opt.UseInMemoryDatabase("SARMDB")
+        //     .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
-        // services.AddDbContext<SARMDbContext>(options =>
-        //     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<SARMDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         ConfigureMyServices(services);
         
