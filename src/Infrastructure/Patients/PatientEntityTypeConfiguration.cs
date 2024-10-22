@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.Patients;
 using Domain.Shared;
 using Google.Type;
+using System;
 using DateTime = System.DateTime;
 using PhoneNumber = Domain.Shared.PhoneNumber;
 
