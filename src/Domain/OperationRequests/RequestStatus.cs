@@ -1,3 +1,5 @@
+using System;
+
 namespace Domain.OperationRequests
 {
     public enum RequestStatus
@@ -7,7 +9,7 @@ namespace Domain.OperationRequests
         REJECTED
     }
 
-    public static class RequestStatusExtensions
+    public static class RequestStatusUtils
     {
         public static string ToString(this RequestStatus status)
         {
@@ -17,6 +19,16 @@ namespace Domain.OperationRequests
                 RequestStatus.ACCEPTED => "Accepted",
                 RequestStatus.REJECTED => "Rejected",
                 _ => string.Empty,
+            };
+        }
+
+        public static RequestStatus FromString(this string status)
+        {
+            return status switch{
+                "Pending" => RequestStatus.PENDING,
+                "Accepted" => RequestStatus.ACCEPTED,
+                "Rejected" => RequestStatus.REJECTED,
+                _ => throw new ArgumentException("Invalid request status value")
             };
         }
     }

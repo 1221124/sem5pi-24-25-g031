@@ -17,17 +17,17 @@ namespace Domain.OperationRequests
         private readonly IOperationTypeRepository _operationTypeRepository;
         private readonly IPatientRepository _patientRepository;
         private readonly IStaffRepository _staffRepository;
-        private readonly IDBLogRepository _logRepository;
+        private readonly DBLogService _logService;
 
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo,
-        IPatientRepository patientRepository, IStaffRepository staffRepository, IDBLogRepository logRepository)
+        IPatientRepository patientRepository, IStaffRepository staffRepository, DBLogService logService)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _patientRepository = patientRepository;
             _staffRepository = staffRepository;
-            _logRepository = logRepository;
+            _logService = logService;
         }
 
         private static Task<DateTime> DeadlineDateValidation(string datetime){
@@ -73,19 +73,14 @@ namespace Domain.OperationRequests
                 await this._repo.AddAsync(category);
                 await this._unitOfWork.CommitAsync();
 
-                var logEntry = new DBLog(
-                    EntityType.OPERATION_REQUEST, DBLogType.CREATE, DateTime.Now, new UserId(Guid.NewGuid()), category.Id.AsGuid()
-                    );
-
-                await _logRepository.AddAsync(logEntry);
+                _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.CREATE, category);
                 
                 return new OperationRequestDto {
                     Id = category.Id.AsGuid()
                 };
 
             }catch(Exception e){
-                var logEntry = _logRepository.AddAsync(new DBLog(e.ToString()));
-
+                _logService.LogError(e.ToString());
                 return new OperationRequestDto{};
             }
         }
@@ -93,18 +88,25 @@ namespace Domain.OperationRequests
 
         public async Task<List<OperationRequestDto>> GetAllAsync()
         {
-            var list = await this._repo.GetAllAsync();
-            
-            List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(
-                cat => new OperationRequestDto{ 
-                    Id = cat.Id.AsGuid(), 
-                    OperationTypeId = cat.OperationTypeId, 
-                    DeadlineDate = cat.DeadlineDate, 
-                    Priority = cat.Priority
-                    }
-                );
 
-            return listDto;
+            try{
+                var list = await this._repo.GetAllAsync();
+                
+                List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(
+                    cat => new OperationRequestDto{ 
+                        Id = cat.Id.AsGuid(), 
+                        OperationTypeId = cat.OperationTypeId, 
+                        DeadlineDate = cat.DeadlineDate, 
+                        Priority = cat.Priority
+                        }
+                    );
+
+                return listDto;
+                
+            }catch(Exception e){
+                _logService.LogError(e.ToString());
+                return new List<OperationRequestDto>{};
+            }
         }
 
         public async Task<OperationRequestDto> GetByIdAsync(string id)
@@ -124,7 +126,7 @@ namespace Domain.OperationRequests
                 };
             }
             catch(Exception e){
-                var logEntry = _logRepository.AddAsync(new DBLog(e.ToString()));
+                _logService.LogError(e.ToString());
                 return new OperationRequestDto{};
             }
         }
@@ -147,23 +149,17 @@ namespace Domain.OperationRequests
                 await this._repo.UpdateAsync(category);
                 await this._unitOfWork.CommitAsync();
 
-                var logEntry = new DBLog(
-                    EntityType.OPERATION_REQUEST, DBLogType.UPDATE, DateTime.Now, new UserId(Guid.NewGuid()), category.Id.AsGuid()
-                    );
-
-                await _logRepository.AddAsync(logEntry);
-
+                _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.UPDATE, category);
                 return new OperationRequestDto {
                     Id = category.Id.AsGuid()
                 };
 
             }catch(Exception e){
-                var logEntry = _logRepository.AddAsync(new DBLog(e.ToString()));
+                _logService.LogError(e.ToString());
                 return new OperationRequestDto{};
             }
         }
-
-         public async Task<OperationRequestDto> DeleteAsync(string id)
+        public async Task<OperationRequestDto> DeleteAsync(string id)
         {
 
             try{
@@ -177,12 +173,14 @@ namespace Domain.OperationRequests
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
+                _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.DELETE, category);
+
                 return new OperationRequestDto {
                     Id = category.Id.AsGuid()
                 };
 
             }catch (Exception e){
-                var logEntry = _logRepository.AddAsync(new DBLog(e.ToString()));
+                _logService.LogError(e.ToString());
                 return null;
             }
         }  
