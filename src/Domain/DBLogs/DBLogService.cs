@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Domain.DBLogs;
 using Domain.Users;
 using Domain.OperationRequests;
-using Domain.Staff;
+using Domain.Staffs;
 
 namespace Domain.DBLogs
 {

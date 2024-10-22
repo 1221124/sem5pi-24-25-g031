@@ -31,5 +31,7 @@ namespace Domain.Users
         {
             return (Guid)base.ObjValue;
         }
+
+
     }
 }

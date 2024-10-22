@@ -2,7 +2,7 @@ using System;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.Patients;
-using Domain.Staff;
+using Domain.Staffs;
 using Azure;
 
 namespace Domain.OperationRequests

@@ -1,7 +1,8 @@
 using System;
 using Domain.Shared;
+using Domain.Users;
 
-namespace Domain.Staff
+namespace Domain.Staffs
 {
 
     public class StaffId : EntityId
@@ -12,6 +13,7 @@ namespace Domain.Staff
 
         public StaffId(string value) : base(value)
         {
+
         }
 
         override
@@ -31,5 +33,7 @@ namespace Domain.Staff
         {
             return (Guid)base.ObjValue;
         }
+
+
     }
 }

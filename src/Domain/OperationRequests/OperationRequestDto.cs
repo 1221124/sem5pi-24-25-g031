@@ -1,7 +1,7 @@
 using System;
 using Domain.OperationTypes;
 using Domain.Patients;
-using Domain.Staff;
+using Domain.Staffs;
 using Domain.Shared;
 
 namespace Domain.OperationRequests

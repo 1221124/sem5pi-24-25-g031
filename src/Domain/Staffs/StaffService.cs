@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Domain.Shared;
 
 
-namespace Domain.Staff
+namespace Domain.Staffs
 {
     public class StaffService
     {
@@ -47,9 +47,18 @@ namespace Domain.Staff
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
+        //CREATE STAFF WITH first name, last name, contact information, and specialization
         public async Task<StaffDto> AddAsync(CreatingStaffDto dto)
         {
-            var staff = new Staff(dto.FullName, dto.ContactInformation, dto.LicenseNumber, dto.Specialization, dto.Status, dto.Slot);
+
+            //PERGUNTAR O ID USER
+            //SE O EMAIL OU O TELEFONE JÁ EXISTE, NÃO PODE CRIAR
+            if (await _repo.GetByEmailAsync(dto.ContactInformation.Email) != null && await _repo.GetByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
+            {
+                throw new BusinessRuleValidationException("Email or phone number already in use.");
+            }
+
+            var staff = new Staff(new FullName(dto.FullName.FirstName, dto.FullName.LastName), dto.ContactInformation, dto.LicenseNumber, dto.Specialization, Status.Active, new List<Slot>());
 
             await this._repo.AddAsync(staff);
 
@@ -57,7 +66,6 @@ namespace Domain.Staff
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
-
         public async Task<StaffDto> UpdateAsync(StaffDto dto)
         {
             var staff = await this._repo.GetByIdAsync(new StaffId(dto.Id));
@@ -106,6 +114,5 @@ namespace Domain.Staff
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
-
     }
 }

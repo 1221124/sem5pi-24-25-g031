@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Domain.Shared;
 
-namespace Domain.Staff
+namespace Domain.Staffs
 {
     public class CreatingStaffDto
     {

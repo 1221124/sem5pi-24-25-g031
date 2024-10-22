@@ -5,7 +5,7 @@ using Domain.OperationTypes;
 using System;
 using Domain.DBLogs;
 using Domain.Users;
-using Domain.Staff;
+using Domain.Staffs;
 using Domain.Patients;
 
 namespace Domain.OperationRequests
@@ -30,33 +30,46 @@ namespace Domain.OperationRequests
             _logService = logService;
         }
 
-        private static Task<DateTime> DeadlineDateValidation(string datetime){
-            if (!DateTime.TryParse(datetime, out DateTime output)){
+        private static Task<DateTime> DeadlineDateValidation(string datetime)
+        {
+            if (!DateTime.TryParse(datetime, out DateTime output))
+            {
                 throw new ArgumentException("Invalid date format for 'deadline date'.");
-            } else return Task.FromResult(output);
+            }
+            else return Task.FromResult(output);
         }
 
-        private static Task<Priority> PriorityValidation(string priority){
-            if (!Enum.TryParse(priority, out Priority output)){
+        private static Task<Priority> PriorityValidation(string priority)
+        {
+            if (!Enum.TryParse(priority, out Priority output))
+            {
                 throw new ArgumentException("Invalid priority format.");
-            } else return Task.FromResult(output);
+            }
+            else return Task.FromResult(output);
         }
 
-        private static Task<OperationTypeId> OperationTypeValidation(string operationTypeId){
-            if (!Guid.TryParse(operationTypeId, out Guid output)){
+        private static Task<OperationTypeId> OperationTypeValidation(string operationTypeId)
+        {
+            if (!Guid.TryParse(operationTypeId, out Guid output))
+            {
                 throw new ArgumentException("Invalid operation type id format.");
-            } else return Task.FromResult(new OperationTypeId(output));
+            }
+            else return Task.FromResult(new OperationTypeId(output));
         }
-        
-        private static Task<RequestStatus> RequestStatusValidation(string status){
-            if (!Enum.TryParse(status, out RequestStatus output)){
+
+        private static Task<RequestStatus> RequestStatusValidation(string status)
+        {
+            if (!Enum.TryParse(status, out RequestStatus output))
+            {
                 throw new ArgumentException("Invalid status format.");
-            } else return Task.FromResult(output);
-        }   
+            }
+            else return Task.FromResult(output);
+        }
 
         public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto dto)
         {
-            try{
+            try
+            {
                 DateTime deadlineDate = await DeadlineDateValidation(dto.DeadlineDate);
 
                 Priority priority = await PriorityValidation(dto.Priority);
@@ -66,7 +79,7 @@ namespace Domain.OperationRequests
                 RequestStatus requestStatus = await RequestStatusValidation(dto.Status);
 
                 OperationRequest category = new OperationRequest(
-                    new(dto.PatientId), new(dto.StaffId), operationTypeId, 
+                    new(dto.PatientId), new(dto.StaffId), operationTypeId,
                     deadlineDate, priority, requestStatus
                     );
 
@@ -74,14 +87,17 @@ namespace Domain.OperationRequests
                 await this._unitOfWork.CommitAsync();
 
                 _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.CREATE, category);
-                
-                return new OperationRequestDto {
+
+                return new OperationRequestDto
+                {
                     Id = category.Id.AsGuid()
                 };
 
-            }catch(Exception e){
+            }
+            catch (Exception e)
+            {
                 _logService.LogError(e.ToString());
-                return new OperationRequestDto{};
+                return new OperationRequestDto { };
             }
         }
 
@@ -89,100 +105,118 @@ namespace Domain.OperationRequests
         public async Task<List<OperationRequestDto>> GetAllAsync()
         {
 
-            try{
+            try
+            {
                 var list = await this._repo.GetAllAsync();
-                
+
                 List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(
-                    cat => new OperationRequestDto{ 
-                        Id = cat.Id.AsGuid(), 
-                        OperationTypeId = cat.OperationTypeId, 
-                        DeadlineDate = cat.DeadlineDate, 
+                    cat => new OperationRequestDto
+                    {
+                        Id = cat.Id.AsGuid(),
+                        OperationTypeId = cat.OperationTypeId,
+                        DeadlineDate = cat.DeadlineDate,
                         Priority = cat.Priority
-                        }
+                    }
                     );
 
                 return listDto;
-                
-            }catch(Exception e){
+
+            }
+            catch (Exception e)
+            {
                 _logService.LogError(e.ToString());
-                return new List<OperationRequestDto>{};
+                return new List<OperationRequestDto> { };
             }
         }
 
         public async Task<OperationRequestDto> GetByIdAsync(string id)
         {
 
-            try{
+            try
+            {
                 OperationRequestId operationRequestId = new(id);
-            
-                var category = await this._repo.GetByIdAsync(id); 
+
+                var category = await this._repo.GetByIdAsync(id);
 
                 if (category == null)
                     return null;
 
-                return new OperationRequestDto {
-                    Id = category.Id.AsGuid(), OperationTypeId = category.OperationTypeId, 
-                    DeadlineDate = category.DeadlineDate, Priority = category.Priority, Status = category.Status
+                return new OperationRequestDto
+                {
+                    Id = category.Id.AsGuid(),
+                    OperationTypeId = category.OperationTypeId,
+                    DeadlineDate = category.DeadlineDate,
+                    Priority = category.Priority,
+                    Status = category.Status
                 };
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
                 _logService.LogError(e.ToString());
-                return new OperationRequestDto{};
+                return new OperationRequestDto { };
             }
         }
 
 
         public async Task<OperationRequestDto> UpdateAsync(OperationRequestDto dto)
         {
-            try{
+            try
+            {
                 OperationRequestId operationRequestId = new(dto.Id.ToString());
 
-                var category = await this._repo.GetByIdAsync(dto.Id.ToString()); 
+                var category = await this._repo.GetByIdAsync(dto.Id.ToString());
 
                 if (category == null)
                     return null;
 
                 category.Update(
-                    dto.PatientId, dto.DoctorId, dto.OperationTypeId, dto.DeadlineDate, dto.Priority, dto.Status 
+                    dto.PatientId, dto.DoctorId, dto.OperationTypeId, dto.DeadlineDate, dto.Priority, dto.Status
                     );
 
                 await this._repo.UpdateAsync(category);
                 await this._unitOfWork.CommitAsync();
 
                 _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.UPDATE, category);
-                return new OperationRequestDto {
+                return new OperationRequestDto
+                {
                     Id = category.Id.AsGuid()
                 };
 
-            }catch(Exception e){
+            }
+            catch (Exception e)
+            {
                 _logService.LogError(e.ToString());
-                return new OperationRequestDto{};
+                return new OperationRequestDto { };
             }
         }
         public async Task<OperationRequestDto> DeleteAsync(string id)
         {
 
-            try{
+            try
+            {
                 OperationRequestId operationRequestId = new(id);
 
-                var category = await this._repo.GetByIdAsync(id); 
+                var category = await this._repo.GetByIdAsync(id);
 
                 if (category == null)
-                    return null;   
-                
+                    return null;
+
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
                 _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.DELETE, category);
 
-                return new OperationRequestDto {
+                return new OperationRequestDto
+                {
                     Id = category.Id.AsGuid()
                 };
 
-            }catch (Exception e){
+            }
+            catch (Exception e)
+            {
                 _logService.LogError(e.ToString());
                 return null;
             }
-        }  
+        }
     }
 }

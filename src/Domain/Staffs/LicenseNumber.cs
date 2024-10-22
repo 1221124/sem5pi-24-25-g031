@@ -1,6 +1,6 @@
 using Domain.Shared;
 
-namespace Domain.Staff
+namespace Domain.Staffs
 {
     public class LicenseNumber : IValueObject
     {

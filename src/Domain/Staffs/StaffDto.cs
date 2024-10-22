@@ -4,7 +4,7 @@ using System.ComponentModel;
 using Domain.Shared;
 using Domain.Users;
 
-namespace Domain.Staff
+namespace Domain.Staffs
 {
     public class StaffDto
     {
