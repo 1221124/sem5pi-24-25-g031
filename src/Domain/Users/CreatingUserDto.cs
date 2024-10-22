@@ -10,8 +10,15 @@ namespace Domain.Users
 
         public CreatingUserDto(string email, string role)
         {
-            Email = email;
             Role = RoleUtils.FromString(role);
+            if (RoleUtils.IsBackoffice(Role))
+            {
+                if (!email.EndsWith("@backoffice.com"))
+                {
+                    throw new BusinessRuleValidationException("Backoffice users must have an email ending with @backoffice.com");
+                }
+            }
+            Email = new Email(email);
         }
     }
 }
