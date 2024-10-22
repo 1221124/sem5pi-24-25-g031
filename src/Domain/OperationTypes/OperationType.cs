@@ -16,6 +16,8 @@ namespace Domain.OperationTypes
 
         public Status Status { get; set; }
 
+        public OperationType() { }
+        
         public OperationType(Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
         {
             Id = new OperationTypeId(Guid.NewGuid());

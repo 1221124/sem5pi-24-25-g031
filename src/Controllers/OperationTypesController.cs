@@ -41,7 +41,7 @@ namespace Controllers
 
         // POST: api/OperationTypes
         [HttpPost]
-        public async Task<ActionResult<OperationTypeDto>> Create([FromBody] CreatingOperationTypeDto dto)
+        public async Task<ActionResult<OperationTypeDto>> Create(CreatingOperationTypeDto dto)
         {
             var operationType = await _service.AddAsync(dto);
 
@@ -54,7 +54,6 @@ namespace Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<OperationTypeDto>> Update(OperationTypeDto dto)
         {
-
             try
             {
                 var operationType = await _service.UpdateAsync(dto);

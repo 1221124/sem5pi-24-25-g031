@@ -18,6 +18,7 @@ namespace Domain.OperationRequests
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
         
+        public OperationRequest() { }
         
         public OperationRequest(PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
         {

@@ -16,6 +16,8 @@ namespace Domain.Staff
         public List<Slot> SlotAppointement { get; set; }
         public List<Slot> SlotAvailability { get; set; }
 
+        public Staff() { }
+        
         public Staff(FullName fullName, ContactInformation contactInformation, LicenseNumber licenseNumber, Specialization specialization, Status status, List<Slot> slot)
         {
             FullName = fullName;

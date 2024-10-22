@@ -10,6 +10,8 @@ namespace Domain.Users
         public Role Role { get; set; }
         public UserStatus UserStatus { get; set; }
 
+        public User() { }
+        
         public User(Email email, Role role)
         {
             Id = new UserId(Guid.NewGuid());

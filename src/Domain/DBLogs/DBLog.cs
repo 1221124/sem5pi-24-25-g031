@@ -13,6 +13,8 @@ namespace Domain.DBLogs
         public Guid EntityId { get; }
         public string Message { get; }
 
+        public DBLog() { }
+        
         public DBLog(EntityType entityType, DBLogType logType, DateTime timeStamp, UserId performedBy, Guid entityId)
         {
             Id = new DBLogId(Guid.NewGuid());

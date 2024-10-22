@@ -15,6 +15,8 @@ namespace Domain.Patients
     public List<MedicalConditions> MedicalConditions { get; set; }
     public EmergencyContact EmergencyContact { get; set; }
 
+    public Patient() { }
+    
     public Patient(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
     {
       Id = new PatientId(Guid.NewGuid());
