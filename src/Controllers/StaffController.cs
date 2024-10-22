@@ -44,9 +44,15 @@ namespace Controllers
         [HttpPost]
         public async Task<ActionResult<StaffDto>> Create(CreatingStaffDto dto)
         {
-            var staff = await _service.AddAsync(dto);
-
-            return CreatedAtAction(nameof(GetGetById), new { id = staff.Id }, staff);
+            try
+            {
+                await _service.AddAsync(dto);
+                return Ok("Staff created successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: api/Staff/5

@@ -17,10 +17,10 @@ namespace Domain.Staffs
         public List<Slot> SlotAvailability { get; set; }
 
         public Staff() { }
-        
-        public Staff(FullName fullName, ContactInformation contactInformation, LicenseNumber licenseNumber, Specialization specialization, Status status, List<Slot> slot)
+
+        public Staff(StaffId id, FullName fullName, ContactInformation contactInformation, LicenseNumber licenseNumber, Specialization specialization, Status status, List<Slot> slot)
         {
-            Id = new StaffId(new Guid());
+            Id = id;
             FullName = fullName;
             ContactInformation = contactInformation;
             LicenseNumber = licenseNumber;

@@ -9,11 +9,12 @@ using Domain.Staffs;
 
 namespace Domain.DBLogs
 {
-    public class DBLogService{
-    
+    public class DBLogService
+    {
+
         private readonly IDBLogRepository _logRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IStaffRepository _staffRepository; 
+        private readonly IStaffRepository _staffRepository;
         private readonly IPatientRepository _patientRepository;
 
         public DBLogService(IDBLogRepository logRepository, IUserRepository userRepository)
@@ -28,7 +29,7 @@ namespace Domain.DBLogs
 
             await CreateLogAsync(log);
         }
-        
+
         public async void LogAction(EntityType entityType, DBLogType logType, OperationRequest category)
         {
 
@@ -38,7 +39,7 @@ namespace Domain.DBLogs
 
             await CreateLogAsync(log);
         }
-        
+
         public async void LogAction(EntityType entityType, DBLogType logType, PatientId id)
         {
 
@@ -48,7 +49,16 @@ namespace Domain.DBLogs
 
             await CreateLogAsync(log);
         }
-        
+
+        public async void LogAction(EntityType entityType, DBLogType logType, StaffId category)
+        {
+
+            var staff = await _staffRepository.GetByIdAsync(category);
+
+            var log = new DBLog(entityType, logType, staff.UserId, staff.Id.AsGuid());
+
+            await CreateLogAsync(log);
+        }
 
         public async Task<IEnumerable<DBLog>> GetLogsAsync()
         {

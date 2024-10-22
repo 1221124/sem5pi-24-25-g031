@@ -18,6 +18,7 @@ namespace Domain.Staffs
 
         private readonly IDBLogRepository _logRepo;
 
+        private readonly DBLogService _dbLogService;
         public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo)
         {
             this._unitOfWork = unitOfWork;
@@ -66,7 +67,7 @@ namespace Domain.Staffs
 
             var log = await _logRepo.GetByIdAsync(dto.UserId);
 
-            var numberStaff = _repo.GetAllAsync().Result.Count;
+            var numberStaff = (await _repo.GetAllAsync()).Count;
 
             string idStaff = Role + log + numberStaff;
 
@@ -75,11 +76,13 @@ namespace Domain.Staffs
                 throw new BusinessRuleValidationException("Email or phone number already in use.");
             }
 
-            var staff = new Staff(new FullName(dto.FullName.FirstName, dto.FullName.LastName), dto.ContactInformation, dto.LicenseNumber, dto.Specialization, Status.Active, new List<Slot>());
+            var staff = new Staff(new StaffId(idStaff), new FullName(dto.FullName.FirstName, dto.FullName.LastName), dto.ContactInformation, dto.LicenseNumber, dto.Specialization, Status.Active, new List<Slot>());
 
             await this._repo.AddAsync(staff);
 
             await this._unitOfWork.CommitAsync();
+
+            _dbLogService.LogAction(EntityType.STAFF, DBLogType.CREATE, staff.Id);
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
