@@ -38,6 +38,17 @@ namespace Domain.Shared
             };
         }
 
+        public static string IdStaff(Role role)
+        {
+            return role switch
+            {
+                Role.Doctor => "D",
+                Role.Nurse => "N",
+                Role.Technician => "T",
+                _ => throw new System.Exception("Invalid role")
+            };
+        }
+
         public static bool IsValid(string role)
         {
             return role switch

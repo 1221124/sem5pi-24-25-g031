@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.DBLogs;
 using Domain.Shared;
+using Domain.Users;
 
 
 namespace Domain.Staffs
@@ -11,6 +13,10 @@ namespace Domain.Staffs
         private readonly IUnitOfWork _unitOfWork;
 
         private readonly IStaffRepository _repo;
+
+        private readonly IUserRepository _userRepo;
+
+        private readonly IDBLogRepository _logRepo;
 
         public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo)
         {
@@ -51,8 +57,19 @@ namespace Domain.Staffs
         public async Task<StaffDto> AddAsync(CreatingStaffDto dto)
         {
 
-            //PERGUNTAR O ID USER
-            //SE O EMAIL OU O TELEFONE JÁ EXISTE, NÃO PODE CRIAR
+            var user = await _userRepo.GetByIdAsync(dto.UserId);
+
+            if (user == null)
+                throw new BusinessRuleValidationException("User not found.");
+
+            string Role = RoleUtils.IdStaff(user.Role);
+
+            var log = await _logRepo.GetByIdAsync(dto.UserId);
+
+            var numberStaff = _repo.GetAllAsync().Result.Count;
+
+            string idStaff = Role + log + numberStaff;
+
             if (await _repo.GetByEmailAsync(dto.ContactInformation.Email) != null && await _repo.GetByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
             {
                 throw new BusinessRuleValidationException("Email or phone number already in use.");
@@ -66,6 +83,7 @@ namespace Domain.Staffs
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
+
         public async Task<StaffDto> UpdateAsync(StaffDto dto)
         {
             var staff = await this._repo.GetByIdAsync(new StaffId(dto.Id));
