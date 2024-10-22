@@ -17,10 +17,10 @@ namespace Infrastructure.StaffRepository
             this._objs = context.Staffs;
         }
 
-        /* public async Task<Staff> GetByEmailAsync(Email email)
+        public async Task<Staff> GetByEmailAsync(Email email)
         {
              return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.Email == email);
-        }*/
+        }
     }
 
 }
