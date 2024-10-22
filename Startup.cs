@@ -16,7 +16,7 @@ using Domain.Users;
 using Infrastructure.Users;
 using Domain.Patients;
 using Infrastructure.Patients;
-using Domain.Staff;
+using Domain.Staffs;
 using Domain.IAM;
 using Infrastructure.StaffRepository;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;

@@ -1,9 +1,10 @@
+using System;
 using Domain.Shared;
-using Domain.Staff;
+using Domain.Staffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Staff;
+namespace Infrastructure.Staffs;
 
 public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
 {
@@ -16,11 +17,11 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
 
         builder.OwnsOne(o => o.FullName, name =>
         {
-            name.Property(n => n.Value)
+            name.Property(n => n.FirstName)
                 .HasColumnName("FirstName")
                 .IsRequired()
                 .HasMaxLength(100);
-            name.Property(n => n.Value)
+            name.Property(n => n.LastName)
                 .HasColumnName("LastName")
                 .IsRequired()
                 .HasMaxLength(100);
@@ -31,12 +32,10 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
             contact.Property(c => c.Email)
                 .HasColumnName("Email")
                 .IsRequired()
-                .IsUnique()
                 .HasMaxLength(100);
-            contact.Property(c => c.Phone)
-                .HasColumnName("Phone")
+            contact.Property(c => c.PhoneNumber)
+                .HasColumnName("PhoneNumber")
                 .IsRequired()
-                .IsUnique()
                 .HasMaxLength(10);
         });
 
@@ -65,14 +64,14 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 .HasColumnName("Start")
                 .IsRequired()
                 .HasConversion(
-                    v => s.ToString("yyyy-MM-dd:HH'h'mm"),
+                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
                     v => DateTime.Parse(v)
                 );
             slot.Property(s => s.End)
                 .HasColumnName("End")
                 .IsRequired()
                 .HasConversion(
-                    v => s.ToString("yyyy-MM-dd:HH'h'mm"),
+                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
                     v => DateTime.Parse(v)
                 );
         });
@@ -83,14 +82,14 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 .HasColumnName("Start")
                 .IsRequired()
                 .HasConversion(
-                    v => s.ToString("yyyy-MM-dd:HH'h'mm"),
+                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
                     v => DateTime.Parse(v)
                 );
             slot.Property(s => s.End)
                 .HasColumnName("End")
                 .IsRequired()
                 .HasConversion(
-                    v => s.ToString("yyyy-MM-dd:HH'h'mm"),
+                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
                     v => DateTime.Parse(v)
                 );
         });

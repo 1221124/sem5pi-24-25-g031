@@ -9,7 +9,7 @@ using Infrastructure.OperationRequests;
 using Infrastructure.Users;
 using Domain.Users;
 using Infrastructure.Patients;
-using Domain.Staff;
+using Domain.Staffs;
 
 namespace Infrastructure
 {

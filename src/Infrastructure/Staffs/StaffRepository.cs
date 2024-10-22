@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Staff;
+using Domain.Staffs;
 using Domain.Shared;
 using Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,12 @@ namespace Infrastructure.StaffRepository
 
         public async Task<Staff> GetByEmailAsync(Email email)
         {
-             return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.Email == email);
+            return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.Email == email);
+        }
+
+        public async Task<Staff> GetByPhoneNumberAsync(PhoneNumber phoneNumber)
+        {
+            return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.PhoneNumber == phoneNumber);
         }
     }
 
