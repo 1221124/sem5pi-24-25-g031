@@ -77,5 +77,25 @@ namespace src.Controllers
                 return BadRequest(new {Message = ex.Message});
             }
         }
+        
+        // DELETE: api/Patient/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            try
+            {
+                var patient = await _service.DeleteAsync(new PatientId(id));
+
+                if (patient == null)
+                {
+                    return NotFound();
+                }
+                return Ok(patient);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
