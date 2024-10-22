@@ -8,7 +8,6 @@ namespace Domain.Patients
     {
         public Guid Id { get; set; }
         public FullName FullName { get; set; }
-        public Name Name { get; set; }
         public DateTime DateOfBirth { get; set; }
         public Gender Gender { get; set; }
         public MedicalRecordNumber MedicalRecordNumber { get; set; }
@@ -17,10 +16,9 @@ namespace Domain.Patients
         public EmergencyContact EmergencyContact { get; set; }
         //public AppointmentHistory AppointementHistory { get; set; }
 
-        public PatientDto(FullName fullName, Name name, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
+        public PatientDto(FullName fullName, DateTime dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact/*, AppointementHistory appointementHistory*/)
         {
             FullName = fullName;
-            Name = name;
             DateOfBirth = dateOfBirth; 
             Gender = gender;
             MedicalRecordNumber = medicalRecordNumber;
@@ -30,10 +28,9 @@ namespace Domain.Patients
             //AppointmentHistory = appointmentHistory;
         }
         
-        public PatientDto (FullName fullName, Name name, DateTime dateOfBirth, ContactInformation contactInformation)
+        public PatientDto (FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation)
         {
             FullName = fullName;
-            Name = name;
             DateOfBirth = dateOfBirth; 
             ContactInformation = contactInformation;
         }

@@ -15,5 +15,10 @@ namespace Domain.Shared
 
             Value = int.Parse(value);
         }
+        //fromString
+        public static PhoneNumber FromString(string value)
+        {
+            return new PhoneNumber(value);
+        }
     }
 }
