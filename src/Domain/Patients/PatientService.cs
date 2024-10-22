@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using DDDNetCore.Domain.Email;
 using Domain.DBLogs;
 using Domain.Shared;
-using FirebaseAdmin.Auth;
 
 namespace Domain.Patients
 {
