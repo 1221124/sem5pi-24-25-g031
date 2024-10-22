@@ -83,11 +83,12 @@ namespace Infrastructure.Patients
                         v=> PhoneNumber.FromString(v))
                     .HasMaxLength(100);
             });
-            
-            
-            
-            
-                
+
+            builder.Property(p => p.UserId)
+                .HasColumnName("UserId");
+
+
+
         }
     }
 }
