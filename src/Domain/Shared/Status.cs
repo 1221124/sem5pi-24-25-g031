@@ -30,20 +30,23 @@ namespace Domain.Shared
 
         public static Status FromString(string status)
         {
-            return status switch
+            switch (status.ToUpper())
             {
-                "Active" => Status.Active,
-                "Inactive" => Status.Inactive,
-                _ => throw new System.ArgumentException($"Invalid status: {status}")
-            };
+                case "ACTIVE":
+                    return Status.Active;
+                case "INACTIVE":
+                    return Status.Inactive;
+                default:
+                    throw new System.ArgumentException($"Invalid status: {status}");
+            }
         }
 
         public static string ToString(Status status)
         {
             return status switch
             {
-                Status.Active => "Active",
-                Status.Inactive => "Inactive",
+                Status.Active => "ACTIVE",
+                Status.Inactive => "INACTIVE",
                 _ => throw new System.ArgumentException($"Invalid status: {status}")
             };
         }

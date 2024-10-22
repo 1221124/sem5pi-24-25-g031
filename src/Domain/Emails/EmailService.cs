@@ -1,10 +1,9 @@
-namespace DDDNetCore.Domain.Email
-{
-    
-    using MailKit.Net.Smtp;
-    using MimeKit;
-    using System.Threading.Tasks;
 
+using MailKit.Net.Smtp;
+using MimeKit;
+
+namespace Domain.Emails
+{
     public class EmailService
     {
         private readonly string _smtpServer;

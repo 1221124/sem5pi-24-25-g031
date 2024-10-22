@@ -27,7 +27,7 @@ namespace Infrastructure.OperationTypes
                     v => SpecializationUtils.FromString(v)
                 );
 
-            builder.Property(o => o._requiredStaff)
+            builder.Property(o => o.RequiredStaff)
                 .IsRequired()
                 .HasConversion(
                     v => RequiredStaff.ToString(v),

@@ -89,6 +89,30 @@ namespace Domain.OperationTypes
 
             return string.Join(",", phaseStrings);
         }
+
+        public static PhasesDuration FromString(List<string> phasesDuration)
+        {
+            if (phasesDuration.Count != 3)
+            {
+                throw new BusinessRuleValidationException("Operation type must contain all three phases (anesthesia, surgery, and cleaning).");
+            }
+
+            var phasesDictionary = new Dictionary<Phase, Quantity> { };
+
+            foreach (var phase in phasesDuration)
+            {
+                var str = phase.Split(':');
+                var str0 = str[0].ToUpper();
+                if (str0 != "PREPARATION" && str0 != "SURGERY" && str0 != "CLEANING")
+                {
+                    throw new BusinessRuleValidationException("Operation type must contain all three phases (anesthesia, surgery, and cleaning).");
+                }
+                var str1 = int.Parse(str[1]);
+                phasesDictionary.Add(PhaseUtils.FromString(str[0]), new Quantity(str1));
+            }
+
+            return new PhasesDuration(phasesDictionary);
+        }
     }
 
     public enum Phase
@@ -102,13 +126,13 @@ namespace Domain.OperationTypes
     {
         public static Phase FromString(string phase)
         {
-            switch (phase)
+            switch (phase.ToUpper())
             {
-                case "Preparation":
+                case "PREPARATION":
                     return Phase.Preparation;
-                case "Surgery":
+                case "SURGERY":
                     return Phase.Surgery;
-                case "Cleaning":
+                case "CLEANING":
                     return Phase.Cleaning;
                 default:
                     throw new ArgumentException("Invalid Phase value", phase);
@@ -120,14 +144,32 @@ namespace Domain.OperationTypes
             switch (phase)
             {
                 case Phase.Preparation:
-                    return "Preparation";
+                    return "PREPARATION";
                 case Phase.Surgery:
-                    return "Surgery";
+                    return "SURGERY";
                 case Phase.Cleaning:
-                    return "Cleaning";
+                    return "CLEANING";
                 default:
                     throw new ArgumentException("Invalid Phase value", phase.ToString());
             }
+        }
+
+        public static PhasesDuration FromStringList(List<string> phasesDuration)
+        {
+            if (phasesDuration.Count != 3)
+            {
+                throw new BusinessRuleValidationException("Operation type must contain all three phases (preparation, surgery, and cleaning).");
+            }
+            
+            var phasesDictionary = new Dictionary<Phase, Quantity>{};
+
+            foreach (var phase in phasesDuration)
+            {
+                var str = phase.Split(':');
+                phasesDictionary.Add(PhaseUtils.FromString(str[0]), new Quantity(int.Parse(str[1])));
+            }
+
+            return new PhasesDuration(phasesDictionary);
         }
     }
 }

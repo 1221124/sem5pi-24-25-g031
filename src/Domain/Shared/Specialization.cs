@@ -10,22 +10,26 @@ namespace Domain.Shared
     {
         public static Specialization FromString(string specialization)
         {
-            return specialization switch
+            switch (specialization.ToUpper())
             {
-                "Anaesthesiology" => Specialization.ANAESTHESIOLOGY,
-                "Cardiology" => Specialization.CARDIOLOGY,
-                "Orthopaedics" => Specialization.ORTHOPAEDICS,
-                _ => throw new System.ArgumentException($"Invalid specialization: {specialization}")
-            };
+                case "ANAESTHESIOLOGY":
+                    return Specialization.ANAESTHESIOLOGY;
+                case "CARDIOLOGY":
+                    return Specialization.CARDIOLOGY;
+                case "ORTHOPAEDICS":
+                    return Specialization.ORTHOPAEDICS;
+                default:
+                    throw new System.ArgumentException($"Invalid specialization: {specialization}");
+            }
         }
 
         public static string ToString(Specialization specialization)
         {
             return specialization switch
             {
-                Specialization.ANAESTHESIOLOGY => "Anaesthesiology",
-                Specialization.CARDIOLOGY => "Cardiology",
-                Specialization.ORTHOPAEDICS => "Orthopaedics",
+                Specialization.ANAESTHESIOLOGY => "ANAESTHESIOLOGY",
+                Specialization.CARDIOLOGY => "CARDIOLOGY",
+                Specialization.ORTHOPAEDICS => "ORTHOPAEDICS",
                 _ => throw new System.ArgumentException($"Invalid specialization: {specialization}")
             };
         }

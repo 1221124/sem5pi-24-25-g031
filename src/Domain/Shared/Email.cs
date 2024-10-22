@@ -38,8 +38,12 @@ namespace Domain.Shared
             return email.Value;
         }
 
-        override
-        public bool Equals(object obj)
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        public override bool Equals(object? obj)
         {
             if (obj == null || GetType() != obj.GetType())
             {

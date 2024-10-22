@@ -1,24 +1,22 @@
-using System.Collections.Generic;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
 {
     public class CreatingOperationTypeDto
     {
-        public Name Name { get; set; }
+        public string Name { get; set; }
 
-        public Specialization Specialization { get; set; }
+        public string Specialization { get; set; }
 
-        public List<RequiredStaff> _requiredStaff { get; set; }
+        public List<string> RequiredStaff { get; set; }
 
-        public PhasesDuration PhasesDuration { get; set; }
+        public List<string> PhasesDuration { get; set; }
 
-
-        public CreatingOperationTypeDto(string name, string specialization, string requiredStaff, string phasesDuration)
+        public CreatingOperationTypeDto(string name, string specialization, List<string> requiredStaff, List<string> phasesDuration)
         {
             Name = name;
-            Specialization = SpecializationUtils.FromString(specialization);
-            _requiredStaff = RequiredStaff.FromString(requiredStaff);
+            Specialization = specialization;
+            RequiredStaff = requiredStaff;
             PhasesDuration = phasesDuration;
         }
     }

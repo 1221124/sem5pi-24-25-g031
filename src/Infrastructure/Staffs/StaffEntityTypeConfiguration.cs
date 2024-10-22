@@ -20,11 +20,19 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
             name.Property(n => n.FirstName)
                 .HasColumnName("FirstName")
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(100)
+                .HasConversion(
+                    v => v.Value,
+                    v => new Name(v)
+                );
             name.Property(n => n.LastName)
                 .HasColumnName("LastName")
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(100)
+                .HasConversion(
+                    v => v.Value,
+                    v => new Name(v)
+                );
         });
 
         builder.OwnsOne(o => o.ContactInformation, contact =>
@@ -32,16 +40,28 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
             contact.Property(c => c.Email)
                 .HasColumnName("Email")
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(100)
+                .HasConversion(
+                    v => v.Value,
+                    v => new Email(v)
+                );
             contact.Property(c => c.PhoneNumber)
                 .HasColumnName("PhoneNumber")
                 .IsRequired()
-                .HasMaxLength(10);
+                .HasMaxLength(10)
+                .HasConversion(
+                    v => v.Value.ToString(),
+                    v => new PhoneNumber(v)
+                );
         });
 
         builder.Property(o => o.LicenseNumber)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(100)
+            .HasConversion(
+                v => v.Value,
+                v => new LicenseNumber(v)
+            );
 
         builder.Property(o => o.Specialization)
             .IsRequired()
@@ -64,15 +84,16 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 .HasColumnName("Start")
                 .IsRequired()
                 .HasConversion(
-                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
-                    v => DateTime.Parse(v)
+                    v => v.ToString("yyyy-MM-dd HH:mm"), 
+                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null) 
                 );
+
             slot.Property(s => s.End)
                 .HasColumnName("End")
                 .IsRequired()
                 .HasConversion(
-                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
-                    v => DateTime.Parse(v)
+                    v => v.ToString("yyyy-MM-dd HH:mm"),
+                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                 );
         });
 
@@ -82,15 +103,16 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 .HasColumnName("Start")
                 .IsRequired()
                 .HasConversion(
-                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
-                    v => DateTime.Parse(v)
+                    v => v.ToString("yyyy-MM-dd HH:mm"),
+                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                 );
+
             slot.Property(s => s.End)
                 .HasColumnName("End")
                 .IsRequired()
                 .HasConversion(
-                    v => v.ToString("yyyy-MM-dd:HH'h'mm"),
-                    v => DateTime.Parse(v)
+                    v => v.ToString("yyyy-MM-dd HH:mm"),
+                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                 );
         });
 

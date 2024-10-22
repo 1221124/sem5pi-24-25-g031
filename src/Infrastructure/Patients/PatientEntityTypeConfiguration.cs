@@ -22,11 +22,17 @@ namespace Infrastructure.Patients
                 name.Property(n => n.FirstName)
                     .HasColumnName("FirstName")
                     .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        v => v.Value,
+                        v => new Name(v));
                 name.Property(n => n.LastName)
                     .HasColumnName("LastName")
                     .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        v => v.Value,
+                        v => new Name(v));
             });
 
             builder.Property(p => p.DateOfBirth)
@@ -37,20 +43,19 @@ namespace Infrastructure.Patients
                     v => DateTime.Parse(v) 
                 );
 
-                
-
             builder.Property(p => p.Gender)
                 .HasColumnName("Gender")
                 .HasConversion(
                     v => GenderUtils.ToString(v),
                     v => GenderUtils.FromString(v)
                 );
-            
-            /*
+
             builder.Property(p => p.MedicalRecordNumber)
-                .HasColumnName("MedicalRecordNumber");
-                
-            */
+                .HasColumnName("BloodType")
+                .HasConversion(
+                    v => v.Value,
+                    v => new MedicalRecordNumber(v)
+                );
             
             builder.OwnsOne(p=> p.ContactInformation, contact =>
             {
@@ -58,13 +63,16 @@ namespace Infrastructure.Patients
                     .HasColumnName("PhoneNumber")
                     .IsRequired()
                     .HasConversion(
-                        v=> v.ToString(),
+                        v=> v.Value.ToString(),
                         v=> PhoneNumber.FromString(v))
                     .HasMaxLength(100);
                 contact.Property(c => c.Email)
                     .HasColumnName("Email")
                     .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        v=> v.Value,
+                        v=> new Email(v));
             });
             
             builder.OwnsMany(p => p.MedicalConditions, medicalConditions =>
@@ -79,15 +87,13 @@ namespace Infrastructure.Patients
                 emergencyContact.Property(e => e.Number)
                     .HasColumnName("EmergencyContactPhoneNumber")
                     .HasConversion(
-                        v=> v.ToString(),
+                        v=> v.Value.ToString(),
                         v=> PhoneNumber.FromString(v))
                     .HasMaxLength(100);
             });
 
             builder.Property(p => p.UserId)
                 .HasColumnName("UserId");
-
-
 
         }
     }

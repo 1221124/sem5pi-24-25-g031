@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Domain.Shared;
 
 namespace Domain.OperationTypes
 {
@@ -8,21 +9,33 @@ namespace Domain.OperationTypes
         {
             return new OperationTypeDto
             {
+                Id = operationType.Id.AsGuid(),
                 Name = operationType.Name,
                 Specialization = operationType.Specialization,
-                _requiredStaff = operationType._requiredStaff,
+                RequiredStaff = operationType.RequiredStaff,
                 PhasesDuration = operationType.PhasesDuration,
-                status = operationType.Status
+                Status = operationType.Status
             };
         }
 
-        public static OperationType ToEntity(CreatingOperationTypeDto creatingOperationTypeDto)
+        public static OperationType ToEntity(OperationTypeDto dto)
         {
             return new OperationType(
-                creatingOperationTypeDto.Name,
-                creatingOperationTypeDto.Specialization,
-                creatingOperationTypeDto._requiredStaff,
-                creatingOperationTypeDto.PhasesDuration
+                dto.Id,
+                dto.Name,
+                dto.Specialization,
+                dto.RequiredStaff,
+                dto.PhasesDuration,
+                dto.Status
+            );
+        }
+
+        public static OperationType ToEntityFromCreating(CreatingOperationTypeDto dto) {
+            return new OperationType(
+                dto.Name,
+                SpecializationUtils.FromString(dto.Specialization),
+                RequiredStaffUtils.FromStringList(dto.RequiredStaff),
+                PhaseUtils.FromStringList(dto.PhasesDuration)
             );
         }
 
@@ -31,9 +44,9 @@ namespace Domain.OperationTypes
             return operationTypes.ConvertAll(operationType => ToDto(operationType));
         }
 
-        public static List<OperationType> ToEntityList(List<CreatingOperationTypeDto> creatingOperationTypeDtos)
+        public static List<OperationType> ToEntityList(List<OperationTypeDto> dtoList)
         {
-            return creatingOperationTypeDtos.ConvertAll(creatingOperationTypeDto => ToEntity(creatingOperationTypeDto));
+            return dtoList.ConvertAll(dto => ToEntity(dto));
         }
     }
 }

@@ -14,27 +14,33 @@ namespace Domain.Shared
     {
         public static Role FromString(string role)
         {
-            return role switch
+            switch (role.ToUpper())
             {
-                "Admin" => Role.Admin,
-                "Doctor" => Role.Doctor,
-                "Nurse" => Role.Nurse,
-                "Technician" => Role.Technician,
-                "Patient" => Role.Patient,
-                _ => throw new System.Exception("Invalid role")
-            };
+                case "ADMIN":
+                    return Role.Admin;
+                case "DOCTOR":
+                    return Role.Doctor;
+                case "NURSE":
+                    return Role.Nurse;
+                case "TECHNICIAN":
+                    return Role.Technician;
+                case "PATIENT":
+                    return Role.Patient;
+                default:
+                    throw new System.ArgumentException($"Invalid role: {role}");
+            }
         }
 
         public static string ToString(Role role)
         {
             return role switch
             {
-                Role.Admin => "Admin",
-                Role.Doctor => "Doctor",
-                Role.Nurse => "Nurse",
-                Role.Technician => "Technician",
-                Role.Patient => "Patient",
-                _ => throw new System.Exception("Invalid role")
+                Role.Admin => "ADMIN",
+                Role.Doctor => "DOCTOR",
+                Role.Nurse => "NURSE",
+                Role.Technician => "TECHNICIAN",
+                Role.Patient => "PATIENT",
+                _ => throw new System.ArgumentException($"Invalid role: {role}")
             };
         }
 
@@ -51,15 +57,17 @@ namespace Domain.Shared
 
         public static bool IsValid(string role)
         {
-            return role switch
+            switch (role.ToUpper())
             {
-                "Admin" => true,
-                "Doctor" => true,
-                "Nurse" => true,
-                "Technician" => true,
-                "Patient" => true,
-                _ => false
-            };
+                case "ADMIN":
+                case "DOCTOR":
+                case "NURSE":
+                case "TECHNICIAN":
+                case "PATIENT":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         public static bool IsValid(Role role)

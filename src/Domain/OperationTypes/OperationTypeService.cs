@@ -64,7 +64,7 @@ namespace Domain.OperationTypes
 
         public async Task<OperationTypeDto> AddAsync(CreatingOperationTypeDto dto)
         {
-            var operationType = new OperationType(dto.Name, dto.Specialization, dto._requiredStaff, dto.PhasesDuration);
+            var operationType = OperationTypeMapper.ToEntityFromCreating(dto);
 
             await this._repo.AddAsync(operationType);
 
@@ -82,7 +82,7 @@ namespace Domain.OperationTypes
 
             operationType.Name = dto.Name;
             operationType.Specialization = dto.Specialization;
-            operationType._requiredStaff = dto._requiredStaff;
+            operationType.RequiredStaff = dto.RequiredStaff;
             operationType.PhasesDuration = dto.PhasesDuration;
 
             // OperationType opType = (OperationType) operationType;
@@ -122,8 +122,8 @@ namespace Domain.OperationTypes
             if (operationType == null)
                 return null;   
 
-            if (operationType.Status == Status.Active)
-                throw new BusinessRuleValidationException("It is not possible to delete an active operation type.");
+            // if (operationType.Status == Status.Active)
+            //     throw new BusinessRuleValidationException("It is not possible to delete an active operation type.");
             
             this._repo.Remove(operationType);
             await this._unitOfWork.CommitAsync();

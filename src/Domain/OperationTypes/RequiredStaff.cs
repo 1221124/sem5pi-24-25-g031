@@ -6,9 +6,9 @@ namespace Domain.OperationTypes
 {
     public class RequiredStaff : IValueObject
     {
-        public Role Role { get; set; }
-        public Specialization Specialization { get; set; }
-        public Quantity Quantity { get; set; }
+        public Role Role { get; private set; }
+        public Specialization Specialization { get; private set; }
+        public Quantity Quantity { get; private set; }
 
         public RequiredStaff(Role role, Specialization specialization, Quantity quantity)
         {
@@ -31,25 +31,14 @@ namespace Domain.OperationTypes
                 throw new ArgumentException("Input string must be in the format 'Role,Specialization,Quantity'.");
             }
 
-            // if (!Enum.TryParse(parts[0], out Role role))
-            // {
-            //     throw new ArgumentException("Invalid Role value.");
-            // }
-
-            // if (!Enum.TryParse(parts[1], out Specialization specialization))
-            // {
-            //     throw new ArgumentException("Invalid Specialization value.");
-            // }
-
-            // if (!int.TryParse(parts[2], out int quantityValue))
-            // {
-            //     throw new ArgumentException("Invalid Quantity value.");
-            // }
-
             var role = RoleUtils.FromString(parts[0]);
             var specialization = SpecializationUtils.FromString(parts[1]);
-            var quantity = new Quantity(int.Parse(parts[2]));
+            if (!int.TryParse(parts[2], out int quantityValue) || quantityValue < 0)
+            {
+                throw new ArgumentException($"Invalid Quantity value: {parts[2]}.");
+            }
 
+            var quantity = new Quantity(quantityValue);
             return new RequiredStaff(role, specialization, quantity);
         }
 
@@ -64,7 +53,10 @@ namespace Domain.OperationTypes
 
             foreach (var staffMember in staff)
             {
-                staffStrings.Add($"{staffMember.Role},{staffMember.Specialization},{staffMember.Quantity}");
+                var specializationString = SpecializationUtils.ToString(staffMember.Specialization);
+                var roleString = RoleUtils.ToString(staffMember.Role);
+                var quantityString = staffMember.Quantity.Value.ToString();
+                staffStrings.Add($"{roleString},{specializationString},{quantityString}");
             }
 
             return string.Join(";", staffStrings);
@@ -77,13 +69,32 @@ namespace Domain.OperationTypes
                 throw new ArgumentException("Invalid input string for RequiredStaff.");
             }
 
+            var staffStrings = value.Split(';');
             var staffList = new List<RequiredStaff>();
 
-            var staffParts = value.Split(';');
-
-            foreach (var staff in staffParts)
+            foreach (var str in staffStrings)
             {
-                staffList.Add(staff);
+                staffList.Add((RequiredStaff)str);
+            }
+
+            return staffList;
+        }
+    }
+
+    public class RequiredStaffUtils
+    {
+        public static List<RequiredStaff> FromStringList(List<string> requiredStaff)
+        {
+            if (requiredStaff == null || requiredStaff.Count == 0)
+            {
+                throw new ArgumentException("Invalid input list for RequiredStaff.");
+            }
+
+            var staffList = new List<RequiredStaff>();
+
+            foreach (var str in requiredStaff)
+            {
+                staffList.Add((RequiredStaff)str);
             }
 
             return staffList;

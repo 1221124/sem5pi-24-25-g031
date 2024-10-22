@@ -10,6 +10,7 @@ using Infrastructure.Users;
 using Domain.Users;
 using Infrastructure.Patients;
 using Domain.Staffs;
+using Infrastructure.Staffs;
 
 namespace Infrastructure
 {
@@ -40,6 +41,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new OperationRequestEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
         }
     }
 }

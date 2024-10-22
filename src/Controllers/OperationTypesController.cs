@@ -38,11 +38,16 @@ namespace Controllers
 
         // POST: api/OperationTypes
         [HttpPost]
-        public async Task<ActionResult<OperationTypeDto>> Create(CreatingOperationTypeDto dto)
+        public async Task<ActionResult<OperationTypeDto>> Create([FromBody] CreatingOperationTypeDto dto)
         {
+            if (dto == null)
+            {
+                return BadRequest("Creating Operation Type DTO cannot be null");
+            }
+
             var operationType = await _service.AddAsync(dto);
 
-            return CreatedAtAction(nameof(GetById), new { name = operationType.Name }, operationType);
+            return Ok(operationType);
         }
 
         

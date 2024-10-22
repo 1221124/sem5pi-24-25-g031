@@ -20,6 +20,20 @@ namespace Domain.OperationTypes
             return new Quantity(value);
         }
 
+        public static implicit operator Quantity(string value)
+        {
+            if (!int.TryParse(value, out int quantityValue) || quantityValue < 0)
+            {
+                throw new BusinessRuleValidationException("Invalid Quantity value.");
+            }
+            return new Quantity(quantityValue);
+        }
+
+        public static implicit operator string(Quantity quantity)
+        {
+            return quantity.Value.ToString();
+        }
+
         public static implicit operator int(Quantity quantity)
         {
             return quantity.Value;

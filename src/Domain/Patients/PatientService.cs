@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using DDDNetCore.Domain.Email;
+using Domain.Emails;
 using Domain.DBLogs;
 using Domain.Shared;
 
