@@ -6,6 +6,8 @@ namespace Domain.Patients
     {
         public List<string> Condition { get; set; }
         
+        public AppointmentHistory() { }
+
         public AppointmentHistory(List<string> condition){
             Condition = condition;
         }

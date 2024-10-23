@@ -45,10 +45,10 @@ namespace Domain.IAM
         {
             var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(new UserRecordArgs()
             {
-                Email = dto.Email.Value,
+                Email = dto.Email,
                 EmailVerified = false,
-                Password = PasswordGenerator.GeneratePassword(dto.Email.Value),
-                DisplayName = dto.Email.Value,
+                Password = PasswordGenerator.GeneratePassword(dto.Email),
+                DisplayName = dto.Email,
                 Disabled = false
             });
 

@@ -99,6 +99,17 @@ namespace Infrastructure.Patients
             builder.Property(p => p.MedicalRecordNumber)
                 .HasColumnName("MedicalRecordNumber");
 
+            builder.OwnsOne(p => p.AppointmentHistory, history =>
+            {
+                history.Property(h => h.Condition)
+                    .HasColumnName("Condition")
+                    .IsRequired()
+                    .HasConversion(
+                        v => string.Join(";", v),
+                        v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
+                    );
+            });
+
             builder.Property(p => p.UserId)
                 .HasColumnName("UserId")
                 .HasConversion(

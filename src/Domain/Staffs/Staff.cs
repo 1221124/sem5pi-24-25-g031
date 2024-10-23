@@ -16,6 +16,11 @@ namespace Domain.Staffs
         public List<Slot> SlotAppointement { get; set; }
         public List<Slot> SlotAvailability { get; set; }
 
+        public Staff()
+        {
+            // SlotAppointement = new List<Slot>();
+            // SlotAvailability = new List<Slot>();
+        }
 
         public Staff(StaffId staffId, UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
         {

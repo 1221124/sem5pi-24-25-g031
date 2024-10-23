@@ -55,13 +55,16 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
             ;
         });
 
-        builder.Property(o => o.Id.LicenseNumber)
-            .HasColumnName("LicenseNumber")
-            .HasMaxLength(100)
-            .HasConversion(
-                v => v.Value,
-                v => new LicenseNumber(v)
-            );
+        // builder.OwnsOne(o => o.Id, sa =>
+        // {
+        //     sa.Property(p => p.LicenseNumber.Value)
+        //         .HasColumnName("LicenseNumber")
+        //         .HasMaxLength(100)
+        //         .HasConversion(
+        //             v => v,
+        //             v => new LicenseNumber(v)
+        //         );
+        // });
 
         builder.Property(o => o.Specialization)
             .IsRequired()

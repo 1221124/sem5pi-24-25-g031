@@ -18,7 +18,7 @@ namespace Domain.Patients
     public AppointmentHistory AppointmentHistory { get; set; }
     public UserId UserId { get; set; }
 
-    //public Patient() { }
+    public Patient() { }
     
     public Patient(FullName fullName, DateTime dateOfBirth, Gender gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
     {
