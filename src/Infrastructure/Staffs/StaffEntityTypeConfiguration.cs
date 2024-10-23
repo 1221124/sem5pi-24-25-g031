@@ -50,8 +50,9 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 .HasMaxLength(10)
                 .HasConversion(
                     v => v.Value.ToString(),
-                    v => new PhoneNumber(v)
+                    v => new PhoneNumber(int.Parse(v))
                 );
+            ;
         });
 
         builder.Property(o => o.Id.LicenseNumber)

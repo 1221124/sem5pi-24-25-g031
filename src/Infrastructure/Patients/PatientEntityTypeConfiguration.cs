@@ -4,6 +4,7 @@ using Domain.Patients;
 using Domain.Shared;
 using Google.Type;
 using System;
+using Domain.OperationRequests;
 using Domain.Users;
 using DateTime = System.DateTime;
 using PhoneNumber = Domain.Shared.PhoneNumber;
@@ -26,7 +27,8 @@ namespace Infrastructure.Patients
                     .HasMaxLength(100)
                     .HasConversion(
                         v => v.Value,
-                        v => new Name(v));
+                        v => new Name(v)
+                    );
                 name.Property(n => n.LastName)
                     .HasColumnName("LastName")
                     .IsRequired()
@@ -63,10 +65,11 @@ namespace Infrastructure.Patients
                 contact.Property(c => c.PhoneNumber)
                     .HasColumnName("PhoneNumber")
                     .IsRequired()
+                    .HasMaxLength(100)
                     .HasConversion(
-                        v=> v.Value.ToString(),
-                        v=> PhoneNumber.FromString(v))
-                    .HasMaxLength(100);
+                        v => v.Value.ToString(),
+                        v => new PhoneNumber(v));
+                
                 contact.Property(c => c.Email)
                     .HasColumnName("Email")
                     .IsRequired()
@@ -88,8 +91,8 @@ namespace Infrastructure.Patients
                 emergencyContact.Property(e => e.Number)
                     .HasColumnName("EmergencyContactPhoneNumber")
                     .HasConversion(
-                        v=> v.Value.ToString(),
-                        v=> PhoneNumber.FromString(v))
+                        v => v.Value.ToString(),
+                        v => new PhoneNumber(int.Parse(v)))
                     .HasMaxLength(100);
             });
 
