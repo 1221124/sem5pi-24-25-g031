@@ -9,14 +9,12 @@ namespace Domain.Patients {
         public FullName FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public ContactInformation ContactInformation { get; set; }
-        public UserId UserId { get; set; }
 
-        public CreatingPatientDto(FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation, UserId userId)
+        public CreatingPatientDto(FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation)
         {
           FullName = fullName;
           DateOfBirth = dateOfBirth; 
           ContactInformation = contactInformation;
-          UserId = userId;
         }
        
     }

@@ -15,11 +15,12 @@ namespace Domain.Patients
     public ContactInformation ContactInformation { get; set; }
     public List<MedicalConditions> MedicalConditions { get; set; }
     public EmergencyContact EmergencyContact { get; set; }
-    public UserId UserId { get; }
+    public AppointmentHistory AppointmentHistory { get; set; }
+    public UserId UserId { get; set; }
 
-    public Patient() { }
+    //public Patient() { }
     
-    public Patient(FullName fullName, DateTime dateOfBirth, Gender gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, UserId userId)
+    public Patient(FullName fullName, DateTime dateOfBirth, Gender gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
@@ -29,22 +30,22 @@ namespace Domain.Patients
       ContactInformation = contactInformation;
       MedicalConditions = medicalConditions;
       EmergencyContact = emergencyContact;
+      AppointmentHistory = appointmentHistory;
       UserId = userId;
     }
         
-    public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, UserId userId)
+    public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
       DateOfBirth = dateOfBirth; 
       MedicalRecordNumber = medicalRecordNumber;
       ContactInformation = contactInformation;
-      UserId = userId;
     }
     
     public override string ToString()
     {
-      return $"{Id};{FullName};{DateOfBirth:yyyy-MM-dd};{Gender};{ContactInformation};{string.Join(",", MedicalConditions.Select(m => m.ToString()))};{EmergencyContact}";
+      return $"{Id};{FullName};{DateOfBirth:yyyy-MM-dd};{Gender};{MedicalRecordNumber};{ContactInformation};{string.Join(",", MedicalConditions.Select(m => m.ToString()))};{EmergencyContact};{AppointmentHistory};{UserId}";
     }
     
     public void ChangeFullName(FullName fullName)
@@ -77,5 +78,15 @@ namespace Domain.Patients
     {
       this.EmergencyContact = emergencyContact;
     }  
+    
+    public void ChangeAppointmentHistory(AppointmentHistory appointmentHistory)
+    {
+      this.AppointmentHistory = appointmentHistory;
+    }
+    
+    public void ChangeUserId(UserId userId)
+    {
+      this.UserId = userId;
+    }
   }
 }

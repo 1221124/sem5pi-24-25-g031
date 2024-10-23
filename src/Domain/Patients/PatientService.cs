@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Domain.Emails;
 using Domain.DBLogs;
 using Domain.Shared;
+using Domain.Users;
+using FirebaseAdmin.Auth;
 
 namespace Domain.Patients
 {
@@ -12,6 +14,7 @@ namespace Domain.Patients
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
         private readonly DBLogService _dbLogService;
+        private readonly UserService _userService;
 
         public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo)
         {
@@ -49,7 +52,8 @@ namespace Domain.Patients
             
             MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
             
-            var patient = new Patient(dto.FullName, dto.DateOfBirth, medicalRecordNumber, dto.ContactInformation, dto.UserId);
+            
+            var patient = new Patient(dto.FullName, dto.DateOfBirth, medicalRecordNumber, dto.ContactInformation);
             
             
             await this._repo.AddAsync(patient);
