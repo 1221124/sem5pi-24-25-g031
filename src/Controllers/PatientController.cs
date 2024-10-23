@@ -4,6 +4,7 @@ using Domain.Patients;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Domain.DBLogs;
 
 namespace src.Controllers
 {
@@ -12,11 +13,16 @@ namespace src.Controllers
     public class PatientController: ControllerBase
     {
         private readonly PatientService _service;
-
-        public PatientController(PatientService service)
+        private readonly DBLogService _dbLogService;
+        
+        public PatientController(PatientService service, DBLogService dbLogService)
         {
             _service = service;
+            _dbLogService = dbLogService; // Certifique-se de inicializá-lo
         }
+
+        
+        private static readonly EntityType patientEntityType = EntityType.PATIENT;
 
         // GET: api/Patient
         [HttpGet]
@@ -43,12 +49,15 @@ namespace src.Controllers
         [HttpPost]
         public async Task<ActionResult<PatientDto>> Create(CreatingPatientDto dto)
         {
-            var patient = await _service.AddAsync(dto);
-            
-            if (patient == null)
+            /*
+            if (dto == null)
             {
+                //_dbLogService.LogError(patientEntityType, "Invalid data request");
                 return BadRequest(new {Message = "Phone number already exists"});
             }
+            */
+            
+            var patient = await _service.AddAsync(PatientMapper.toEntityFromCreating(dto));
 
             return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
         }
