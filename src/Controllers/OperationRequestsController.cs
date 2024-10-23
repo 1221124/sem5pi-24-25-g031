@@ -18,9 +18,10 @@ namespace Controllers
 
          private static readonly EntityType OperationRequestEntityType = EntityType.OPERATION_REQUEST;
 
-         public OperationRequestController(OperationRequestService operationRequestService)
+         public OperationRequestController(OperationRequestService operationRequestService, DBLogService dBLogService)
          {
              _operationRequestService = operationRequestService;
+             _DBLogService = dBLogService;
          }
 
          // GET api/operationrequest
@@ -45,12 +46,12 @@ namespace Controllers
                  return Ok(operationRequestDto);
 
              }catch(Exception){
-                 Log.Error("Error in OperationRequestController.Get");
+                 _DBLogService.LogError(OperationRequestEntityType, "Error in OperationRequestController.Get");
                  return NotFound();
              }
          }
 
-         // Body{{staffId, patientId, suggestedDeadline, priority, status}
+         // Body{staffId, patientId, suggestedDeadline, priority, status}
          [HttpPost("operationrequest/request")]
          public async Task<IActionResult> Create(CreatingOperationRequestDto requestDto)
          {
@@ -59,23 +60,21 @@ namespace Controllers
                  return BadRequest("Invalid request data.");
              }
 
-            await _operationRequestService.AddAsync(requestDto);
+            await _operationRequestService.AddAsync(OperationRequestMapper.ToEntityFromCreating(requestDto));
 
-             return Ok("Operation request created successfully.");
+            return Ok("Operation request created successfully.");
          }
 
          // PUT api/operationrequest/update
          [HttpPost("operationrequest/update")]
-         public async Task<IActionResult> Update(CreatingOperationRequestDto creatingDto)
+         public async Task<IActionResult> Update(CreatingOperationRequestDto dto)
          {
-             if (id == null){
+             if (dto == null){
                 _DBLogService.LogError(EntityType.OPERATION_REQUEST, "Operation request data is required.");
                  return BadRequest("Operation request data is required.");
              }
 
-             OperationRequestDto dto = new OperationRequestDto(creatingDto);
-
-             await _operationRequestService.UpdateAsync(dto);
+             await _operationRequestService.UpdateAsync(OperationRequestMapper.ToEntityFromCreating(dto));
 
              return Ok("Operation request updated successfully.");
          }   
