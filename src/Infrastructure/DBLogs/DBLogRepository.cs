@@ -6,15 +6,16 @@ namespace Infrastructure.DBLogs
 {
     public class DBLogRepository : BaseRepository<DBLog, DBLogId>, IDBLogRepository
     {
-    
-        public DBLogRepository(SARMDbContext context):base(context.OperationRequests)
+
+        public DBLogRepository(SARMDbContext context) : base(context.OperationRequests)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public Task<DBLog> GetByIdAsync(object value)
         {
-            throw new System.NotImplementedException();
+            return null;
+            //throw new System.NotImplementedException();
         }
     }
 }
