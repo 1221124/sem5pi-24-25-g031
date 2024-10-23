@@ -1,4 +1,3 @@
-using System;
 using Domain.Shared;
 using Domain.Staffs;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +55,6 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
         });
 
         builder.Property(o => o.LicenseNumber)
-            .IsRequired()
             .HasMaxLength(100)
             .HasConversion(
                 v => v.Value,
@@ -84,8 +82,8 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 .HasColumnName("Start")
                 .IsRequired()
                 .HasConversion(
-                    v => v.ToString("yyyy-MM-dd HH:mm"), 
-                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null) 
+                    v => v.ToString("yyyy-MM-dd HH:mm"),
+                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                 );
 
             slot.Property(s => s.End)
