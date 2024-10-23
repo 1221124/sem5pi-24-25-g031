@@ -34,8 +34,5 @@ namespace Domain.OperationRequests
             Id = id;
         }
 
-        public OperationRequestDto()
-        {
-        }
     }
 }
