@@ -14,19 +14,20 @@ namespace Domain.OperationRequests
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationRequestRepository _repo;
-        private readonly IOperationTypeRepository _operationTypeRepository;
-        private readonly IPatientRepository _patientRepository;
-        private readonly IStaffRepository _staffRepository;
         private readonly DBLogService _logService;
-
+        private readonly OperationTypeService _operationTypeService;
+        private readonly StaffService _staffService;
+        private readonly PatientService _patientService;
+        private static readonly EntityType OperationRequestEntityType = EntityType.OPERATION_REQUEST;
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo,
-        IPatientRepository patientRepository, IStaffRepository staffRepository, DBLogService logService)
+        OperationTypeService operationTypeService, PatientService patientService, StaffService staffService, DBLogService logService)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
-            _patientRepository = patientRepository;
-            _staffRepository = staffRepository;
+            _operationTypeService = operationTypeService;
+            _staffService = staffService;
+            _patientService = patientService;
             _logService = logService;
         }
 
@@ -48,13 +49,27 @@ namespace Domain.OperationRequests
             else return Task.FromResult(output);
         }
 
-        private static Task<OperationTypeId> OperationTypeValidation(string operationTypeId)
+        private async Task<OperationTypeId> OperationTypeValidation(string operationTypeId, string staffId)
         {
             if (!Guid.TryParse(operationTypeId, out Guid output))
             {
-                throw new ArgumentException("Invalid operation type id format.");
+                _logService.LogError(OperationRequestEntityType, "Invalid data format.");
+                throw new ArgumentException("Invalid data format.");
+
             }
-            else return Task.FromResult(new OperationTypeId(output));
+            else{
+
+                StaffDto staff = await _staffService.GetByIdAsync(new(staffId));
+
+                OperationTypeDto operationType = await _operationTypeService.GetByIdAsync(new(operationTypeId));
+
+                if(staff.Specialization != operationType.Specialization){
+                    _logService.LogError(OperationRequestEntityType, "Staff specialization doesn't match Operation Type.");
+                    throw new ArgumentException("Staff specialization doesn't match Operation Type.");
+                }         
+            
+                return new OperationTypeId(output);
+            }
         }
 
         private static Task<RequestStatus> RequestStatusValidation(string status)
@@ -68,36 +83,40 @@ namespace Domain.OperationRequests
 
         public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto dto)
         {
-            try
-            {
-                DateTime deadlineDate = await DeadlineDateValidation(dto.DeadlineDate);
+            
+            DateTime deadlineDate = await DeadlineDateValidation(dto.DeadlineDate);
 
-                Priority priority = await PriorityValidation(dto.Priority);
+            Priority priority = await PriorityValidation(dto.Priority);
 
-                OperationTypeId operationTypeId = await OperationTypeValidation(dto.OperationTypeId);
+            OperationTypeId operationTypeId = await OperationTypeValidation(dto.OperationTypeId, dto.StaffId);
 
-                RequestStatus requestStatus = await RequestStatusValidation(dto.Status);
+            RequestStatus requestStatus = await RequestStatusValidation(dto.Status);
 
-                OperationRequest category = new OperationRequest(
-                    new(dto.PatientId), new(dto.StaffId), operationTypeId,
-                    deadlineDate, priority, requestStatus
-                    );
+            OperationRequest category = new OperationRequest
+                (
+                new(dto.PatientId), new(dto.StaffId), operationTypeId,
+                deadlineDate, priority, requestStatus
+                );
+
+            try{
 
                 await this._repo.AddAsync(category);
                 await this._unitOfWork.CommitAsync();
 
-                _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.CREATE, category);
+                _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, category);
 
-                return new OperationRequestDto
-                {
-                    Id = category.Id.AsGuid()
-                };
+                /*_patientService.UpdateAsync(
+                    new PatientDto(
+                        dto.PatientId, dto.AppointmentHistory.add(category)
+                        )
+                    );
+                );*/
 
-            }
-            catch (Exception e)
-            {
-                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
-                return new OperationRequestDto { };
+                return new OperationRequestDto(category.Id.AsGuid());            
+
+            }catch (Exception e){
+                _logService.LogError(OperationRequestEntityType, e.ToString());
+                return new OperationRequestDto(category.Id.AsGuid());            
             }
         }
 
