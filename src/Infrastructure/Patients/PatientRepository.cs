@@ -22,5 +22,11 @@ namespace Infrastructure.Patients
             return await _objs.
                 FirstOrDefaultAsync(p => p.ContactInformation.PhoneNumber == phoneNumber);
         }
+
+        public async Task<Patient> GetByEmailAsync(Email email)
+        {
+            return await _objs.
+                FirstOrDefaultAsync(p => p.ContactInformation.Email == email);
+        }
     }
 }

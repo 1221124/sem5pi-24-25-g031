@@ -41,6 +41,16 @@ namespace Domain.Patients
             return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
+        public async Task<PatientDto> GetByEmailAsync(Email email)
+        {
+            var patient = await this._repo.GetByEmailAsync(email);
+            
+            if(patient == null)
+                return null;
+
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+        }
+
         public async Task<PatientDto> AddAsync(CreatingPatientDto dto)
         {
             if(_repo.getByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
