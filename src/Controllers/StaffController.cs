@@ -5,6 +5,7 @@ using Domain.Shared;
 using Domain.Staffs;
 using Infrastructure;
 using System.Threading.Tasks;
+using Domain.DBLogs;
 
 namespace Controllers
 {
@@ -13,6 +14,10 @@ namespace Controllers
     public class StaffController : ControllerBase
     {
         private readonly StaffService _service;
+
+        private readonly DBLogService _DBLogService;
+
+        private static readonly EntityType StaffEntityType = EntityType.STAFF;
 
         public StaffController(StaffService service)
         {
@@ -42,17 +47,17 @@ namespace Controllers
 
         // POST: api/Staff
         [HttpPost]
-        public async Task<ActionResult<StaffDto>> Create(CreatingStaffDto dto)
+        public async Task<ActionResult<StaffDto>> Create(CreatingStaffDto staffDto)
         {
-            try
+            if (staffDto == null)
             {
-                await _service.AddAsync(dto);
-                return Ok("Staff created successfully");
+                _DBLogService.LogError(StaffEntityType, "Invalid data request.");
+                return BadRequest("Invalid request data.");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
+
+            return Ok("Operation request created successfully.");
         }
 
         // PUT: api/Staff/5
