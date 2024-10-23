@@ -21,6 +21,14 @@ namespace Domain.OperationRequests
             };
         }
 
+        public static OperationRequestDto ToDto(OperationRequestId id)
+        {
+            return new OperationRequestDto
+            {
+                Id = id.AsGuid()
+            };
+        }
+
         public static OperationRequest ToEntity(OperationRequestDto dto)
         {
             return new OperationRequest(

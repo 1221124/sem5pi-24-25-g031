@@ -34,9 +34,8 @@ namespace Domain.OperationRequests
         public async Task<OperationRequestDto> AddAsync(OperationRequest operationRequest)
         {
             try{
-
-                await this._repo.AddAsync(operationRequest);
-                await this._unitOfWork.CommitAsync();
+                await _repo.AddAsync(operationRequest);
+                await _unitOfWork.CommitAsync();
 
                 _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, operationRequest);
 
@@ -115,60 +114,52 @@ namespace Domain.OperationRequests
         {
             try
             {
-                OperationRequestId operationRequestId = new(operationRequest.Id);
+                OperationRequest op = await _repo.GetByIdAsync(operationRequest.Id);
 
-                var category = await this._repo.GetByIdAsync(operationRequestId);
+                if(op == null){
+                    _logService.LogError(OperationRequestEntityType, "Unable to find {operationRequest " + operationRequest.Id  + "}");
+                    return OperationRequestMapper.ToDto(operationRequest);
+                }
 
-                if (category == null)
-                    throw new ArgumentException("Operation request not found.");
+                op.ChangeDeadlineDate(operationRequest.DeadlineDate);
+                op.ChangePriority(operationRequest.Priority);
+                op.ChangeStatus(operationRequest.Status);
 
-                category.Update(
-                    operationRequest.PatientId, operationRequest.DoctorId, operationRequest.OperationTypeId,
-                    operationRequest.DeadlineDate, operationRequest.Priority, operationRequest.Status
-                    );
+                await _repo.UpdateAsync(op);
+                await _unitOfWork.CommitAsync();
 
-                await this._repo.UpdateAsync(category);
-                await this._unitOfWork.CommitAsync();
-
-                _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.UPDATE, category);
-                return new OperationRequestDto
-                {
-                    Id = category.Id.AsGuid()
-                };
+                _logService.LogAction(OperationRequestEntityType, DBLogType.UPDATE, op);
+                return OperationRequestMapper.ToDto(op);
 
             }
             catch (Exception e)
             {
-                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
-                return new OperationRequestDto { };
+                _logService.LogError(OperationRequestEntityType, e.ToString());
+                return OperationRequestMapper.ToDto(operationRequest);
             }
         }
+
         public async Task<OperationRequestDto> DeleteAsync(OperationRequestId id)
         {
             try
             {
-                OperationRequestId operationRequestId = new(id);
-
                 var category = await this._repo.GetByIdAsync(id);
 
                 if (category == null)
-                    return null;
+                    return OperationRequestMapper.ToDto(id);
 
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
-                _logService.LogAction(EntityType.OPERATION_REQUEST, DBLogType.DELETE, category);
+                _logService.LogAction(OperationRequestEntityType, DBLogType.DELETE, category);
 
-                return new OperationRequestDto
-                {
-                    Id = category.Id.AsGuid()
-                };
+                return OperationRequestMapper.ToDto(id);
 
             }
             catch (Exception e)
             {
-                _logService.LogError(EntityType.OPERATION_REQUEST, e.ToString());
-                return null;
+                _logService.LogError(OperationRequestEntityType, e.ToString());
+                return OperationRequestMapper.ToDto(id);
             }
         }
     }
