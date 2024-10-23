@@ -6,6 +6,7 @@ using Domain.Users;
 using Domain.OperationRequests;
 using Domain.Patients;
 using Domain.Staffs;
+using Domain.Shared;
 
 namespace Domain.DBLogs
 {
