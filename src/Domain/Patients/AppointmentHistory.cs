@@ -4,10 +4,9 @@ namespace Domain.Patients
 {
     public class AppointmentHistory: IValueObject
     {
-        public string Condition { get; set; }
+        public List<string> Condition { get; set; }
         
-        public AppointmentHistory(string condition)
-        {
+        public AppointmentHistory(List<string> condition){
             Condition = condition;
         }
     }

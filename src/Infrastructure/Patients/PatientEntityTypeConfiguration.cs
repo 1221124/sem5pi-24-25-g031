@@ -4,6 +4,7 @@ using Domain.Patients;
 using Domain.Shared;
 using Google.Type;
 using System;
+using Domain.Users;
 using DateTime = System.DateTime;
 using PhoneNumber = Domain.Shared.PhoneNumber;
 
@@ -92,8 +93,15 @@ namespace Infrastructure.Patients
                     .HasMaxLength(100);
             });
 
+            builder.Property(p => p.MedicalRecordNumber)
+                .HasColumnName("MedicalRecordNumber");
+
             builder.Property(p => p.UserId)
-                .HasColumnName("UserId");
+                .HasColumnName("UserId")
+                .HasConversion(
+                    v => v.Value.ToString(),
+                    v => new UserId(Guid.Parse(v))
+                );
 
         }
     }
