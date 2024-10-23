@@ -6,16 +6,22 @@ using Domain.Users;
 namespace Domain.Patients {
 
     public class CreatingPatientDto{
-        public FullName FullName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public ContactInformation ContactInformation { get; set; }
+        
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string dateOfBirth { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        
+        
 
-        public CreatingPatientDto(FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation)
+        public CreatingPatientDto(string firstName, string lastName, string dateOfBirth, string phoneNumber, string email)
         {
-          FullName = fullName;
-          DateOfBirth = dateOfBirth; 
-          ContactInformation = contactInformation;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.dateOfBirth = dateOfBirth;
+            this.phoneNumber = phoneNumber;
+            this.email = email;
         }
-       
     }
 }

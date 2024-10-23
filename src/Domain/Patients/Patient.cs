@@ -42,7 +42,15 @@ namespace Domain.Patients
       MedicalRecordNumber = medicalRecordNumber;
       ContactInformation = contactInformation;
     }
-    
+
+    public Patient(FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation)
+    {
+      Id = new PatientId(Guid.NewGuid());
+      FullName = fullName;
+      DateOfBirth = dateOfBirth; 
+      ContactInformation = contactInformation;
+    }
+
     public override string ToString()
     {
       return $"{Id};{FullName};{DateOfBirth:yyyy-MM-dd};{Gender};{MedicalRecordNumber};{ContactInformation};{string.Join(",", MedicalConditions.Select(m => m.ToString()))};{EmergencyContact};{AppointmentHistory};{UserId}";

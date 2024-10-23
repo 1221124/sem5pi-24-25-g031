@@ -2,23 +2,41 @@ using System;
 
 namespace Domain.Shared
 {
-    public class PhoneNumber: IValueObject
+    public class PhoneNumber : IValueObject
     {
-        public int Value { get; set;}
+        public int Value { get; }
 
+        public PhoneNumber(int value) 
+        {
+            if (value <= 0) 
+            {
+                throw new ArgumentException("Phone number must be a positive integer.");
+            }
+            Value = value;
+        }
         public PhoneNumber(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value) || !int.TryParse(value, out int result) || result <= 0)
             {
-                throw new ArgumentException("Phone number cannot be empty");
+                throw new ArgumentException("Invalid phone number.");
             }
-
-            Value = int.Parse(value);
+            Value = result;
         }
-        //fromString
+        
         public static PhoneNumber FromString(string value)
         {
-            return new PhoneNumber(value);
+            return new PhoneNumber(int.Parse(value));
+        }
+        
+        public static implicit operator string(PhoneNumber phoneNumber)
+        {
+            return phoneNumber.Value.ToString();
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
         }
     }
+
 }

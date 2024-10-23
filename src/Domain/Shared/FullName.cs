@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Domain.Shared
 {
     public class FullName : IValueObject
@@ -5,12 +7,7 @@ namespace Domain.Shared
         public Name FirstName { get; }
         public Name LastName { get; }
 
-        public FullName(string firstName, string lastName)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-        }
-
+        [JsonConstructor]
         public FullName(Name firstName, Name lastName)
         {
             FirstName = firstName;

@@ -26,7 +26,7 @@ namespace Domain.Patients
         {
             var list = await this._repo.GetAllAsync();
             
-            List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId ));
+            List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth.ToString(), patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId ));
 
             return listDto;
         }
@@ -38,7 +38,7 @@ namespace Domain.Patients
             if(patient == null)
                 return null;
 
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth.ToString(), patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
         public async Task<PatientDto> GetByEmailAsync(Email email)
@@ -48,12 +48,12 @@ namespace Domain.Patients
             if(patient == null)
                 return null;
 
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth.ToString(), patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
-        public async Task<PatientDto> AddAsync(CreatingPatientDto dto)
+        public async Task<PatientDto> AddAsync(Patient p)
         {
-            if(_repo.getByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
+            if(_repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber) != null)
                 return null;
             
             var numberPatients = _repo.GetAllAsync().Result.Count;
@@ -62,18 +62,21 @@ namespace Domain.Patients
             
             MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
             
-            
-            var patient = new Patient(dto.FullName, dto.DateOfBirth, medicalRecordNumber, dto.ContactInformation);
-            
-            
-            await this._repo.AddAsync(patient);
-
+            await this._repo.AddAsync(p);
             await this._unitOfWork.CommitAsync();
             
-            _dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, patient.Id );
+            //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, p.Id );
 
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+            return new PatientDto (p.Id.AsGuid(), p.FullName, p.DateOfBirth.ToString(), p.Gender, p.MedicalRecordNumber, p.ContactInformation, p.MedicalConditions, p.EmergencyContact, p.UserId );
         }
+        
+        /*
+        private Patient PatientDtoPatient(CreatingPatientDto dto)
+        {
+            return new Patient(new FullName(dto.FullName.FirstName, dto.FullName.LastName), DateTime.Parse(dto.DateOfBirth), new ContactInformation(dto.ContactInformation.Email, dto.ContactInformation.PhoneNumber));
+
+        }
+        */
 
         public async Task<PatientDto> UpdateAsync(PatientDto dto)
         {
@@ -84,7 +87,7 @@ namespace Domain.Patients
 
             // change all field
             patient.ChangeFullName(dto.FullName);
-            patient.ChangeDateOfBirth(dto.DateOfBirth);
+            patient.ChangeDateOfBirth(DateTime.Parse(dto.DateOfBirth));
             patient.ChangeGender(dto.Gender);
             patient.ChangeContactInformation(dto.ContactInformation);
             patient.ChangeMedicalConditions(dto.MedicalConditions);
@@ -92,7 +95,7 @@ namespace Domain.Patients
 
             await this._unitOfWork.CommitAsync();
 
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth.ToString(), patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
         public async Task<PatientDto> DeleteAsync(PatientId id)
@@ -117,7 +120,7 @@ namespace Domain.Patients
                 //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
             });
     
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth.ToString(), patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }    
     }
 }
