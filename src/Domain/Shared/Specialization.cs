@@ -4,7 +4,11 @@ namespace Domain.Shared
     {
         ANAESTHESIOLOGY,
         CARDIOLOGY,
-        ORTHOPAEDICS
+        CIRCULATING,
+        INSTRUMENTAL,
+        MEDICAL_ACTION,
+        ORTHOPAEDICS,
+        X_RAY
     }
     public class SpecializationUtils
     {
@@ -16,8 +20,16 @@ namespace Domain.Shared
                     return Specialization.ANAESTHESIOLOGY;
                 case "CARDIOLOGY":
                     return Specialization.CARDIOLOGY;
+                case "CIRCULATING":
+                    return Specialization.CIRCULATING;
+                case "INSTRUMENTAL":
+                    return Specialization.INSTRUMENTAL;
+                case "MEDICAL_ACTION":
+                    return Specialization.MEDICAL_ACTION;
                 case "ORTHOPAEDICS":
                     return Specialization.ORTHOPAEDICS;
+                case "X_RAY":
+                    return Specialization.X_RAY;
                 default:
                     throw new System.ArgumentException($"Invalid specialization: {specialization}");
             }
@@ -29,7 +41,11 @@ namespace Domain.Shared
             {
                 Specialization.ANAESTHESIOLOGY => "ANAESTHESIOLOGY",
                 Specialization.CARDIOLOGY => "CARDIOLOGY",
+                Specialization.CIRCULATING => "CIRCULATING",
+                Specialization.INSTRUMENTAL => "INSTRUMENTAL",
+                Specialization.MEDICAL_ACTION => "MEDICAL_ACTION",
                 Specialization.ORTHOPAEDICS => "ORTHOPAEDICS",
+                Specialization.X_RAY => "X_RAY",
                 _ => throw new System.ArgumentException($"Invalid specialization: {specialization}")
             };
         }
