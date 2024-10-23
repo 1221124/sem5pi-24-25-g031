@@ -1,107 +1,97 @@
-// using System.Collections.Generic;
-// using Log;
-// using Microsoft.AspNetCore.Mvc;
-// using Domain.OperationRequests;
-// using System.Threading.Tasks;
-// using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Domain.OperationRequests;
+using System.Threading.Tasks;
+using System;
+using Domain.DBLogs;
 
 
-// namespace Controllers
-// {
-//     [Route("api/[controller]")]
-//     [ApiController]
+namespace Controllers
+{
+     [Route("api/[controller]")]
+     [ApiController]
     
-//     public class OperationRequestController : ControllerBase
-//     {
-//         private readonly OperationRequestService _operationRequestService;
+     public class OperationRequestController : ControllerBase
+     {
+         private readonly OperationRequestService _operationRequestService;
+         private readonly DBLogService _DBLogService;
 
-//         public OperationRequestController(OperationRequestService operationRequestService)
-//         {
-//             _operationRequestService = operationRequestService;
-//         }
+         private static readonly EntityType OperationRequestEntityType = EntityType.OPERATION_REQUEST;
 
-//         // GET api/operationrequest
-//         [HttpGet]
-//         public async Task<ActionResult<IEnumerable<OperationRequest>>> Get()
-//         {
-//             var operationRequests = await _operationRequestService.GetAllAsync();
-//             return Ok(operationRequests);
-//         }
+         public OperationRequestController(OperationRequestService operationRequestService)
+         {
+             _operationRequestService = operationRequestService;
+         }
 
-//         // GET api/operationrequest/5
-//         [HttpGet("{id}")]
-//         public ActionResult<OperationRequest> Get(string id)
-//         {  
-//             try{
-//                 var operationRequestDto = _operationRequestService.GetByIdAsync(id);
+         // GET api/operationrequest
+         [HttpGet]
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> Get()
+         {
+             var operationRequests = await _operationRequestService.GetAllAsync();
+             return Ok(operationRequests);
+         }
 
-//                     if (operationRequestDto == null){
-//                         return NotFound();
-//                     }
+         // GET api/operationrequest/5
+         [HttpGet("{id}")]
+         public ActionResult<OperationRequest> Get(string id)
+         {  
+             try{
+                 var operationRequestDto = _operationRequestService.GetByIdAsync(id);
 
-//                 return Ok(operationRequestDto);
+                     if (operationRequestDto == null){
+                         return NotFound();
+                     }
 
-//             }catch(Exception){
-//                 Log.Error("Error in OperationRequestController.Get");
-//                 return NotFound();
-//             }
-//         }
+                 return Ok(operationRequestDto);
 
-//         // Body{{staffId, patientId, suggestedDeadline, priority, status}
-//         [HttpPost("operationrequest/request")]
-//         public async Task<IActionResult> CreateOperationRequest(CreatingOperationRequestDto requestDto)
-//         {
-//             if (requestDto == null)
-//                 return BadRequest("Invalid request data.");
+             }catch(Exception){
+                 Log.Error("Error in OperationRequestController.Get");
+                 return NotFound();
+             }
+         }
 
-//             await _operationRequestService.AddAsync(requestDto);
+         // Body{{staffId, patientId, suggestedDeadline, priority, status}
+         [HttpPost("operationrequest/request")]
+         public async Task<IActionResult> Create(CreatingOperationRequestDto requestDto)
+         {
+             if (requestDto == null){
+                _DBLogService.LogError(OperationRequestEntityType, "Invalid data request.");
+                 return BadRequest("Invalid request data.");
+             }
 
-//             return Ok("Operation request created successfully.");
-//         }
+            await _operationRequestService.AddAsync(requestDto);
 
-//         // PUT api/operationrequest/update/{id}/{updateType}
-//         [HttpPost("operationrequest/update/{id}/{updateType}")]
-//         public async Task<IActionResult> UpdateOperationRequest(UpdateType updateType, [FromBody] string id)
-//         {
-//             if (id == null)
-//                 return BadRequest("Operation request data is required.");
+             return Ok("Operation request created successfully.");
+         }
 
-//             OperationRequestDto request = new OperationRequestDto{id}; 
+         // PUT api/operationrequest/update
+         [HttpPost("operationrequest/update")]
+         public async Task<IActionResult> Update(CreatingOperationRequestDto creatingDto)
+         {
+             if (id == null){
+                _DBLogService.LogError(EntityType.OPERATION_REQUEST, "Operation request data is required.");
+                 return BadRequest("Operation request data is required.");
+             }
 
-//             // Handle different update types based on the route parameter
-//             switch (updateType)
-//             {
-//                 case UpdateType.STATUS:
-//                     await _operationRequestService.UpdateAsync(request, updateType);
-//                     break;
+             OperationRequestDto dto = new OperationRequestDto(creatingDto);
 
-//                 case UpdateType.PRIORITY:
-//                     await _operationRequestService.UpdateAsync(request, updateType);
-//                     break;
+             await _operationRequestService.UpdateAsync(dto);
 
-//                 case UpdateType.DEADLINE_DATE:
-//                     await _operationRequestService.UpdateAsync(request, updateType);
-//                     break;
+             return Ok("Operation request updated successfully.");
+         }   
 
-//                 default:
-//                     return BadRequest("Invalid update type.");
-//             }
+         // DELETE api/operationrequest/5
+         [HttpDelete("{id}")]
+         public IActionResult Delete(int id)
+         {
+             var operationRequestId = new OperationRequestId(id.ToString());
 
-//             return Ok("Operation request updated successfully.");
-//         }   
+             var operationRequestDto = _operationRequestService.DeleteAsync(operationRequestId);
 
-//         // DELETE api/operationrequest/5
-//         [HttpDelete("{id}")]
-//         public IActionResult Delete(int id)
-//         {
-//             var operationRequestId = new OperationRequestId(id.ToString());
-
-//             var operationRequestDto = _operationRequestService.DeleteAsync(operationRequestId);
-
-//             if (operationRequestDto == null)
-//                 return NotFound();
-//                 else
-//                 return Ok("Operation Request  was deleted successfully.");
-//         }
-//     }
-// }
+             if (operationRequestDto == null)
+                 return NotFound();
+                 else
+                 return Ok("Operation Request  was deleted successfully.");
+         }
+     }
+ }
