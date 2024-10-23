@@ -29,7 +29,7 @@ namespace Domain.Staffs
         {
             var list = await this._repo.GetAllAsync();
 
-            List<StaffDto> listDto = list.ConvertAll<StaffDto>(staff => new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability });
+            List<StaffDto> listDto = list.ConvertAll<StaffDto>(staff => new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability });
 
             return listDto;
         }
@@ -41,7 +41,7 @@ namespace Domain.Staffs
             if (staff == null)
                 return null;
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> GetByEmailAsync(Email email)
@@ -51,40 +51,45 @@ namespace Domain.Staffs
             if (staff == null)
                 return null;
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         //CREATE STAFF WITH first name, last name, contact information, and specialization
-        public async Task<StaffDto> AddAsync(CreatingStaffDto dto)
+        public async Task<StaffDto> AddAsync(Staff dto)
         {
-
-            var user = await _userRepo.GetByIdAsync(dto.UserId);
-
-            if (user == null)
-                throw new BusinessRuleValidationException("User not found.");
-
-            string Role = RoleUtils.IdStaff(user.Role);
-
-            var log = await _logRepo.GetByIdAsync(dto.UserId);
-
-            var numberStaff = (await _repo.GetAllAsync()).Count;
-
-            string idStaff = Role + log + numberStaff;
-
-            if (await _repo.GetByEmailAsync(dto.ContactInformation.Email) != null && await _repo.GetByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
+            try
             {
-                throw new BusinessRuleValidationException("Email or phone number already in use.");
+                var user = await _userRepo.GetByIdAsync(dto.UserId);
+
+                if (user == null)
+                    throw new BusinessRuleValidationException("User not found.");
+
+                string Role = RoleUtils.IdStaff(user.Role);
+
+                var log = await _logRepo.GetByIdAsync(dto.UserId);
+
+                var numberStaff = (await _repo.GetAllAsync()).Count;
+
+                if (await _repo.GetByEmailAsync(dto.ContactInformation.Email) != null && await _repo.GetByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
+                {
+                    throw new BusinessRuleValidationException("Email or phone number already in use.");
+                }
+
+                var staff = new Staff(new StaffId(dto.Id.AsGuid(), Role + log + numberStaff), dto.UserId, dto.FullName, dto.ContactInformation, dto.Specialization, Status.Active);
+
+                await this._repo.AddAsync(staff);
+
+                await this._unitOfWork.CommitAsync();
+
+                _dbLogService.LogAction(EntityType.STAFF, DBLogType.CREATE, staff.Id);
+
+                return StaffMapper.ToDto(staff);
             }
-
-            var staff = new Staff(new StaffId(idStaff), new FullName(dto.FullName.FirstName, dto.FullName.LastName), dto.ContactInformation, dto.LicenseNumber, dto.Specialization, Status.Active, new List<Slot>());
-
-            await this._repo.AddAsync(staff);
-
-            await this._unitOfWork.CommitAsync();
-
-            _dbLogService.LogAction(EntityType.STAFF, DBLogType.CREATE, staff.Id);
-
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            catch (Exception e)
+            {
+                _dbLogService.LogError(EntityType.STAFF, e.ToString());
+                return new StaffDto { };
+            }
         }
 
         public async Task<StaffDto> UpdateAsync(StaffDto dto)
@@ -101,7 +106,7 @@ namespace Domain.Staffs
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> InactivateAsync(StaffId id)
@@ -116,7 +121,7 @@ namespace Domain.Staffs
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
         public async Task<StaffDto> DeleteAsync(StaffId id)
@@ -133,7 +138,7 @@ namespace Domain.Staffs
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, LicenseNumber = staff.LicenseNumber, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
     }
 }

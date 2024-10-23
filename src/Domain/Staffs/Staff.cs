@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Domain.Shared;
 using Domain.Users;
 
@@ -9,25 +10,34 @@ namespace Domain.Staffs
     {
         public UserId UserId { get; set; }
         public FullName FullName { get; set; }
-        public LicenseNumber LicenseNumber { get; set; }
         public Specialization Specialization { get; set; }
         public ContactInformation ContactInformation { get; set; }
         public Status Status { get; set; }
         public List<Slot> SlotAppointement { get; set; }
         public List<Slot> SlotAvailability { get; set; }
 
-        public Staff() { }
 
-        public Staff(StaffId id, FullName fullName, ContactInformation contactInformation, LicenseNumber licenseNumber, Specialization specialization, Status status, List<Slot> slot)
+        public Staff(StaffId staffId, UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
         {
-            Id = id;
+            Id = staffId;
+            UserId = userId;
             FullName = fullName;
             ContactInformation = contactInformation;
-            LicenseNumber = licenseNumber;
             Specialization = specialization;
             Status = status;
-            SlotAppointement = slot;
-            SlotAvailability = slot;
+            SlotAppointement = new List<Slot>();
+            SlotAvailability = new List<Slot>();
+        }
+
+        public Staff(UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
+        {
+            UserId = userId;
+            FullName = fullName;
+            ContactInformation = contactInformation;
+            Specialization = specialization;
+            Status = status;
+            SlotAppointement = new List<Slot>();
+            SlotAvailability = new List<Slot>();
         }
 
         public void ChangeContactInformation(ContactInformation contactInformation)

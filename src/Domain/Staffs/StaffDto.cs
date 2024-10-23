@@ -10,6 +10,7 @@ namespace Domain.Staffs
     {
         public Guid Id { get; set; }
         public UserId UserId { get; set; }
+        public StaffId StaffId { get; set; }
         public FullName FullName { get; set; }
         public ContactInformation ContactInformation { get; set; }
         public LicenseNumber LicenseNumber { get; set; }

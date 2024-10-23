@@ -17,10 +17,11 @@ namespace Domain.Shared
             LastName = lastName;
         }
 
-        public static implicit operator FullName(string value)
+        public FullName(string value)
         {
-            var names = value.Split(' ');
-            return new FullName(names[0], names[1]);
+            var names = value.Split(',');
+            if (names != null)
+                _ = new FullName(names[0], names[1]);
         }
 
         public static implicit operator string(FullName fullName)

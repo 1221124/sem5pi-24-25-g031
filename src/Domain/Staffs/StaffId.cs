@@ -7,13 +7,14 @@ namespace Domain.Staffs
 
     public class StaffId : EntityId
     {
+        public LicenseNumber LicenseNumber;
         public StaffId(Guid value) : base(value)
         {
         }
 
-        public StaffId(string value) : base(value)
+        public StaffId(Guid value, string licenseNumber) : base(value)
         {
-
+            LicenseNumber = licenseNumber;
         }
 
         override

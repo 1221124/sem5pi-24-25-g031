@@ -21,6 +21,13 @@ namespace Domain.Shared
             return Email == other.Email && PhoneNumber == other.PhoneNumber;
         }
 
+        public ContactInformation(string value)
+        {
+            var contact = value.Split(',');
+            if (contact != null)
+                _ = new FullName(contact[0], contact[1]);
+        }
+
         public override int GetHashCode()
         {
             return Email.GetHashCode() ^ PhoneNumber.GetHashCode();
