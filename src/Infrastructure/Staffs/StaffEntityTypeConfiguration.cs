@@ -54,7 +54,8 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 );
         });
 
-        builder.Property(o => o.LicenseNumber)
+        builder.Property(o => o.Id.LicenseNumber)
+            .HasColumnName("LicenseNumber")
             .HasMaxLength(100)
             .HasConversion(
                 v => v.Value,
