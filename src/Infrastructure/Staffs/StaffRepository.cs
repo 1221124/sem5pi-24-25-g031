@@ -26,6 +26,11 @@ namespace Infrastructure.StaffRepository
         {
             return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.PhoneNumber == phoneNumber);
         }
+
+        public Task UpdateAsync(Staff staff)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 }
