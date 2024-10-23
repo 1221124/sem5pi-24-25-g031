@@ -8,5 +8,7 @@ namespace Domain.Staffs
         Task<Staff> GetByEmailAsync(Email email);
 
         Task<Staff> GetByPhoneNumberAsync(PhoneNumber phoneNumber);
+
+        Task UpdateAsync(Staff staff);
     }
 }

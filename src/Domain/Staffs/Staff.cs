@@ -29,9 +29,8 @@ namespace Domain.Staffs
             SlotAvailability = new List<Slot>();
         }
 
-        public Staff(UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
+        public Staff(FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
         {
-            UserId = userId;
             FullName = fullName;
             ContactInformation = contactInformation;
             Specialization = specialization;

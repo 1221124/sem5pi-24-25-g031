@@ -36,7 +36,6 @@ namespace Domain.Staffs
         public static Staff ToEntityFromCreating(CreatingStaffDto dto)
         {
             return new Staff(
-                new UserId(dto.UserId),
                 new FullName(dto.FullName),
                 new ContactInformation(dto.ContactInformation),
                 SpecializationUtils.FromString(dto.Specialization),

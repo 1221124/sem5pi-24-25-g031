@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Domain.DBLogs;
 using Domain.Shared;
 using Domain.Users;
+using Infrastructure.Staffs;
 
 
 namespace Domain.Staffs
@@ -19,6 +20,18 @@ namespace Domain.Staffs
         private readonly IDBLogRepository _logRepo;
 
         private readonly DBLogService _dbLogService;
+
+        private static readonly EntityType StaffEntityType = EntityType.OPERATION_REQUEST;
+
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, IUserRepository userRepo, IDBLogRepository logRepo, DBLogService dbLogService)
+        {
+            this._unitOfWork = unitOfWork;
+            this._repo = repo;
+            this._userRepo = userRepo;
+            this._logRepo = logRepo;
+            this._dbLogService = dbLogService;
+        }
+
         public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo)
         {
             this._unitOfWork = unitOfWork;
@@ -66,7 +79,7 @@ namespace Domain.Staffs
 
                 string Role = RoleUtils.IdStaff(user.Role);
 
-                var log = await _logRepo.GetByIdAsync(dto.UserId);
+                var log = DateTime.Now.ToString("yyyy");
 
                 var numberStaff = (await _repo.GetAllAsync()).Count;
 
@@ -81,32 +94,45 @@ namespace Domain.Staffs
 
                 await this._unitOfWork.CommitAsync();
 
-                _dbLogService.LogAction(EntityType.STAFF, DBLogType.CREATE, staff.Id);
+                //_dbLogService.LogAction(EntityType.STAFF, DBLogType.CREATE, staff.Id);
 
                 return StaffMapper.ToDto(staff);
             }
             catch (Exception e)
             {
-                _dbLogService.LogError(EntityType.STAFF, e.ToString());
-                return new StaffDto { };
+                //_dbLogService.LogError(EntityType.STAFF, e.ToString());
+                return StaffMapper.ToDto(dto);
             }
         }
 
-        public async Task<StaffDto> UpdateAsync(StaffDto dto)
+        public async Task<StaffDto> UpdateAsync(Staff staff)
         {
-            var staff = await this._repo.GetByIdAsync(new StaffId(dto.Id));
+            try
+            {
+                Staff newStaff = await _repo.GetByIdAsync(staff.Id);
 
-            if (staff == null)
-                return null;
+                if (newStaff == null)
+                {
+                    _dbLogService.LogError(StaffEntityType, "Unable to find {staff " + staff.Id + "}");
+                    return StaffMapper.ToDto(staff);
+                }
 
-            // change all field
-            staff.ChangeContactInformation(dto.ContactInformation);
-            staff.ChangeSlotAvailability(dto.SlotAvailability);
-            staff.ChangeSpecialization(dto.Specialization);
+                // change all field
+                newStaff.ChangeContactInformation(staff.ContactInformation);
+                newStaff.ChangeSlotAvailability(staff.SlotAvailability);
+                newStaff.ChangeSpecialization(staff.Specialization);
 
-            await this._unitOfWork.CommitAsync();
+                await _repo.UpdateAsync(newStaff);
+                await _unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+                _dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);
+                return StaffMapper.ToDto(newStaff);
+            }
+            catch (Exception e)
+            {
+                _dbLogService.LogError(StaffEntityType, e.ToString());
+                return StaffMapper.ToDto(staff);
+            }
         }
 
         public async Task<StaffDto> InactivateAsync(StaffId id)

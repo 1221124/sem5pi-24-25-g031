@@ -25,6 +25,7 @@ namespace Domain.Shared
             {
                 Status.Active => true,
                 Status.Inactive => false,
+                Status.Pending => false,
                 _ => throw new System.ArgumentException($"Invalid status: {status}")
             };
         }
@@ -37,6 +38,8 @@ namespace Domain.Shared
                     return Status.Active;
                 case "INACTIVE":
                     return Status.Inactive;
+                case "PENDING":
+                    return Status.Pending;
                 default:
                     throw new System.ArgumentException($"Invalid status: {status}");
             }
@@ -48,6 +51,7 @@ namespace Domain.Shared
             {
                 Status.Active => "ACTIVE",
                 Status.Inactive => "INACTIVE",
+                Status.Pending => "PENDING",
                 _ => throw new System.ArgumentException($"Invalid status: {status}")
             };
         }
