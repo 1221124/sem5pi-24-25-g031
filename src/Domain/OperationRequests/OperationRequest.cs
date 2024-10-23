@@ -17,26 +17,48 @@ namespace Domain.OperationRequests
         public DateTime DeadlineDate { get; set; }
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
-        
-        public OperationRequest() { }
-        
-        public OperationRequest(PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
+
+        public OperationRequest(StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority)
         {
             Id = new OperationRequestId(Guid.NewGuid());
-            PatientId = patientId;
             DoctorId = doctorId;
+            PatientId = patientId;
+            OperationTypeId = operationTypeId;
+            DeadlineDate = deadlineDate;
+            Priority = priority;
+            Status = RequestStatus.PENDING;
+        }
+        
+        public OperationRequest(StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
+        {
+            Id = new OperationRequestId(Guid.NewGuid());
+            DoctorId = doctorId;
+            PatientId = patientId;
             OperationTypeId = operationTypeId;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
         }
 
-        public OperationRequest(OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
+        public OperationRequest(Guid id, StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
         {
+            Id = new OperationRequestId(id);
+            DoctorId = doctorId;
+            PatientId = patientId;
             OperationTypeId = operationTypeId;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
+        }
+
+        public OperationRequest(OperationRequestId id, StaffId staffId, PatientId patientId, OperationTypeId operationTypeId, DateTime dateTime, Priority priority)
+        {
+            Id = id;
+            DoctorId = staffId;
+            PatientId = patientId;
+            OperationTypeId = operationTypeId;
+            DeadlineDate = dateTime;
+            Priority = priority;
         }
 
         internal void Update(PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DateTime deadlineDate, Priority priority, RequestStatus status)
