@@ -68,16 +68,18 @@ namespace Controllers
                 PatientDto.UserId = new UserId(User.Id);
 
                 var Patient = await _patientService.UpdateAsync(PatientDto);
-            } else {
+            }
+            else
+            {
                 StaffDto.UserId = new UserId(User.Id);
 
-                var Staff = await _staffService.UpdateAsync(StaffDto);
+                // var Staff = await _staffService.UpdateAsync(StaffDto);
             }
 
             return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
         }
 
-        
+
         // PUT: api/User/5
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update(UserDto dto)
@@ -86,16 +88,16 @@ namespace Controllers
             try
             {
                 var User = await _service.UpdateAsync(dto);
-                
+
                 if (User == null)
                 {
                     return NotFound();
                 }
                 return Ok(User);
             }
-            catch(BusinessRuleValidationException ex)
+            catch (BusinessRuleValidationException ex)
             {
-                return BadRequest(new { ex.Message});
+                return BadRequest(new { ex.Message });
             }
         }
 
@@ -112,7 +114,7 @@ namespace Controllers
 
             return Ok(User);
         }
-        
+
         // DELETE: api/User/5
         [HttpDelete("{id}/hard")]
         public async Task<ActionResult<UserDto>> HardDelete(Guid id)
@@ -128,9 +130,9 @@ namespace Controllers
 
                 return Ok(User);
             }
-            catch(BusinessRuleValidationException ex)
+            catch (BusinessRuleValidationException ex)
             {
-               return BadRequest(new {Message = ex.Message});
+                return BadRequest(new { Message = ex.Message });
             }
         }
     }

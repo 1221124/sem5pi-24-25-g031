@@ -57,33 +57,22 @@ namespace Controllers
 
             await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
 
-            return Ok("Operation request created successfully.");
+            return Ok("Staff created successfully.");
         }
 
         // PUT: api/Staff/5
-        [HttpPut("{id}")]
-        public async Task<ActionResult<StaffDto>> Update(Guid id, StaffDto dto)
+        [HttpPost("{id}")]
+        public async Task<ActionResult<StaffDto>> Update(CreatingStaffDto dto)
         {
-            if (id != dto.Id)
+            if (dto == null)
             {
-                return BadRequest();
+                _DBLogService.LogError(EntityType.STAFF, "Staff data is required.");
+                return BadRequest("Staff data is required.");
             }
 
-            try
-            {
-                var staff = await _service.UpdateAsync(dto);
+            await _service.UpdateAsync(StaffMapper.ToEntityFromCreating(dto));
 
-                if (staff == null)
-                {
-                    return NotFound();
-                }
-
-                return staff;
-            }
-            catch (BusinessRuleValidationException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            return Ok("Staff request updated successfully.");
         }
 
         [HttpDelete("{id}")]
