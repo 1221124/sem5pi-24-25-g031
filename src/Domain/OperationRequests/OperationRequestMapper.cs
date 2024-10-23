@@ -44,7 +44,7 @@ namespace Domain.OperationRequests
 
         public static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto) {
             return new OperationRequest(
-                new StaffId(dto.StaffId),
+                new StaffId(new Guid(dto.StaffId)),
                 new PatientId(dto.PatientId),
                 new OperationTypeId(dto.OperationTypeId),
                 DateTime.Parse(dto.DeadlineDate),
@@ -54,7 +54,17 @@ namespace Domain.OperationRequests
 
         public static List<OperationRequestDto> ToDtoList(List<OperationRequest> operationRequests)
         {
-            return operationRequests.ConvertAll(operationRequest => ToDto(operationRequest));
+            return operationRequests.ConvertAll(ToDto);
+        }
+
+        public static List<OperationRequestDto> ToDtoList(List<Task> list)
+        {
+            return [];
+        }
+
+        public static List<OperationRequestDto> ToDtoList()
+        {
+            return [];
         }
 
         public static List<OperationRequest> ToEntityList(List<OperationRequestDto> dtoList)
