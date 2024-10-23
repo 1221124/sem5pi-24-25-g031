@@ -26,9 +26,13 @@
 > Urgent Surgery: Needs to be done sooner but is not an immediate emergency. Typically within days (e.g., certain types of cancer > surgeries).
 > Emergency Surgery: Needs immediate intervention to save life, limb, or function. Typically performed within hours (e.g., ruptured aneurysm, trauma).
 
-> **Question:**
+> **Question:** Can a doctor make more than one operation request for the same patient? If so, is there any limit or rules to follow? For example, doctors can make another operation request for the same patient as long as it's not the same operation type?
 >
-> **Answer:** 
+> **Answer:** it should not be possible to have more than one "open" surgery request (that is, a surgery that is requested or scheduled but not yet performed) for the same patient and operation type.
+
+> **Questionn:**
+>
+> **Answer:**
 
 ---
 
