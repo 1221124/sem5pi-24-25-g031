@@ -57,9 +57,17 @@ namespace src.Controllers
             }
             */
             
-            var patient = await _service.AddAsync(PatientMapper.toEntityFromCreating(dto));
+            var patient = await _service.AddAsync(PatientMapper.ToEntityFromCreating(dto)); //problema
 
-            return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
+            if (patient == null)
+            {
+                return BadRequest(new {Message = "Paciente Null"});
+            }
+            else
+            {
+                return Ok("Patient created successfully");
+            }
+            
         }
 
         // PUT: api/Patient/5

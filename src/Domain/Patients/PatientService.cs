@@ -53,19 +53,27 @@ namespace Domain.Patients
 
         public async Task<PatientDto> AddAsync(Patient p)
         {
-            if(_repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber) != null)
+            try
+            {
+                if(_repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber) == null)
+                    return null;
+                
+                var numberPatients = _repo.GetAllAsync().Result.Count;
+                string formattedDate = DateTime.Now.ToString("yyyyMM");
+                string combinedString = $"{formattedDate}{numberPatients:D6}";  // Combine the date and zero-padded number
+                
+                MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
+                
+                await this._repo.AddAsync(p);
+                await this._unitOfWork.CommitAsync();
+                
+                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, p.Id );
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
                 return null;
-            
-            var numberPatients = _repo.GetAllAsync().Result.Count;
-            string formattedDate = DateTime.Now.ToString("yyyyMM");
-            string combinedString = $"{formattedDate}{numberPatients:D6}";  // Combine the date and zero-padded number
-            
-            MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
-            
-            await this._repo.AddAsync(p);
-            await this._unitOfWork.CommitAsync();
-            
-            //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, p.Id );
+            }
+
 
             return new PatientDto (p.Id.AsGuid(), p.FullName, p.DateOfBirth.ToString(), p.Gender, p.MedicalRecordNumber, p.ContactInformation, p.MedicalConditions, p.EmergencyContact, p.UserId );
         }

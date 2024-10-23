@@ -40,8 +40,6 @@ namespace Domain.Patients
             UserId = userId;
         }
 
-        
-
         public PatientDto(Guid guid){
             Id = guid;
         }
