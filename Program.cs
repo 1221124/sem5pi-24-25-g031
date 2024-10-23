@@ -63,6 +63,8 @@ builder.Services.AddTransient<IAMService>();
 builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
 builder.Services.AddTransient<DBLogService>();
 
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
