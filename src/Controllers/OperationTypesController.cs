@@ -47,7 +47,7 @@ namespace Controllers
 
             var operationType = await _service.AddAsync(dto);
 
-            return Ok(operationType);
+            return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
         }
 
         

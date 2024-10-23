@@ -6,6 +6,7 @@ using Domain.Shared;
 using Domain.Users;
 using Domain.IAM;
 using Domain.Staffs;
+using Domain.Patients;
 
 namespace Controllers
 {
@@ -15,12 +16,14 @@ namespace Controllers
     {
         private readonly UserService _service;
         private readonly StaffService _staffService;
+        private readonly PatientService _patientService;
         private readonly IAMService _iamService;
 
-        public UsersController(UserService service, StaffService staffService, IAMService iAMService)
+        public UsersController(UserService service, StaffService staffService, PatientService patientService, IAMService iAMService)
         {
             _service = service;
             _staffService = staffService;
+            _patientService = patientService;
             _iamService = iAMService;
         }
 
@@ -55,12 +58,21 @@ namespace Controllers
 
             if (StaffDto == null)
             {
-                return BadRequest(new { Message = "Staff not found" });
-            }
-            
-            StaffDto.UserId = new UserId(User.Id);
+                var PatientDto = await _patientService.GetByEmailAsync(new Email(dto.Email));
 
-            var Staff = await _staffService.UpdateAsync(StaffDto);
+                if (PatientDto == null)
+                {
+                    return BadRequest(new { Message = "User's profile not found" });
+                }
+
+                PatientDto.UserId = new UserId(User.Id);
+
+                var Patient = await _patientService.UpdateAsync(PatientDto);
+            } else {
+                StaffDto.UserId = new UserId(User.Id);
+
+                var Staff = await _staffService.UpdateAsync(StaffDto);
+            }
 
             return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
         }

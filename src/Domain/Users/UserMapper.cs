@@ -33,5 +33,13 @@ namespace Domain.Users
         {
             return userDtos.ConvertAll(userDto => ToEntity(userDto));
         }
+
+        public static User ToEntityFromCreating(CreatingUserDto dto)
+        {
+            return new User(
+                dto.Email,
+                dto.Role
+            );
+        }
     }
 }

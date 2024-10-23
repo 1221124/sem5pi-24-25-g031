@@ -55,7 +55,7 @@ namespace Domain.Users
 
         public async Task<UserDto> AddAsync(CreatingUserDto dto)
         {
-            var User = new User(dto.Email, dto.Role);
+            var User = UserMapper.ToEntityFromCreating(dto);
 
             await this._repo.AddAsync(User);
 
