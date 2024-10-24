@@ -22,7 +22,7 @@ namespace Domain.OperationRequests
             _repo = repo;
             _patientService = patientService;
             _logService = logService;
-        }
+        }        
 
         public async Task<OperationRequestDto> AddAsync(OperationRequest operationRequest)
         {

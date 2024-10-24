@@ -22,7 +22,5 @@ namespace Domain.OperationRequests
             Priority = priority;
             Status = status;
         }
-
-        public CreatingOperationRequestDto(){}
     }
 }
