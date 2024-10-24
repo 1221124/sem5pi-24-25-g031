@@ -1,60 +1,62 @@
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Domain.Shared;
-using Google.Cloud.Firestore;
-using System;
-using Infrastructure;
-using FirebaseAdmin.Auth;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Domain.Users;
+using System.IdentityModel.Tokens.Jwt;
+using Infrastructure;
+using Domain.Shared;
 
 namespace Domain.IAM
 {
     public class IAMService
     {
-        // private readonly SARMDbContext _dbContext;
-        
-        // private FirestoreDb _firestoreDb;
+        private readonly string _googleURL;
+        private readonly string _googleClientId;
+        private readonly string _googleClientSecret;
 
-        // public IAMService()
-        // {
-        //     string pathToServiceAccountKey = "../../../sem5-pi-24-25-g061-firebase-adminsdk-wo55l-834164845b.json";
-        //     Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToServiceAccountKey);
-            
-        //     _firestoreDb = FirestoreDb.Create("sem5-pi-24-25-g061"); //TODO: Review this
-        // }
-
-        // public IAMService(SARMDbContext dbContext)
-        // {
-        //     // _dbContext = dbContext;
-        // }
-
-        public async Task<Email> GetEmailFromToken(string token)
+        public IAMService()
         {
+            _googleURL = AppSettings.GoogleURL;
+            _googleClientId = AppSettings.GoogleClientId;
+            _googleClientSecret = AppSettings.GoogleClientSecret;
+        }
+
+        public ClaimsPrincipal GetPrincipalFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _googleURL,
+                ValidAudience = _googleClientId,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_googleClientSecret))
+            };
+
             try
             {
-                var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-                return new Email(decodedToken.Claims["email"]?.ToString());
+                return tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
             }
-            catch (FirebaseAuthException ex)
+            catch
             {
-                throw new Exception("Invalid token.", ex);
+                return null;
             }
         }
-        
-        public async Task<UserDto> RegisterUser(CreatingUserDto dto)
+
+        public async Task<Email> GetUserInfoFromTokenAsync(string token)
         {
-            var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(new UserRecordArgs()
+            var principal = GetPrincipalFromToken(token);
+
+            if (principal == null)
             {
-                Email = dto.Email,
-                EmailVerified = false,
-                Password = PasswordGenerator.GeneratePassword(dto.Email),
-                DisplayName = dto.Email,
-                Disabled = false
-            });
+                return null;
+            }
 
-            var user = new User(userRecord.Email, dto.Role);
+            var email = principal.FindFirst(ClaimTypes.Email)?.Value;
 
-            return UserMapper.ToDto(user);
+            return new Email(email);
         }
     }
 }

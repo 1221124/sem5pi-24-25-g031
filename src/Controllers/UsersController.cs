@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
 using Domain.Shared;
 using Domain.Users;
 using Domain.IAM;
@@ -30,14 +27,14 @@ namespace Controllers
             _emailService = emailService;
         }
 
-        // GET: api/User
+        // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
         {
             return await _service.GetAllAsync();
         }
 
-        // GET: api/User/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetById(Guid id)
         {
@@ -51,39 +48,89 @@ namespace Controllers
             return User;
         }
 
-        // POST: api/User
-        [HttpPost]
-        public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto)
+        // POST: api/Users/register/backoffice
+        [HttpPost("register/backoffice")]
+        public async Task<ActionResult<UserDto>> RegisterBackoffice([FromBody] string token)
         {
-            var User = await _service.AddAsync(dto);
+            var email = await _iamService.GetUserInfoFromTokenAsync(token);
 
-            var StaffDto = await _staffService.GetByEmailAsync(dto.Email);
-
-            if (StaffDto == null)
+            Role role;
+            if (email.Value.EndsWith("@myhospital.com"))
             {
-                var PatientDto = await _patientService.GetByEmailAsync(new Email(dto.Email));
+                var firstChar = email.Value[0].ToString().ToUpper();
+                role = RoleUtils.FromFirstChar(firstChar);
 
-                if (PatientDto == null)
-                {
-                    return BadRequest(new { Message = "User's profile not found" });
-                }
-
-                PatientDto.UserId = new UserId(User.Id);
-
-                var Patient = await _patientService.UpdateAsync(PatientDto);
             }
             else
             {
-                StaffDto.UserId = new UserId(User.Id);
-
-                var Staff = await _staffService.UpdateAsync(StaffMapper.ToEntity(StaffDto));
+                return BadRequest(new { Message = "Invalid email domain for backoffice registration." });
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
+            var staff = await _staffService.GetByEmailAsync(email);
+            if (staff == null) {
+                return BadRequest("Staff profile not found.");
+            } else {
+                var user = await _service.AddAsync(new CreatingUserDto(email, role));
+                staff.UserId = new UserId(user.Id);
+                var staffDto = await _staffService.UpdateAsync(StaffMapper.ToEntity(staff));
+            }
+
+            return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
         }
 
+        // POST: api/Users/register/patient
+        [HttpPost("register/patient")]
+        public async Task<ActionResult<UserDto>> RegisterPatientUser(CreatingUserDto dto)
+        {
+            var PatientDto = await _patientService.GetByEmailAsync(new Email(dto.Email));
 
-        // PUT: api/User/5
+            if (PatientDto != null)
+            {
+                var User = await _service.AddAsync(dto);
+
+                PatientDto.UserId = new UserId(User.Id);
+                await _patientService.UpdateAsync(PatientDto);
+                
+                return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
+            }
+
+            return BadRequest(new { Message = "Patient profile not found. If you are sure you have a patient record in our hospital, please provide a mobile number for linking." });
+        }
+
+        // // POST: api/Users
+        // [HttpPost]
+        // public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto)
+        // {
+        //     var User = await _service.AddAsync(dto);
+
+        //     var StaffDto = await _staffService.GetByEmailAsync(dto.Email);
+
+        //     if (StaffDto == null)
+        //     {
+        //         var PatientDto = await _patientService.GetByEmailAsync(new Email(dto.Email));
+
+        //         if (PatientDto == null)
+        //         {
+        //             return BadRequest(new { Message = "User's profile not found" });
+        //         }
+
+        //         await _emailService.SendEmailAsync(PatientDto.ContactInformation.Email.Value, "Registration Confirmation", "Please, confirm your registration.");
+
+        //         PatientDto.UserId = new UserId(User.Id);
+
+        //         var Patient = await _patientService.UpdateAsync(PatientDto);
+        //     }
+        //     else
+        //     {
+        //         StaffDto.UserId = new UserId(User.Id);
+
+        //         var Staff = await _staffService.UpdateAsync(StaffMapper.ToEntity(StaffDto));
+        //     }
+
+        //     return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
+        // }
+
+        // PUT: api/Users/5
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update(UserDto dto)
         {
@@ -103,7 +150,7 @@ namespace Controllers
             }
         }
 
-        // Inactivate: api/User/5
+        // Inactivate: api/Users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserDto>> SoftDelete(Guid id)
         {
@@ -117,7 +164,7 @@ namespace Controllers
             return Ok(User);
         }
 
-        // DELETE: api/User/5
+        // DELETE: api/Users/5
         [HttpDelete("{id}/hard")]
         public async Task<ActionResult<UserDto>> HardDelete(Guid id)
         {

@@ -8,6 +8,9 @@ namespace Infrastructure
         public static string ConnectionString { get; private set; }
         public static string Email { get; private set; }
         public static string Password { get; private set; }
+        public static string GoogleClientId { get; private set; }
+        public static string GoogleClientSecret { get; private set; }
+        public static string GoogleURL { get; internal set; }
 
         public static void Initialize(IConfiguration configuration)
         {
@@ -15,6 +18,9 @@ namespace Infrastructure
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
             Email = configuration["SendEmailSettings:Email"];
             Password = configuration["SendEmailSettings:Password"];
+            GoogleClientId = configuration["Google:ClientId"];
+            GoogleClientSecret = configuration["Google:ClientSecret"];
+            GoogleURL = configuration["Google:URL"];
         }
     }
 }

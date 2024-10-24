@@ -1,3 +1,4 @@
+
 namespace Domain.Shared
 
 {
@@ -118,6 +119,25 @@ namespace Domain.Shared
         public static bool IsAdmin(Role role)
         {
             return role == Role.Admin;
+        }
+
+        public static Role FromFirstChar(string firstChar)
+        {
+            switch (firstChar.ToUpper())
+            {
+                case "A":
+                    return Role.Admin;
+                case "D":
+                    return Role.Doctor;
+                case "N":
+                    return Role.Nurse;
+                case "T":
+                    return Role.Technician;
+                case "P":
+                    return Role.Patient;
+                default:
+                    throw new System.ArgumentException($"Invalid first char: {firstChar}");
+            }
         }
     }
 }

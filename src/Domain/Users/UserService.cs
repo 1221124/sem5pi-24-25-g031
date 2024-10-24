@@ -16,23 +16,23 @@ namespace Domain.Users
             this._repo = repo;
         }
 
-        public async Task<bool> IsAuthorized(Email email, List<Role> roles)
-        {
-            // var email = await GetEmailFromToken();
-            var loggedUser = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email.Value);
-            var user = _repo.GetByEmailAsync(loggedUser.Email).Result;
+        // public async Task<bool> IsAuthorized(Email email, List<Role> roles)
+        // {
+        //     // var email = await GetEmailFromToken();
+        //     var loggedUser = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email.Value);
+        //     var user = _repo.GetByEmailAsync(loggedUser.Email).Result;
             
-            if (user == null)
-                return false;
+        //     if (user == null)
+        //         return false;
 
-            for (int i = 0; i < roles.Count; i++)
-            {
-                if (user.Role == roles[i])
-                    return true;
-            }
+        //     for (int i = 0; i < roles.Count; i++)
+        //     {
+        //         if (user.Role == roles[i])
+        //             return true;
+        //     }
 
-            return false;
-        }
+        //     return false;
+        // }
 
         public async Task<List<UserDto>> GetAllAsync()
         {
@@ -47,6 +47,16 @@ namespace Domain.Users
         {
             var User = await this._repo.GetByIdAsync(id);
             
+            if(User == null)
+                return null;
+
+            return UserMapper.ToDto(User);
+        }
+
+        public async Task<UserDto> GetByEmailAsync(Email email)
+        {
+            var User = await this._repo.GetByEmailAsync(email);
+
             if(User == null)
                 return null;
 

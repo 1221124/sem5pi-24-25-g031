@@ -5,10 +5,10 @@ namespace Domain.Users
 {
     public class CreatingUserDto
     {
-        public string Email { get; set; }
-        public string Role { get; set; }
+        public Email Email { get; set; }
+        public Role Role { get; set; }
 
-        public CreatingUserDto(string email, string role)
+        public CreatingUserDto(Email email, Role role)
         {
             Role = role;
             Email = email;
