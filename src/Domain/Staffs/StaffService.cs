@@ -57,14 +57,20 @@ namespace Domain.Staffs
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
 
-        public async Task<StaffDto> GetByEmailAsync(Email email)
+        public async Task<StaffDto?> GetByEmailAsync(Email email)
         {
-            var staff = await this._repo.GetByEmailAsync(email);
+            try{
+                var staff = await this._repo.GetByEmailAsync(email);
 
-            if (staff == null)
+                if (staff == null)
+                    return null;
+
+                //return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+                return StaffMapper.ToDto(staff);
+            }catch(Exception e){
+                _dbLogService.LogError(StaffEntityType, e.ToString());
                 return null;
-
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            }
         }
 
         //CREATE STAFF WITH first name, last name, contact information, and specialization

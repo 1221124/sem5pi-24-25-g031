@@ -42,13 +42,13 @@ namespace Domain.OperationRequests
             );
         }
 
-        public static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto) {
+        public static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto, StaffDto staff, PatientDto patient, OperationTypeDto operationType) {
             return new OperationRequest(
-                new StaffId(new Guid(dto.StaffId)),
-                new PatientId(dto.PatientId),
-                new OperationTypeId(dto.OperationTypeId),
-                DateTime.Parse(dto.DeadlineDate),
-                PriorityUtils.FromString(dto.Priority)
+                new StaffId(staff.Id),
+                new PatientId(patient.Id),
+                new OperationTypeId(operationType.Id),
+                dto.DeadlineDate,
+                dto.Priority
             );
         }
 
@@ -70,6 +70,11 @@ namespace Domain.OperationRequests
         public static List<OperationRequest> ToEntityList(List<OperationRequestDto> dtoList)
         {
             return dtoList.ConvertAll(dto => ToEntity(dto));
+        }
+
+        internal static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

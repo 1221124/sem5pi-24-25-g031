@@ -6,34 +6,23 @@ using Domain.Shared;
 namespace Domain.OperationRequests
 {
         public class CreatingOperationRequestDto{
-            public string Id { get; set; }
-            public string OperationRequestId { get; set; }
-            public string StaffId { get; set; }
-            public string PatientId { get; set; }
-            public string OperationTypeId { get; set; }
-            public string DeadlineDate { get; set; }
-            public string Priority { get; set; }
-            public string Status { get; set; }
+            public Email StaffEmail { get; set; }
+            public Email PatientEmail { get; set; }
+            public Name OperationTypeName { get; set; }
+            public DateTime DeadlineDate { get; set; }
+            public Priority Priority { get; set; }
+            public RequestStatus Status { get; set; }
 
-        public CreatingOperationRequestDto(string id, string staffId, string patientId, string operationTypeId, string deadlineDate, string priority, string status)
+        public CreatingOperationRequestDto(Email staffEmail, Email patientEmail, Name operationTypeName, DateTime deadlineDate, Priority priority, RequestStatus status)
         {
-            Id = id;
-            StaffId = staffId;
-            PatientId = patientId;
-            OperationTypeId = operationTypeId;
+            StaffEmail = staffEmail;
+            PatientEmail = patientEmail;
+            OperationTypeName = operationTypeName;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
         }
 
-        public CreatingOperationRequestDto(string staffId, string patientId, string operationTypeId, string deadlineDate, string priority, string status)
-        {
-            StaffId = staffId;
-            PatientId = patientId;
-            OperationTypeId = operationTypeId;
-            DeadlineDate = deadlineDate;
-            Priority = priority;
-            Status = status;
-        }
+        public CreatingOperationRequestDto(){}
     }
 }

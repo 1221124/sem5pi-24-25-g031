@@ -30,7 +30,7 @@ namespace Domain.OperationRequests
                 await _repo.AddAsync(operationRequest);
                 await _unitOfWork.CommitAsync();
 
-                _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, operationRequest);
+                // _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, operationRequest);
 
                 /*_patientService.UpdateAsync(
                     new PatientDto(
@@ -41,8 +41,8 @@ namespace Domain.OperationRequests
 
                 return OperationRequestMapper.ToDto(operationRequest);
 
-            }catch (Exception e){
-                _logService.LogError(OperationRequestEntityType, e.ToString());
+            }catch (Exception){
+                // _logService.LogError(OperationRequestEntityType, e.ToString());
                 return OperationRequestMapper.ToDto(operationRequest);     
             }
         }
