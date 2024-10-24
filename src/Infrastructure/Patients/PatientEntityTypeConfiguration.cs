@@ -48,6 +48,7 @@ namespace Infrastructure.Patients
 
             builder.Property(p => p.Gender)
                 .HasColumnName("Gender")
+                .IsRequired(false)
                 .HasConversion(
                     v => GenderUtils.ToString(v),
                     v => GenderUtils.FromString(v)
@@ -83,13 +84,15 @@ namespace Infrastructure.Patients
             {
                 medicalConditions.Property(m => m.Condition)
                     .HasColumnName("MedicalCondition")
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired(false);
             });
             
             builder.OwnsOne(p => p.EmergencyContact, emergencyContact =>
             {
                 emergencyContact.Property(e => e.Number)
                     .HasColumnName("EmergencyContactPhoneNumber")
+                    .IsRequired(false)
                     .HasConversion(
                         v => v.Value.ToString(),
                         v => new PhoneNumber(int.Parse(v)))
@@ -104,6 +107,7 @@ namespace Infrastructure.Patients
                 history.Property(h => h.Condition)
                     .HasColumnName("Condition")
                     .IsRequired()
+                    .IsRequired(false)
                     .HasConversion(
                         v => string.Join(";", v),
                         v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
@@ -112,6 +116,7 @@ namespace Infrastructure.Patients
 
             builder.Property(p => p.UserId)
                 .HasColumnName("UserId")
+                .IsRequired(false)
                 .HasConversion(
                     v => v.Value.ToString(),
                     v => new UserId(Guid.Parse(v))
