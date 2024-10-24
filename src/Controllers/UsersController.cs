@@ -5,6 +5,8 @@ using Domain.IAM;
 using Domain.Staffs;
 using Domain.Patients;
 using Domain.Emails;
+using Infrastructure;
+using System.Web;
 
 namespace Controllers
 {
@@ -48,88 +50,79 @@ namespace Controllers
             return User;
         }
 
-        // POST: api/Users/register/backoffice
-        [HttpPost("register/backoffice")]
-        public async Task<ActionResult<UserDto>> RegisterBackoffice([FromBody] string token)
+        // POST: api/Users/callback
+        [HttpPost("callback")]
+        public async Task<ActionResult<UserDto>> HandleCallback([FromBody] CallbackRequest request)
         {
-            var email = await _iamService.GetUserInfoFromTokenAsync(token);
-
-            Role role;
-            if (email.Value.EndsWith("@myhospital.com"))
+            if (string.IsNullOrEmpty(request.RedirectUri))
             {
-                var firstChar = email.Value[0].ToString().ToUpper();
-                role = RoleUtils.FromFirstChar(firstChar);
-
-            }
-            else
-            {
-                return BadRequest(new { Message = "Invalid email domain for backoffice registration." });
+                return BadRequest("Redirect URI is required.");
             }
 
-            var staff = await _staffService.GetByEmailAsync(email);
+            var uri = new Uri(request.RedirectUri);
+            var accessToken = HttpUtility.ParseQueryString(uri.Fragment.Substring(1))["access_token"];
+
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return BadRequest("Access token not found.");
+            }
+
+            var email = await _iamService.GetUserInfoFromTokenAsync(accessToken);
+
+            if (!email.EndsWith(AppSettings.EmailDomain))
+            {
+                return await CreateOrLoginPatientUser(new CreatingUserDto(email, Role.Patient));
+            }
+            //TODO: Redirect to Backoffice Login
+            return Ok();
+        }
+
+        // POST: api/Users/backoffice/create
+        [HttpPost("backoffice/create")]
+        public async Task<ActionResult<UserDto>> CreateBackofficeUser([FromBody] CreatingUserDto dto)
+        {
+            var staff = await _staffService.GetByEmailAsync(dto.Email);
             if (staff == null) {
                 return BadRequest("Staff profile not found.");
             }
 
-            var user = await _service.AddAsync(new CreatingUserDto(email, role));
+            var user = await _service.AddAsync(dto);
+
             staff.UserId = new UserId(user.Id);
             await _staffService.UpdateAsync(StaffMapper.ToEntity(staff));
 
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        // POST: api/Users/register/patient
-        [HttpPost("register/patient")]
-        public async Task<ActionResult<UserDto>> RegisterPatientUser(CreatingUserDto dto)
+        // POST: api/Users/patient
+        [HttpPost("patient")]
+        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto)
         {
-            var PatientDto = await _patientService.GetByEmailAsync(new Email(dto.Email));
+            // var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code, "http://localhost:5500/api/patient/register");
 
-            if (PatientDto != null)
+            // var email = await _iamService.GetUserInfoFromTokenAsync(tokenResponse.IdToken);
+
+            var patientDto = await _patientService.GetByEmailAsync(dto.Email);
+
+            if (patientDto != null)
             {
-                var User = await _service.AddAsync(dto);
+                var user = await _service.GetByEmailAsync(dto.Email);
 
-                PatientDto.UserId = new UserId(User.Id);
-                await _patientService.UpdateAsync(PatientDto);
+                if (user == null) {
+                    user = await _service.AddAsync(dto);
+
+                    patientDto.UserId = new UserId(user.Id);
+                    await _patientService.UpdateAsync(patientDto);
+                } else {
+                    return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+                }
+                //TODO: Remove 'else' and Implement Patient Login
                 
-                return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
             }
 
-            return BadRequest(new { Message = "Patient profile with email not found." });
-            // return BadRequest(new { Message = "Patient profile not found. If you are sure you have a patient record in our hospital, please provide a mobile number for linking." });
+            return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
         }
-
-        // // POST: api/Users
-        // [HttpPost]
-        // public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto)
-        // {
-        //     var User = await _service.AddAsync(dto);
-
-        //     var StaffDto = await _staffService.GetByEmailAsync(dto.Email);
-
-        //     if (StaffDto == null)
-        //     {
-        //         var PatientDto = await _patientService.GetByEmailAsync(new Email(dto.Email));
-
-        //         if (PatientDto == null)
-        //         {
-        //             return BadRequest(new { Message = "User's profile not found" });
-        //         }
-
-        //         await _emailService.SendEmailAsync(PatientDto.ContactInformation.Email.Value, "Registration Confirmation", "Please, confirm your registration.");
-
-        //         PatientDto.UserId = new UserId(User.Id);
-
-        //         var Patient = await _patientService.UpdateAsync(PatientDto);
-        //     }
-        //     else
-        //     {
-        //         StaffDto.UserId = new UserId(User.Id);
-
-        //         var Staff = await _staffService.UpdateAsync(StaffMapper.ToEntity(StaffDto));
-        //     }
-
-        //     return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
-        // }
 
         // PUT: api/Users/5
         [HttpPut("{id}")]

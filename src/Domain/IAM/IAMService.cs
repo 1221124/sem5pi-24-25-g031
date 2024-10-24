@@ -1,62 +1,87 @@
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Domain.Users;
 using System.IdentityModel.Tokens.Jwt;
-using Infrastructure;
-using Domain.Shared;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
 
-namespace Domain.IAM
+namespace Infrastructure
 {
     public class IAMService
     {
-        private readonly string _googleURL;
-        private readonly string _googleClientId;
-        private readonly string _googleClientSecret;
-
         public IAMService()
         {
-            _googleURL = AppSettings.GoogleURL;
-            _googleClientId = AppSettings.GoogleClientId;
-            _googleClientSecret = AppSettings.GoogleClientSecret;
         }
 
-        public ClaimsPrincipal GetPrincipalFromToken(string token)
+        // public async Task<TokenResponse> ExchangeCodeForTokenAsync(string code, string redirectUri)
+        // {
+        //     var requestBody = new Dictionary<string, string>
+        //     {
+        //         { "code", code },
+        //         { "client_id", _clientId },
+        //         { "client_secret", _clientSecret },
+        //         { "redirect_uri", redirectUri },
+        //         { "grant_type", "authorization_code" }
+        //     };
+
+        //     var response = await _httpClient.PostAsync(_tokenEndpoint, new FormUrlEncodedContent(requestBody));
+        //     response.EnsureSuccessStatusCode();
+
+        //     var json = await response.Content.ReadAsStringAsync();
+        //     return JsonSerializer.Deserialize<TokenResponse>(json);
+        // }
+
+        // public async Task<string> GetUserInfoFromTokenAsync(string token)
+        // {
+        //     var request = new HttpRequestMessage(HttpMethod.Get, _userinfoEndpoint);
+        //     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     var response = await _httpClient.SendAsync(request);
+        //     response.EnsureSuccessStatusCode();
+
+        //     var json = await response.Content.ReadAsStringAsync();
+        //     var userInfo = JsonSerializer.Deserialize<UserInfoResponse>(json);
+
+        //     return userInfo.Email;
+        // }
+
+
+        public async Task<string> GetUserInfoFromTokenAsync(string token)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
             var validationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = _googleURL,
-                ValidAudience = _googleClientId,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_googleClientSecret))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.GoogleClientSecret)),
+                ValidateIssuer = false,
+                ValidateAudience = false
             };
 
             try
             {
-                return tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+                var claimsPrincipal = handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                var emailClaim = claimsPrincipal.FindFirst(ClaimTypes.Email);
+
+                return emailClaim?.Value;
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                throw new Exception("Token validation failed.", ex);
             }
         }
 
-        public async Task<Email> GetUserInfoFromTokenAsync(string token)
+        public class TokenResponse
         {
-            var principal = GetPrincipalFromToken(token);
+            public string AccessToken { get; set; }
+            public string RefreshToken { get; set; }
+            public string IdToken { get; set; }
+            public string ExpiresIn { get; set; }
+        }
 
-            if (principal == null)
-            {
-                return null;
-            }
-
-            var email = principal.FindFirst(ClaimTypes.Email)?.Value;
-
-            return new Email(email);
+        public class UserInfoResponse
+        {
+            public string Email { get; set; }
         }
     }
 }

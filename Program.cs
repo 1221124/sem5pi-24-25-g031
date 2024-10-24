@@ -55,6 +55,7 @@ builder.Services.AddTransient<IStaffRepository, StaffRepository>();
 builder.Services.AddTransient<StaffService>();
 
 builder.Services.AddTransient<IAMService>();
+// builder.Services.AddHttpClient<IAMService, IAMService>();
 
 builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
 builder.Services.AddTransient<DBLogService>();
