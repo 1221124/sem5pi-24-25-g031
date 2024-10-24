@@ -33,9 +33,9 @@ namespace Domain.OperationTypes
         public static OperationType ToEntityFromCreating(CreatingOperationTypeDto dto) {
             return new OperationType(
                 dto.Name,
-                SpecializationUtils.FromString(dto.Specialization),
-                RequiredStaffUtils.FromStringList(dto.RequiredStaff),
-                PhaseUtils.FromStringList(dto.PhasesDuration)
+                dto.Specialization,
+                dto.RequiredStaff,
+                dto.PhasesDuration
             );
         }
 

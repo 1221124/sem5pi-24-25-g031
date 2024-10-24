@@ -4,15 +4,15 @@ namespace Domain.OperationTypes
 {
     public class CreatingOperationTypeDto
     {
-        public string Name { get; set; }
+        public Name Name { get; set; }
 
-        public string Specialization { get; set; }
+        public Specialization Specialization { get; set; }
 
-        public List<string> RequiredStaff { get; set; }
+        public List<RequiredStaff> RequiredStaff { get; set; }
 
-        public List<string> PhasesDuration { get; set; }
+        public PhasesDuration PhasesDuration { get; set; }
 
-        public CreatingOperationTypeDto(string name, string specialization, List<string> requiredStaff, List<string> phasesDuration)
+        public CreatingOperationTypeDto(Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
         {
             Name = name;
             Specialization = specialization;
