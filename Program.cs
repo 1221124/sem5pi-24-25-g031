@@ -1,6 +1,4 @@
-﻿using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
-using Infrastructure;
+﻿using Infrastructure;
 using Infrastructure.OperationTypes;
 using Infrastructure.OperationRequests;
 using Infrastructure.Users;
@@ -20,13 +18,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Infrastructure.Shared;
 using Newtonsoft.Json.Serialization;
 using Domain.Emails;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
-
-FirebaseApp.Create(new AppOptions()
-{
-    Credential = GoogleCredential.FromFile("sem5-pi-24-25-g061-firebase-adminsdk-wo55l-834164845b.json"),
-});
 
 AppSettings.Initialize(builder.Configuration);
 
@@ -68,6 +63,22 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(new EmailService("smtp.gmail.com", 587, AppSettings.Email, AppSettings.Password));
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = AppSettings.GoogleClientId;
+    options.ClientSecret = AppSettings.GoogleClientSecret;
+    options.Scope.Add("email");
+    options.Scope.Add("profile");
+    options.SaveTokens = true;
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -87,6 +98,8 @@ else
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
