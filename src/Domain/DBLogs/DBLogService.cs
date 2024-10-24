@@ -31,7 +31,7 @@ namespace Domain.DBLogs
 
         public async void LogError(EntityType entityType, string message)
         {
-            var log = new DBLog(entityType, DBLogType.ERROR, message);
+            var log = new DBLog(entityType, message.ToString());
 
             await CreateLogAsync(log);
         }

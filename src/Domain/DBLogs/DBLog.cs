@@ -24,7 +24,7 @@ namespace Domain.DBLogs
             Affected = affected;
         }
 
-        public DBLog(EntityType entityType, DBLogType logType, string message){
+        public DBLog(EntityType entityType, string message){
             Id = new DBLogId(Guid.NewGuid());
             EntityType = entityType;
             LogType = DBLogType.ERROR;
