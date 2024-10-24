@@ -45,29 +45,18 @@ namespace src.Controllers
             return patient;
         }
 
-        // POST: api/Patient
+        // POST: api/Patient/{ "fullname", "dateOfBirth", "contactInformation" } 
         [HttpPost]
-        public async Task<ActionResult<PatientDto>> Create(CreatingPatientDto dto)
+        public async Task<ActionResult<PatientDto>> Create([FromBody] CreatingPatientDto dto)
         {
-            /*
             if (dto == null)
             {
                 //_dbLogService.LogError(patientEntityType, "Invalid data request");
                 return BadRequest(new {Message = "Phone number already exists"});
             }
-            */
-            
             var patient = await _service.AddAsync(PatientMapper.ToEntityFromCreating(dto)); //problema
 
-            if (patient == null)
-            {
-                return BadRequest(new {Message = "Paciente Null"});
-            }
-            else
-            {
-                return Ok("Patient created successfully");
-            }
-            
+            return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
         }
 
         // PUT: api/Patient/5
