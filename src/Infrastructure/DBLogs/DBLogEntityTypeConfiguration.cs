@@ -19,8 +19,8 @@ namespace Infrastructure.DBLogs
                 .IsRequired()
                 .HasColumnName("LogType");
 
-            builder.Property(p => p.PerformedBy)
-                .HasColumnName("PerformedBy");
+            // builder.Property(p => p.PerformedBy)
+            //     .HasColumnName("PerformedBy");
             
             builder.Property(p => p.Affected)
                 .HasColumnName("Affected");
