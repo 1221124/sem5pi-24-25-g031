@@ -52,20 +52,14 @@ namespace Controllers
 
         // POST: api/Users/callback
         [HttpPost("callback")]
-        public async Task<ActionResult<UserDto>> HandleCallback([FromBody] CallbackRequest request)
+        public async Task<ActionResult<UserDto>> HandleCallback(string code)
         {
-            if (string.IsNullOrEmpty(request.RedirectUri))
+            if (string.IsNullOrEmpty(code))
             {
-                return BadRequest("Redirect URI is required.");
+                return BadRequest("Authorization code is required.");
             }
 
-            var uri = new Uri(request.RedirectUri);
-            var accessToken = HttpUtility.ParseQueryString(uri.Fragment.Substring(1))["access_token"];
-
-            if (string.IsNullOrEmpty(accessToken))
-            {
-                return BadRequest("Access token not found.");
-            }
+            var accessToken = await _iamService.ExchangeCodeForTokenAsync(code);
 
             var email = await _iamService.GetUserInfoFromTokenAsync(accessToken);
 
