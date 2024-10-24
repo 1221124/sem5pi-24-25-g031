@@ -9,18 +9,18 @@ namespace Domain.DBLogs
         public EntityType EntityType { get; }
         public DBLogType LogType { get; }
         public DateTime TimeStamp { get; }
-        public UserId PerformedBy { get; }
+        //public Guid PerformedBy { get; }
         public Guid Affected { get; }
-        public string Message { get; }
+        public string? Message { get; }
 
             
-        public DBLog(EntityType entityType, DBLogType logType, UserId performedBy, Guid affected)
+        public DBLog(EntityType entityType, DBLogType logType, /*Guid performedBy,*/ Guid affected)
         {
             Id = new DBLogId(Guid.NewGuid());
             EntityType = entityType;
             LogType = logType;
             TimeStamp = DateTime.Now;   
-            PerformedBy = performedBy;
+            //PerformedBy = performedBy;
             Affected = affected;
         }
 
