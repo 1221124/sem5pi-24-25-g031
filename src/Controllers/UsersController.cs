@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.Users;
-using Domain.IAM;
 using Domain.Staffs;
 using Domain.Patients;
 using Domain.Emails;
 using Infrastructure;
-using System.Web;
+using Domain.IAM;
 
 namespace Controllers
 {
@@ -50,25 +49,29 @@ namespace Controllers
             return User;
         }
 
-        // POST: api/Users/callback
-        [HttpPost("callback")]
-        public async Task<ActionResult<UserDto>> HandleCallback(string code)
+        // GET: api/Users/callback
+        [HttpGet("callback")]
+        public async Task<ActionResult<UserDto>> HandleCallback([FromQuery] string code)
         {
             if (string.IsNullOrEmpty(code))
             {
                 return BadRequest("Authorization code is required.");
             }
 
-            var accessToken = await _iamService.ExchangeCodeForTokenAsync(code);
+            try {
+                var accessToken = await _iamService.ExchangeCodeForTokenAsync(code);
 
-            var email = await _iamService.GetUserInfoFromTokenAsync(accessToken);
+                var email = await _iamService.GetUserInfoFromTokenAsync(accessToken);
 
-            if (!email.EndsWith(AppSettings.EmailDomain))
-            {
-                return await CreateOrLoginPatientUser(new CreatingUserDto(email, Role.Patient));
+                if (!email.EndsWith(AppSettings.EmailDomain))
+                {
+                    return await CreateOrLoginPatientUser(new CreatingUserDto(email, Role.Patient));
+                }
+                //TODO: Redirect to Backoffice Login
+                return Ok();
+            } catch (Exception ex) {
+                return BadRequest(new { Message = ex.Message });
             }
-            //TODO: Redirect to Backoffice Login
-            return Ok();
         }
 
         // POST: api/Users/backoffice/create

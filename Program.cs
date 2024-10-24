@@ -10,7 +10,6 @@ using Domain.OperationRequests;
 using Domain.Users;
 using Domain.Patients;
 using Domain.Staffs;
-using Domain.IAM;
 using Domain.Shared;
 using Domain.DBLogs;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +19,7 @@ using Newtonsoft.Json.Serialization;
 using Domain.Emails;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Domain.IAM;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,8 +54,8 @@ builder.Services.AddTransient<PatientService>();
 builder.Services.AddTransient<IStaffRepository, StaffRepository>();
 builder.Services.AddTransient<StaffService>();
 
-builder.Services.AddTransient<IAMService>();
-// builder.Services.AddHttpClient<IAMService, IAMService>();
+// builder.Services.AddTransient<IAMService>();
+builder.Services.AddHttpClient<IAMService>();
 
 builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
 builder.Services.AddTransient<DBLogService>();
