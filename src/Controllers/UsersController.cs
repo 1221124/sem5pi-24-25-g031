@@ -69,13 +69,13 @@ namespace Controllers
             var staff = await _staffService.GetByEmailAsync(email);
             if (staff == null) {
                 return BadRequest("Staff profile not found.");
-            } else {
-                var user = await _service.AddAsync(new CreatingUserDto(email, role));
-                staff.UserId = new UserId(user.Id);
-                var staffDto = await _staffService.UpdateAsync(StaffMapper.ToEntity(staff));
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
+            var user = await _service.AddAsync(new CreatingUserDto(email, role));
+            staff.UserId = new UserId(user.Id);
+            await _staffService.UpdateAsync(StaffMapper.ToEntity(staff));
+
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
         // POST: api/Users/register/patient
@@ -94,7 +94,8 @@ namespace Controllers
                 return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
             }
 
-            return BadRequest(new { Message = "Patient profile not found. If you are sure you have a patient record in our hospital, please provide a mobile number for linking." });
+            return BadRequest(new { Message = "Patient profile with email not found." });
+            // return BadRequest(new { Message = "Patient profile not found. If you are sure you have a patient record in our hospital, please provide a mobile number for linking." });
         }
 
         // // POST: api/Users
