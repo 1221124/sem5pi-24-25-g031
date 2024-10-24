@@ -11,7 +11,7 @@ namespace Domain.Staffs
             if (string.IsNullOrWhiteSpace(value))
                 throw new BusinessRuleValidationException("License number cannot be empty");
 
-            if (value.Length > 10)
+            if (value.Length > 100)
                 throw new BusinessRuleValidationException("License number cannot be longer than 10 characters");
 
             Value = value;

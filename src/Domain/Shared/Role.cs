@@ -7,7 +7,8 @@ namespace Domain.Shared
         Doctor,
         Nurse,
         Technician,
-        Patient
+        Patient,
+        NotApplicable
     }
 
     public class RoleUtils
@@ -51,6 +52,7 @@ namespace Domain.Shared
                 Role.Doctor => "D",
                 Role.Nurse => "N",
                 Role.Technician => "T",
+                Role.NotApplicable => "N/A",
                 _ => throw new System.Exception("Invalid role")
             };
         }

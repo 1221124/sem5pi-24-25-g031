@@ -7,7 +7,6 @@ namespace Domain.Staffs
 
     public class StaffId : EntityId
     {
-        public LicenseNumber LicenseNumber;
         public StaffId(Guid value) : base(value)
         {
         }

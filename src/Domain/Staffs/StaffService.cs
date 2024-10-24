@@ -72,23 +72,25 @@ namespace Domain.Staffs
         {
             try
             {
+                /*
                 var user = await _userRepo.GetByIdAsync(dto.UserId);
 
                 if (user == null)
                     throw new BusinessRuleValidationException("User not found.");
-
-                string Role = RoleUtils.IdStaff(user.Role);
+                */
+                
+                //string Role = RoleUtils.IdStaff(user.Role);
 
                 var log = DateTime.Now.ToString("yyyy");
-
-                var numberStaff = (await _repo.GetAllAsync()).Count;
+                
+                var numberStaff =  _repo.GetAllAsync().Result.Count;
 
                 if (await _repo.GetByEmailAsync(dto.ContactInformation.Email) != null && await _repo.GetByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
                 {
                     throw new BusinessRuleValidationException("Email or phone number already in use.");
                 }
 
-                var staff = new Staff(new LicenseNumber(Role + log + numberStaff), dto.FullName, dto.ContactInformation, dto.Specialization, Status.Active);
+                var staff = new Staff(new LicenseNumber(Role.NotApplicable + log + numberStaff), dto.FullName, dto.ContactInformation, dto.Specialization, Status.Active);
 
 
                 if (staff == null)
