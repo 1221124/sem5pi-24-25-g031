@@ -10,13 +10,13 @@ namespace Domain.Patients
   {
     public FullName FullName { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public Gender Gender { get; set; }
-    public MedicalRecordNumber MedicalRecordNumber { get; set; }
+    public Gender? Gender { get; set; }
+    public MedicalRecordNumber? MedicalRecordNumber { get; set; }
     public ContactInformation ContactInformation { get; set; }
-    public List<MedicalConditions> MedicalConditions { get; set; }
-    public EmergencyContact EmergencyContact { get; set; }
-    public AppointmentHistory AppointmentHistory { get; set; }
-    public UserId UserId { get; set; }
+    public List<MedicalConditions>? MedicalConditions { get; set; }
+    public EmergencyContact? EmergencyContact { get; set; }
+    public AppointmentHistory? AppointmentHistory { get; set; }
+    public UserId? UserId { get; set; }
 
     public Patient() { }
     
@@ -36,6 +36,11 @@ namespace Domain.Patients
         
     public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
     {
+      if (fullName == null || contactInformation == null)
+      {
+        throw new ArgumentNullException("FullName or ContactInformation cannot be null.");
+      }
+      
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
       DateOfBirth = dateOfBirth; 
@@ -66,8 +71,12 @@ namespace Domain.Patients
     {
       this.DateOfBirth = dateOfBirth;
     }
+    public void ChangeMedicalRecordNumber(MedicalRecordNumber medicalRecordNumber)
+    {
+      this.MedicalRecordNumber = medicalRecordNumber;
+    }
 
-    public void ChangeGender(Gender gender)
+    public void ChangeGender(Gender? gender)
     {
       this.Gender = gender;
     }

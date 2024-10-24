@@ -11,6 +11,10 @@ namespace Domain.Shared
             PhoneNumber = phoneNumber;
         }
 
+        public ContactInformation()
+        {
+        }
+
         public override bool Equals(object obj)
         {
             var other = obj as ContactInformation;
@@ -25,7 +29,7 @@ namespace Domain.Shared
         {
             var contact = value.Split(',');
             if (contact != null)
-                _ = new FullName(contact[0], contact[1]);
+                _ = new ContactInformation(contact[0],new PhoneNumber(contact[1]));
         }
 
         public override int GetHashCode()

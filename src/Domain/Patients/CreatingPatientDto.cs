@@ -7,13 +7,13 @@ namespace Domain.Patients {
 
     public class CreatingPatientDto{
         
-        public string Fullname { get; set; }
-        public string DateOfBirth { get; set; }
-        public string ContactInformation { get; set; }
+        public FullName Fullname { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public ContactInformation ContactInformation { get; set; }
         
         
 
-        public CreatingPatientDto(string fullname, string dateOfBirth, string contactInformation)
+        public CreatingPatientDto(FullName fullname, DateTime dateOfBirth, ContactInformation contactInformation)
         {
             Fullname = fullname;
             DateOfBirth = dateOfBirth;

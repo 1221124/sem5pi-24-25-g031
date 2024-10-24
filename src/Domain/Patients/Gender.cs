@@ -32,7 +32,7 @@ namespace Domain.Patients
       };
     }
     
-    public static string ToString(Gender gender)
+    public static string ToString(Gender? gender)
     {
       return gender switch
       {

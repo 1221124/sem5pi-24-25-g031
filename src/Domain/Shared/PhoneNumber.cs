@@ -4,7 +4,7 @@ namespace Domain.Shared
 {
     public class PhoneNumber : IValueObject
     {
-        public int Value { get; }
+        public int Value { get; set; }
 
         public PhoneNumber(int value) 
         {
@@ -21,6 +21,9 @@ namespace Domain.Shared
                 throw new ArgumentException("Invalid phone number.");
             }
             Value = result;
+        }
+        public PhoneNumber()
+        {
         }
         
         public static PhoneNumber FromString(string value)
