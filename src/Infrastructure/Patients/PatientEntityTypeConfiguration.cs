@@ -48,11 +48,12 @@ namespace Infrastructure.Patients
 
             builder.Property(p => p.Gender)
                 .HasColumnName("Gender")
-                .IsRequired(false)
+                .IsRequired(false) // Make it optional
                 .HasConversion(
-                    v => GenderUtils.ToString(v),
-                    v => GenderUtils.FromString(v)
+                    v => v.HasValue ? GenderUtils.ToString(v.Value) : null,  // Handle null values
+                    v => v != null ? GenderUtils.FromString(v) : (Gender?)null // Allow null to map correctly
                 );
+
 
             builder.Property(p => p.MedicalRecordNumber)
                 .HasColumnName("BloodType")

@@ -55,6 +55,15 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
             ;
         });
 
+        builder.Property(s => s.LicenseNumber)
+            .HasColumnName("LicenseNumber")
+            .HasMaxLength(100)
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new LicenseNumber(v)
+                )
+            .IsRequired();
+
         // builder.OwnsOne(o => o.Id, sa =>
         // {
         //     sa.Property(p => p.LicenseNumber.Value)
@@ -117,6 +126,7 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
 
         builder.Property(s=>s.UserId)
             .HasColumnName("UserId");
+        
         
 
     }
