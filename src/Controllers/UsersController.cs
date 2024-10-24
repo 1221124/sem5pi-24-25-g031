@@ -7,6 +7,7 @@ using Domain.Users;
 using Domain.IAM;
 using Domain.Staffs;
 using Domain.Patients;
+using Domain.Emails;
 
 namespace Controllers
 {
@@ -18,13 +19,15 @@ namespace Controllers
         private readonly StaffService _staffService;
         private readonly PatientService _patientService;
         private readonly IAMService _iamService;
+        private readonly EmailService _emailService;
 
-        public UsersController(UserService service, StaffService staffService, PatientService patientService, IAMService iAMService)
+        public UsersController(UserService service, StaffService staffService, PatientService patientService, IAMService iAMService, EmailService emailService)
         {
             _service = service;
             _staffService = staffService;
             _patientService = patientService;
             _iamService = iAMService;
+            _emailService = emailService;
         }
 
         // GET: api/User
@@ -73,7 +76,7 @@ namespace Controllers
             {
                 StaffDto.UserId = new UserId(User.Id);
 
-                // var Staff = await _staffService.UpdateAsync(StaffDto);
+                var Staff = await _staffService.UpdateAsync(StaffMapper.ToEntity(StaffDto));
             }
 
             return CreatedAtAction(nameof(GetById), new { id = User.Id }, User);
@@ -84,7 +87,6 @@ namespace Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update(UserDto dto)
         {
-
             try
             {
                 var User = await _service.UpdateAsync(dto);

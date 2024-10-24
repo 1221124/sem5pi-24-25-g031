@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Infrastructure.Shared;
 using Newtonsoft.Json.Serialization;
+using Domain.Emails;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +65,8 @@ builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
 builder.Services.AddTransient<DBLogService>();
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddSingleton(new EmailService("smtp.gmail.com", 587, AppSettings.Email, AppSettings.Password));
 
 var app = builder.Build();
 
