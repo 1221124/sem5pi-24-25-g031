@@ -7,14 +7,14 @@ namespace Domain.Staffs
     public class CreatingStaffDto
     {
         //public string UserId { get; set; }
-        public string FullName { get; set; }
-        public string ContactInformation { get; set; }
+        public FullName FullName { get; set; }
+        public ContactInformation ContactInformation { get; set; }
         //  public string LicenseNumber { get; set; }
-        public string Specialization { get; set; }
-        public string Status { get; set; }
+        public Specialization Specialization { get; set; }
+        public Status Status { get; set; }
         //  public List<Slot> Slot { get; set; }
 
-        public CreatingStaffDto(string fullName, string contactInformation, string specialization, string status)
+        public CreatingStaffDto(FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
         {
             FullName = fullName;
             ContactInformation = contactInformation;

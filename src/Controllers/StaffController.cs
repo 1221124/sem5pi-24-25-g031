@@ -33,7 +33,7 @@ namespace Controllers
 
         //GET: api/Staff/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<StaffDto>> GetGetById(Guid id)
+        public async Task<ActionResult<StaffDto>> GetById(Guid id)
         {
             var staff = await _service.GetByIdAsync(new StaffId(id));
 
@@ -47,7 +47,7 @@ namespace Controllers
 
         // POST: api/Staff
         [HttpPost]
-        public async Task<ActionResult<StaffDto>> Create(CreatingStaffDto staffDto)
+        public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
         {
             if (staffDto == null)
             {
@@ -55,9 +55,10 @@ namespace Controllers
                 return BadRequest("Invalid request data.");
             }
 
-            await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
+            var staff = await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
 
-            return Ok("Staff created successfully.");
+            return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
+
         }
 
         // PUT: api/Staff/5
