@@ -12,10 +12,6 @@ namespace Domain.Staffs
         {
         }
 
-        public StaffId(Guid value, string licenseNumber) : base(value)
-        {
-            LicenseNumber = licenseNumber;
-        }
 
         override
         protected object createFromString(string text)

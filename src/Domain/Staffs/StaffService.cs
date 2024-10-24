@@ -68,7 +68,7 @@ namespace Domain.Staffs
         }
 
         //CREATE STAFF WITH first name, last name, contact information, and specialization
-        public async Task<StaffDto> AddAsync(Staff dto)
+        public async Task<StaffDto?> AddAsync(Staff dto)
         {
             try
             {
@@ -88,7 +88,11 @@ namespace Domain.Staffs
                     throw new BusinessRuleValidationException("Email or phone number already in use.");
                 }
 
-                var staff = new Staff(new StaffId(dto.Id.AsGuid(), Role + log + numberStaff), dto.UserId, dto.FullName, dto.ContactInformation, dto.Specialization, Status.Active);
+                var staff = new Staff(new LicenseNumber(Role + log + numberStaff), dto.FullName, dto.ContactInformation, dto.Specialization, Status.Active);
+
+
+                if (staff == null)
+                    return null;
 
                 await this._repo.AddAsync(staff);
 

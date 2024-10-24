@@ -51,7 +51,7 @@ namespace Controllers
         {
             if (staffDto == null)
             {
-                _DBLogService.LogError(StaffEntityType, "Invalid data request.");
+                //_DBLogService.LogError(StaffEntityType, "Invalid data request.");
                 return BadRequest("Invalid request data.");
             }
 

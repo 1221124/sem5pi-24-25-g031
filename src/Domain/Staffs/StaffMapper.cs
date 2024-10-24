@@ -10,8 +10,8 @@ namespace Domain.Staffs
 
             return new StaffDto
             {
+                Id = staff.Id.AsGuid(),
                 UserId = staff.UserId,
-                StaffId = staff.Id,
                 FullName = staff.FullName,
                 Specialization = staff.Specialization,
                 ContactInformation = staff.ContactInformation,

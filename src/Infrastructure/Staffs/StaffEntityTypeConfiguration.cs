@@ -85,7 +85,6 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
         {
             slot.Property(s => s.Start)
                 .HasColumnName("Start")
-                .IsRequired()
                 .HasConversion(
                     v => v.ToString("yyyy-MM-dd HH:mm"),
                     v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
@@ -93,7 +92,6 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
 
             slot.Property(s => s.End)
                 .HasColumnName("End")
-                .IsRequired()
                 .HasConversion(
                     v => v.ToString("yyyy-MM-dd HH:mm"),
                     v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
@@ -104,7 +102,6 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
         {
             slot.Property(s => s.Start)
                 .HasColumnName("Start")
-                .IsRequired()
                 .HasConversion(
                     v => v.ToString("yyyy-MM-dd HH:mm"),
                     v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
@@ -112,12 +109,15 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
 
             slot.Property(s => s.End)
                 .HasColumnName("End")
-                .IsRequired()
                 .HasConversion(
                     v => v.ToString("yyyy-MM-dd HH:mm"),
                     v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                 );
         });
+
+        builder.Property(s=>s.UserId)
+            .HasColumnName("UserId");
+        
 
     }
 }
