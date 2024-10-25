@@ -57,10 +57,10 @@ namespace Domain.Staffs
         }
 
 
-        public Staff(Email email, PhoneNumber phoneNumber, List<Slot> avalibilitySlots, Specialization specialization)
+        public Staff(Guid id, Email email, PhoneNumber phoneNumber, List<Slot> avalibilitySlots, Specialization specialization)
         {
-            ContactInformation.Email = email;
-            ContactInformation.PhoneNumber = phoneNumber;
+            Id = new StaffId(id);
+            ContactInformation = new ContactInformation(email, phoneNumber);
             Specialization = specialization;
             SlotAvailability = avalibilitySlots;
         }

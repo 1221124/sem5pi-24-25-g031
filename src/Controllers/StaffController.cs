@@ -82,21 +82,22 @@ namespace Controllers
         }
 
         // PUT: api/Staff/5
-        [HttpPut("update/email={email}")]
-        public async Task<ActionResult<StaffDto>> Update(UpdatingStaffDto dto)
+        [HttpPut("update/{oldEmail}")]
+        public async Task<ActionResult<StaffDto>> Update(string oldEmail, [FromBody] UpdatingStaffDto dto)
         {
             if (dto == null)
             {
                 _DBLogService.LogError(EntityType.STAFF, "Staff data is required.");
                 return BadRequest("Staff data is required.");
             }
-
-            await _service.UpdateAsync(StaffMapper.ToEntityFromUpdating(dto));
+            var staff = await _service.GetByEmailAsync(oldEmail); 
+            
+            await _service.UpdateAsync(oldEmail, StaffMapper.ToEntityFromUpdating(dto, staff));
 
             return Ok("Staff request updated successfully.");
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{email}")]
         public async Task<ActionResult<StaffDto>> SoftDelete(Guid id)
         {
             var staff = await _service.InactivateAsync(new StaffId(id));

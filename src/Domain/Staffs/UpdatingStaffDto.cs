@@ -13,7 +13,7 @@ namespace Domain.Staffs
 
         public UpdatingStaffDto(Email email, PhoneNumber phoneNumber, List<Slot> availabilitySlots, Specialization specialization)
         {
-            Email = email;
+            Email = email.Value;
             PhoneNumber = phoneNumber;
             AvailabilitySlots = availabilitySlots;
             Specialization = specialization;

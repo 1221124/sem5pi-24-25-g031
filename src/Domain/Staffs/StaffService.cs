@@ -80,6 +80,10 @@ namespace Domain.Staffs
         {
             try
             {
+                if (email == null)
+                {
+                    return null;
+                }
                 var staff = await this._repo.GetByEmailAsync(email);
 
                 if (staff == null)
@@ -149,12 +153,11 @@ namespace Domain.Staffs
                 return StaffMapper.ToDto(dto);
             }
         }
-
-        public async Task<StaffDto> UpdateLicenseNumberAsync(Staff staff)
+        public async Task<StaffDto> UpdateAsync(string oldEmail, Staff staff)
         {
             try
             {
-                Staff newStaff = await _repo.GetByIdAsync(staff.Id);
+                Staff newStaff = await _repo.GetByEmailAsync(oldEmail);
 
                 if (newStaff == null)
                 {
@@ -163,51 +166,35 @@ namespace Domain.Staffs
                 }
 
                 // change all field
-                newStaff.ChangeLicenseNumber(staff.LicenseNumber);
-
-
-                await _repo.UpdateAsync(newStaff);
-                await _unitOfWork.CommitAsync();
-
-                _dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);
-
-                /*if(DBLogType.UPDATE)
+                try
                 {
-                    string toEmail = newStaff.ContactInformation.Email; // Assuming the contact information has an Email field
-                    string subject = "Your contact information has been updated";
-                    string body = $"Dear {newStaff.Name}, your contact information has been successfully updated.";
-                    
-                    await _emailService.SendEmailAsync(toEmail, subject, body);
-                }*/
-
-                return StaffMapper.ToDto(newStaff);
-            }
-            catch (Exception e)
-            {
-                _dbLogService.LogError(StaffEntityType, e.ToString());
-                return StaffMapper.ToDto(staff);
-            }
-        }
-
-        public async Task<StaffDto> UpdateAsync(Staff staff)
-        {
-            try
-            {
-                Staff newStaff = await _repo.GetByEmailAsync(staff.ContactInformation.Email);
-
-                if (newStaff == null)
+                    newStaff.ChangeContactInformation(staff.ContactInformation);
+                }
+                catch (Exception ex)
                 {
-                    _dbLogService.LogError(StaffEntityType, "Unable to find {staff " + staff.Id + "}");
-                    return StaffMapper.ToDto(staff);
+                    throw new Exception("Failed to change contact information", ex);
                 }
 
-                // change all field
-                newStaff.ChangeContactInformation(staff.ContactInformation);
-                newStaff.ChangeSlotAvailability(staff.SlotAvailability);
-                newStaff.ChangeSpecialization(staff.Specialization);
+                try
+                {
+                    newStaff.ChangeSlotAvailability(staff.SlotAvailability);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to change slot availability", ex);
+                }
+
+                try
+                {
+                    newStaff.ChangeSpecialization(staff.Specialization);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to change specialization", ex);
+                }
 
 
-                await _repo.UpdateAsync(newStaff);
+                // await _repo.UpdateAsync(newStaff);
                 await _unitOfWork.CommitAsync();
 
                 //_dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);

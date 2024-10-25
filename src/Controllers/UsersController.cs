@@ -100,7 +100,7 @@ namespace Controllers
             user = await _service.AddAsync(dto);
 
             staff.UserId = new UserId(user.Id);
-            await _staffService.UpdateAsync(StaffMapper.ToEntity(staff));
+            await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntity(staff));
 
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }

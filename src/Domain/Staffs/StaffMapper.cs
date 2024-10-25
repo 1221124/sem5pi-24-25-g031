@@ -1,5 +1,6 @@
 using Domain.Shared;
 using Domain.Users;
+using Org.BouncyCastle.Utilities;
 
 namespace Domain.Staffs
 {
@@ -7,7 +8,6 @@ namespace Domain.Staffs
     {
         public static StaffDto ToDto(Staff staff)
         {
-
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
@@ -42,9 +42,10 @@ namespace Domain.Staffs
             );
         }
 
-        public static Staff ToEntityFromUpdating(UpdatingStaffDto dto)
+        public static Staff ToEntityFromUpdating(UpdatingStaffDto dto, StaffDto staff)
         {
             return new Staff(
+                staff.Id,
                 dto.Email,
                 dto.PhoneNumber,
                 dto.AvailabilitySlots,
