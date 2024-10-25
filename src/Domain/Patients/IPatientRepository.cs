@@ -6,7 +6,7 @@ namespace Domain.Patients
 {
     public interface IPatientRepository: IRepository<Patient, PatientId>
     {
-        public Task<Patient> GetByEmailAsync(Email email);
-        public Task<Patient> getByPhoneNumberAsync(PhoneNumber phoneNumber);
+        public Task<Patient?> GetByEmailAsync(Email email);
+        public Task<Patient?> GetByPhoneNumberAsync(PhoneNumber phoneNumber);
     }
 }
