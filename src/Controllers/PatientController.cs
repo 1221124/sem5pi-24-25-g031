@@ -61,13 +61,9 @@ namespace src.Controllers
 
         // PUT: api/Patient/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<PatientDto>> Update(Guid id, UpdatingPatientDto dto)
+        public async Task<ActionResult<PatientDto>> Update(UpdatingPatientDto dto)
         {
-            if (id != dto.Id)
-            {
-                return BadRequest();
-            }
-
+            
             try
             {
                 var patient = await _service.UpdateAsync(PatientMapper.ToEntity(dto));
