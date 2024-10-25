@@ -33,6 +33,17 @@ namespace Infrastructure.UsersSession
             }
         }
 
+        public async Task<UserSession?> GetByEmailAsync(Email admin)
+        {
+            var session = await _objs.FirstOrDefaultAsync(s => s.Email == admin);
+
+            if (session == null)
+            {
+                throw new Exception("Session not found");
+            }
+            else return session;
+        }
+
         public async Task<UserSession?> GetByUserIdAsync(UserId userId)
         {
             return await _objs.FirstOrDefaultAsync(s => s.UserId == userId);
