@@ -20,7 +20,7 @@ namespace Domain.Patients
 
     public Patient() { }
     
-    public Patient(FullName fullName, DateTime dateOfBirth, Gender gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
+    public Patient(FullName fullName, DateTime dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
@@ -83,6 +83,10 @@ namespace Domain.Patients
 
     public void ChangeContactInformation(ContactInformation contactInformation)
     {
+      if(contactInformation == null)
+      {
+        throw new ArgumentNullException("ContactInformation cannot be null.");
+      }
       this.ContactInformation = contactInformation;
     }
 

@@ -21,26 +21,27 @@ namespace Domain.Patients
           throw new ArgumentException("Invalid Gender");
       }
     }
-    //Method fromString
-    public static Gender FromString(string gender)
-    {
-      return gender switch
-      {
-        "Anaesthesiology" => Gender.MALE,
-        "Cardiology" => Gender.FEMALE,
-        _ => throw new System.ArgumentException($"Invalid gender: {gender}")
-      };
-    }
-    
-    public static string ToString(Gender? gender)
+    public static string? ToString(Gender? gender)
     {
       return gender switch
       {
         Gender.MALE => "Male",
         Gender.FEMALE => "Female",
-        _ => throw new ArgumentException("Invalid Gender")
+        _ => null // Return null if the gender is not set
       };
     }
+
+    public static Gender? FromString(string gender)
+    {
+      return gender switch
+      {
+        "Male" => Gender.MALE,
+        "Female" => Gender.FEMALE,
+        null => (Gender?)null, // Handle null from the database
+        _ => throw new ArgumentException($"Invalid gender: {gender}")
+      };
+    }
+
 
   }
 }  

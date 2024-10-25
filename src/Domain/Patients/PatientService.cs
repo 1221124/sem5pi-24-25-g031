@@ -64,15 +64,15 @@ namespace Domain.Patients
                 if(_repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber) == null)
                     return null;
                 
-                await this._repo.AddAsync(p);
-                await this._unitOfWork.CommitAsync();
+                await _repo.AddAsync(p);
+                await _unitOfWork.CommitAsync();
                 
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, p.Id );
             }catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-
+            
             return new PatientDto (p.Id.AsGuid(), p.FullName, p.DateOfBirth, p.Gender, medicalRecordNumber, p.ContactInformation, p.MedicalConditions, p.EmergencyContact, p.UserId );
         }
         
@@ -91,15 +91,10 @@ namespace Domain.Patients
             if (patient == null)
                 return null;   
 
-            // change all field
-            patient.ChangeFullName(dto.FullName);
-            patient.ChangeDateOfBirth(dto.DateOfBirth);
-            patient.ChangeGender(dto.Gender);
+            
             patient.ChangeContactInformation(dto.ContactInformation);
-            patient.ChangeMedicalConditions(dto.MedicalConditions);
-            patient.ChangeEmergencyContact(dto.EmergencyContact);
 
-            await this._unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync();
 
             return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
