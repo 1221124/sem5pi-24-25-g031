@@ -7,7 +7,7 @@ using Infrastructure.UsersSession;
 
 namespace Domain.UsersSession
 {
-    public class SessionService : ISessionService
+    public class SessionService
     {
         private readonly IUnitOfWork _unitOfWork;
 
