@@ -83,6 +83,41 @@ namespace Controllers
             }
         }
 
+        // POST: api/Users/patient/login
+        [HttpPost("patient/login")]
+        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto)
+        {
+            // var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code, "http://localhost:5500/api/patient/register");
+
+            // var email = await _iamService.GetUserInfoFromTokenAsync(tokenResponse.IdToken);
+
+            var patientDto = await _patientService.GetByEmailAsync(dto.Email);
+
+            if (patientDto != null)
+            {
+                var user = await _service.GetByEmailAsync(dto.Email);
+
+                if (user == null) {
+                    user = await _service.AddAsync(dto);
+
+                    patientDto.UserId = new UserId(user.Id);
+                    await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
+                }
+
+                var userSession = new UserSession(
+                    new UserId(user.Id),
+                    user.Email,
+                    user.Role
+                );
+
+                await _sessionService.CreateSessionAsync(userSession);
+                
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            }
+
+            return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
+        }
+
         // POST: api/Users/backoffice/create
         [HttpPost("backoffice/create")]
         public async Task<ActionResult<UserDto>> CreateBackofficeUser([FromBody] CreatingUserDto dto)
@@ -103,38 +138,6 @@ namespace Controllers
             await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntity(staff));
 
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-        }
-
-        // POST: api/Users/patient/login
-        [HttpPost("patient/login")]
-        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto)
-        {
-            // var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code, "http://localhost:5500/api/patient/register");
-
-            // var email = await _iamService.GetUserInfoFromTokenAsync(tokenResponse.IdToken);
-
-            var patientDto = await _patientService.GetByEmailAsync(dto.Email);
-
-            if (patientDto != null)
-            {
-                var user = await _service.GetByEmailAsync(dto.Email);
-
-                if (user == null) {
-                    user = await _service.AddAsync(dto);
-
-                    patientDto.UserId = new UserId(user.Id);
-                    await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
-                } else {
-                    if (user.UserStatus == UserStatus.Blocked || !RoleUtils.IsPatient(user.Role))
-                        return Forbid();
-
-                    // else await LoginPatientUser(user);
-                }
-                
-                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-            }
-
-            return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
         }
 
         // POST: api/Users/backoffice/login
