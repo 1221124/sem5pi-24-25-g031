@@ -18,14 +18,17 @@ namespace Controllers
         private readonly PatientService _patientService;
         private readonly IAMService _iamService;
         private readonly EmailService _emailService;
+        private readonly ISessionService _sessionService;
 
-        public UsersController(UserService service, StaffService staffService, PatientService patientService, IAMService iAMService, EmailService emailService)
+        public UsersController(UserService service, StaffService staffService, PatientService patientService, 
+        IAMService iAMService, EmailService emailService, ISessionService sessionService)
         {
             _service = service;
             _staffService = staffService;
             _patientService = patientService;
             _iamService = iAMService;
             _emailService = emailService;
+            _sessionService = sessionService;
         }
 
         // GET: api/Users
@@ -61,7 +64,7 @@ namespace Controllers
             try {
                 var idToken = await _iamService.ExchangeCodeForTokenAsync(code);
 
-                var email = await _iamService.GetEmailFromIdTokenAsync(idToken.IdToken);
+                var email = _iamService.GetEmailFromIdToken(idToken.IdToken);
 
                 if (!email.EndsWith(AppSettings.EmailDomain))
                 {
@@ -121,9 +124,11 @@ namespace Controllers
                     patientDto.UserId = new UserId(user.Id);
                     await _patientService.UpdateAsync(PatientMapper.ToEntity(patientDto));
                 } else {
-                    return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+                    if (user.UserStatus == UserStatus.Blocked || !RoleUtils.IsPatient(user.Role))
+                        return Forbid();
+
+                    // else await LoginPatientUser(user);
                 }
-                //TODO: Remove 'else' and Implement Patient Login
                 
                 return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
             }
@@ -148,8 +153,19 @@ namespace Controllers
                 else{
                     if(user.UserStatus == UserStatus.Blocked || !RoleUtils.IsStaff(user.Role))
                         return Forbid();
+                    
                     else
-                        return Ok();
+                    {
+                        var userSession = new UserSession(
+                            new UserId(user.Id),
+                            user.Email,
+                            user.Role                         
+                        );
+
+                        await _sessionService.CreateSessionAsync(userSession);
+
+                        return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+                    }
                 }
 
             }else{
