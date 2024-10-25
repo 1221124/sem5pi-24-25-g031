@@ -83,7 +83,12 @@ namespace Controllers
                 return BadRequest("Staff profile not found.");
             }
 
-            var user = await _service.AddAsync(dto);
+            var user = await _service.GetByEmailAsync(dto.Email);
+            if (user != null) {
+                return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+            }
+
+            user = await _service.AddAsync(dto);
 
             staff.UserId = new UserId(user.Id);
             await _staffService.UpdateAsync(StaffMapper.ToEntity(staff));
