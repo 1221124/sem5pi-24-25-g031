@@ -14,18 +14,19 @@ using Infrastructure.Staffs;
 using Domain.DBLogs;
 using Infrastructure.DBLogs;
 using Infrastructure.UsersSession;
+using Domain.UsersSession;
 
 namespace Infrastructure
 {
     public class SARMDbContext : DbContext
     {
-        internal readonly DbSet<DBLog> DBLogs;
+        public DbSet<DBLog> DBLogs { get; set; }
         public DbSet<OperationType> OperationTypes { get; set; }
         public DbSet<OperationRequest> OperationRequests { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Staff> Staffs { get; set; }
-        public DbSet<UserSession> UsersSessions { get; internal set; }
+        public DbSet<UserSession> UsersSessions { get; set; }
 
         public SARMDbContext(DbContextOptions options) : base(options)
         {
