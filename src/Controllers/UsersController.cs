@@ -119,7 +119,7 @@ namespace Controllers
                     user = await _service.AddAsync(dto);
 
                     patientDto.UserId = new UserId(user.Id);
-                    await _patientService.UpdateAsync(patientDto);
+                    await _patientService.UpdateAsync(PatientMapper.ToEntity(patientDto));
                 } else {
                     return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
                 }
