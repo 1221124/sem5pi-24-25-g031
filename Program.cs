@@ -59,6 +59,7 @@ builder.Services.AddHttpClient<IAMService>();
 builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
 builder.Services.AddTransient<DBLogService>();
 
+builder.Services.AddTransient<UsersSessionRepository>();
 builder.Services.AddTransient<IUserSessionRepository, UsersSessionRepository>();
 builder.Services.AddTransient<SessionService>();
 
