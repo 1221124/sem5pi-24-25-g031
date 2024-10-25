@@ -9,7 +9,7 @@ namespace Domain.Patients
     {
         public Guid Id { get; set; }
         public FullName FullName { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateOfBirth DateOfBirth { get; set; }
         public Gender? Gender { get; set; }
         public MedicalRecordNumber MedicalRecordNumber { get; set; }
         public ContactInformation ContactInformation { get; set; }
@@ -18,7 +18,7 @@ namespace Domain.Patients
         public AppointmentHistory AppointmentHistory { get; set; }
         public UserId UserId { get; set; }
 
-        public PatientDto(Guid id,FullName fullName, DateTime dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,UserId userId)
+        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,UserId userId)
         {
             Id = id; 
             FullName = fullName;
@@ -31,7 +31,7 @@ namespace Domain.Patients
             UserId = userId;
         }
         
-        public PatientDto(Guid id,FullName fullName, DateTime dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,AppointmentHistory appointmentHistory,UserId userId)
+        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,AppointmentHistory appointmentHistory,UserId userId)
         {
             Id = id; 
             FullName = fullName;
@@ -45,7 +45,7 @@ namespace Domain.Patients
             UserId = userId;
         }
         
-        public PatientDto (Guid id, FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation, UserId userId)
+        public PatientDto (Guid id, FullName fullName, DateOfBirth dateOfBirth, ContactInformation contactInformation, UserId userId)
         {
             Id = id;
             FullName = fullName;

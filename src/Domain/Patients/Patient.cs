@@ -9,7 +9,7 @@ namespace Domain.Patients
   public class Patient : Entity<PatientId>, IAggregateRoot
   {
     public FullName FullName { get; set; }
-    public DateTime DateOfBirth { get; set; }
+    public DateOfBirth DateOfBirth { get; set; }
     public Gender? Gender { get; set; }
     public MedicalRecordNumber? MedicalRecordNumber { get; set; }
     public ContactInformation ContactInformation { get; set; }
@@ -20,7 +20,7 @@ namespace Domain.Patients
 
     public Patient() { }
     
-    public Patient(FullName fullName, DateTime dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
+    public Patient(FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
@@ -34,7 +34,7 @@ namespace Domain.Patients
       UserId = userId;
     }
     
-    public Patient(Guid guid ,FullName fullName, DateTime dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
+    public Patient(Guid guid ,FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
     {
       Id = new PatientId(guid);
       FullName = fullName;
@@ -48,7 +48,7 @@ namespace Domain.Patients
       UserId = userId;
     }
         
-    public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
+    public Patient (FullName fullName, DateOfBirth dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
     {
       if (fullName == null || contactInformation == null)
       {
@@ -62,7 +62,7 @@ namespace Domain.Patients
       ContactInformation = contactInformation;
     }
 
-    public Patient(FullName fullName, DateTime dateOfBirth, ContactInformation contactInformation)
+    public Patient(FullName fullName, DateOfBirth dateOfBirth, ContactInformation contactInformation)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
@@ -70,10 +70,10 @@ namespace Domain.Patients
       ContactInformation = contactInformation;
     }
 
-    public Patient(Guid guid, ContactInformation contactInformation)
+    public Patient(Guid guid, Email email, PhoneNumber phoneNumber)
     {
       Id = new PatientId(guid);
-      ContactInformation = contactInformation;
+      ContactInformation = new ContactInformation(email, phoneNumber);
     }
 
     public override string ToString()
@@ -83,21 +83,37 @@ namespace Domain.Patients
     
     public void ChangeFullName(FullName fullName)
     {
+      if (fullName == null)
+      {
+        throw new ArgumentNullException("FullName is null.");
+      }
       this.FullName = fullName;
     }
     
 
-    public void ChangeDateOfBirth(DateTime dateOfBirth)
+    public void ChangeDateOfBirth(DateOfBirth dateOfBirth)
     {
+      if (dateOfBirth == null)
+      {
+        throw new ArgumentNullException("DateOfBirth is null.");
+      }
       this.DateOfBirth = dateOfBirth;
     }
     public void ChangeMedicalRecordNumber(MedicalRecordNumber medicalRecordNumber)
     {
+      if (medicalRecordNumber == null)
+      {
+        throw new ArgumentNullException("MedicalRecordNumber is null.");
+      }
       this.MedicalRecordNumber = medicalRecordNumber;
     }
 
     public void ChangeGender(Gender? gender)
     {
+      if (gender == null)
+      {
+        throw new ArgumentNullException("Gender is null.");
+      }
       this.Gender = gender;
     }
 
@@ -105,7 +121,7 @@ namespace Domain.Patients
     {
       if(contactInformation == null)
       {
-        throw new ArgumentNullException("ContactInformation cannot be null.");
+        throw new ArgumentNullException("ContactInformation is null");
       }
 
       if (contactInformation.PhoneNumber != null)
@@ -124,22 +140,66 @@ namespace Domain.Patients
 
     public void ChangeMedicalConditions(List<MedicalConditions> medicalConditions)
     {
+      if (medicalConditions == null)
+      {
+        throw new ArgumentNullException("MedicalConditions is null.");
+      }
       this.MedicalConditions = medicalConditions;
     }
 
     public void ChangeEmergencyContact(EmergencyContact emergencyContact)
     {
+      if (emergencyContact == null)
+      {
+        throw new ArgumentNullException("EmergencyContact is null.");
+      }
       this.EmergencyContact = emergencyContact;
     }  
     
     public void ChangeAppointmentHistory(AppointmentHistory appointmentHistory)
     {
+      if (appointmentHistory == null)
+      {
+        throw new ArgumentNullException("AppointmentHistory is null.");
+      }
       this.AppointmentHistory = appointmentHistory;
     }
     
     public void ChangeUserId(UserId userId)
     {
+      if (userId == null)
+      {
+        throw new ArgumentNullException("UserId is null.");
+      }
       this.UserId = userId;
+    }
+
+    public void UpdatePatient(Patient p)
+    {
+      if (p.FullName.FirstName != null)
+      {
+        this.FullName.FirstName = p.FullName.FirstName;
+      }
+      if (p.FullName.LastName != null)
+      {
+        this.FullName.LastName = p.FullName.LastName;
+      }
+      if (p.ContactInformation.PhoneNumber != null)
+      {
+        this.ContactInformation.PhoneNumber = p.ContactInformation.PhoneNumber;
+      }
+      if (p.ContactInformation.Email != null)
+      {
+        this.ContactInformation.Email = p.ContactInformation.Email;
+      }
+      if (p.MedicalConditions != null)
+      {
+        this.MedicalConditions = p.MedicalConditions;
+      }
+      if (p.AppointmentHistory != null)
+      {
+        this.AppointmentHistory = p.AppointmentHistory;
+      }
     }
   }
 }

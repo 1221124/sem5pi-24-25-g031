@@ -10,7 +10,7 @@ namespace Domain.Patients
             
             return new Patient(
                 dto.Fullname,
-                dto.DateOfBirth,
+                dto.BirthDate,
                 dto.ContactInformation
             );
         }
@@ -31,7 +31,8 @@ namespace Domain.Patients
         {
             return new Patient(
                 dto.Id,
-                dto.ContactInformation
+                dto.Email,
+                dto.PhoneNumber
             );
         }
 

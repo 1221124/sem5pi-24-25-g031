@@ -61,8 +61,9 @@ namespace Domain.Patients
             p.ChangeMedicalRecordNumber(medicalRecordNumber);
             try
             {
-                if(_repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber) == null)
-                    return null;
+                var byPhoneNumberAsync = _repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber);
+                if(byPhoneNumberAsync != null)
+                    throw new Exception("Phone number already exists");
                 
                 await _repo.AddAsync(p);
                 await _unitOfWork.CommitAsync();
@@ -90,12 +91,17 @@ namespace Domain.Patients
 
             if (patient == null)
                 return null;   
-
-            
-            patient.ChangeContactInformation(p.ContactInformation);
-
-            await _unitOfWork.CommitAsync();
-
+            try
+            {
+                if (_repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber) == null)
+                    return null;
+                patient.UpdatePatient(p);
+                await _unitOfWork.CommitAsync();
+                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, p.Id );
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 

@@ -5,23 +5,35 @@ namespace Domain.Patients
     public class UpdatingPatientDto
     {
         public Guid Id { get; set; }
-        public FullName FullName { get; set; }
-        public ContactInformation ContactInformation { get; set; }
-        public AppointmentHistory AppointmentHistory { get; set; }
-        public MedicalConditions MedicalConditions { get; set; }
+        public Name? FirstName { get; set; }
+        public Name? LastName { get; set; }
+        public Email? Email { get; set; }
+        public PhoneNumber? PhoneNumber { get; set; }
+        public AppointmentHistory? AppointmentHistory { get; set; }
+        public MedicalConditions? MedicalConditions { get; set; }
         
-        public UpdatingPatientDto(FullName fullName, ContactInformation contactInformation, AppointmentHistory appointmentHistory, MedicalConditions medicalConditions)
+        public UpdatingPatientDto(Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, MedicalConditions? medicalConditions)
         {
-            FullName = fullName;
-            ContactInformation = contactInformation;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            PhoneNumber = phoneNumber;
             AppointmentHistory = appointmentHistory;
             MedicalConditions = medicalConditions;
         }
         
-        public UpdatingPatientDto(Guid id, ContactInformation contactInformation)
+        public UpdatingPatientDto(Email email)
         {
-            Id = id;
-            ContactInformation = contactInformation;
+            Email = email;
+        }
+        
+        public UpdatingPatientDto(PhoneNumber phoneNumber)
+        {
+            PhoneNumber = phoneNumber;
+        }
+        
+        public UpdatingPatientDto()
+        {
         }
     }
     

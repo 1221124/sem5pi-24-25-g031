@@ -4,8 +4,8 @@ namespace Domain.Shared
 {
     public class FullName : IValueObject
     {
-        public Name FirstName { get; }
-        public Name LastName { get; }
+        public Name FirstName { get; set; }
+        public Name LastName { get; set; }
 
         [JsonConstructor]
         public FullName(Name firstName, Name lastName)
