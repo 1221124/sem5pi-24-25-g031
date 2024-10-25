@@ -36,15 +36,15 @@ namespace Domain.IAM
             var responseContent = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseContent);
 
-            if (tokenResponse.IdToken == null)
+            if (tokenResponse == null || tokenResponse.IdToken == null)
             {
-                throw new Exception("ID token not found in response.");
+                throw new Exception("Token not found in response.");
             }
 
             return tokenResponse;
         }
 
-        public async Task<string> GetEmailFromIdTokenAsync(string idToken)
+        public string GetEmailFromIdToken(string idToken)
         {
             if (string.IsNullOrWhiteSpace(idToken))
             {
