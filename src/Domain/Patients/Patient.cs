@@ -75,6 +75,15 @@ namespace Domain.Patients
       Id = new PatientId(guid);
       ContactInformation = new ContactInformation(email, phoneNumber);
     }
+    
+    public Patient(Guid guid, Name FirstName, Name LastName, Email email, PhoneNumber phoneNumber, AppointmentHistory appointmentHistory, List<MedicalConditions> medicalConditions)
+    {
+      Id = new PatientId(guid);
+      FullName = new FullName(FirstName, LastName);
+      ContactInformation = new ContactInformation(email, phoneNumber);
+      AppointmentHistory = appointmentHistory;
+      MedicalConditions = medicalConditions;
+    }
 
     public override string ToString()
     {

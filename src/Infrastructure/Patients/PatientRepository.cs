@@ -12,21 +12,23 @@ namespace Infrastructure.Patients
     public class PatientRepository : BaseRepository<Patient, PatientId>, IPatientRepository
     {
         private DbSet<Patient> _objs;
+        
         public PatientRepository(SARMDbContext context):base(context.Patients)
         {
             this._objs = context.Patients;
         }
 
-        public async Task<Patient> getByPhoneNumberAsync(PhoneNumber phoneNumber)
+        public async Task<Patient?> GetByPhoneNumberAsync(PhoneNumber phoneNumber)
         {
-            return await _objs.
-                FirstOrDefaultAsync(p => p.ContactInformation.PhoneNumber == phoneNumber);
+            return await _objs
+                .AsQueryable().Where(x=> phoneNumber.Equals(x.ContactInformation.PhoneNumber)).FirstOrDefaultAsync();
+            
         }
 
-        public async Task<Patient> GetByEmailAsync(Email email)
+        public async Task<Patient?> GetByEmailAsync(Email email)
         {
             return await _objs.
-                FirstOrDefaultAsync(p => p.ContactInformation.Email == email);
+                AsQueryable().Where(x=> email.Equals(x.ContactInformation.Email)).FirstOrDefaultAsync();
         }
     }
 }

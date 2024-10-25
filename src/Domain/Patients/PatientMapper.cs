@@ -14,6 +14,19 @@ namespace Domain.Patients
                 dto.ContactInformation
             );
         }
+        
+        public static UpdatingPatientDto ToUpdatingPatientDto(PatientDto dto)
+        {
+            return new UpdatingPatientDto
+            (
+                dto.FullName.FirstName,
+                dto.FullName.LastName,
+                dto.ContactInformation.Email,
+                dto.ContactInformation.PhoneNumber,
+                dto.AppointmentHistory,
+                dto.MedicalConditions
+            );
+        }
 
         public static PatientDto ToDto(Patient patient)
         {
@@ -31,8 +44,12 @@ namespace Domain.Patients
         {
             return new Patient(
                 dto.Id,
+                dto.FirstName,
+                dto.LastName,
                 dto.Email,
-                dto.PhoneNumber
+                dto.PhoneNumber,
+                dto.AppointmentHistory,
+                dto.MedicalConditions
             );
         }
 

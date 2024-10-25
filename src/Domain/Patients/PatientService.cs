@@ -51,7 +51,7 @@ namespace Domain.Patients
             return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
-        public async Task<PatientDto> AddAsync(Patient p)
+        public async Task<PatientDto?> AddAsync(Patient p)
         {
             var numberPatients = _repo.GetAllAsync().Result.Count;
             string formattedDate = DateTime.Now.ToString("yyyyMM");
@@ -61,20 +61,25 @@ namespace Domain.Patients
             p.ChangeMedicalRecordNumber(medicalRecordNumber);
             try
             {
-                var byPhoneNumberAsync = _repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber);
-                if(byPhoneNumberAsync != null)
+                var phoneNumberToCheck = p.ContactInformation.PhoneNumber;
+                var byPhoneNumberAsync = await _repo.GetByPhoneNumberAsync(phoneNumberToCheck);
+                if (byPhoneNumberAsync != null)
+                {
                     throw new Exception("Phone number already exists");
+                }
                 
                 await _repo.AddAsync(p);
                 await _unitOfWork.CommitAsync();
                 
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, p.Id );
+                
+                return new PatientDto (p.Id.AsGuid(), p.FullName, p.DateOfBirth, p.Gender, medicalRecordNumber, p.ContactInformation, p.MedicalConditions, p.EmergencyContact, p.UserId );
             }catch(Exception e)
             {
                 Console.WriteLine(e.Message);
+                return null;
             }
             
-            return new PatientDto (p.Id.AsGuid(), p.FullName, p.DateOfBirth, p.Gender, medicalRecordNumber, p.ContactInformation, p.MedicalConditions, p.EmergencyContact, p.UserId );
         }
         
         /*
@@ -85,17 +90,24 @@ namespace Domain.Patients
         }
         */
 
-        public async Task<PatientDto> UpdateAsync(Patient p)
+        public async Task<PatientDto> UpdateAsync(UpdatingPatientDto dto)
         {
-            var patient = await this._repo.GetByIdAsync(p.Id); 
+            var patient = await this._repo.GetByEmailAsync(dto.Email); 
 
             if (patient == null)
                 return null;   
             try
             {
-                if (_repo.getByPhoneNumberAsync(p.ContactInformation.PhoneNumber) == null)
-                    return null;
-                patient.UpdatePatient(p);
+                if (dto.PhoneNumber != null)
+                {
+                    var phoneNumberToCheck = dto.PhoneNumber;
+                    var byPhoneNumberAsync = await _repo.GetByPhoneNumberAsync(phoneNumberToCheck);
+                    if (byPhoneNumberAsync != null)
+                    {
+                        throw new Exception("Phone number already exists");
+                    }
+                }
+                patient.UpdatePatient(PatientMapper.ToEntity(dto));
                 await _unitOfWork.CommitAsync();
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, p.Id );
             }catch(Exception e)
