@@ -8,9 +8,12 @@ namespace Infrastructure
         public static string ConnectionString { get; private set; }
         public static string Email { get; private set; }
         public static string Password { get; private set; }
-        public static string GoogleClientId { get; private set; }
-        public static string GoogleClientSecret { get; private set; }
-        public static string GoogleURL { get; internal set; }
+        public static string IAMDomain { get; private set; }
+        public static string IAMClientId { get; private set; }
+        public static string IAMClientSecret { get; private set; }
+        public static string IAMRedirectUri { get; private set; }
+        public static string IAMLoginUrl { get; private set; }
+        public static string IAMLogoutUrl { get; private set; }
 
         public static void Initialize(IConfiguration configuration)
         {
@@ -18,9 +21,12 @@ namespace Infrastructure
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
             Email = configuration["SendEmailSettings:Email"];
             Password = configuration["SendEmailSettings:Password"];
-            GoogleClientId = configuration["Google:ClientId"];
-            GoogleClientSecret = configuration["Google:ClientSecret"];
-            GoogleURL = configuration["Google:URL"];
+            IAMDomain = configuration["IAM:Domain"];
+            IAMClientId = configuration["IAM:ClientId"];
+            IAMClientSecret = configuration["IAM:ClientSecret"];
+            IAMRedirectUri = configuration["IAM:redirect_uri"];
+            IAMLoginUrl = configuration["IAM:LoginURL"];
+            IAMLogoutUrl = configuration["IAM:LogoutURL"];
         }
     }
 }

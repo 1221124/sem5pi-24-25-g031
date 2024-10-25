@@ -17,8 +17,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Infrastructure.Shared;
 using Newtonsoft.Json.Serialization;
 using Domain.Emails;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Domain.IAM;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,7 +52,6 @@ builder.Services.AddTransient<PatientService>();
 builder.Services.AddTransient<IStaffRepository, StaffRepository>();
 builder.Services.AddTransient<StaffService>();
 
-// builder.Services.AddTransient<IAMService>();
 builder.Services.AddHttpClient<IAMService>();
 
 builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
@@ -64,21 +61,12 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(new EmailService("smtp.gmail.com", 587, AppSettings.Email, AppSettings.Password));
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(options =>
-{
-    options.ClientId = AppSettings.GoogleClientId;
-    options.ClientSecret = AppSettings.GoogleClientSecret;
-    options.Scope.Add("email");
-    options.Scope.Add("profile");
-    options.SaveTokens = true;
-});
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = AppSettings.IAMDomain;
+        options.Audience = AppSettings.IAMClientId;
+    });
 
 var app = builder.Build();
 

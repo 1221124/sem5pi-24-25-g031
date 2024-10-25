@@ -59,11 +59,11 @@ namespace Controllers
             }
 
             try {
-                var accessToken = await _iamService.ExchangeCodeForTokenAsync(code);
+                var token = await _iamService.ExchangeCodeForTokenAsync(code);
 
-                var email = await _iamService.GetUserInfoFromTokenAsync(accessToken);
+                var email = await _iamService.GetEmailFromCodeAsync(token);
 
-                if (!email.EndsWith(AppSettings.EmailDomain))
+                if (!email.Value.EndsWith(AppSettings.EmailDomain))
                 {
                     return await CreateOrLoginPatientUser(new CreatingUserDto(email, Role.Patient));
                 }
