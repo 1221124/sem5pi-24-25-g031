@@ -19,7 +19,8 @@ namespace Infrastructure.StaffRepository
 
         public async Task<Staff> GetByEmailAsync(Email email)
         {
-            return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.Email == email);
+            return await this._objs
+                .AsQueryable().Where(x => email.Equals(x.ContactInformation.Email)).FirstOrDefaultAsync();
         }
 
         public async Task<Staff> GetByPhoneNumberAsync(PhoneNumber phoneNumber)
@@ -30,11 +31,6 @@ namespace Infrastructure.StaffRepository
         public async Task<Staff> GetByFullNameAsync(FullName firstName)
         {
             return await _objs.FirstOrDefaultAsync(x => x.FullName.FirstName == firstName);
-        }
-
-        public Task UpdateAsync(Staff staff)
-        {
-            throw new System.NotImplementedException();
         }
     }
 
