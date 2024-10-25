@@ -67,6 +67,12 @@ namespace Domain.Patients
                 {
                     throw new Exception("Phone number already exists");
                 }
+                var emailToCheck = p.ContactInformation.Email;
+                var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
+                if (byEmailAsync != null)
+                {
+                    throw new Exception("Email already exists");
+                }
                 
                 await _repo.AddAsync(p);
                 await _unitOfWork.CommitAsync();
@@ -81,18 +87,10 @@ namespace Domain.Patients
             }
             
         }
-        
-        /*
-        private Patient PatientDtoPatient(CreatingPatientDto dto)
-        {
-            return new Patient(new FullName(dto.FullName.FirstName, dto.FullName.LastName), DateTime.Parse(dto.DateOfBirth), new ContactInformation(dto.ContactInformation.Email, dto.ContactInformation.PhoneNumber));
 
-        }
-        */
-
-        public async Task<PatientDto> UpdateAsync(UpdatingPatientDto dto)
+        public async Task<PatientDto?> UpdateAsync(UpdatingPatientDto dto)
         {
-            var patient = await this._repo.GetByEmailAsync(dto.Email); 
+            var patient = await this._repo.GetByEmailAsync(dto.EmailId); 
 
             if (patient == null)
                 return null;   
@@ -107,14 +105,26 @@ namespace Domain.Patients
                         throw new Exception("Phone number already exists");
                     }
                 }
+
+                if (dto.Email != null)
+                {
+                    var emailToCheck = dto.Email;
+                    var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
+                    if (byEmailAsync != null)
+                    {
+                        throw new Exception("Email already exists");
+                    } 
+                }
+
                 patient.UpdatePatient(PatientMapper.ToEntity(dto));
                 await _unitOfWork.CommitAsync();
-                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, p.Id );
+                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id );
+                return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
             }catch(Exception e)
             {
                 Console.WriteLine(e.Message);
+                return null;
             }
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
         }
 
         public async Task<PatientDto> DeleteAsync(PatientId id)

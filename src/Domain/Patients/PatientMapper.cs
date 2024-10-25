@@ -19,6 +19,7 @@ namespace Domain.Patients
         {
             return new UpdatingPatientDto
             (
+                dto.ContactInformation.Email,
                 dto.FullName.FirstName,
                 dto.FullName.LastName,
                 dto.ContactInformation.Email,

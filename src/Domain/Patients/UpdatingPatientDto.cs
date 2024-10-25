@@ -5,15 +5,17 @@ namespace Domain.Patients
     public class UpdatingPatientDto
     {
         public Guid Id { get; set; }
+        public Email EmailId { get; set; }
         public Name? FirstName { get; set; }
         public Name? LastName { get; set; }
-        public Email Email { get; set; }
+        public Email? Email { get; set; }
         public PhoneNumber? PhoneNumber { get; set; }
         public AppointmentHistory? AppointmentHistory { get; set; }
         public List<MedicalConditions>? MedicalConditions { get; set; }
         
-        public UpdatingPatientDto(Name? firstName, Name? lastName, Email email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, List<MedicalConditions>? medicalConditions)
+        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, List<MedicalConditions>? medicalConditions)
         {
+            EmailId = emailId;
             FirstName = firstName;
             LastName = lastName;
             Email = email;
