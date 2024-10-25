@@ -8,13 +8,13 @@
 
 // namespace Users
 // {
-//     public class UserServiceTest
+//     public class UserServiceUnitTest
 //     {
 //         private readonly UserService _userService;
 //         private readonly Mock<IUserRepository> _userRepositoryMock;
 //         private readonly DbContextOptions<SARMDbContext> _options;
 
-//         public UserServiceTest()
+//         public UserServiceUnitTest()
 //         {
 //             _options = new DbContextOptionsBuilder<SARMDbContext>()
 //                 .UseInMemoryDatabase("TestDatabase")
