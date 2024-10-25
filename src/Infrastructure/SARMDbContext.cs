@@ -13,6 +13,7 @@ using Domain.Staffs;
 using Infrastructure.Staffs;
 using Domain.DBLogs;
 using Infrastructure.DBLogs;
+using Infrastructure.UsersSession;
 
 namespace Infrastructure
 {
@@ -24,6 +25,7 @@ namespace Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Staff> Staffs { get; set; }
+        public DbSet<UserSession> UsersSessions { get; internal set; }
 
         public SARMDbContext(DbContextOptions options) : base(options)
         {
@@ -46,6 +48,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new DBLogEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UsersSessionEntityTypeConfiguration());
         }
     }
 }

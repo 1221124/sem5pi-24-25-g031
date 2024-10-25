@@ -17,7 +17,7 @@ namespace Infrastructure
 
         public static void Initialize(IConfiguration configuration)
         {
-            EmailDomain = configuration["EmailSettings:EmailDomain"];
+            EmailDomain = configuration["SendEmailSettings:Email"];
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
             Email = configuration["SendEmailSettings:Email"];
             Password = configuration["SendEmailSettings:Password"];
