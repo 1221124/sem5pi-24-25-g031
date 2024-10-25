@@ -15,9 +15,10 @@ namespace Domain.Patients
         public ContactInformation ContactInformation { get; set; }
         public List<MedicalConditions> MedicalConditions { get; set; }
         public EmergencyContact EmergencyContact { get; set; }
+        public AppointmentHistory AppointmentHistory { get; set; }
         public UserId UserId { get; set; }
 
-        public PatientDto(Guid id,FullName fullName, DateTime dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, UserId userId)
+        public PatientDto(Guid id,FullName fullName, DateTime dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,UserId userId)
         {
             Id = id; 
             FullName = fullName;
@@ -27,7 +28,20 @@ namespace Domain.Patients
             ContactInformation = contactInformation;
             MedicalConditions = medicalConditions;
             EmergencyContact = emergencyContact;
-            //AppointmentHistory = appointmentHistory;
+            UserId = userId;
+        }
+        
+        public PatientDto(Guid id,FullName fullName, DateTime dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,AppointmentHistory appointmentHistory,UserId userId)
+        {
+            Id = id; 
+            FullName = fullName;
+            DateOfBirth = dateOfBirth; 
+            Gender = gender;
+            MedicalRecordNumber = medicalRecordNumber;
+            ContactInformation = contactInformation;
+            MedicalConditions = medicalConditions;
+            EmergencyContact = emergencyContact;
+            AppointmentHistory = appointmentHistory;
             UserId = userId;
         }
         
@@ -39,6 +53,12 @@ namespace Domain.Patients
             ContactInformation = contactInformation;
             UserId = userId;
         }
+        
+        public PatientDto (Guid guid, ContactInformation contactInformation)
+        {
+            Id = guid;
+            ContactInformation = contactInformation;
+        }
 
         public PatientDto(Guid guid){
             Id = guid;
@@ -47,11 +67,11 @@ namespace Domain.Patients
         public PatientDto(PatientId id){
             Id = id.AsGuid();
         }
-        /*
+        
         public PatientDto()
         {
             
         }
-        */
+        
     }
 }

@@ -25,9 +25,30 @@ namespace Domain.Patients
                 patient.ContactInformation,
                 patient.UserId
             );
-                
-                
-            
+        }
+        
+        public static Patient ToEntity(UpdatingPatientDto dto)
+        {
+            return new Patient(
+                dto.Id,
+                dto.ContactInformation
+            );
+        }
+
+        public static Patient ToEntity(PatientDto dto)
+        {
+            return new Patient(
+                dto.Id,
+                dto.FullName,
+                dto.DateOfBirth,
+                dto.Gender,
+                dto.MedicalRecordNumber,
+                dto.ContactInformation,
+                dto.MedicalConditions,
+                dto.EmergencyContact,
+                dto.AppointmentHistory,
+                dto.UserId
+            );
         }
     }
 }

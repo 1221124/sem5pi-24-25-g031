@@ -19,5 +19,7 @@ namespace Domain.Patients {
             DateOfBirth = dateOfBirth;
             ContactInformation = contactInformation;
         }
+        
+        
     }
 }

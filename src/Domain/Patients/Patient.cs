@@ -33,6 +33,20 @@ namespace Domain.Patients
       AppointmentHistory = appointmentHistory;
       UserId = userId;
     }
+    
+    public Patient(Guid guid ,FullName fullName, DateTime dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
+    {
+      Id = new PatientId(guid);
+      FullName = fullName;
+      DateOfBirth = dateOfBirth; 
+      Gender = gender;
+      MedicalRecordNumber = medicalRecordNumber;
+      ContactInformation = contactInformation;
+      MedicalConditions = medicalConditions;
+      EmergencyContact = emergencyContact;
+      AppointmentHistory = appointmentHistory;
+      UserId = userId;
+    }
         
     public Patient (FullName fullName, DateTime dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
     {
@@ -53,6 +67,12 @@ namespace Domain.Patients
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
       DateOfBirth = dateOfBirth; 
+      ContactInformation = contactInformation;
+    }
+
+    public Patient(Guid guid, ContactInformation contactInformation)
+    {
+      Id = new PatientId(guid);
       ContactInformation = contactInformation;
     }
 
@@ -87,7 +107,19 @@ namespace Domain.Patients
       {
         throw new ArgumentNullException("ContactInformation cannot be null.");
       }
-      this.ContactInformation = contactInformation;
+
+      if (contactInformation.PhoneNumber != null)
+      {
+        this.ContactInformation.PhoneNumber = contactInformation.PhoneNumber;
+      }
+
+      if (contactInformation.Email != null)
+      {
+        this.ContactInformation.Email = contactInformation.Email;
+      }
+      {
+        
+      }
     }
 
     public void ChangeMedicalConditions(List<MedicalConditions> medicalConditions)

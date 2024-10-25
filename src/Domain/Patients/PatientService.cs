@@ -84,15 +84,15 @@ namespace Domain.Patients
         }
         */
 
-        public async Task<PatientDto> UpdateAsync(PatientDto dto)
+        public async Task<PatientDto> UpdateAsync(Patient p)
         {
-            var patient = await this._repo.GetByIdAsync(new PatientId(dto.Id)); 
+            var patient = await this._repo.GetByIdAsync(p.Id); 
 
             if (patient == null)
                 return null;   
 
             
-            patient.ChangeContactInformation(dto.ContactInformation);
+            patient.ChangeContactInformation(p.ContactInformation);
 
             await _unitOfWork.CommitAsync();
 
