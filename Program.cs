@@ -18,6 +18,8 @@ using Infrastructure.Shared;
 using Newtonsoft.Json.Serialization;
 using Domain.Emails;
 using Domain.IAM;
+using Infrastructure.UsersSession;
+using Domain.UsersSession;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +58,9 @@ builder.Services.AddHttpClient<IAMService>();
 
 builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
 builder.Services.AddTransient<DBLogService>();
+
+builder.Services.AddTransient<IUserSessionRepository, UsersSessionRepository>();
+builder.Services.AddTransient<SessionService>();
 
 builder.Services.AddMemoryCache();
 
