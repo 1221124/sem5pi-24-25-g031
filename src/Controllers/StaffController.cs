@@ -15,6 +15,8 @@ namespace Controllers
     {
         private readonly StaffService _service;
 
+        private readonly IStaffRepository _repo;
+
         private readonly DBLogService _DBLogService;
 
         private static readonly EntityType StaffEntityType = EntityType.STAFF;
@@ -45,25 +47,43 @@ namespace Controllers
             return staff;
         }
 
+        //Procurar por searchCriteria
+        /*[HttpGet("search")]
+        public async Task<ActionResult<StaffDto>> GetBySearchCriteria(CreatingStaffDto staffDto)
+        {
+            if (staffDto == null)
+            {
+                return BadRequest("Parâmetros de pesquisa inválidos.");
+            }
+
+        }*/
+
         // POST: api/Staff
         [HttpPost]
         public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
         {
-            if (staffDto == null)
+            try
             {
-                //_DBLogService.LogError(StaffEntityType, "Invalid data request.");
-                return BadRequest("Invalid request data.");
+                if (staffDto == null)
+                {
+                    //_DBLogService.LogError(StaffEntityType, "Invalid data request.");
+                    return BadRequest("Invalid request data.");
+                }
+
+                var staff = await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
+
+                return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
             }
-
-            var staff = await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
-
-            return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
 
         }
 
         // PUT: api/Staff/5
-        [HttpPost("{id}")]
-        public async Task<ActionResult<StaffDto>> Update(CreatingStaffDto dto)
+        [HttpPut("update/email={email}")]
+        public async Task<ActionResult<StaffDto>> Update(UpdatingStaffDto dto)
         {
             if (dto == null)
             {
@@ -71,7 +91,7 @@ namespace Controllers
                 return BadRequest("Staff data is required.");
             }
 
-            await _service.UpdateAsync(StaffMapper.ToEntityFromCreating(dto));
+            await _service.UpdateAsync(StaffMapper.ToEntityFromUpdating(dto));
 
             return Ok("Staff request updated successfully.");
         }

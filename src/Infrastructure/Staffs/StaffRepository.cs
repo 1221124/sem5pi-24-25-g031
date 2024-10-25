@@ -27,6 +27,11 @@ namespace Infrastructure.StaffRepository
             return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.PhoneNumber == phoneNumber);
         }
 
+        public async Task<Staff> GetByFullNameAsync(FullName firstName)
+        {
+            return await _objs.FirstOrDefaultAsync(x => x.FullName.FirstName == firstName);
+        }
+
         public Task UpdateAsync(Staff staff)
         {
             throw new System.NotImplementedException();
