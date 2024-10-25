@@ -67,7 +67,12 @@ namespace Controllers
                 {
                     return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient));
                 }
-                //TODO: Redirect to Backoffice Login
+                
+                if(email.EndsWith(AppSettings.EmailDomain))
+                {
+                    return await LoginBackofficeUser(email);
+                }
+
                 return Ok();
             } catch (Exception ex) {
                 return BadRequest(new { Message = ex.Message });
@@ -96,8 +101,8 @@ namespace Controllers
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        // POST: api/Users/patient
-        [HttpPost("patient")]
+        // POST: api/Users/patient/login
+        [HttpPost("patient/login")]
         public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto)
         {
             // var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code, "http://localhost:5500/api/patient/register");
@@ -124,6 +129,32 @@ namespace Controllers
             }
 
             return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
+        }
+
+        // POST: api/Users/backoffice/login
+        [HttpPost("backoffice/login")]
+        public async Task<ActionResult<UserDto>> LoginBackofficeUser(string sEmail)
+        {
+            Email email = new(sEmail);
+
+            var staffDto = await _staffService.GetByEmailAsync(email);
+            
+            if(staffDto != null)
+            {
+                var user = await _service.GetByEmailAsync(email);
+
+                if (user == null)
+                    return BadRequest(new { Message = $"User with email {email.Value} not found." });
+                else{
+                    if(user.UserStatus == UserStatus.Blocked || !RoleUtils.IsStaff(user.Role))
+                        return Forbid();
+                    else
+                        return Ok();
+                }
+
+            }else{
+                return BadRequest(new { Message = $"Staff with email {email.Value} not found." });
+            }
         }
 
         // PUT: api/Users/5
