@@ -13,7 +13,7 @@ namespace Domain.IAM
             _httpClient = httpClient;
         }
 
-        public async Task<string> ExchangeCodeForTokenAsync(string code)
+        public async Task<TokenResponse> ExchangeCodeForTokenAsync(string code)
         {
             var requestBody = new Dictionary<string, string>
             {
@@ -36,40 +36,44 @@ namespace Domain.IAM
             var responseContent = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseContent);
 
-            if (tokenResponse.AccessToken == null)
+            if (tokenResponse.IdToken == null)
             {
-                throw new Exception("Access token not found in response.");
+                throw new Exception("ID token not found in response.");
             }
 
-            return tokenResponse.AccessToken;
+            return tokenResponse;
         }
 
-        public async Task<Email> GetEmailFromCodeAsync(string token)
+        public async Task<string> GetEmailFromIdTokenAsync(string idToken)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(idToken))
             {
-                throw new Exception("Token cannot be null or empty.");
+                throw new Exception("ID token cannot be null or empty.");
             }
 
             var handler = new JwtSecurityTokenHandler();
-            if (!handler.CanReadToken(token))
+            if (!handler.CanReadToken(idToken))
             {
-                throw new Exception("Invalid token.");
+                throw new Exception("Invalid ID token.");
             }
 
-            var jwtToken = handler.ReadJwtToken(token);
-            // var emailClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "email");
-            var emailClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "https://dev-sagir8s22k2ehmk0.us.auth0.com/api/v2/email");
-            return emailClaim?.Value ?? throw new Exception("Email claim not found in token.");
-        }
+            var jwtToken = handler.ReadJwtToken(idToken);
+            var emailClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "email");
+            if (emailClaim == null)
+            {
+                throw new Exception("Email claim not found in ID token.");
+            }
 
+            return emailClaim.Value;
+        }
     }
 
     public class TokenResponse
     {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }
-        
-    }
 
+        [JsonProperty("id_token")]
+        public string IdToken { get; set; }
+    }
 }

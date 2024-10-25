@@ -59,13 +59,13 @@ namespace Controllers
             }
 
             try {
-                var token = await _iamService.ExchangeCodeForTokenAsync(code);
+                var idToken = await _iamService.ExchangeCodeForTokenAsync(code);
 
-                var email = await _iamService.GetEmailFromCodeAsync(token);
+                var email = await _iamService.GetEmailFromIdTokenAsync(idToken.IdToken);
 
-                if (!email.Value.EndsWith(AppSettings.EmailDomain))
+                if (!email.EndsWith(AppSettings.EmailDomain))
                 {
-                    return await CreateOrLoginPatientUser(new CreatingUserDto(email, Role.Patient));
+                    return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient));
                 }
                 //TODO: Redirect to Backoffice Login
                 return Ok();
