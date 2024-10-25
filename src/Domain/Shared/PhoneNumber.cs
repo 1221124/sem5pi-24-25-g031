@@ -40,6 +40,25 @@ namespace Domain.Shared
         {
             return Value.ToString();
         }
+        public override bool Equals(object obj)
+        {
+            return obj is PhoneNumber number && Value == number.Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Value);
+        }
+
+        public static bool operator ==(PhoneNumber left, PhoneNumber right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PhoneNumber? left, PhoneNumber right)
+        {
+            return !Equals(left, right);
+        }
     }
 
 }

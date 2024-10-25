@@ -122,7 +122,7 @@ namespace Controllers
                     user = await _service.AddAsync(dto);
 
                     patientDto.UserId = new UserId(user.Id);
-                    await _patientService.UpdateAsync(PatientMapper.ToEntity(patientDto));
+                    await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
                 } else {
                     if (user.UserStatus == UserStatus.Blocked || !RoleUtils.IsPatient(user.Role))
                         return Forbid();

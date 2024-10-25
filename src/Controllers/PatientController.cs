@@ -55,8 +55,14 @@ namespace src.Controllers
                 return BadRequest(new {Message = "Phone number already exists"});
             }
             var patient = await _service.AddAsync(PatientMapper.ToEntityFromCreating(dto)); //problema
-
-            return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
+            if (patient == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
+            }
         }
 
         // PUT: api/Patient/5
@@ -66,7 +72,7 @@ namespace src.Controllers
             
             try
             {
-                var patient = await _service.UpdateAsync(PatientMapper.ToEntity(dto));
+                var patient = await _service.UpdateAsync(dto);
 
                 if (patient == null)
                 {

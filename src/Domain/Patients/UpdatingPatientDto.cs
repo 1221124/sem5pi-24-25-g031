@@ -7,12 +7,12 @@ namespace Domain.Patients
         public Guid Id { get; set; }
         public Name? FirstName { get; set; }
         public Name? LastName { get; set; }
-        public Email? Email { get; set; }
+        public Email Email { get; set; }
         public PhoneNumber? PhoneNumber { get; set; }
         public AppointmentHistory? AppointmentHistory { get; set; }
-        public MedicalConditions? MedicalConditions { get; set; }
+        public List<MedicalConditions>? MedicalConditions { get; set; }
         
-        public UpdatingPatientDto(Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, MedicalConditions? medicalConditions)
+        public UpdatingPatientDto(Name? firstName, Name? lastName, Email email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, List<MedicalConditions>? medicalConditions)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -27,8 +27,9 @@ namespace Domain.Patients
             Email = email;
         }
         
-        public UpdatingPatientDto(PhoneNumber phoneNumber)
+        public UpdatingPatientDto(Email email, PhoneNumber phoneNumber)
         {
+            Email = email;
             PhoneNumber = phoneNumber;
         }
         
