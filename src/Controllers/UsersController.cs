@@ -6,6 +6,7 @@ using Domain.Patients;
 using Domain.Emails;
 using Infrastructure;
 using Domain.IAM;
+using Domain.UsersSession;
 
 namespace Controllers
 {
@@ -18,10 +19,10 @@ namespace Controllers
         private readonly PatientService _patientService;
         private readonly IAMService _iamService;
         private readonly EmailService _emailService;
-        private readonly ISessionService _sessionService;
+        private readonly SessionService _sessionService;
 
         public UsersController(UserService service, StaffService staffService, PatientService patientService, 
-        IAMService iAMService, EmailService emailService, ISessionService sessionService)
+        IAMService iAMService, EmailService emailService, SessionService sessionService)
         {
             _service = service;
             _staffService = staffService;
