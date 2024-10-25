@@ -42,8 +42,8 @@ namespace Infrastructure.Patients
                 .IsRequired()
                 .HasColumnName("DateOfBirth")
                 .HasConversion(
-                    v => v.ToString("yyyy-MM-dd"), 
-                    v => DateTime.Parse(v) 
+                    v => v.ToString(), 
+                    v => new DateOfBirth(v)
                 );
 
             builder.Property(p => p.Gender)
