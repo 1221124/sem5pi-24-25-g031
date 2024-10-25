@@ -11,6 +11,10 @@ namespace Domain.Staffs
         {
         }
 
+        public StaffId(String value) : base(value)
+        {
+        }
+
 
         override
         protected object createFromString(string text)

@@ -12,7 +12,7 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
         builder.HasKey(o => o.Id);
 
         builder.Property(o => o.UserId)
-            .IsRequired();
+            .HasColumnName("UserId");
 
         builder.OwnsOne(o => o.FullName, name =>
         {
@@ -64,18 +64,8 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 )
             .IsRequired();
 
-        // builder.OwnsOne(o => o.Id, sa =>
-        // {
-        //     sa.Property(p => p.LicenseNumber.Value)
-        //         .HasColumnName("LicenseNumber")
-        //         .HasMaxLength(100)
-        //         .HasConversion(
-        //             v => v,
-        //             v => new LicenseNumber(v)
-        //         );
-        // });
-
         builder.Property(o => o.Specialization)
+            .HasColumnName("Specialization")
             .IsRequired()
             .HasMaxLength(100)
             .HasConversion(
@@ -84,6 +74,7 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
             );
 
         builder.Property(o => o.Status)
+            .HasColumnName("Status")
             .IsRequired()
             .HasConversion(
                 v => StatusUtils.ToString(v),
@@ -123,11 +114,6 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                     v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                 );
         });
-
-        builder.Property(s=>s.UserId)
-            .HasColumnName("UserId");
-        
-        
 
     }
 }

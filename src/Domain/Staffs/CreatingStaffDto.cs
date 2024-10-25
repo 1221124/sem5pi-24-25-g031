@@ -6,20 +6,17 @@ namespace Domain.Staffs
 {
     public class CreatingStaffDto
     {
-        //public string UserId { get; set; }
         public FullName FullName { get; set; }
-        public ContactInformation ContactInformation { get; set; }
-        //  public string LicenseNumber { get; set; }
+        public PhoneNumber PhoneNumber { get; set; }
+        public Email Email { get; set; }
         public Specialization Specialization { get; set; }
-        public Status Status { get; set; }
-        //  public List<Slot> Slot { get; set; }
 
-        public CreatingStaffDto(FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
+        public CreatingStaffDto(FullName fullName, PhoneNumber phoneNumber, Email email, Specialization specialization)
         {
             FullName = fullName;
-            ContactInformation = contactInformation;
+            PhoneNumber = phoneNumber;
+            Email = email;
             Specialization = specialization;
-            Status = status;
         }
 
 

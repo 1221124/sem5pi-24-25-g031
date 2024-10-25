@@ -14,8 +14,8 @@ namespace Domain.Staffs
         public Specialization Specialization { get; set; }
         public ContactInformation ContactInformation { get; set; }
         public Status Status { get; set; }
-        public List<Slot>? SlotAppointement { get; set; }
-        public List<Slot>? SlotAvailability { get; set; }
+        public List<Slot> SlotAppointement { get; set; }
+        public List<Slot> SlotAvailability { get; set; }
 
         public Staff()
         {
@@ -23,27 +23,16 @@ namespace Domain.Staffs
             // SlotAvailability = new List<Slot>();
         }
 
-        public Staff(LicenseNumber licenseNumber, UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
+        public Staff(LicenseNumber licenseNumber, FullName fullName, ContactInformation contactInformation, Specialization specialization)
         {
             Id = new StaffId(Guid.NewGuid());
             LicenseNumber = licenseNumber;
-            UserId = userId;
             FullName = fullName;
             ContactInformation = contactInformation;
             Specialization = specialization;
-            Status = status;
+            Status = Status.Pending;
             SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
-        }
-
-        public Staff(LicenseNumber licenseNumber, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
-        {
-            Id = new StaffId(Guid.NewGuid());
-            LicenseNumber = licenseNumber;
-            FullName = fullName;
-            ContactInformation = contactInformation;
-            Specialization = specialization;
-            Status = status;
         }
 
         public Staff(StaffId staffId, UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
@@ -58,19 +47,32 @@ namespace Domain.Staffs
             SlotAvailability = new List<Slot>();
         }
 
-        public Staff(FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
+        public Staff(FullName fullName, ContactInformation contactInformation, Specialization specialization)
         {
             FullName = fullName;
             ContactInformation = contactInformation;
             Specialization = specialization;
-            Status = status;
             SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
+        }
+
+
+        public Staff(Email email, PhoneNumber phoneNumber, List<Slot> avalibilitySlots, Specialization specialization)
+        {
+            ContactInformation.Email = email;
+            ContactInformation.PhoneNumber = phoneNumber;
+            Specialization = specialization;
+            SlotAvailability = avalibilitySlots;
         }
 
         public void ChangeContactInformation(ContactInformation contactInformation)
         {
             ContactInformation = contactInformation;
+        }
+
+        public void ChangeLicenseNumber(LicenseNumber licenseNumber)
+        {
+            LicenseNumber = licenseNumber;
         }
 
         public void ChangeSpecialization(Specialization specialization)

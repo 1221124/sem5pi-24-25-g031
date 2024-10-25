@@ -37,10 +37,29 @@ namespace Domain.Staffs
         {
             return new Staff(
                 dto.FullName,
-                dto.ContactInformation,
-                dto.Specialization,
-                dto.Status
+                new ContactInformation(dto.Email, dto.PhoneNumber),
+                dto.Specialization
             );
+        }
+
+        public static Staff ToEntityFromUpdating(UpdatingStaffDto dto)
+        {
+            return new Staff(
+                dto.Email,
+                dto.PhoneNumber,
+                dto.AvailabilitySlots,
+                dto.Specialization
+            );
+        }
+
+        public static List<StaffDto> ToDtoList(List<Staff> staffs)
+        {
+            return staffs.ConvertAll(staff => ToDto(staff));
+        }
+
+        public static List<Staff> ToEntityList(List<StaffDto> dtoList)
+        {
+            return dtoList.ConvertAll(dto => ToEntity(dto));
         }
     }
 }

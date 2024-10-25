@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Domain.DBLogs;
 using Domain.Shared;
 using Domain.Users;
+using Google.Rpc;
 using Infrastructure.Staffs;
+using NuGet.Protocol;
 
 
 namespace Domain.Staffs
@@ -40,11 +43,23 @@ namespace Domain.Staffs
 
         public async Task<List<StaffDto>> GetAllAsync()
         {
-            var list = await this._repo.GetAllAsync();
+            try
+            {
+                var list = await this._repo.GetAllAsync();
 
-            List<StaffDto> listDto = list.ConvertAll<StaffDto>(staff => new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability });
-
-            return listDto;
+                if (list == null)
+                {
+                    return [];
+                }
+                else
+                {
+                    return StaffMapper.ToDtoList(list);
+                }
+            }
+            catch (Exception)
+            {
+                return [];
+            }
         }
 
         public async Task<StaffDto> GetByIdAsync(StaffId id)
@@ -56,10 +71,15 @@ namespace Domain.Staffs
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
+        /*public async Task<List<StaffDto>> GetBySearchCriteriaAsync(Staff staffDto)
+        {
+
+        }*/
 
         public async Task<StaffDto?> GetByEmailAsync(Email email)
         {
-            try{
+            try
+            {
                 var staff = await this._repo.GetByEmailAsync(email);
 
                 if (staff == null)
@@ -67,7 +87,9 @@ namespace Domain.Staffs
 
                 //return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
                 return StaffMapper.ToDto(staff);
-            }catch(Exception e){
+            }
+            catch (Exception e)
+            {
                 _dbLogService.LogError(StaffEntityType, e.ToString());
                 return null;
             }
@@ -78,26 +100,35 @@ namespace Domain.Staffs
         {
             try
             {
-                /*
-                var user = await _userRepo.GetByIdAsync(dto.UserId);
-
-                if (user == null)
-                    throw new BusinessRuleValidationException("User not found.");
-                */
-                
-                //string Role = RoleUtils.IdStaff(user.Role);
-
-                var log = DateTime.Now.ToString("yyyy");
-                
-                var numberStaff =  _repo.GetAllAsync().Result.Count;
-
-                if (await _repo.GetByEmailAsync(dto.ContactInformation.Email) != null && await _repo.GetByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
+                if (dto.ContactInformation.PhoneNumber == null)
                 {
-                    throw new BusinessRuleValidationException("Email or phone number already in use.");
+                    throw new ArgumentNullException(nameof(dto.ContactInformation), "Contact information cannot be null.");
                 }
 
-                var staff = new Staff(new LicenseNumber(Role.NotApplicable + log + numberStaff), dto.FullName, dto.ContactInformation, dto.Specialization, Status.Active);
+                if (dto.ContactInformation.PhoneNumber.Equals(0))
+                {
+                    throw new ArgumentNullException(nameof(dto.ContactInformation), "Contact information igual a 0.");
+                }
 
+                var staffList = await _repo.GetAllAsync();
+                if (staffList == null)
+                {
+                    throw new InvalidOperationException("Failed to retrieve staff list.");
+                }
+
+                if (await _repo.GetByEmailAsync(dto.ContactInformation.Email) != null || await _repo.GetByPhoneNumberAsync(dto.ContactInformation.PhoneNumber) != null)
+                {
+                    throw new InvalidDataException("Email or phone number exists!");
+                }
+
+                var numberStaff = staffList.Count;
+
+                string licenseNumber = RoleUtils.IdStaff(Role.NotApplicable) + DateTime.Now.ToString("yyyy") + numberStaff;
+
+                Console.WriteLine("Generated License Number: " + licenseNumber); // Para debug    
+
+                // Construct new Staff object
+                var staff = new Staff(new LicenseNumber(licenseNumber), dto.FullName, dto.ContactInformation, dto.Specialization);
 
                 if (staff == null)
                     return null;
@@ -112,12 +143,14 @@ namespace Domain.Staffs
             }
             catch (Exception e)
             {
-                //_dbLogService.LogError(EntityType.STAFF, e.ToString());
+                // Log error with stack trace for better debugging
+                Console.WriteLine("Error: " + e.Message);
+                Console.WriteLine("Stack Trace: " + e.StackTrace);
                 return StaffMapper.ToDto(dto);
             }
         }
 
-        public async Task<StaffDto> UpdateAsync(Staff staff)
+        public async Task<StaffDto> UpdateLicenseNumberAsync(Staff staff)
         {
             try
             {
@@ -130,14 +163,64 @@ namespace Domain.Staffs
                 }
 
                 // change all field
-                newStaff.ChangeContactInformation(staff.ContactInformation);
-                newStaff.ChangeSlotAvailability(staff.SlotAvailability);
-                newStaff.ChangeSpecialization(staff.Specialization);
+                newStaff.ChangeLicenseNumber(staff.LicenseNumber);
+
 
                 await _repo.UpdateAsync(newStaff);
                 await _unitOfWork.CommitAsync();
 
                 _dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);
+
+                /*if(DBLogType.UPDATE)
+                {
+                    string toEmail = newStaff.ContactInformation.Email; // Assuming the contact information has an Email field
+                    string subject = "Your contact information has been updated";
+                    string body = $"Dear {newStaff.Name}, your contact information has been successfully updated.";
+                    
+                    await _emailService.SendEmailAsync(toEmail, subject, body);
+                }*/
+
+                return StaffMapper.ToDto(newStaff);
+            }
+            catch (Exception e)
+            {
+                _dbLogService.LogError(StaffEntityType, e.ToString());
+                return StaffMapper.ToDto(staff);
+            }
+        }
+
+        public async Task<StaffDto> UpdateAsync(Staff staff)
+        {
+            try
+            {
+                Staff newStaff = await _repo.GetByEmailAsync(staff.ContactInformation.Email);
+
+                if (newStaff == null)
+                {
+                    _dbLogService.LogError(StaffEntityType, "Unable to find {staff " + staff.Id + "}");
+                    return StaffMapper.ToDto(staff);
+                }
+
+                // change all field
+                newStaff.ChangeContactInformation(staff.ContactInformation);
+                newStaff.ChangeSlotAvailability(staff.SlotAvailability);
+                newStaff.ChangeSpecialization(staff.Specialization);
+
+
+                await _repo.UpdateAsync(newStaff);
+                await _unitOfWork.CommitAsync();
+
+                //_dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);
+
+                /*if(DBLogType.UPDATE)
+                {
+                    string toEmail = newStaff.ContactInformation.Email; // Assuming the contact information has an Email field
+                    string subject = "Your contact information has been updated";
+                    string body = $"Dear {newStaff.Name}, your contact information has been successfully updated.";
+                    
+                    await _emailService.SendEmailAsync(toEmail, subject, body);
+                }*/
+
                 return StaffMapper.ToDto(newStaff);
             }
             catch (Exception e)

@@ -4,33 +4,33 @@ namespace Domain.Shared
 {
     public class PhoneNumber : IValueObject
     {
-        public int Value { get; set; }
+        public long Value { get; set; }
 
-        public PhoneNumber(int value) 
+        public PhoneNumber(long value)
         {
-            if (value <= 0) 
-            {
-                throw new ArgumentException("Phone number must be a positive integer.");
-            }
+            // if (value <= 0)
+            // {
+            //     throw new ArgumentException("Phone number must be a positive number.");
+            // }
             Value = value;
         }
+
         public PhoneNumber(string value)
         {
-            if (string.IsNullOrWhiteSpace(value) || !int.TryParse(value, out int result) || result <= 0)
+            if (string.IsNullOrWhiteSpace(value) || !long.TryParse(value, out long result) || result <= 0)
             {
                 throw new ArgumentException("Invalid phone number.");
             }
             Value = result;
         }
-        public PhoneNumber()
-        {
-        }
-        
+
+        public PhoneNumber() { }
+
         public static PhoneNumber FromString(string value)
         {
-            return new PhoneNumber(int.Parse(value));
+            return new PhoneNumber(long.Parse(value));
         }
-        
+
         public static implicit operator string(PhoneNumber phoneNumber)
         {
             return phoneNumber.Value.ToString();
