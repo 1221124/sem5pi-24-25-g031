@@ -11,13 +11,13 @@ namespace DDDNetCore.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "LicenseNumber",
-                table: "Staffs",
-                type: "nvarchar(100)",
-                maxLength: 100,
-                nullable: false,
-                defaultValue: "");
+            // migrationBuilder.AddColumn<string>(
+            //     name: "LicenseNumber",
+            //     table: "Staffs",
+            //     type: "nvarchar(100)",
+            //     maxLength: 100,
+            //     nullable: false,
+            //     defaultValue: "");
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserId",
