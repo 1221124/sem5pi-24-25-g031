@@ -38,7 +38,7 @@ namespace Controllers
 
         // GET: api/OperationTypes/name/{name}
         [HttpGet("name/{name}")]
-        public async Task<ActionResult<OperationTypeDto>> GetByName(Name name)
+        public async Task<ActionResult<OperationTypeDto>> GetByName(string name)
         {
             var operationType = await _service.GetByNameAsync(name);
 
