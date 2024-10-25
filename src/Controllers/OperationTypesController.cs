@@ -22,8 +22,8 @@ namespace Controllers
             return await _service.GetAllAsync();
         }
 
-        // GET: api/OperationTypes/5
-        [HttpGet("{id}")]
+        // GET: api/OperationTypes/id/{id}
+        [HttpGet("id/{id}")]
         public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
         {
             var operationType = await _service.GetByIdAsync(new OperationTypeId(id));
@@ -36,6 +36,48 @@ namespace Controllers
             return operationType;
         }
 
+        // GET: api/OperationTypes/name/{name}
+        [HttpGet("name/{name}")]
+        public async Task<ActionResult<OperationTypeDto>> GetByName(Name name)
+        {
+            var operationType = await _service.GetByNameAsync(name);
+
+            if (operationType == null)
+            {
+                return NotFound();
+            }
+
+            return operationType;
+        }
+
+        // GET: api/OperationTypes/specialization/{specialization}
+        [HttpGet("specialization/{specialization}")]
+        public async Task<ActionResult<List<OperationTypeDto>>> GetBySpecialization(Specialization specialization)
+        {
+            var operationTypes = await _service.GetBySpecializationAsync(specialization);
+
+            if (operationTypes == null)
+            {
+                return NotFound();
+            }
+
+            return operationTypes;
+        }
+
+        // GET: api/OperationTypes/status/{status}
+        [HttpGet("status/{status}")]
+        public async Task<ActionResult<List<OperationTypeDto>>> GetByStatus(Status status)
+        {
+            var operationTypes = await _service.GetByStatusAsync(status);
+
+            if (operationTypes == null)
+            {
+                return NotFound();
+            }
+
+            return operationTypes;
+        }
+
         // POST: api/OperationTypes
         [HttpPost]
         public async Task<ActionResult<OperationTypeDto>> Create([FromBody] CreatingOperationTypeDto dto)
@@ -45,7 +87,13 @@ namespace Controllers
                 return BadRequest("Creating Operation Type DTO cannot be null");
             }
 
-            var operationType = await _service.AddAsync(dto);
+            var operationType = await _service.GetByNameAsync(dto.Name);
+            if (operationType != null)
+            {
+                return BadRequest("Operation Type with this name already exists");
+            }
+
+            operationType = await _service.AddAsync(dto);
 
             return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
         }
