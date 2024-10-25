@@ -1,6 +1,6 @@
 using Domain.Users;
 
-namespace Domain.IAM
+namespace Domain.UsersSession
 {
     public interface ISessionService
     {

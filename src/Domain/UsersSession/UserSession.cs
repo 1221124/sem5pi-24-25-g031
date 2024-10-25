@@ -2,6 +2,7 @@ using Domain.Shared;
 using Domain.Users;
 using Domain.UsersSession;
 
+namespace Domain.UsersSession{
 public class UserSession : Entity<UserSessionId>, IAggregateRoot
 {
     public UserId UserId { get; set; }
@@ -18,4 +19,5 @@ public class UserSession : Entity<UserSessionId>, IAggregateRoot
         Email = email;
         Role = role;
     }
+}
 }

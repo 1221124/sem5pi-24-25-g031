@@ -2,9 +2,10 @@ using System.Collections.Concurrent;
 using Domain.IAM;
 using Domain.Shared;
 using Domain.Users;
+using Domain.UsersSession;
 using Infrastructure.UsersSession;
 
-namespace Infrastructure.IAM
+namespace Domain.UsersSession
 {
     public class SessionService : ISessionService
     {
