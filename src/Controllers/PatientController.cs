@@ -72,11 +72,15 @@ namespace src.Controllers
             
             try
             {
+                if (dto == null)
+                {
+                    return BadRequest("Invalid UpdatingPatientDto");
+                }
                 var patient = await _service.UpdateAsync(dto);
 
                 if (patient == null)
                 {
-                    return NotFound();
+                    return NotFound("Patient not found");
                 }
                 return Ok(patient);
             }
