@@ -10996,32 +10996,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\david\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Utilizador\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g061\\DDDNetCore.csproj",
+      "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj",
       "projectName": "DDDNetCore",
-      "projectPath": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g061\\DDDNetCore.csproj",
-      "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g061\\obj\\",
+      "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.csproj",
+      "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
