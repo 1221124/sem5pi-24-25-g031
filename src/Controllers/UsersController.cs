@@ -8,6 +8,7 @@ using Infrastructure;
 using Domain.IAM;
 using Domain.UsersSession;
 using System.Text.RegularExpressions;
+using DDDNetCore.Domain.Patients;
 
 namespace Controllers
 {

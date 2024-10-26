@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.OperationRequests;
 using System.Threading.Tasks;
 using System;
+using DDDNetCore.Domain.Patients;
 using Domain.DBLogs;
 using Domain.Staffs;
 using Domain.Patients;

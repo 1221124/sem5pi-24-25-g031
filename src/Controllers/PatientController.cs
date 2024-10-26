@@ -4,6 +4,7 @@ using Domain.Patients;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using DDDNetCore.Domain.Patients;
 using Domain.DBLogs;
 using Date = System.DateOnly;
 
