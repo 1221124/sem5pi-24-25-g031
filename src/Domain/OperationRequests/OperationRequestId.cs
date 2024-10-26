@@ -1,6 +1,5 @@
-using System;
+using System.Text.Json.Serialization;
 using Domain.Shared;
-using Newtonsoft.Json;
 
 namespace Domain.OperationRequests
 {

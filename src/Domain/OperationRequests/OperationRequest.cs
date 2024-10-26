@@ -1,9 +1,8 @@
-using System;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.Patients;
 using Domain.Staffs;
-using Azure;
+
 
 namespace Domain.OperationRequests
 {
@@ -51,7 +50,7 @@ namespace Domain.OperationRequests
             Status = status;
         }
 
-        /*public OperationRequest(Guid id, StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DeadlineDate? deadlineDate, Priority? priority, RequestStatus? status)
+        public OperationRequest(Guid id, StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DeadlineDate? deadlineDate, Priority? priority, RequestStatus? status)
         {
             Id = new OperationRequestId(id);
             DoctorId = doctorId;
@@ -60,7 +59,7 @@ namespace Domain.OperationRequests
             DeadlineDate = deadlineDate ?? throw new ArgumentNullException(nameof(deadlineDate));
             Priority = priority ?? throw new ArgumentNullException(nameof(priority));
             Status = status ?? throw new ArgumentNullException(nameof(status));
-        }*/
+        }
 
         internal void ChangeDeadlineDate(DeadlineDate deadlineDate)
         {

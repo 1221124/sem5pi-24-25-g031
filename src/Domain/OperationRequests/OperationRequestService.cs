@@ -2,7 +2,6 @@ using DDDNetCore.Domain.Patients;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.DBLogs;
-using Domain.Patients;
 
 namespace Domain.OperationRequests
 {
@@ -23,48 +22,23 @@ namespace Domain.OperationRequests
             _logService = logService;
         }        
 
-        public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto requestDto)
+        public async Task<OperationRequestDto?> AddAsync(CreatingOperationRequestDto requestDto)
         {
-            // try{
-            //     OperationRequest operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto);
-            //
-            //     if (operationRequest == null)
-            //         return null;
-            //     
-            //     if (string.IsNullOrEmpty(operationRequest.DoctorId.ToString()) || 
-            //         string.IsNullOrEmpty(operationRequest.PatientId.ToString()) ||
-            //         string.IsNullOrEmpty(operationRequest.OperationTypeId.ToString())) {
-            //         throw new ArgumentException("One of the required properties is null or empty.");
-            //     }
-            //     
-            //     Console.WriteLine("Operation antes");
-            //     await _repo.AddAsync(operationRequest);
-            //     
-            //     Console.WriteLine("Operation despues");
-            //     
-            //     await _unitOfWork.CommitAsync();
-            //
-            //     Console.WriteLine("Operation despues 2");
-            //
-            //     // _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, operationRequest);
-            //     return OperationRequestMapper.ToDto(operationRequest);
-            // } catch (ArgumentException ae) {
-            //     Console.WriteLine("Argument exception: " + ae.Message);
-            //     Console.WriteLine(ae.StackTrace);
-            //     return null;
-            // }catch (Exception e){
-            //     Console.WriteLine("Error adding Operation Request: " + e.Message);
-            //     // _logService.LogError(OperationRequestEntityType, e.ToString());
-            //     return null;     
-            // }
+            try
+            {
+                var operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto);
 
-            var operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto);
+                await this._repo.AddAsync(operationRequest);
 
-            await this._repo.AddAsync(operationRequest);
+                await this._unitOfWork.CommitAsync();
 
-            await this._unitOfWork.CommitAsync();
-
-            return OperationRequestMapper.ToDto(operationRequest);
+                return OperationRequestMapper.ToDto(operationRequest);
+            }
+            catch (Exception e)
+            {
+                _logService.LogError(OperationRequestEntityType, e.ToString());
+                return null;
+            }
         }
 
         public async Task<OperationRequestDto?> GetByIdAsync(OperationRequestId operationRequestId)
@@ -106,101 +80,92 @@ namespace Domain.OperationRequests
             }
         }
 
-        public async Task<List<OperationRequestDto>> GetByPatientNameAsync(string name)
+        public async Task<List<OperationRequestDto>?> GetByPatientNameAsync(FullName fullName)
         {
             try
             {
-                FullName fullName = new(name);
-
                 var patients = await this._patientService.GetAllAsync();
                 var operations = await this._repo.GetAllAsync();
-
-                if (patients == null ||patients.Count == 0 || operations == null || operations.Count == 0)
-                {
-                    return OperationRequestMapper.ToDtoList();
-                }
-
                 var list = patients.Where(x => x.FullName.Equals(fullName)).ToList();
 
-                if (list == null || list.Count == 0)
+
+                if (patients == null ||patients.Count == 0 || operations == null || operations.Count == 0 ||list == null || list.Count == 0)
                 {
-                    return OperationRequestMapper.ToDtoList();
+                    return null;
                 }
 
-                var final = operations.Where(x => list.Any(y => y.Id.Equals(x.PatientId))).ToList();
+                var final = operations.Where(x => list.Any(y => y.Id.Equals(x.PatientId.AsGuid()))).ToList();
 
                 return OperationRequestMapper.ToDtoList(final);
             }
             catch (Exception)
             {
-                return OperationRequestMapper.ToDtoList();
+                return null;
             }
         }
 
-        public async Task<List<OperationRequestDto>> GetByOperationTypeAsync(string operationTypeId)
+        public async Task<List<OperationRequestDto>?> GetByOperationTypeAsync(OperationTypeId operationType)
         {
             try
             {
-                OperationTypeId operationType = new(operationTypeId);
-
                 var list = await _repo.GetByOperationType(operationType);
 
                 if (list == null)
-                    return OperationRequestMapper.ToDtoList();
+                    return null;
 
                 return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
             {
-                return OperationRequestMapper.ToDtoList();
+                return null;
             }
         }
 
-        public async Task<List<OperationRequestDto>> GetByRequestStatusAsync(string status)
+        public async Task<List<OperationRequestDto>?> GetByRequestStatusAsync(RequestStatus requestStatus)
         {
             try
             {
-                RequestStatus requestStatus = RequestStatusUtils.FromString(status);
-
                 var list = await _repo.GetByStatusId(requestStatus);
 
                 if (list == null)
-                    return OperationRequestMapper.ToDtoList();
+                    return null;
 
                 return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
             {
-                return OperationRequestMapper.ToDtoList();
+                return null;
             }
         }
 
-        public async Task<OperationRequestDto> UpdateAsync(OperationRequest operationRequest)
+        public async Task<OperationRequestDto?> UpdateAsync(UpdatingOperationRequestDto dto)
         {
             try
             {
-                OperationRequest op = await _repo.GetByIdAsync(operationRequest.Id);
+                var operationRequest = await _repo.GetByIdAsync(dto.Id);
 
-                if(op == null){
-                    _logService.LogError(OperationRequestEntityType, "Unable to find {operationRequest " + operationRequest.Id  + "}");
-                    return OperationRequestMapper.ToDto(operationRequest);
+                var newOperationRequest = OperationRequestMapper.ToEntityFromUpdating(dto, operationRequest);
+
+                if(operationRequest == null){
+                    _logService.LogError(OperationRequestEntityType, "Unable to find {operationRequest " + newOperationRequest.Id  + "}");
+                    return null;
                 }
 
-                op.ChangeDeadlineDate(operationRequest.DeadlineDate);
-                op.ChangePriority(operationRequest.Priority);
-                op.ChangeStatus(operationRequest.Status);
+                operationRequest.ChangeDeadlineDate(newOperationRequest.DeadlineDate);
+                operationRequest.ChangePriority(newOperationRequest.Priority);
+                operationRequest.ChangeStatus(newOperationRequest.Status);
 
-                await _repo.UpdateAsync(op);
+                await _repo.UpdateAsync(operationRequest);
                 await _unitOfWork.CommitAsync();
 
-                _logService.LogAction(OperationRequestEntityType, DBLogType.UPDATE, op.Id.AsGuid());
-                return OperationRequestMapper.ToDto(op);
+                _logService.LogAction(OperationRequestEntityType, DBLogType.UPDATE, operationRequest.Id.AsGuid());
+                return OperationRequestMapper.ToDto(operationRequest);
 
             }
             catch (Exception e)
             {
                 _logService.LogError(OperationRequestEntityType, e.ToString());
-                return OperationRequestMapper.ToDto(operationRequest);
+                return null;
             }
         }
 

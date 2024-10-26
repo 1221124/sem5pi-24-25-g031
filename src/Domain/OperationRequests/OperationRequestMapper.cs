@@ -1,9 +1,3 @@
-using System.Collections.Generic;
-using Domain.OperationTypes;
-using Domain.Patients;
-using Domain.Shared;
-using Domain.Staffs;
-
 namespace Domain.OperationRequests
 {
     public class OperationRequestMapper {
@@ -52,14 +46,14 @@ namespace Domain.OperationRequests
             );
         }
 
-        /*public static OperationRequest ToEntityFromUpdating(UpdatingOperationRequestDto dto, OperationRequestDto operation){
+        public static OperationRequest ToEntityFromUpdating(UpdatingOperationRequestDto dto, OperationRequest operation){
             
             dto.DeadlineDate ??= operation.DeadlineDate;
             dto.Priority ??= operation.Priority;
             dto.RequestStatus ??= operation.Status;
 
             return new OperationRequest(
-                operation.Id,
+                dto.Id,
                 operation.DoctorId,
                 operation.PatientId,
                 operation.OperationTypeId,
@@ -68,16 +62,11 @@ namespace Domain.OperationRequests
                 dto.RequestStatus
             );
 
-        }*/
+        }
 
         public static List<OperationRequestDto> ToDtoList(List<OperationRequest> operationRequests)
         {
             return operationRequests.ConvertAll(ToDto);
-        }
-
-        public static List<OperationRequestDto> ToDtoList(List<Task> list)
-        {
-            return [];
         }
 
         public static List<OperationRequestDto> ToDtoList()
