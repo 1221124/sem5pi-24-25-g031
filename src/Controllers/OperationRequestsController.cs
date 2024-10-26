@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.OperationRequests;
-
-using System.Threading.Tasks;
-using System;
-using DDDNetCore.Domain.Patients;
-
 using Domain.DBLogs;
-using Microsoft.EntityFrameworkCore;
+using Domain.OperationTypes;
+using Domain.Shared;
 
 namespace Controllers
 {
@@ -58,11 +54,71 @@ namespace Controllers
                 return Ok(operationRequestDto);
 
             }catch(Exception ex){
-                //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
+                return BadRequest("Error: " + ex.Message);
+            }
+        }
+        
+        // GET api/operationrequest/patientname
+        [HttpPost("patientname/{name}")]
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByPatientName(FullName name)
+        {
+            try{
+                if(name == null)
+                    return BadRequest("Patient name is required.");
+
+                var operationRequests = await _operationRequestService.GetByPatientNameAsync(name);
+
+                if(operationRequests == null)
+                    return NotFound();
+
+                return Ok(operationRequests);
+
+            }catch(Exception ex){
+                return BadRequest("Error: " + ex.Message);
+            }
+        }
+        
+        // GET api/operationrequest/operationtype
+        [HttpPost("operationtype/{operationType}")]
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByOperationType(OperationTypeId operationType)
+        {
+            try{
+                if(operationType == null)
+                    return BadRequest("Operation type is required.");
+
+                var operationRequests = await _operationRequestService.GetByOperationTypeAsync(operationType);
+
+                if(operationRequests == null)
+                    return NotFound();
+
+                return Ok(operationRequests);
+
+            }catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);
             }
         }
 
+        // GET api/operationrequest/status
+        [HttpPost("status/{status}")]
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByStatus(RequestStatus status)
+        {
+            try{
+                if(status == null)
+                    return BadRequest("Status is required.");
+
+                var operationRequests = await _operationRequestService.GetByRequestStatusAsync(status);
+
+                if(operationRequests == null)
+                    return NotFound();
+
+                return Ok(operationRequests);
+
+            }catch(Exception ex){
+                return BadRequest("Error: " + ex.Message);
+            }
+        }
+        
+        
         // Body{staffId, patientId, suggestedDeadline, priority, status}
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatingOperationRequestDto requestDto)
@@ -75,11 +131,11 @@ namespace Controllers
             try
             {
                 var operationRequest = await _operationRequestService.AddAsync(requestDto);
+                
+                //if(operationRequest == null)
+                   // return BadRequest("Operation Request could not be created.");
+                
                 return Ok(operationRequest);
-            }
-            catch (DbUpdateException dbEx)
-            {
-                return BadRequest(dbEx.Message);
             }
             catch (Exception ex)
             {
@@ -88,7 +144,7 @@ namespace Controllers
         }
 
         //PUT api/operationrequest/update
-        /*[HttpPost("update")]
+        [HttpPost("update")]
         public async Task<IActionResult> Update(UpdatingOperationRequestDto dto)
         {
             try{
@@ -97,11 +153,7 @@ namespace Controllers
                     return BadRequest("Operation request data is required.");
                 }
 
-                var operationRequestDto = await _operationRequestService.GetByIdAsync(dto.Id);
-                if(operationRequestDto == null)
-                    return NotFound();
-
-                var operationRequest = await _operationRequestService.UpdateAsync(OperationRequestMapper.ToEntityFromUpdating(dto, operationRequestDto));
+                var operationRequest = await _operationRequestService.UpdateAsync(dto);
 
                 if(operationRequest == null) return NotFound();
                 return Ok("Operation request updated successfully.");
@@ -110,7 +162,7 @@ namespace Controllers
                 //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
                 return BadRequest("Error in Update: " + ex.Message);
             }
-        }*/   
+        }   
 
         // DELETE api/operationrequest/5
         [HttpDelete("delete/{id}")]
