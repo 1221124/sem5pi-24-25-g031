@@ -1,4 +1,5 @@
 ﻿using DDDNetCore.Domain.Patients;
+using DDDNetCore.Infrastructure.Patients;
 using Infrastructure;
 using Infrastructure.OperationTypes;
 using Infrastructure.OperationRequests;

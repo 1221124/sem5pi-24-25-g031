@@ -7,7 +7,11 @@ using Domain.OperationTypes;
 using Domain.Shared;
 using Domain.Users;
 using FirebaseAdmin.Auth;
+using Google.Type;
 using Microsoft.AspNetCore.Http.HttpResults;
+using DateTime = System.DateTime;
+using Date = System.DateOnly;
+using PhoneNumber = Domain.Shared.PhoneNumber;
 
 namespace Domain.Patients
 {
@@ -66,15 +70,97 @@ namespace Domain.Patients
 
         public async Task<PatientDto> GetByEmailAsync(Email email)
         {
-            var patient = await this._repo.GetByEmailAsync(email);
+            try
+            {
+                var patient = await this._repo.GetByEmailAsync(email);
             
-            if(patient == null)
-                return null;
+                if(patient == null)
+                    return null;
 
-            return PatientMapper.ToDto(patient);
+                return PatientMapper.ToDto(patient);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
             
         }
+        
+        public async Task<PatientDto> GetByPhoneNumberAsync(PhoneNumber phoneNumber)
+        {
+            try
+            {
+                var patient = await this._repo.GetByPhoneNumberAsync(phoneNumber);
+            
+                if(patient == null)
+                    return null;
 
+                return PatientMapper.ToDto(patient);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+            
+        }
+        
+        public async Task<PatientDto> GetByMedicalRecordNumberAsync(MedicalRecordNumber medicalRecordNumber)
+        {
+            try
+            {
+                var patient = await this._repo.GetByMedicalRecordNumberAsync(medicalRecordNumber);
+            
+                if(patient == null)
+                    return null;
+
+                return PatientMapper.ToDto(patient);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+        
+        public async Task<List<PatientDto>> GetByDateOfBirthAsync(Date dateOfBirth)
+        {
+            try
+            {
+                var listPatient = await _repo.GetByDateOfBirthAsync(new DateOfBirth(dateOfBirth));
+
+                if (listPatient == null)
+                    return null;
+                
+                List<PatientDto> listDto = PatientMapper.toDtoList(listPatient);
+
+                return listDto;
+
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public async Task<List<PatientDto>> GetByGenderAsync(Gender gender)
+        {
+            try
+            {
+                var listPatient = await _repo.GetByGenderAsync(gender);
+
+                if (listPatient == null)
+                    return null;
+
+                List<PatientDto> listDto = PatientMapper.toDtoList(listPatient);
+
+                return listDto;
+
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+        
         public async Task<PatientDto?> AddAsync(Patient p)
         {
             var numberPatients = _repo.GetAllAsync().Result.Count;

@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.DBLogs;
+using Date = System.DateOnly;
 
 namespace src.Controllers
 {
@@ -45,7 +46,7 @@ namespace src.Controllers
             return patient;
         }
         
-        // GET: api/OperationTypes/name/{name}
+        // GET: api/Patient/name/{name}
         [HttpGet("name/{fullName}")]
         public async Task<ActionResult<IEnumerable<PatientDto>>> GetByName(string fullName)
         {
@@ -70,13 +71,70 @@ namespace src.Controllers
             return patient;
         }
         
-        // GET: api/Patient/getByEmail?email=gui.cr04@isep.ipp.pt
+        // GET: api/Patient/email/{email}
         [HttpGet("email/{email}")]
         public async Task<ActionResult<PatientDto>> GetByEmail(string email)
         {
             var patient = await _service.GetByEmailAsync(new Email(email));
 
             if (patient == null)
+            {
+                return NotFound();
+            }
+
+            return patient;
+        }
+        
+        // GET: api/Patient/phoneNumber/{phoneNumber}
+        [HttpGet("phoneNumber/{phoneNumber}")]
+        public async Task<ActionResult<PatientDto>> GetByPhoneNumber(string phoneNumber)
+        {
+            var patient = await _service.GetByPhoneNumberAsync(new PhoneNumber(phoneNumber));
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            return patient;
+        }
+        
+        //GET: api/Patient/medicalRecordNumber/{medicalRecordNumber}
+        [HttpGet("medicalRecordNumber/{medicalRecordNumber}")]
+        public async Task<ActionResult<PatientDto>> GetByMedicalRecordNumber(string medicalRecordNumber)
+        {
+            var patient = await _service.GetByMedicalRecordNumberAsync(new MedicalRecordNumber(medicalRecordNumber));
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            return patient;
+        }
+        
+        //GET: api/Patient/dateOfBirth/{dateOfBirth}
+        [HttpGet("dateOfBirth/{dateOfBirth}")]
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByDateOfBirth(string dateOfBirth)
+        {
+            var patient = await _service.GetByDateOfBirthAsync(Date.Parse(dateOfBirth));
+
+            if (patient == null)
+                
+            {
+                return NotFound();
+            }
+
+            return patient;
+        }
+        
+        //GET: api/Patient/gender/{gender}
+        [HttpGet("gender/{gender}")]
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByGender(string gender)
+        {
+            var patient = await _service.GetByGenderAsync(GenderUtils.FromString(gender));
+            
+            if(patient == null)
             {
                 return NotFound();
             }

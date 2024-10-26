@@ -21,6 +21,7 @@ namespace Domain.Patients
           throw new ArgumentException("Invalid Gender");
       }
     }
+    
     public static string? ToString(Gender? gender)
     {
       return gender switch
@@ -31,13 +32,13 @@ namespace Domain.Patients
       };
     }
 
-    public static Gender? FromString(string gender)
+    public static Gender FromString(string gender)
     {
       return gender switch
       {
         "Male" => Gender.MALE,
         "Female" => Gender.FEMALE,
-        null => (Gender?)null, // Handle null from the database
+        null => (Gender)(Gender?)null, // Handle null from the database
         _ => throw new ArgumentException($"Invalid gender: {gender}")
       };
     }
