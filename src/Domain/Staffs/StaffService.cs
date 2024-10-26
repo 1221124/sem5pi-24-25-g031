@@ -276,9 +276,24 @@ namespace Domain.Staffs
                 _dbLogService.LogError(StaffEntityType, e.ToString());
                 return null;
             }
-          
-            
-            
+        }
+
+        public async Task<StaffDto> SearchByEmailAsync(Email email)
+        {
+            try
+            {
+                var staff = await _repo.GetByEmailAsync(email);
+
+                if (staff == null)
+                    return null;
+                
+                return StaffMapper.ToDto(staff);
+            }
+            catch (Exception e)
+            {
+                _dbLogService.LogError(StaffEntityType, e.ToString());
+                return null;
+            }
         }
     }
 }

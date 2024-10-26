@@ -51,7 +51,7 @@ namespace Controllers
 
         //Procurar por searchCriteria
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<PatientDto>>> GetBySearchCriteriaName([FromQuery] String fullName)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySearchCriteriaName([FromQuery] String fullName)
         {
             var names = fullName.Split('-');
             
@@ -64,6 +64,19 @@ namespace Controllers
             var lastName = names[1];
             
             var staffList = await _service.SearchByNameAsync(new FullName(new Name(firstName), new Name(lastName))); 
+
+            if (staffList == null)
+            {
+                return NotFound();
+            }
+            return Ok(staffList);
+        }
+        
+        
+        [HttpGet("search/{email}")]
+        public async Task<ActionResult<StaffDto>> GetBySearchCriteriaEmail(String email)
+        {
+            var staffList = await _service.SearchByEmailAsync(new Email(email)); 
 
             if (staffList == null)
             {
