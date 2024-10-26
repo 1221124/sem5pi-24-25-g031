@@ -13,6 +13,7 @@ namespace src.Controllers
     [ApiController]
     public class PatientController: ControllerBase
     {
+        private readonly int pageSize = 2;
         private readonly PatientService _service;
         private readonly DBLogService _dbLogService;
         
@@ -25,11 +26,19 @@ namespace src.Controllers
         
         private static readonly EntityType patientEntityType = EntityType.PATIENT;
 
-        // GET: api/Patient
+        // GET: api/Patient/?pageNumber=1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll(int pageNumber)
         {
-            return await _service.GetAllAsync();
+            var patients = await _service.GetAllAsync();
+            
+            var paginatedPatients = patients
+                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .ToList();                         // Converte o resultado em uma lista para fácil manipulação
+
+
+            return paginatedPatients;
         }
         
         //GET: api/Patient/5
@@ -42,13 +51,13 @@ namespace src.Controllers
             {
                 return NotFound();
             }
-
+            
             return patient;
         }
         
-        // GET: api/Patient/name/{name}
+        // GET: api/Patient/name/{name}/?pageNumber=1
         [HttpGet("name/{fullName}")]
-        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByName(string fullName)
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByName(string fullName, int pageNumber)
         {
             
             var names = fullName.Split("-");
@@ -67,8 +76,13 @@ namespace src.Controllers
             {
                 return NotFound();
             }
-
-            return patient;
+            
+            var paginatedPatients = patient
+                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .ToList();                         // Converte o resultado em uma lista para fácil manipulação
+            
+            return paginatedPatients;
         }
         
         // GET: api/Patient/email/{email}
@@ -81,7 +95,7 @@ namespace src.Controllers
             {
                 return NotFound();
             }
-
+            
             return patient;
         }
         
@@ -113,9 +127,9 @@ namespace src.Controllers
             return patient;
         }
         
-        //GET: api/Patient/dateOfBirth/{dateOfBirth}
+        //GET: api/Patient/dateOfBirth/{dateOfBirth}/?pageNumber=1
         [HttpGet("dateOfBirth/{dateOfBirth}")]
-        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByDateOfBirth(string dateOfBirth)
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByDateOfBirth(string dateOfBirth, int pageNumber)
         {
             var patient = await _service.GetByDateOfBirthAsync(Date.Parse(dateOfBirth));
 
@@ -124,13 +138,18 @@ namespace src.Controllers
             {
                 return NotFound();
             }
+            
+            var paginatedPatients = patient
+                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .ToList();                         // Converte o resultado em uma lista para fácil manipulação
 
-            return patient;
+            return paginatedPatients;
         }
         
-        //GET: api/Patient/gender/{gender}
+        //GET: api/Patient/gender/{gender}/?pageNumber=1
         [HttpGet("gender/{gender}")]
-        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByGender(string gender)
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByGender(string gender, int pageNumber)
         {
             var patient = await _service.GetByGenderAsync(GenderUtils.FromString(gender));
             
@@ -138,8 +157,13 @@ namespace src.Controllers
             {
                 return NotFound();
             }
+            
+            var paginatedPatients = patient
+                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .ToList();                         // Converte o resultado em uma lista para fácil manipulação
 
-            return patient;
+            return paginatedPatients;
         }
 
         // POST: api/Patient/{ "fullname", "dateOfBirth", "contactInformation" } 
