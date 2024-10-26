@@ -13,10 +13,10 @@ namespace Domain.Patients
         public Gender? Gender { get; set; }
         public MedicalRecordNumber MedicalRecordNumber { get; set; }
         public ContactInformation ContactInformation { get; set; }
-        public List<MedicalConditions> MedicalConditions { get; set; }
-        public EmergencyContact EmergencyContact { get; set; }
-        public AppointmentHistory AppointmentHistory { get; set; }
-        public UserId UserId { get; set; }
+        public List<MedicalConditions>? MedicalConditions { get; set; }
+        public EmergencyContact? EmergencyContact { get; set; }
+        public AppointmentHistory? AppointmentHistory { get; set; }
+        public UserId? UserId { get; set; }
 
         public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,UserId userId)
         {

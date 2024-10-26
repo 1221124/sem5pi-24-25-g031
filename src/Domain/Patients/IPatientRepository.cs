@@ -8,5 +8,6 @@ namespace Domain.Patients
     {
         public Task<Patient?> GetByEmailAsync(Email email);
         public Task<Patient?> GetByPhoneNumberAsync(PhoneNumber phoneNumber);
+        public Task<List<Patient>> GetByName(Name firstName, Name lastName);
     }
 }

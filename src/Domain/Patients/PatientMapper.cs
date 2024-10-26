@@ -28,6 +28,10 @@ namespace Domain.Patients
                 dto.MedicalConditions
             );
         }
+        public static List<PatientDto> toDtoList(List<Patient> patients)
+        {
+            return patients.ConvertAll(patient=> ToDto(patient));
+        }
 
         public static PatientDto ToDto(Patient patient)
         {

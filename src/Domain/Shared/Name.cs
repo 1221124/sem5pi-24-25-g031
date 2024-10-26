@@ -2,7 +2,7 @@ namespace Domain.Shared
 {
     public class Name : IValueObject
     {
-        public string Value { get; }
+        public string Value { get; set; }
 
         public Name(string value)
         {
