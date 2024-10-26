@@ -1,0 +1,6 @@
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\test.csproj.AssemblyReference.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\test.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\test.AssemblyInfoInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\test.AssemblyInfo.cs
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\test.csproj.CoreCompileInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\test.sourcelink.json
