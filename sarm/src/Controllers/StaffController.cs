@@ -15,6 +15,7 @@ namespace Controllers
     [ApiController]
     public class StaffController : ControllerBase
     {
+        private readonly int pageSize = 2;
         private readonly StaffService _service;
 
         private readonly IStaffRepository _repo;
@@ -28,11 +29,18 @@ namespace Controllers
             _service = service;
         }
 
-        // GET: api/Staff
+        // GET: api/Staff/?pageNumber=1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll(int pageNumber)
         {
-            return await _service.GetAllAsync();
+            var staff = await _service.GetAllAsync();
+            
+            var paginatedStaff = staff
+                .Skip((pageNumber - 1) * pageSize) 
+                .Take(pageSize)                    
+                .ToList();                         
+            
+            return paginatedStaff;
         }
 
         //GET: api/Staff/5
@@ -49,9 +57,9 @@ namespace Controllers
             return staff;
         }
 
-        //Procurar por searchCriteria
+        //GET: api/Staff/search/name?name=Beatriz-Silva/?pageNumber=1
         [HttpGet("search/name")]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySearchCriteriaName([FromQuery] String fullName)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySearchCriteriaName([FromQuery] String fullName, int pageNumber)
         {
             var names = fullName.Split('-');
             
@@ -69,7 +77,13 @@ namespace Controllers
             {
                 return NotFound();
             }
-            return Ok(staffList);
+            
+            var paginatedStaff = staffList
+                .Skip((pageNumber - 1) * pageSize) 
+                .Take(pageSize)                    
+                .ToList();                         
+            
+            return paginatedStaff;
         }
         
         
@@ -85,8 +99,9 @@ namespace Controllers
             return Ok(staffList);
         }
         
+        //GET: api/Staff/search/specialization?specialization=CARDIOLOGY/?pageNumber=1
         [HttpGet("search/specialization")] 
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySpecializationAsync([FromQuery] String specialization)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySpecializationAsync([FromQuery] String specialization, int pageNumber)
         {
             var staffList = await _service.SearchBySpecializationAsync(SpecializationUtils.FromString(specialization)); 
 
@@ -94,7 +109,13 @@ namespace Controllers
             {
                 return NotFound();
             }
-            return Ok(staffList);
+            
+            var paginatedStaff = staffList
+                .Skip((pageNumber - 1) * pageSize) 
+                .Take(pageSize)                    
+                .ToList();                         
+            
+            return paginatedStaff;
         }
 
         // POST: api/Staff
