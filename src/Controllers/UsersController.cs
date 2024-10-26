@@ -210,11 +210,11 @@ namespace Controllers
             }
         }
 
-        // POST: api/Users/verify
-        [HttpPost("api/users/verify")]
-        public async Task<ActionResult<UserDto>> VerifyEmail([FromQuery] Email email)
+        // GET: api/Users/verify
+        [HttpGet("verify")]
+        public async Task<ActionResult<UserDto>> VerifyEmail([FromQuery] string email)
         {
-            var user = await _service.GetByEmailAsync(email);
+            var user = await _service.GetByEmailAsync(new Email(email));
 
             if (user != null)
             {

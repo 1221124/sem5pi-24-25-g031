@@ -24,8 +24,8 @@ namespace Domain.Emails
             request.AddHeader("api-key", _apiKey);
             request.AddJsonBody(new
             {
-                sender = new { email = _fromEmail },
-                to = new[] { new { email = toEmail } },
+                sender = new { name = "SARM G031", email = _fromEmail },
+                to = new[] { new { email = toEmail, name = toEmail } },
                 subject = subject,
                 htmlContent = body
             });
@@ -49,7 +49,8 @@ namespace Domain.Emails
 
         public string GenerateLink(string email)
         {
-            return $"{AppSettings.VerifyEmailUrl}?email={email}&token={GenerateToken()}";
+            // return $"{AppSettings.VerifyEmailUrl}?email={email}&token={GenerateToken()}";
+            return $"http://localhost:5500/api/Users/verify?email={email}&token={GenerateToken()}";
         }
 
         public string GenerateToken()
