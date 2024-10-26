@@ -28,9 +28,10 @@ namespace Infrastructure.StaffRepository
             return await _objs.FirstOrDefaultAsync(x => x.ContactInformation.PhoneNumber == phoneNumber);
         }
 
-        public async Task<Staff> GetByFullNameAsync(FullName firstName)
+        public async Task<List<Staff>> GetByFullNameAsync(FullName fullName)
         {
-            return await _objs.FirstOrDefaultAsync(x => x.FullName.FirstName == firstName);
+            return await this._objs
+                .AsQueryable().Where(x => fullName.Equals(x.ContactInformation.Email)).ToListAsync();
         }
     }
 
