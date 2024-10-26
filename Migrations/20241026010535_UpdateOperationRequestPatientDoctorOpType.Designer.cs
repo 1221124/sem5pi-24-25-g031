@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(SARMDbContext))]
-    partial class SARMDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241026010535_UpdateOperationRequestPatientDoctorOpType")]
+    partial class UpdateOperationRequestPatientDoctorOpType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,23 +56,21 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateOnly>("DeadlineDate")
-                        .HasColumnType("date")
+                    b.Property<string>("DeadlineDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("DeadlineDate");
 
-                    b.Property<string>("DoctorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("StaffId");
 
-                    b.Property<string>("OperationTypeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                    b.Property<Guid>("OperationTypeId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("OperationTypeId");
 
-                    b.Property<string>("PatientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("PatientId");
 
                     b.Property<string>("Priority")
@@ -80,7 +81,7 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("RequestStatus");
+                        .HasColumnName("Status");
 
                     b.HasKey("Id");
 
@@ -135,17 +136,9 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("MedicalRecordNumber");
 
-                    b.Property<string>("TokenExpiryDate")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("TokenExpiryDate");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("UserId");
-
-                    b.Property<string>("VerificationToken")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("VerificationToken");
 
                     b.HasKey("Id");
 

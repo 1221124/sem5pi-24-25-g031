@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(SARMDbContext))]
-    partial class SARMDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241026143229_UpdateOperationRequestChange")]
+    partial class UpdateOperationRequestChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,17 +138,9 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("MedicalRecordNumber");
 
-                    b.Property<string>("TokenExpiryDate")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("TokenExpiryDate");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("UserId");
-
-                    b.Property<string>("VerificationToken")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("VerificationToken");
 
                     b.HasKey("Id");
 
