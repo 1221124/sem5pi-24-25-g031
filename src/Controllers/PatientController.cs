@@ -44,6 +44,45 @@ namespace src.Controllers
 
             return patient;
         }
+        
+        // GET: api/OperationTypes/name/{name}
+        [HttpGet("name/{fullName}")]
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetByName(string fullName)
+        {
+            
+            var names = fullName.Split("-");
+
+            if (names.Length != 2)
+            {
+                return BadRequest("Full name format is invalid. Expected format: FirstName%2LastName");
+            }
+
+            var firstName = names[0];
+            var lastName = names[1];
+            
+            var patient = await _service.GetByNameAsync(new FullName(new Name(firstName), new Name(lastName)));
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            return patient;
+        }
+        
+        // GET: api/Patient/getByEmail?email=gui.cr04@isep.ipp.pt
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<PatientDto>> GetByEmail(string email)
+        {
+            var patient = await _service.GetByEmailAsync(new Email(email));
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            return patient;
+        }
 
         // POST: api/Patient/{ "fullname", "dateOfBirth", "contactInformation" } 
         [HttpPost]
