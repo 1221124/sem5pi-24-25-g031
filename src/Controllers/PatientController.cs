@@ -151,7 +151,7 @@ namespace src.Controllers
                 //_dbLogService.LogError(patientEntityType, "Invalid data request");
                 return BadRequest(new {Message = "Phone number already exists"});
             }
-            var patient = await _service.AddAsync(PatientMapper.ToEntityFromCreating(dto)); //problema
+            var patient = await _service.AddAsync(PatientMapper.ToEntityFromCreating(dto));
             if (patient == null)
             {
                 return BadRequest();
