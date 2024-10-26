@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Domain.DBLogs;
 using Domain.Shared;
 using Domain.Users;
-using Google.Rpc;
 using Infrastructure.Staffs;
-using NuGet.Protocol;
 
 
 namespace Domain.Staffs
@@ -217,9 +215,9 @@ namespace Domain.Staffs
             }
         }
 
-        public async Task<StaffDto> InactivateAsync(StaffId id)
+        public async Task<StaffDto> InactivateAsync(Email email)
         {
-            var staff = await this._repo.GetByIdAsync(id);
+            var staff = await _repo.GetByEmailAsync(email);
 
             if (staff == null)
                 return null;

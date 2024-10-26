@@ -87,7 +87,7 @@ namespace Domain.Staffs
 
         public void MarkAsInative()
         {
-            this.Status = Status.Inactive;
+            Status = Status.Inactive;
         }
     }
 }

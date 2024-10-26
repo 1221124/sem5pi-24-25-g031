@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
+using System.Linq.Expressions;
 using Domain.Shared;
 using Domain.Staffs;
 using Infrastructure;
@@ -94,20 +95,37 @@ namespace Controllers
             
             await _service.UpdateAsync(oldEmail, StaffMapper.ToEntityFromUpdating(dto, staff));
 
-            return Ok("Staff request updated successfully.");
+            return Ok("Staff profile updated successfully.");
         }
 
         [HttpDelete("{email}")]
-        public async Task<ActionResult<StaffDto>> SoftDelete(Guid id)
+        public async Task<ActionResult<StaffId>> SoftDelete(String email)
         {
-            var staff = await _service.InactivateAsync(new StaffId(id));
-
-            if (staff == null)
+            try
             {
-                return NotFound();
-            }
+                if (email == null)
+                    return BadRequest("Invalid request data.");
+                
+                var staff = await _service.GetByEmailAsync(email);
 
-            return Ok(staff);
+                if (staff == null)
+                {
+                    return NotFound("Staff not found.");
+                }
+
+                var result = await _service.InactivateAsync(email);
+
+                if (result == null)
+                {
+                    return NotFound("Staff could not be inactivated.");
+                }
+                
+                return Ok("Deactivate staff profile successfully.");
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         // DELETE: api/Staff/5
