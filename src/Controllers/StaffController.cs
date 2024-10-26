@@ -71,7 +71,7 @@ namespace Controllers
                     return BadRequest("Invalid request data.");
                 }
 
-                var staff = await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
+                var staff = await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto), staffDto.RoleFirstChar);
 
                 return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
             }

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using Domain.Shared;
-using Domain.Users;
 
 namespace Domain.Staffs
 {
@@ -10,16 +8,16 @@ namespace Domain.Staffs
         public PhoneNumber PhoneNumber { get; set; }
         public Email Email { get; set; }
         public Specialization Specialization { get; set; }
+        public RoleFirstChar RoleFirstChar { get; set; }
 
-        public CreatingStaffDto(FullName fullName, PhoneNumber phoneNumber, Email email, Specialization specialization)
+        public CreatingStaffDto(FullName fullName, PhoneNumber phoneNumber, Email email, Specialization specialization, RoleFirstChar roleFirstChar)
         {
             FullName = fullName;
             PhoneNumber = phoneNumber;
             Email = email;
             Specialization = specialization;
+            RoleFirstChar = roleFirstChar;
         }
-
-
 
     }
 }

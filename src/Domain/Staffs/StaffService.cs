@@ -98,7 +98,7 @@ namespace Domain.Staffs
         }
 
         //CREATE STAFF WITH first name, last name, contact information, and specialization
-        public async Task<StaffDto?> AddAsync(Staff dto)
+        public async Task<StaffDto?> AddAsync(Staff dto, RoleFirstChar roleFirstChar)
         {
             try
             {
@@ -123,9 +123,9 @@ namespace Domain.Staffs
                     throw new InvalidDataException("Email or phone number exists!");
                 }
 
-                var numberStaff = staffList.Count;
+                var numberStaff = staffList.Count + 1;
 
-                string licenseNumber = RoleUtils.IdStaff(Role.NotApplicable) + DateTime.Now.ToString("yyyy") + numberStaff;
+                string licenseNumber = roleFirstChar.Value + DateTime.Now.ToString("yyyy") + numberStaff;
 
                 Console.WriteLine("Generated License Number: " + licenseNumber); // Para debug    
 

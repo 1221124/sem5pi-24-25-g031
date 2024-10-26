@@ -13,6 +13,7 @@ namespace Domain.Staffs
                 Id = staff.Id.AsGuid(),
                 UserId = staff.UserId,
                 FullName = staff.FullName,
+                LicenseNumber = staff.LicenseNumber,
                 Specialization = staff.Specialization,
                 ContactInformation = staff.ContactInformation,
                 Status = staff.Status,

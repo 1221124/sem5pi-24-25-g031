@@ -8,8 +8,7 @@ namespace Domain.Shared
         Doctor,
         Nurse,
         Technician,
-        Patient,
-        NotApplicable
+        Patient
     }
 
     public class RoleUtils
@@ -53,7 +52,6 @@ namespace Domain.Shared
                 Role.Doctor => "D",
                 Role.Nurse => "N",
                 Role.Technician => "T",
-                Role.NotApplicable => "N/A",
                 _ => throw new System.Exception("Invalid role")
             };
         }
@@ -120,8 +118,25 @@ namespace Domain.Shared
         {
             return role == Role.Admin;
         }
+    }
 
-        public static Role FromFirstChar(string firstChar)
+    public class RoleFirstChar
+    {
+        public string Value { get; set; }
+        public static string FromRole(Role role)
+        {
+            return role switch
+            {
+                Role.Admin => "A",
+                Role.Doctor => "D",
+                Role.Nurse => "N",
+                Role.Technician => "T",
+                Role.Patient => "P",
+                _ => throw new System.ArgumentException($"Invalid role: {role}")
+            };
+        }
+
+        public static Role FromChar(string firstChar)
         {
             switch (firstChar.ToUpper())
             {
