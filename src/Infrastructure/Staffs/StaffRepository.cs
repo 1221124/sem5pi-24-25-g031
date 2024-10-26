@@ -33,6 +33,12 @@ namespace Infrastructure.StaffRepository
             return (await _objs
                 .AsQueryable().Where(x=> firstName.Equals(x.FullName.FirstName)).Where(x=> lastName.Equals(x.FullName.LastName)).ToListAsync())!;
         }
+        
+        public async Task<List<Staff>> GetBySpecializationAsync(Specialization specialization)
+        {
+            return (await _objs
+                .AsQueryable().Where(x => specialization.Equals(x.Specialization)).ToListAsync())!;
+        }
     }
 
 }
