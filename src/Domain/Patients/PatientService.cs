@@ -205,7 +205,7 @@ namespace DDDNetCore.Domain.Patients
 
         public async Task<PatientDto?> UpdateAsync(UpdatingPatientDto dto)
         {
-            var patient = await _repo.GetByEmailAsync(dto.EmailId); 
+            var patient = await _repo.GetByEmailAsync(dto.EmailId); //ainda tem os argumentos antigos
             
             if (patient == null)
                 return null;   
@@ -231,11 +231,11 @@ namespace DDDNetCore.Domain.Patients
                     } 
                 }
                 
-                
                 if (dto.PhoneNumber != null || dto.Email != null)
                 {
                     var token = Guid.NewGuid().ToString();
                     patient.SetVerificationToken(token);
+                    await _unitOfWork.CommitAsync();
                     
                     dto.VerificationToken = token;
                     dto.TokenExpiryDate = patient.TokenExpiryDate;
@@ -245,13 +245,8 @@ namespace DDDNetCore.Domain.Patients
                     
                     var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(token, dto);
                     await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
-                    
-                    patient.UpdatePatient(PatientMapper.ToEntity(dto));
-                    await _unitOfWork.CommitAsync();
                 }
-
-                patient.UpdatePatient(PatientMapper.ToEntity(dto));
-                await _unitOfWork.CommitAsync();
+                
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id.AsGuid() );
                 return PatientMapper.ToDto(patient);
                 //return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
@@ -262,31 +257,6 @@ namespace DDDNetCore.Domain.Patients
             }
         }
         
-        //GET: api/Patients/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
-        [HttpGet("sensitiveInfo")]
-        public async Task<ActionResult<PatientDto>> VerifySensitiveInfo([FromQuery] string email, [FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
-        {
-            var patient = await _repo.GetByEmailAsync(new Email(email));
-            
-            if (patient != null == !patient.IsTokenValid(token))
-            {
-                return null;
-            }
-            
-            if (!string.IsNullOrEmpty(pendingPhoneNumber))
-            {
-                patient.ContactInformation.PhoneNumber = new PhoneNumber(pendingPhoneNumber);
-            }
-            if (!string.IsNullOrEmpty(pendingEmail))
-            {
-                patient.ContactInformation.Email = pendingEmail;
-            }
-            
-            patient.ClearVerificationToken();
-            
-            return PatientMapper.ToDto(patient);
-        }
-
         public async Task<PatientDto> PatientDeleteAsync(PatientId id)
         {
             var patient = await this._repo.GetByIdAsync(id); 

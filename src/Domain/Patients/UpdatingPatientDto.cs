@@ -11,6 +11,8 @@ namespace DDDNetCore.Domain.Patients
         public Name? FirstName { get; set; }
         public Name? LastName { get; set; }
         public Email? Email { get; set; }
+        public DateOfBirth? DateOfBirth { get; set; }
+        public Gender? Gender { get; set; }
         public PhoneNumber? PhoneNumber { get; set; }
         public AppointmentHistory? AppointmentHistory { get; set; }
         public List<MedicalConditions>? MedicalConditions { get; set; }
