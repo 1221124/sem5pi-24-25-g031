@@ -30,5 +30,11 @@ namespace Infrastructure.Patients
             return await _objs.
                 AsQueryable().Where(x=> email.Equals(x.ContactInformation.Email)).FirstOrDefaultAsync();
         }
+        
+        public async Task<List<Patient>> GetByName(Name firstName, Name lastName)
+        {
+            return await _objs
+                .AsQueryable().Where(x=> firstName.Equals(x.FullName.FirstName)).Where(x=> lastName.Equals(x.FullName.LastName)).ToListAsync();
+        }
     }
 }
