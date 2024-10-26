@@ -129,25 +129,44 @@ namespace Domain.Patients
             }
         }
 
-        public async Task<PatientDto> DeleteAsync(PatientId id)
+        public async Task<PatientDto> PatientDeleteAsync(PatientId id)
         {
             var patient = await this._repo.GetByIdAsync(id); 
             
             if (patient == null)
                 return null;
-
-            await Task.Run(async () =>
-            {
-                await Task.Delay(TimeSpan.FromMinutes(1));
-                
-                _repo.Remove(patient);
-                await _unitOfWork.CommitAsync();
-                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.DELETE, patient);
-                //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
-                //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
-            });
-
+            
+            _repo.Remove(patient);
+            await _unitOfWork.CommitAsync();
+            //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.DELETE, patient);
+            //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
+            //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
+            
             return PatientMapper.ToDto(patient);
         }    
+        
+        public async Task<PatientDto> AdminDeleteAsync(PatientId id)
+        {
+            var patient = await this._repo.GetByIdAsync(id); 
+            
+            if (patient == null)
+                return null;
+            try
+            {
+                //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
+                //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            _repo.Remove(patient);
+            await _unitOfWork.CommitAsync();
+            
+            //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.INACTIVATE, patient);
+            //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
+            //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
+            
+            return PatientMapper.ToDto(patient);
+        }
     }
 }

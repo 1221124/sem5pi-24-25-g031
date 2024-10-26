@@ -92,11 +92,11 @@ namespace src.Controllers
         
         // DELETE: api/Patient/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(Guid id)
+        public async Task<ActionResult> AdminDelete(Guid id)
         {
             try
             {
-                var patient = await _service.DeleteAsync(new PatientId(id));
+                var patient = await _service.PatientDeleteAsync(new PatientId(id));
 
                 if (patient == null)
                 {
@@ -109,5 +109,27 @@ namespace src.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+        
+        /*
+        // DELETE: api/Patient/
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> PatientDelete(Guid id)
+        {
+            try
+            {
+                var patient = await _service.AdminDeleteAsync(new PatientId(id));
+
+                if (patient == null)
+                {
+                    return NotFound();
+                }
+                return Ok(patient);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        */
     }
 }

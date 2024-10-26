@@ -30,7 +30,7 @@ namespace DDDNetCore.Domain.Patients
                     if (dbLog != null && dbLog.TimeStamp <= thresholdDate)
                     {
                         var patientId = new PatientId(dbLog.Affected);
-                        await _patientService.DeleteAsync(patientId);
+                        await _patientService.AdminDeleteAsync(patientId);
                     }
                 }
             }
