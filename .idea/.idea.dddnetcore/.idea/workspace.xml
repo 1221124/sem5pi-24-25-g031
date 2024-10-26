@@ -9,19 +9,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1801ba99-87f7-497b-abfc-99e403e4e0e9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.dddnetcore/.idea/projectSettingsUpdater.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.dddnetcore/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026010203_UpdateDeadlineDateColumn.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026010203_UpdateDeadlineDateColumn.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026010535_UpdateOperationRequestPatientDoctorOpType.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026010535_UpdateOperationRequestPatientDoctorOpType.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026014037_UpdateDeadlineDate.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026014037_UpdateDeadlineDate.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026021833_UpdateNewOperationRequest.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Migrations/20241026021833_UpdateNewOperationRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dddnetcore.sln.DotSettings.user" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/DeadlineDate.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/SARMDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Migrations/SARMDbContextModelSnapshot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.dgspec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.g.props" afterDir="false" />
@@ -71,21 +58,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.DDDNetCore: DDDSample1.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/david/Desktop/ISEP/3ano1sem/sem5pi-24-25-g061",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.DDDNetCore: DDDSample1.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/david/Desktop/ISEP/3ano1sem/sem5pi-24-25-g061&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.DDDNetCore: DDDSample1">
     <configuration name="DDDNetCore: DDDSample1" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/DDDNetCore.csproj" />
@@ -137,24 +124,5 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/Controllers/OperationRequestsController.cs</url>
-          <line>92</line>
-          <properties documentPath="C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\src\Controllers\OperationRequestsController.cs" containingFunctionPresentation="Method 'Create'">
-            <startOffsets>
-              <option value="3274" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3349" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

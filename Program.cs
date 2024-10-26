@@ -47,6 +47,7 @@ builder.Services.AddTransient<OperationTypeService>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<UserService>();
 
+builder.Services.AddTransient<OperationRequestRepository>();
 builder.Services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
 builder.Services.AddTransient<OperationRequestService>();
 
