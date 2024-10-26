@@ -49,15 +49,27 @@ namespace Controllers
         }
 
         //Procurar por searchCriteria
-        /*[HttpGet("search")]
-        public async Task<ActionResult<StaffDto>> GetBySearchCriteria(CreatingStaffDto staffDto)
+        [HttpGet("name={fullName}")]
+        public async Task<ActionResult<StaffDto>> GetBySearchCriteriaName(String fullName)
         {
-            if (staffDto == null)
+            var names = fullName.Split('-');
+            
+            if (names.Length != 2)
             {
-                return BadRequest("Parâmetros de pesquisa inválidos.");
+                return BadRequest("Full name format is invalid. Expected format: FirstName%2LastName");
             }
+            
+            var firstName = names[0];
+            var lastName = names[1];
+            
+            var staffList = await _service.SearchByNameAsync(new FullName(new Name(firstName), new Name(lastName))); 
 
-        }*/
+            if (staffList == null)
+            {
+                return NotFound();
+            }
+            return Ok(staffList);
+        }
 
         // POST: api/Staff
         [HttpPost]
