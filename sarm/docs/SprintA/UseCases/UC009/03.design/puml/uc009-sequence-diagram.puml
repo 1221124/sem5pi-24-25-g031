@@ -1,0 +1,130 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC009
+
+
+participant "Routing" as Routing 
+participant "PatientController" as Controller
+participant "PatientService" as Service
+participant "IPatientRepository" as IPatientRepository
+participant "IRepository" as IRepository
+participant "PatientDTO" as PatientDTO
+participant "PatientID" as PatientID
+participant "Patient" as Patient
+participant "EmailService" as EmailService
+participant "Log" as Log
+
+opt if the admin wants to search for a patient 
+
+    loop for each search criteria
+
+      note right of Routing
+        the "searchCriteria" can be any of the following: name, email, 
+        phone number, medical record number, date of birth, gender.
+        The method "GetByCriteria" will be called for each search criteria.
+        "searchCriteria" is from the type e.g "Name"
+      end note
+
+      -> Routing: GET/Patients/{searchCriteria}
+      activate Routing
+
+        Routing -> Controller: GetByCriteria(searchCriteria)
+        activate Controller
+
+          Controller -> Service: GetByCriteriaAsync(searchCriteria)
+          activate Service
+
+            Service -> IPatientRepository: GetByCriteriaAsync(searchCriteria)
+            activate IPatientRepository
+
+              IPatientRepository -> IRepository: GetByCriteriaAsync(searchCriteria)
+              activate IRepository
+
+                  IRepository --> IPatientRepository: Task<List<TEntity>>
+              deactivate IRepository
+
+              IPatientRepository --> Service: Task<List<Patient>>
+            deactivate IPatientRepository
+
+            Service -> Service: List<Patient> allPatients.addAll(List<Patient>)
+    end
+
+            Service -> Service: allPatients.Distinct()
+
+            Service --> Controller: allPatients
+          deactivate Service
+
+          Controller --> Routing: allPatients
+        deactivate Controller
+
+        <- Routing : allPatients
+      deactivate Routing
+
+end opt
+
+-> Routing: PUT/Patient/{id}
+activate Routing
+
+    Routing -> Controller: Update(Guid id, PatientDTO dto)
+    activate Controller
+    
+        Controller -> Service: UpdateAsync(dto)
+        activate Service
+            
+            Service -> PatientID**:  new PatientID(dto.id)
+            activate PatientID
+
+                PatientID -> Service: patientID
+            deactivate PatientID
+
+            Service -> IPatientRepository: GetByIdAsync(patientID);
+            activate IPatientRepository
+
+                IPatientRepository -> IRepository: GetByIdAsync(patientID)
+                activate IRepository
+
+                    IRepository --> IPatientRepository: patient
+                deactivate IRepository
+
+                IPatientRepository --> Service: patient
+            deactivate IPatientRepository
+
+            Service -> Service: verifiesSdensitivity(dto)
+
+            opt if data is sensitive
+
+                Service -> EmailService: SendEmailAsync(patient.Email, "Updates Profile", "Confirm if you want to change these information.")
+
+            end
+            loop for each new attribute in the DTO
+                Service -> Patient: Update"Attribute"(dto."atribute")
+                activate Patient
+                    note right of Patient : Update the patient with the attribute that the Patient inserted in the DTO
+
+                    Patient --> Service: patient updated
+                deactivate Patient    
+            end
+
+            Service -> PatientDTO**: new PatientDTO(patient attributes) 
+            activate PatientDTO
+
+                PatientDTO --> Service: patientDTO
+            deactivate PatientDTO
+
+            Service -> Log: LogChangesAsync(UPDATE, PATIENT)
+
+            Service --> Controller: patientDTO
+        deactivate Service
+
+        Controller --> Routing: response
+    deactivate Controller
+
+    <-- Routing: response
+deactivate Routing
+
+@enduml

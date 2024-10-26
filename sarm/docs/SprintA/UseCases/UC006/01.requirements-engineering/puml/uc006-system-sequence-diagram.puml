@@ -1,0 +1,62 @@
+@startuml "uc006-system-sequence-diagram"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber 1
+
+title System Sequence Diagram (SSD) - UC006
+actor "Backoffice User" as BackofficeUser
+participant ":System" as System
+
+activate BackofficeUser
+
+BackofficeUser -> System: Wants to log in to the system
+
+activate System
+    System --> BackofficeUser: Requests credentials
+    note right: credentials = {username, password}
+    deactivate System
+
+        alt Credentials are valid
+            BackofficeUser -> System: Provides credentials
+            activate System
+                System -> System: Verifies credentials
+                activate System
+                deactivate System
+                    System -> System: Identifies User roles
+                    activate System
+                    System --> BackofficeUser: Grants access to their role's appropriate features
+                    deactivate System
+            deactivate System
+        else Credentials are invalid
+            BackofficeUser -> System: Provides credentials
+            activate System
+                System -> System: Can't verify credentials
+                activate System
+                deactivate System
+                    System --> BackofficeUser: Requests to try again
+            deactivate System
+
+            loop 5 times
+                BackofficeUser -> System: Provides credentials
+                activate System
+                    System -> System: Can't verify credentials
+                    activate System
+                    deactivate System
+                        System --> BackofficeUser: Requests to try again
+            end
+            
+            System -> System: Notifies Admin
+                activate System
+                deactivate System
+            System -> System: Temporarily blocks User
+                activate System
+                deactivate System
+
+        System --> BackofficeUser: Denies User access to the system
+        end
+
+    deactivate System
+
+@enduml

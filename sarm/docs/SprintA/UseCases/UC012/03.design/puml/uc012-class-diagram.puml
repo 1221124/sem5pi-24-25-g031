@@ -1,0 +1,68 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC012
+
+class CreateStaffController {
+    + AddAsync(CreateStaffDTO): Staff
+    + GetAllSpecializations(): List<Specialization>
+}
+
+class StaffService {
+    + AddAsync(CreateStaffDTO): Staff
+    + GetAllSpecializations(): List<Specialization>
+}
+
+class CreateStaffDTO {
+    + FullName: FullName
+    + ContactInformation: ContactInformation
+    + Specialization: Specialization
+}
+
+class Staff {
+    + FullName: FullName
+    + StaffID: int
+    + LicenseNumber: int
+    + ContactInformation: ContactInformation    
+    + Specialization: Specialization
+}
+
+enum Specialization{
+    CARDIOLOGY, ORTHOPEDICS
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+interface IStaffRepository {
+    + AddAsync(Staff): Staff
+    + FindByIdAsync(id: String): Staff
+    + GetAllSpecializationsAsync(): List<Specialization>
+}
+
+class StaffRepository {
+    + AddAsync(Staff): Staff
+    + FindByIdAsync(id: String): Staff
+    + GetAllSpecializationsAsync(): List<Specialization>
+}
+
+CreateStaffDTO --> CreateStaffController : uses
+CreateStaffController --> StaffService : uses
+StaffService --> Staff : creates
+StaffService --> IStaffRepository : depends on
+StaffRepository --> IStaffRepository : implements
+Staff --> ContactInformation : has
+Staff --> FullName : has
+Staff --> Specialization : has
+
+@enduml

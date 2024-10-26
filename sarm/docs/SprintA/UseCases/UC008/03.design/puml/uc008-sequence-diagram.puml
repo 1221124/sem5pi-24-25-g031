@@ -1,0 +1,55 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+title System Sequence Diagram (SSD) - UC008
+
+participant ":Routing" as Routing
+participant ":PatientController" as Controller
+participant ":PatientService" as Service
+participant "Patient" as Patient 
+participant "IPatientRepository" as IPatientRepositry
+participant "IRepository" as IRepository
+participant "PatientDTO" as PatientDTO
+database "Database" as Database
+
+->  Routing: POST/api/Patient
+activate Routing
+
+    Routing -> Controller: CreatePatient(CreatingPatientDto dto)
+    activate Controller
+
+        Controller -> Service: AddAsync(CreatingCategoryDto dto)
+        activate Service
+
+            Service -> Patient**: create(atributos clientes)
+            activate Patient
+
+                Patient --> Service: patient
+            deactivate Patient
+
+            Service -> IPatientRepositry: addAsync(patient)
+            activate IPatientRepositry
+
+                IPatientRepositry -> IRepository: addAsync(patient)
+            deactivate IPatientRepositry
+
+            Service -> PatientDTO**: create(atributes)
+
+            Service -> Patient: create(atributes)
+
+            Service -> Database: save(patient)
+
+            Service --> Controller: patientDto
+        deactivate Service
+
+        Controller --> Routing: response
+    deactivate Controller
+
+    <- Routing: response
+deactivate Routing
+
+
+@enduml

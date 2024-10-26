@@ -1,0 +1,86 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC014
+
+class StaffController {
+    + SoftDelete(StaffId): Staff
+    + GetAllStaff(): List<Staff>
+}
+
+class StaffService {
+    + InactivateAsync(staffId: int): Staff
+    + GetAllStaff(): List<Staff>
+}
+
+class StaffDTO {
+    + FullName: FullName
+    + ContactInformation: ContactInformation
+}
+
+class Staff {
+    + FullName: FullName
+    + StaffID: int
+    + LicenseNumber: int
+    + ContactInformation: ContactInformation    
+    + Specialization: Specialization
+    + Status: StaffStatus
+    + DeactivateTime: dateTime
+    + AppointmentSlots: Appointment
+}
+
+class Appointment {
+    + AppointmentID: int
+    + AppointmentStatus: AppointmentStatus
+}
+
+enum AppointmentStatus{
+    SCHEDULED, COMPLETED, CANCELED
+}
+
+enum StaffStatus {
+    ACTIVE, INACTIVE
+}
+
+enum Specialization{
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+interface IStaffRepository {
+    + InactivateAsync(staffId: int): Staff
+    + FindByIdAsync(id: int): Staff
+    + GetAllAsync(): List<Staff>
+}
+
+class StaffRepository {
+    + InactivateAsync(staffId: int): Staff
+    + FindByIdAsync(id: int): Staff
+    + GetAllAsync(): List<Staff>
+}
+
+DeactivateStaffDTO --> DeactivateStaffController : uses
+DeactivateStaffController --> StaffService : uses
+StaffService --> Staff : creates
+StaffService --> IStaffRepository : depends on
+StaffRepository --> IStaffRepository : implements
+Staff --> ContactInformation : has
+Staff --> FullName : has
+Staff --> StaffStatus : records
+Staff --> Specialization : records
+Staff --> Appointment : has
+Appointment --> AppointmentStatus : has
+
+@enduml

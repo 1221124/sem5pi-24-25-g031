@@ -1,0 +1,75 @@
+@startuml "uc017-sequence-diagram_operation-type"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SSD) - UC017\nUpdating Operation Type
+participant OperationrRequestController as Controller <<controller>>
+participant OperationRequestService as Service <<service>>
+participant OperationRequestDTO as DTO <<dto>>
+participant OperationRequest as OperationRequest <<domain>>
+database StaffRepository as StaffRepository <<repository>>
+participant StaffRepositoryInterface as StaffRepositoryInterface <<interface>>
+database OperationRequestRepository as OpRepository <<repo>>
+participant OperationRequestInterface as OpRepositoryInterface <<interface>>
+
+--> Controller: PUSH /api/staff/operation-request/update/operation-type\nBody: {doctorID,operationID,operationType}
+
+    activate Controller
+
+        Controller -> Service: UpdateAsync(operationRequestDTO)
+        activate Service
+
+            Service -> StaffRepository: GetStaffAsync(operationRequestDTO.doctorId)
+            activate StaffRepository
+                StaffRepository -> StaffRepositoryInterface: GetStaffAsync(operationRequestDTO.doctorId)
+                activate StaffRepositoryInterface
+                    deactivate StaffRepositoryInterface
+                StaffRepository --> Service: staff
+                deactivate StaffRepository
+
+            Service -> OpRepository: GetOperationAsync(operationRequestDTO.operationId)
+            activate OpRepository
+                OpRepository -> OpRepositoryInterface: GetOperationAsync(operationRequestDTO.operationId)
+                activate OpRepositoryInterface
+                    deactivate OpRepositoryInterface
+                OpRepository --> Service: operation
+                deactivate OpRepository
+            
+            Service -> Service: new OperationType(operationRequestDTO.operationType)
+            activate Service
+                Service --> Service: newOperationType
+                deactivate Service
+
+            Service -> Service: compare(operation.operationType.specialization,staff.specialization)
+            activate Service
+            alt equals
+                deactivate Service
+                Service -> OperationRequest: UpdateOperationType(newOperationType)
+                activate OperationRequest
+                    deactivate OperationRequest
+
+                Service -> OpRepository: SaveChangesAsync(operation)
+                activate OpRepository
+                    OpRepository -> OpRepositoryInterface: SaveChangesAsync(operation)
+                    activate OpRepositoryInterface
+                        deactivate OpRepositoryInterface
+                    OpRepository --> Service: operation
+                    deactivate OpRepository
+                
+                Service -> DTO: new OperationRequestDTO(operation.operationID, operation.operationType)
+                activate DTO
+                    DTO --> Service: operationRequestDTO
+                    deactivate DTO
+
+                Service --> Controller: operationRequestDTO
+
+                <-- Controller : 200 OK 
+            else
+                Service -> Controller: throw exception
+                deactivate Service
+            
+                <-- Controller: 400 Bad Request{message}  
+            end
+        deactivate Controller
+@enduml

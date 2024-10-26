@@ -1,0 +1,118 @@
+@startuml uc003-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC003
+
+participant ":UserController" as Controller <<application>>
+participant "IAMService" as IAM <<Service>>
+participant ":UserService" as Service <<Service>>
+participant "UserMapper" as Mapper <<application>>
+participant "user:User" as User <<domain>>
+participant "creatingDto:CreatingUserDto" as Creating <<domain>>
+participant ":IUserRepository" as UserRepo <<persistence>>
+participant "staff:Staff" as Staff <<domain>>
+participant ":IStaffRepository" as StRepo <<persistence>>
+participant "dto:UserDto" as Dto <<domain>>
+
+-> Controller: POST /api/user
+
+activate Controller
+
+    Controller -> IAM: Redirect()
+
+    activate IAM
+
+        IAM --> Controller: token
+
+    deactivate IAM
+
+    Controller -> Service: AddAsync(dto)
+
+    activate Service
+
+        Service -> Mapper: ToUser(dto)
+
+        activate Mapper
+
+            Mapper -> User: new User(dto)
+
+            activate User
+
+                User --> Mapper: user
+
+            deactivate User
+
+            Mapper --> Service: user
+
+        deactivate Mapper
+
+        Service -> Creating: GetRole()
+
+        activate Creating
+
+            Creating --> Service: role
+
+        deactivate Creating
+
+        Service -> User: SetRole(role)
+
+        activate User
+
+            User --> Service: void
+
+        deactivate User
+
+        Service -> UserRepo: AddAsync(user)
+
+        activate UserRepo
+
+            UserRepo --> Service: user
+
+        deactivate UserRepo
+
+        Service -> Staff: SetUserId(userId)
+
+        activate Staff
+
+            Staff --> Service: void
+
+        deactivate Staff
+
+        Service -> StRepo: UpdateAsync(Staff)
+
+        activate StRepo
+
+            StRepo --> Service: Staff
+
+        deactivate StRepo
+
+        Service -> Mapper: ToDto(user)
+
+        activate Mapper
+
+            Mapper -> Dto: new UserDto(user)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
+
+        Service --> Controller: dto
+
+    deactivate Service
+
+    <-- Controller: 201 Created
+
+deactivate Controller
+
+@enduml

@@ -1,0 +1,79 @@
+@startuml "uc007-sequence-diagram_token-valid"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SSD) - UC007\nToken Valid
+
+participant PatientController as Controller <<controller>>
+participant PatientService as Service <<service>>
+participant IAMService as IAM <<service>>
+participant UserToken as Token <<domain>>
+participant PatientDTO as DTO <<dto>>
+database PatientRepository as Repository <<repository>>
+participant InterfacePatientRepository as Interface <<interface>>
+
+--> Controller: POST /api/patient/login\nBody={token}
+    activate Controller
+        Controller -> Service: Login(token)
+        activate Service
+
+            Service -> IAM: ValidatePatientToken(token)
+            activate IAM
+
+            IAM -> Token: new UserToken(token)
+            activate Token
+                Token --> IAM: patientToken
+                deactivate Token
+
+                IAM -> Repository: FindRoleByID(patientToken.id)
+                activate Repository
+                    Repository -> Interface: FindRoleByID(patientToken.id)
+                    activate Interface
+                        deactivate Interface
+                
+                    Repository --> IAM: role
+                    deactivate Repository
+
+                    IAM -> IAM: UserRole.PATIENT == role
+                    activate IAM
+                        deactivate IAM
+                    
+                    IAM -> IAM: TokenValid(patientToken)
+                    activate IAM
+                        deactivate IAM
+
+                IAM --> Service: patientToken
+                deactivate IAM
+
+                alt patientToker.expiredDate < now
+                Service -> Repository: FindPatientByID(patientToken.id)
+                activate Repository
+                    Repository -> Interface: FindPatientByID(patientToken.id)
+                    activate Interface
+                        deactivate Interface
+                
+                    Repository --> Service: patient
+                    deactivate Repository
+
+
+                Service -> DTO: new PatientDTO(patient)
+                activate DTO
+                    DTO --> Service: patientDTO
+                    deactivate DTO
+
+                Service -> Service: AccessData(patientDTO)
+                activate Service
+                    deactivate Service
+
+                Service --> Controller: patientDTO 
+                    
+                <-- Controller: 200 OK\nBody={data}
+
+                else patientToken.expiredDate >= now
+                    Service --> Controller : token expired
+                    deactivate Service
+                    <-- Controller: 401 Unauthorized\nBody={message: patientToken.status}
+                end
+            deactivate Controller
+@endumld

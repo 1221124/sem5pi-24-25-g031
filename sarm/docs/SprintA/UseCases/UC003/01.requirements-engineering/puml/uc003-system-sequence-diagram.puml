@@ -1,0 +1,56 @@
+@startuml uc003-system-sequence-diagram
+
+title System Sequence Diagram (SSD) - UC003
+actor Patient as Patient
+participant ":System" as System
+participant ":IAM" as IAM
+
+activate Patient
+
+    Patient -> System: Self-register
+
+    activate System
+
+        System --> Patient: Redirect to IAM
+
+    deactivate System
+
+    Patient -> IAM: Register
+
+    activate IAM
+
+        IAM --> Patient: Ask for email
+
+    deactivate IAM
+
+    Patient -> IAM: Input email
+
+    activate IAM
+
+        IAM --> Patient: Ask for password
+
+    deactivate IAM
+
+    Patient -> IAM: Input password
+
+    activate IAM
+
+        IAM -> System: Send user email as token
+
+    deactivate IAM
+
+    activate System
+
+        System -> System: Verify patient's profile is created
+
+        System -> System: Assign patient role to user
+
+        System -> System: Link patient's profile to user's account
+
+        System --> Patient: Show success message
+
+    deactivate System
+
+deactivate Patient
+
+@enduml

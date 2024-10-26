@@ -1,0 +1,59 @@
+@startuml "uc018-sequence-diagram"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SSD) - UC018
+participant OperationRequestController as Controller <<controller>>
+participant ":AuthService" as AuthService <<service>>
+participant OperationRequestService as Service <<service>>
+participant OperationRequestDTO as DTO <<dto>>
+database OperationRequestRepository as Repository <<repository>>
+participant OperationRequestRepositoryInterface as Interface <<interface>>
+database StaffRepository as StaffRepository <<repository>>
+participant StaffRepositoryInterface as StaffInterface <<interface>>
+
+
+--> Controller: DELETE /api/staff/operation-requests/delete\nBody: {staffId,operationRequestID}
+activate Controller
+    
+    Controller -> AuthService: AuthenticateAsync(operationRequestDTO.staffId)
+    activate AuthService
+        AuthService --> Controller: IsAuthenticated
+        deactivate AuthService
+
+    Controller -> Service: DeleteAsync(operationRequestDTO.operationRequestID)
+    activate Service 
+        Service -> StaffRepository: GetStaffAsync(operationRequestDTO.staffId)
+        activate StaffRepository
+            StaffRepository -> StaffInterface: GetStaffAsync(operationRequestDTO.staffId)
+            activate StaffInterface
+                deactivate StaffInterface
+            StaffRepository --> Service: staff
+            deactivate StaffRepository 
+
+        Service -> Repository: GetOperationRequestAsync(staff)
+        activate Repository
+            Repository -> Interface: GetOperationRequestAsync(staff)
+            activate Interface
+                deactivate Interface
+            Repository --> Service: operationRequest
+            deactivate Repository
+
+        Service -> Repository: DeleteAsync(operationRequest)
+        activate Repository
+            Repository -> Interface: DeleteAsync(operationRequest)
+            activate Interface
+                deactivate Interface
+            Repository --> Service: operationRequest
+            deactivate Repository
+        Service -> DTO: new OperationRequestDTO(operationRequest.operationRequestID)
+        activate DTO
+            DTO --> Service: operationRequestDTO
+            deactivate DTO
+        Service --> Controller: operationRequestDTO
+        deactivate Service
+
+    <-- Controller: return 200 OK={BODY}
+    deactivate Controller
+@enduml

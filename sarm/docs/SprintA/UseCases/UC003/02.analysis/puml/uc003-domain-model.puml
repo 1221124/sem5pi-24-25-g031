@@ -1,0 +1,73 @@
+@startuml uc003-domain-model
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+top to bottom direction
+left to right direction
+skinparam linetype ortho
+
+hide circle
+hide methods
+
+title Domain Model (DM) - UC003
+
+package "UserAggregate" {
+    class User <<root entity>>
+    class Username <<value object>>
+    note right of Username: same as the user's email
+    class Email <<value object>>
+    class Role <<value object>> {
+        ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+    }
+    note right of Role: in this Use Case, only Backoffice Roles are considered (ADMIN, DOCTOR, NURSE, TECHNICIAN)
+}
+
+package "PatientAggregate" {
+    class Patient <<root entity>>
+    class DateOfBirth <<value object>>
+    note right of DateOfBirth: format: system date
+    class Gender <<value object>> {
+        MALE, FEMALE
+    }
+    class MedicalRecordNumber <<value object>>
+    note right of MedicalRecordNumber: unique identifier (format: YYYYMMnnnnnn - YYYY = year, MM = month, nnnnnn = sequential number)
+    class MedicalCondition <<value object>>
+    note right of MedicalCondition: optional (free text)
+    class EmergencyContact <<value object>>
+    class AppointmentHistory <<value object>>
+}
+
+class FullName <<value object>>
+class ContactInformation <<value object>>
+class PhoneNumber <<value object>>
+class Email <<value object>>
+
+class Admin <<conceptual class>>
+
+Admin "1" --> "*" User: creates >
+
+User "1" --> "1" Username: has >
+User "1" --> "1" Email: has >
+User "*" --> "1" Role: has >
+
+User "0..1" <-- "1" Patient : < references
+
+FullName "1" -- "1" FirstName : > has
+FullName "1" -- "1" LastName : > has
+ContactInformation "1" -- "1" PhoneNumber : > has
+ContactInformation "1" -- "1" Email : > has
+EmergencyContact "1" -- "1" PhoneNumber : > has
+
+Patient "1..*" --- "1" FullName : > has
+Patient "*" --- "1" DateOfBirth : > born on
+Patient "*" --- "1" Gender : > has
+Patient "1" --- "1" MedicalRecordNumber : > identified by
+Patient "1" --- "1" ContactInformation : > has
+Patient "0..*" --- "0..*" MedicalCondition : > can have
+Patient "*" ---"1" EmergencyContact : > has
+Patient "*" --- "1" AppointmentHistory : > has
+
+@enduml

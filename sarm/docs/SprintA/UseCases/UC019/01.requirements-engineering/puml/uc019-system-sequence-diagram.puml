@@ -1,0 +1,73 @@
+@startuml "uc019-system-sequence-diagram"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC019
+
+actor Doctor
+participant ":System" as System
+
+activate Doctor
+    Doctor -> System: Requests to search for Operation Requests
+    activate System
+    
+    System --> Doctor: Display options
+    note right: options = {\n-patient name\n-operation type\n-priority\n-status\n}
+        deactivate System
+
+        alt option = 'patient name'
+        Doctor -> System: Selects 'patient name'
+        activate System
+            System -> System: obtais all operation requests\nfor the patient
+            activate System
+                deactivate System
+
+        else option = 'operation type'
+        Doctor -> System: Selects 'operation type'
+            System -> System: obtais all operation requests\nfor the operation type
+            activate System
+                deactivate System
+
+        else option = 'priority'
+        Doctor -> System: Selects 'priority'
+            System -> System: obtais all operation requests\nfor the priority
+            activate System
+                deactivate System
+
+        else option = 'status'
+        Doctor -> System: Selects 'status'
+            System -> System: obtais all operation requests\nfor the status
+            activate System
+                deactivate System
+
+        end
+
+        System --> Doctor: Display operation requests
+        
+        System -> Doctor: Displays options
+        note right: options = {\n-update\n-delete\n}
+        deactivate System
+
+        alt option = 'update'
+        Doctor -> System: Selects 'update'
+        activate System
+            System -> System: Update the operation request
+            activate System
+                deactivate System
+                note right: documented in UC017
+        else option = 'delete'
+        Doctor -> System: Selects 'delete'
+            System -> System: Delete the operation request
+            activate System
+                deactivate System
+                note right: documented in UC018
+        end
+
+            System --> Doctor: Confirmation message
+            deactivate System
+
+    deactivate Doctor
+
+
+@enduml

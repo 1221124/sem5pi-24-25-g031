@@ -1,0 +1,89 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC013
+
+class StaffController {
+    + Update(staffId: int): Task<ActionResult<StaffDTO>>
+}
+
+class StaffService {
+    + UpdateAsync(staffId: int): Task<StaffDTO>
+}
+
+class Staff {
+    + StaffID: int
+    + FullName: FullName
+    + LicenseNumber: int
+    + ContactInformation: ContactInformation    
+    + Specialization: Specialization
+    + Status: StaffStatus
+    + SetContactInformation(contactInformation: ContactInformation): void
+    + SetSpecialization(specialization: Specialization): void
+}
+
+class Log{
+    + LogID: int
+    + LogType: LogType
+    + EntityType: EntityType
+    + EntityID: int
+}
+
+class StaffDTO {
+    + FullName: FullName
+    + ContactInformation: ContactInformation
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+enum LogType {
+    DELETION, UPDATE, CREATION
+}
+
+enum EntityType {
+    PATIENT, STAFF, OPERATION_TYPE
+}
+
+enum StaffStatus {
+    ACTIVE, INACTIVE
+}
+
+enum Specialization{
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+}
+
+interface IStaffRepository {
+    + GetByIDAsync(id: int): Task<Staff>
+    + UpdateAsync(dto: StaffDTO): Task<Staff>
+}
+
+class StaffRepository {
+    + GetByIDAsync(id: int): Task<Staff>
+    + UpdateAsync(dto: StaffDTO): Task<Staff>
+}
+
+StaffDTO --> StaffController : uses
+StaffController --> StaffService : uses
+StaffService --> Staff : creates
+StaffService --> IStaffRepository : depends on
+StaffRepository --> IStaffRepository : implements
+Staff --> ContactInformation : has
+Staff --> FullName : has
+Staff --> StaffStatus : records
+Staff --> Specialization : records
+Staff --> Log : records
+Log --> LogType : records
+Log --> EntityType : records
+
+@enduml

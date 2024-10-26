@@ -1,0 +1,28 @@
+@startuml uc022-system-sequence-diagram
+
+title System Sequence Diagram (SSD) - UC022
+actor Admin as Adm
+participant ":System" as System
+
+activate Adm
+
+    Adm -> System: Select the option to deactivate an existing operation type
+    activate System
+
+        System --> Adm: List all active operation type and ask to select operation type to deactivate
+    deactivate System
+
+    Adm -> System: Select operation type to deactivate
+    activate System
+
+        System --> Adm: Ask to confirm deactivation
+    deactivate System
+
+    Adm -> System: Confirm deactivation
+    activate System
+
+        System --> Adm: Show (in)success message
+    deactivate System
+deactivate Adm
+
+@enduml

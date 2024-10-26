@@ -1,0 +1,57 @@
+@startuml "uc007-sequence-diagram_token-invalid"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SSD) - UC007\nToken Invalid
+
+participant PatientController as Controller <<controller>>
+participant PatientService as Service <<service>>
+participant IAMService as IAM <<service>>
+participant UserToken as Token <<domain>>
+participant PatientDTO as DTO <<dto>>
+participant PatientRepository as Repository <<interface>>
+
+--> Controller: POST /api/patient/login\nBody={token}
+    activate Controller
+        Controller -> Service: Login(token)
+        activate Service
+
+            Service -> IAM: ValidatePatientToken(token)
+            activate IAM
+
+            IAM -> Token: new UserToken(token)
+            activate Token
+                Token --> IAM: patientToken
+                deactivate Token
+
+                alt try
+                IAM -> Repository: FindRoleByID(patientToken.id)
+                activate Repository
+                    Repository --> IAM: role
+                    deactivate Repository
+
+                IAM -> IAM: UserRole.PATIENT != role
+                activate IAM
+                    deactivate IAM
+
+                IAM -> IAM: TokenInvalid(patientToken)
+                activate IAM
+                    deactivate IAM
+
+                else catch(ex)
+
+                IAM -> IAM: TokenInvalid(patientToke)
+                activate IAM
+                    deactivate IAM
+                
+                end
+
+                IAM --> Service: patientToken
+                deactivate IAM
+                
+            Service --> Controller : token invalid
+            deactivate Service
+        <-- Controller: 401 Unauthorized\nBody={message: patientToken.status}
+        deactivate Controller
+@endumld

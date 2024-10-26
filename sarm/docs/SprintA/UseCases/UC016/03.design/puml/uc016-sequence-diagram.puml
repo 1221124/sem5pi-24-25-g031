@@ -1,0 +1,66 @@
+@startuml "uc016-sequence-diagram"
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC016
+
+participant OperationRequestController as Controller <<application>>
+participant OperationRequestService as Service <<persistence>>
+participant OperationRequestDTO as DTO <<data>>
+participant OperationRequest as Domain <<domain>>
+database OperationRequestRepository as OperationRequestRepository <<repository>>
+participant InterfaceOperationRequestRepository as InterfaceOperationRequestRepository <<interface>>
+database PatientRepository as PatientRepository <<repository>>
+participant InterfacePatientRepository as InterfacePatientRepository <<interface>>
+
+--> Controller : POST /api/operation-request\nBody: {doctorId, patientId, operationType, priority, suggestedDeadline}
+activate Controller
+
+    Controller -> Service: AddAsync(dto)
+    activate Service
+
+        Service -> Domain: new OperationRequest(dto.getDoctorId(), dto.getPatientId(),\ndto.getOperationType(), dto.getPriority(),\ndot.getSuggestedDeadline())
+        activate Domain
+            
+            Domain --> Service: operationRequest
+            deactivate Domain
+
+        Service -> OperationRequestRepository: AddAsync(operationRequest)
+        activate OperationRequestRepository
+            
+            OperationRequestRepository -> InterfaceOperationRequestRepository: AddAsync(operationRequest)
+            activate InterfaceOperationRequestRepository            
+                deactivate InterfaceOperationRequestRepository
+            
+            OperationRequestRepository --> Service: operationRequest
+            deactivate OperationRequestRepository
+
+        Service -> PatientRepository: GetAsync(dto.getPatientId())
+        activate PatientRepository
+
+            PatientRepository -> InterfacePatientRepository: GetAsync(dto.getPatientId())
+            activate InterfacePatientRepository
+                deactivate InterfacePatientRepository
+
+            PatientRepository --> Service: patient
+            deactivate PatientRepository
+
+        Service -> PatientRepository: UpdateAsync(patient.AddOperationRequestToMedicalHistory(operationRequest.ToString()))
+        activate PatientRepository
+
+            PatientRepository -> InterfacePatientRepository: UpdateAsync(patient)
+            activate InterfacePatientRepository
+                deactivate InterfacePatientRepository
+
+            PatientRepository --> Service: patient
+            deactivate PatientRepository
+
+        Service --> Controller: new OperationRequestDto(operationRequest.getId())
+        deactivate Service
+
+    <-- Controller : 201 Created
+    deactivate Controller
+@enduml

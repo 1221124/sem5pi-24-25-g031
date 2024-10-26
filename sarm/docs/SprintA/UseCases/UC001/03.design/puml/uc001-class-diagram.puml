@@ -1,0 +1,128 @@
+@startuml uc001-class-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC001
+
+class UserController {
+    +Create(dto: CreatingUserDto): Task<ActionResult<UserDto>>
+}
+
+class UserService {
+    +AddAsync(dto: CreatingUserDto): Task<UserDto>
+}
+
+class IAMService {
+    +Redirect(): Task<ActionResult<RegisterToken>>
+}
+
+class RegisterToken {
+    +Email: Email
+    ' +Role: Role
+}
+
+interface IStaffRepository {
+    +GetByEmailAsync(email: Email): Task<Staff>
+    +UpdateAsync(staff: Staff): Task<Staff>
+}
+
+interface IUserRepository {
+    +AddAsync(dto: CreatingUserDto): Task<User>
+}
+
+class CreatingUserDto {
+    +Email: Email
+    +Role: Role
+    +getEmail(): Email
+    +getRole: Role
+    +setEmail(email: Email): void
+    +setRole(role: Role): void
+}
+
+class User {
+    +UserId: UserId
+    +Username: Username
+    +Email: Email
+    +Role: Role
+    +UserStatus: UserStatus
+}
+
+class UserDto {
+    +Email: Email
+    +Role: Role
+    +UserStatus: UserStatus
+}
+
+class UserMapper {
+    +ToUser(dto: UserDto): User
+    +ToUserDto(user: User): UserDto
+}
+
+class Staff {
+    +StaffId: StaffId
+    +UserId: UserId
+    +FullName: FullName
+    +DateOfBirth: DateOfBirth
+    +Gender: Gender
+    +MedicalRecordNumber: MedicalRecordNumber
+    +ContactInformation: ContactInformation
+    +MedicalCondition: MedicalCondition
+    +EmergencyContact: EmergencyContact
+'    +AppointmentHistory: AppointmentHistory
+}
+
+class Admin <<conceptual class>>
+
+UserController ..> UserService : > uses
+UserController ..> IAMService : > uses
+
+' UserController --> CreatingUserDto : > receives
+' UserController --> UserDto : > returns
+
+UserService --> IUserRepository : > uses
+UserService --> IStaffRepository : > uses
+
+UserService --> CreatingUserDto : > receives
+UserService --> UserDto : > returns
+
+IAMService --> RegisterToken : > returns
+
+UserMapper --> User : > maps
+UserMapper --> UserDto : > maps
+
+IUserRepository --> User: > saves
+IStaffRepository --> Staff: > saves
+
+' CreatingUserDto --> Email: has >
+
+Admin "1" -> "*" User: > creates
+
+' Staff "1" --> "1" StaffId: has >
+' Staff "1" --> "1" FullName: has >
+' Staff "1" --> "1" DateOfBirth: has >
+' Staff "*" --> "1" Gender: has >
+' Staff "1" --> "1" MedicalRecordNumber: has >
+' Staff "1" --> "1" ContactInformation: has >
+' Staff "0..*" --> "0..*" MedicalCondition: can have >
+' Staff "*" --> "1" EmergencyContact: has >
+' 'Staff "1" --> "1" AppointmentHistory: has >
+
+' ContactInformation "1" --> "1" PhoneNumber: has >
+' ContactInformation "1" --> "1" Email: has >
+
+' EmergencyContact "1" --> "1" PhoneNumber: has >
+
+' FullName "1" --> "2" Name: has >
+
+' PhoneNumber "1" --> "1" CountryCode: has >
+
+' User "1" --> "1" UserId: has >
+' User "1" --> "1" Username: has >
+' User "1" --> "1" Email: has >
+' User "*" --> "1" Role: has >
+' User "*" --> "1" UserStatus: has >
+
+@enduml

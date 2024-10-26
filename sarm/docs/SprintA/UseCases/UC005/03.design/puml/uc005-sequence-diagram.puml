@@ -1,0 +1,62 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC005
+
+participant "Routing" as Routing
+participant "PatientController" as Controller
+participant "PatientService" as Service
+participant "IPatientRepository" as IPatientRepository
+participant "IRepository" as IRepository
+participant "EmailService" as EmailService
+participant "PatientDto" as PatientDto
+
+
+-> Routing: DELETE/api/Patient/{id} 
+activate Routing
+
+    Routing -> Controller: DeletePatient(Guid id)
+    activate Controller
+
+        Controller -> Service: DeletePatientAsync(new CategoryId(id))
+        activate Service
+
+            Service -> IPatientRepository: GetByIdAsync(Guid id)
+            activate IPatientRepository
+
+                IPatientRepository -> IRepository: GetByIdAsync(Guid id)
+                activate IRepository
+
+                    IRepository --> IPatientRepository: patient
+                deactivate IRepository
+            
+                IPatientRepository --> Service: patient
+            deactivate IPatientRepository
+
+            Service -> EmailService: SendEmailAsync(patient.Email, "Account Deletion", "Confirm if you want to delete your account.")
+
+            alt confirm account deletion
+
+                Service -> IPatientRepository: RemovePatient(patient)
+                activate IPatientRepository
+
+                    IPatientRepository -> IRepository: RemovePatient(patient)
+                deactivate IPatientRepository
+
+                Service -> EmailService: SendEmailAsync(patient.Email, "Account Deletion", "Your account has been deleted.")
+
+            end
+
+            Service -> PatientDto**: new PatientDto(patientDto details)
+
+            Service --> Controller: PatientDto
+        deactivate Service
+
+        Controller --> Routing: Ok(patientDto)
+    deactivate Controller
+
+    <- Routing: response

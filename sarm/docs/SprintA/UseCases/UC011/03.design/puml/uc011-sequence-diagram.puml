@@ -1,0 +1,57 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC011
+
+participant "PatientController" as Controller <<controller>>
+participant ":PatientService" as Service <<service>>
+participant ":IPatientRepository" as IPatientRepository <<interface>>
+participant "PatientDTO" as PatientDTO <<dto>>
+
+loop for each search criteria
+
+  note left of Controller
+    the "criteria" can be any of the following: name, email, 
+    phone number, medical record number, date of birth, gender.
+    The method "GetByCriteria" will be called for each search criteria.
+    "searchCriteria" is from the type e.g "Name"
+    Exemplo:"Name=Guilherme&email=1220786@isep.ipp.pt"
+  end note
+
+  -> Controller: GET/Patients/?searchCriteria=criteria\nGetByCriteria(criteria)
+  activate Controller
+
+      Controller -> Service: GetByCriteriaAsync(criteria)
+      activate Service
+
+        Service -> IPatientRepository: GetByCriteriaAsync(criteria)
+        activate IPatientRepository
+
+          IPatientRepository --> Service: List<Patient>
+        deactivate IPatientRepository
+
+        Service -> PatientDTO**: create new List<PatientDTO>
+        activate PatientDTO
+  
+          PatientDTO -> Service: patientDtoList
+        deactivate PatientDTO  
+
+        Service -> Service: List<PatientDTO> patientDtoList.addAll(List<PatientDto>)
+end
+
+        Service -> Service: patientDtoList.Distinct()
+
+        Service --> Controller: patientDtoList
+      deactivate Service
+
+    <-- Controller : response
+  deactivate Controller
+
+
+
+
+@enduml

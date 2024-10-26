@@ -1,0 +1,50 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC012
+actor Admin as Admin
+participant ":System" as System
+
+activate Admin
+
+    Admin -> System: Enter staff details (first name, last name and specialization)
+    activate System
+
+    System --> Admin: List of specializations
+    deactivate System
+
+    Admin -> System: Select specialization
+    activate System
+
+    System --> Admin: Confirm specialization selection
+    deactivate System
+
+    Admin -> System: Enter contact information (email and phone number)
+    activate System
+
+    System -> System: Validate unique email and phone number
+    System --> Admin: Confirm email and phone number are unique
+    deactivate System
+
+    alt if email and phone number are unique
+        Admin -> System: Confirm staff profile creation
+        activate System
+
+        alt if profile creation is successful
+            System -> System: Generate unique staff ID (License Number)
+            System --> Admin: Display generated staff ID and profile is stored securely
+        else Profile creation failed
+            System --> Admin: Staff profile creation failed
+        end
+        deactivate System
+
+    else email and phone number are not unique
+        System --> Admin: Email and phone number are not unique and staff profile creation failed
+        deactivate System
+    end
+
+deactivate Admin
+
+@enduml

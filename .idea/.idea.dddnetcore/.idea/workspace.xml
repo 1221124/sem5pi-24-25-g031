@@ -9,24 +9,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1801ba99-87f7-497b-abfc-99e403e4e0e9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.dddnetcore/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.dddnetcore/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dddnetcore.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/dddnetcore.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.dgspec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/obj/DDDNetCore.csproj.nuget.g.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/obj/project.assets.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/OperationRequestsController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/OperationRequestsController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/CreatingOperationRequestDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/CreatingOperationRequestDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestId.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestId.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestMapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestMapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/OperationRequestService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/Priority.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/Priority.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/RequestStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/RequestStatus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/OperationRequests/UpdatingOperationRequestDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/OperationRequests/UpdatingOperationRequestDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/Patients/PatientId.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/Patients/PatientId.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Domain/Staffs/StaffId.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Domain/Staffs/StaffId.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Infrastructure/OperationRequests/OperationRequestEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Infrastructure/OperationRequests/OperationRequestEntityTypeConfiguration.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,11 +29,19 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/24372012c6c94138bf3f496e104366ffc8f918/6f/3d4e9992/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/117275599da316d4e45c62326f3097e45f8b5b17d8fe17bbcf9ca86b0819b16/ResourceInvoker.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1e8feaadf5c3fa14d36ea2a638c432a2e1a47b7837d8b83d88303c5d9c15cf/AsyncValueTaskMethodBuilderT.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/294078ecfce6fdb942ecfee089f09717de7a6fcfe5efd9fdb6f4f93c0fb4813/ActionMethodExecutor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2a8a2211ff7b6ce5ab05b41d416904ec475a643fb8cbb2261f85a750b13217/Console.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3684e888fd93508450e2f4b0d7d38bee648cba98882592491596fc79375185f/SwaggerMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4b21fc3f8a3abb5d25f06c622276fbec0fd3932f169cc6af520bf5abc6a46b4/DbSet.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/781ebca67bd71532948352c2c24f8db410449e3c21f7191a17bf21348cd4fed4/SwaggerUIMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/879e3173b4f82be9a07b4366bcbf46161cc43f2bd9e494df2d923810e3c48/ControllerActionInvoker.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/918aa32966267955c2bcd6ecbee8af7ab7d84b7cb6cef6443c7b1cd33546d6e/AuthorizationMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9a6b1457cbcf17db31a383ba49ef9bcc786cf3ef77146d997eee499b27a46d/Object.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a0514d311204750f170c0fdd0dfee1c434333c871e398aa495c9548f247de3f/EntityEntry`.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bde5a0e5fb6491e71267549d64518746e9cfebd10d35f355da6815637e3c/AuthenticationMiddleware.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -58,21 +54,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.DDDNetCore: DDDSample1.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/david/Desktop/ISEP/3ano1sem/sem5pi-24-25-g061&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.DDDNetCore: DDDSample1.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/david/Desktop/ISEP/3ano1sem/sem5pi-24-25-g061",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.DDDNetCore: DDDSample1">
     <configuration name="DDDNetCore: DDDSample1" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/DDDNetCore.csproj" />
@@ -115,6 +111,8 @@
       <updated>1729912046490</updated>
       <workItem from="1729912051599" duration="3022000" />
       <workItem from="1729950827942" duration="837000" />
+      <workItem from="1729964994574" duration="3009000" />
+      <workItem from="1729974794565" duration="3675000" />
     </task>
     <servers />
   </component>
@@ -124,5 +122,30 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/src/Controllers/OperationRequestsController.cs</url>
+          <line>132</line>
+          <properties documentPath="C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\src\Controllers\OperationRequestsController.cs" containingFunctionPresentation="Method 'Create'">
+            <startOffsets>
+              <option value="4454" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4529" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <breakpoint enabled="true" type="DotNet Exception Breakpoints">
+          <properties exception="System.NullReferenceException" isInternal="false" displayValue="NullReferenceException" namespaceName="System">
+            <option name="internal" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

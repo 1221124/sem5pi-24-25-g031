@@ -1,0 +1,182 @@
+@startuml uc023-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC023
+
+participant ":OperationTypeController" as Controller
+participant ":OperationTypeService" as Service
+participant "operationType:OperationType" as Domain
+participant "OperationTypeMapper" as Mapper
+participant "dto:OperationTypeDto" as Dto
+participant ":IOperationTypeRepository" as IRepo
+
+-> Controller: GET /api/operationtype
+
+activate Controller
+
+    Controller -> Service: GetAll()
+
+    activate Service
+
+        Service -> IRepo: GetAllAsync()
+
+        activate IRepo
+
+            IRepo --> Service: operationTypes
+
+        deactivate IRepo
+
+        Service -> Mapper: ToDtoList(operationTypes)
+
+        activate Mapper
+
+            loop for each instance of operationType in operationTypes
+
+                Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Specialization, operationType.Status)
+
+                activate Domain
+
+                    Domain --> Mapper: dto
+
+                deactivate Domain
+
+            end
+
+            Mapper --> Service: dtoList
+
+    deactivate Service
+
+    <-- Controller: 200 OK, dtoList
+
+deactivate Controller
+
+opt Admin wants to filter by name
+
+    -> Controller: GET /api/operationtype?filter=name
+
+    activate Controller
+
+        Controller -> Service: GetByName(name)
+
+        activate Service
+
+            Service -> IRepo: GetByNameAsync(name)
+
+            activate IRepo
+
+                IRepo --> Service: operationType
+
+            deactivate IRepo
+
+            Service -> Mapper: ToDto(operationType)
+
+            activate Mapper
+
+                Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Specialization, operationType.Status)
+
+                activate Domain
+
+                    Domain --> Mapper: dto
+
+                deactivate Domain
+
+                Mapper --> Service: dto
+
+        deactivate Service
+
+        <-- Controller: 200 OK, dto
+
+    deactivate Controller
+end
+
+opt Admin wants to filter by Specialization
+
+    -> Controller: GET /api/operationtype?filter=specialization
+
+    activate Controller
+
+        Controller -> Service: GetAllBySpecialization(specialization)
+
+        activate Service
+
+            Service -> IRepo: GetAllBySpecializationAsync(specialization)
+
+            activate IRepo
+
+                IRepo --> Service: operationTypes
+
+            deactivate IRepo
+
+            Service -> Mapper: ToDtoList(operationTypes)
+
+            activate Mapper
+
+                loop for each instance of operationType in operationTypes
+
+                    Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Specialization, operationType.Status)
+
+                    activate Domain
+
+                        Domain --> Mapper: dto
+
+                    deactivate Domain
+
+                end
+
+                Mapper --> Service: dtoList
+
+        deactivate Service
+
+        <-- Controller: 200 OK, dtoList
+
+    deactivate Controller
+end
+
+opt Admin wants to filter by Status
+
+    -> Controller: GET /api/operationtype?filter=status
+
+    activate Controller
+
+        Controller -> Service: GetAllByStatus(status)
+
+        activate Service
+
+            Service -> IRepo: GetAllByStatusAsync(status)
+
+            activate IRepo
+
+                IRepo --> Service: operationTypes
+
+            deactivate IRepo
+
+            Service -> Mapper: ToDtoList(operationTypes)
+
+            activate Mapper
+
+                loop for each instance of operationType in operationTypes
+
+                    Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Specialization, operationType.Status)
+
+                    activate Domain
+
+                        Domain --> Mapper: dto
+
+                    deactivate Domain
+
+                end
+
+                Mapper --> Service: dtoList
+
+        deactivate Service
+
+        <-- Controller: 200 OK, dtoList
+
+    deactivate Controller
+end
+
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC005
+actor Patient as P
+participant ":System" as System
+
+activate P
+
+        P -> System: ask to delete my account and all my data
+    activate System
+
+        System --> P: sends confirmation email
+    deactivate System
+
+    P -> System : confirms/denies deletion by clicking on the link in the email
+    activate System
+
+        System -> System: system logs the deletion of the data
+
+        System --> P: notify patients once the deletion is completed
+    deactivate System
+
+deactivate P
+
+@enduml

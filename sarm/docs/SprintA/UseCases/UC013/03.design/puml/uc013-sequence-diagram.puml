@@ -1,0 +1,92 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC013
+
+participant ":Routing" as Routing
+participant ":StaffController" as Controller <<controller>>
+participant ":StaffService" as Service <<service>>
+participant ":LogService" as LogService <<service>>
+participant ":EmailService" as EmailService <<service>>
+participant "Staff" as Staff <<entity>>
+participant "StaffMapper" as Mapper <<mapper>>
+participant ":IStaffRepository" as IRepository <<interface>>
+participant "StaffDTO" as StaffDTO <<dto>>
+
+-> Routing: PUT /api/staff/{id}
+activate Routing
+
+Routing -> Controller: Update(staffDTO)
+activate Controller
+
+Controller -> Service: UpdateAsync(staffDTO)
+activate Service
+
+    Service -> StaffDTO: GetId()
+    activate StaffDTO
+        StaffDTO --> Service: id
+    deactivate StaffDTO
+
+    Service -> IRepository: GetByIdAsync(id)
+    activate IRepository
+        IRepository --> Service: staff
+    deactivate IRepository
+
+    Service -> StaffDTO: GetAllData()
+    activate StaffDTO
+        StaffDTO --> Service: staff
+    deactivate StaffDTO
+
+    Service -> Staff: SetContactInformation(contactInformation)
+    activate Staff
+        Staff --> Service: void
+    deactivate Staff
+
+    Service -> Staff: SetSlot(slot)
+    activate Staff
+        Staff --> Service: void
+    deactivate Staff
+
+    Service -> Staff: SetSpecialization(specialization)
+    activate Staff
+        Staff --> Service: void
+    deactivate Staff
+
+    Service -> IRepository: UpdateAsync(staff)
+    activate IRepository
+        IRepository --> Service: void
+    deactivate IRepository
+
+    Service -> Mapper: ToDto(staff)
+    activate Mapper
+        Mapper -> StaffDTO: new StaffDTO(staff.Name, staff.LicenseNumber, staff.Specialization, staff.ContactInformation, staff.Slot)
+        activate StaffDTO
+            StaffDTO --> Mapper: dto
+        deactivate StaffDTO
+        Mapper --> Service: dto
+    deactivate Mapper
+
+    Service --> Controller: 200 OK 
+deactivate Service
+
+Controller -> LogService: LogChanges(staff)
+activate LogService
+    LogService --> Controller: void
+deactivate LogService
+
+Controller -> EmailService: SendConfirmationEmail(staff)
+activate EmailService
+    EmailService --> Controller: void
+deactivate EmailService
+
+Controller --> Routing: 200 OK
+deactivate Controller
+
+<-- Routing: 200 OK
+deactivate Routing
+
+@enduml

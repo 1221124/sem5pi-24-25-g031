@@ -1,0 +1,88 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC004
+
+participant "Routing" as Routing
+participant "PatientController" as Controller
+participant "PatientService" as Service
+participant "PatientID" as PatientID
+participant "IPatientRepository" as IPatientRepository
+participant "IRepository" as IRepository
+participant "EmailService" as EmailService
+participant "Patient" as Patient
+participant "PatientDTO" as PatientDTO
+participant "Log" as Log
+
+
+-> Routing: PUT/Patient/{id}
+activate Routing
+
+    Routing -> Controller: Update(Guid id, PatientDTO dto)
+    activate Controller
+    
+        Controller -> Service: UpdateAsync(dto)
+        activate Service
+            
+            Service -> PatientID**:  new PatientID(dto.id)
+            activate PatientID
+
+                PatientID -> Service: patientID
+            deactivate PatientID
+
+            Service -> IPatientRepository: GetByIdAsync(patientID);
+            activate IPatientRepository
+
+                IPatientRepository -> IRepository: GetByIdAsync(patientID)
+                activate IRepository
+
+                    IRepository --> IPatientRepository: patient
+                deactivate IRepository
+
+                IPatientRepository --> Service: patient
+            deactivate IPatientRepository
+
+            Service -> Service: verifiesSdensitivity(dto)
+
+            opt if data is sensitive
+
+                Service -> EmailService: SendEmailAsync(patient.Email, "Updates Profile", "Confirm if you want to change these information.")
+
+            end
+            loop for each new attribute in the DTO
+                Service -> Patient: Update"Attribute"(dto."atribute")
+                activate Patient
+                    note right of Patient : Update the patient with the attribute that the Patient inserted in the DTO
+
+                    Patient --> Service: patient updated
+                deactivate Patient    
+            end
+
+            Service -> PatientDTO**: new PatientDTO(patient attributes) 
+            activate PatientDTO
+
+                PatientDTO --> Service: patientDTO
+            deactivate PatientDTO
+
+            Service -> Log: LogChangesAsync(UPDATE, PATIENT)
+
+            Service --> Controller: patientDTO
+        deactivate Service
+
+        Controller --> Routing: response
+    deactivate Controller
+
+    <-- Routing: response
+deactivate Routing
+
+
+
+
+
+
+
+@enduml

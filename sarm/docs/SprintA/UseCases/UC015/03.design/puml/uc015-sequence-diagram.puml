@@ -1,0 +1,66 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Diagrama de Sequência (SD) - UC015
+
+participant ":Routing" as Routing
+participant ":StaffController" as Controller <<controller>>
+participant ":StaffService" as Service <<service>>
+participant "StaffMapper" as Mapper <<mapper>>
+participant ":IStaffRepository" as IRepository <<interface>>
+participant "StaffDTO" as StaffDTO <<dto>>
+
+loop para cada critério de busca
+
+  note right of Routing
+    o "searchCriteria" pode ser qualquer um dos seguintes: nome, e-mail e especialização.
+    O método "GetByCriteria" será chamado para cada critério de busca.
+    "searchCriteria" é do tipo, por exemplo, "Name"
+    Exemplo: "Name=Beatriz&email=1200347@isep.ipp.pt"
+  end note
+
+  -> Routing: GET /Staff/{id}/?searchCriteria=criteria
+  activate Routing
+
+  Routing -> Controller: GetAll(StaffID)
+  activate Controller
+    
+    Controller -> Service: GetByCriteriaAsync(criteria)
+    activate Service
+
+      Service -> IRepository: GetByCriteriaAsync(criteria)
+      activate IRepository
+
+        IRepository --> Service: staff
+      deactivate IRepository
+
+      Service -> Mapper: ToDto(staff)
+      activate Mapper
+
+        Mapper -> StaffDTO: new StaffDTO(staff.Name, staff.Status, staff.Email, staff.Phone, staff.Role, staff.Department, staff.CreatedAt, staff.UpdatedAt)
+        activate StaffDTO
+
+          StaffDTO --> Mapper: dto
+        deactivate StaffDTO
+
+        Mapper --> Service: dto
+      deactivate Mapper
+
+    Service --> Controller: dto
+
+    deactivate Service
+
+  Controller --> Routing: 200 OK
+
+  
+    deactivate Controller
+
+  <- Routing : 200 OK
+  deactivate Routing
+
+end loop
+
+@enduml

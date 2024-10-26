@@ -1,0 +1,133 @@
+@startuml uc003-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC003
+
+participant ":UserController" as Controller <<application>>
+participant "IAMService" as IAM <<service>>
+participant ":UserService" as Service <<service>>
+participant "dto:UserDto" as Dto <<domain>>
+participant ":IPatientRepository" as PatRepo <<persistence>>
+participant "UserMapper" as Mapper <<domain>>
+participant "user:User" as User <<domain>>
+participant ":IUserRepository" as UserRepo <<persistence>>
+participant "patient:Patient" as Patient <<domain>>
+
+-> Controller: POST /api/user
+
+activate Controller
+
+    Controller -> IAM: Redirect()
+
+    activate IAM
+
+        IAM --> Controller: token
+
+    deactivate IAM
+
+    Controller -> Service: AddAsync(dto)
+
+    activate Service
+
+        Service -> Dto: GetRole()
+
+        activate Dto
+
+            Dto --> Service: PATIENT
+
+        deactivate Dto
+
+        Service -> Dto: GetEmail()
+
+        activate Dto
+
+            Dto --> Service: email
+
+        deactivate Dto
+
+        Service -> PatRepo: GetByEmailAsync(email)
+
+        activate PatRepo
+
+            PatRepo --> Service: patient
+
+        deactivate PatRepo
+
+        Service -> Mapper: ToUser(dto)
+
+        activate Mapper
+
+            Mapper -> User: new User(dto)
+
+            activate User
+
+                User --> Mapper: user
+
+            deactivate User
+
+            Mapper --> Service: user
+
+        deactivate Mapper
+
+        Service -> User: SetRole(PATIENT)
+
+        activate User
+
+            User --> Service: void
+
+        deactivate User
+
+        Service -> UserRepo: AddAsync(user)
+
+        activate UserRepo
+
+            UserRepo --> Service: user
+
+        deactivate UserRepo
+
+        Service -> Patient: SetUserId(userId)
+
+        activate Patient
+
+            Patient --> Service: void
+
+        deactivate Patient
+
+        Service -> PatRepo: UpdateAsync(patient)
+
+        activate PatRepo
+
+            PatRepo --> Service: patient
+
+        deactivate PatRepo
+
+        Service -> Mapper: ToDto(user)
+
+        activate Mapper
+
+            Mapper -> Dto: new UserDto(user)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
+
+        Service --> Controller: dto
+
+    deactivate Service
+
+    <-- Controller: 201 Created
+
+deactivate Controller
+
+@enduml

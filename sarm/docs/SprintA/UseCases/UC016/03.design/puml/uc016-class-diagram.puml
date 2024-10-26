@@ -1,0 +1,76 @@
+@startuml "uc016-class-diagram"
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC016
+
+class OperationRequestController {
+    + AddAsync(dto: OperationRequestDTO): Task
+}
+
+class OperationRequestService {
+    + AddAsync(dto: OperationRequestDTO): Task
+}
+
+class OperationRequestDTO {
+    + getDoctorId(): Guid
+    + getPatientId(): Guid
+    + getOperationType(): OperationType
+    + getPriority(): Priority
+    + getSuggestedDeadline(): DateTime
+}
+
+class OperationRequest {
+    + OperationRequest(doctorId: Guid, patientId: Guid, operationType: OperationType, priority: Priority, suggestedDeadline: DateTime)
+    + ToString(): string
+}
+
+class OperationRequestRepository {
+    + AddAsync(operationRequest: OperationRequest): Task<OperationRequest>
+}
+
+class InterfaceOperationRequestRepository {
+    + AddAsync(operationRequest: OperationRequest): Task<OperationRequest>
+}
+
+class Patient {
+    + AddOperationRequestToMedicalHistory(operationRequest.ToString()): void
+}
+
+class PatientRepository {
+    + GetAsync(patientId: Guid): Task<Patient>
+    + UpdateAsync(patient: Patient): Task<Patient>
+}
+
+class InterfacePatientRepository {
+    + GetAsync(patientId: Guid): Task<Patient>
+    + UpdateAsync(patient: Patient): Task<Patient>
+}
+
+class OperationType {
+    + OperationType(operationTypeID: Guid)
+}
+
+enum Priority {
+    + ELECTIVE
+    + URGENT
+    + EMERGENCY
+}
+
+OperationRequestController "1" -- "1" OperationRequestService : > uses
+OperationRequestService "1" -- "1" OperationRequest : > uses
+OperationRequestService "1" -- "1" OperationRequestRepository : > uses
+OperationRequestService "1" -- "1" OperationRequestDTO : > uses
+OperationRequestRepository "1" -- "1" InterfaceOperationRequestRepository : > uses
+OperationRequestService "1" -- "1" PatientRepository : > uses
+PatientRepository "1" -- "1" InterfacePatientRepository : > uses
+OperationRequest "1" -- "1" OperationType : > uses
+OperationRequest "1" -- "1" Priority : > uses
+Patient "1" -- "1" OperationRequest : > uses
+Patient "1" -- "1" PatientRepository : > uses
+Patient "1" -- "1" InterfacePatientRepository : > uses
+
+
+@enduml

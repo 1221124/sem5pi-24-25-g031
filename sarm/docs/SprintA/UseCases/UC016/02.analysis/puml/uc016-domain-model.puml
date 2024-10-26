@@ -1,0 +1,95 @@
+@startuml "uc016-domain-model"
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+hide methods
+hide circle
+
+title Domain Model (DM) - UC016
+
+package UserAggregate #MediumAquaMarine {
+  class User <<root entity>>
+  class Username <<value object>>
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+}
+note left of UserAggregate: managed using an IAM\n(external to the system)
+
+package PatientAggregate #LightSalmon {
+  class Patient <<root entity>>
+  class MedicalRecordNumber <<value object>>
+  note right of MedicalRecordNumber: unique identifier
+  class AppointmentHistory <<value object>>
+}
+
+package StaffAggregate #Pink {
+  class Staff <<root entity>>
+  class LicenseNumber <<value object>>
+  note left of LicenseNumber: unique identifier
+  class Specialization <<value object>> {
+    CARDIOLOGY, ORTHOPEDICS
+  }
+}
+
+package OperationRequestAggregate #LightGoldenRodYellow {
+  class OperationRequest <<root entity>>
+  class RequestID <<value object>>
+  note right of RequestID: unique identifier
+  class DeadlineDate <<value object>>
+  class OperationPriority <<value object>> {
+    ELECTIVE, URGENT, EMERGENCY
+  }
+}
+
+package OperationTypeAggregate #PaleGreen {
+  class OperationType <<root entity>>
+  class OperationTypeID <<value object>>
+  note bottom of OperationTypeID: unique identifier
+}
+
+class DateTime <<value object>>
+class Date <<value object>>
+class Time <<value object>>
+
+
+
+DateTime "1" -- "1" Date : > has
+DateTime "1" -- "1" Time : > has
+
+User "1" -- "1" Username : > identified by
+User "1" -- "1" Email : > has
+User "*" -- "1" Role : > has assigned
+
+User "0..1" <-- "0..1" Staff : < references
+User "0..1" <-- "1" Patient : < references
+
+Patient "1" --- "1" AppointmentHistory : > has
+
+Staff "1" -- "1" LicenseNumber : > identified by
+Staff "*" -- "1" Specialization : > has
+Staff "1" -- "1" ContactInformation : > has
+Staff "1" -- "*" AvailabilitySlots : > has
+Staff "1" -- "*" AppointmentSlots : > has
+
+OperationRequest "1" -- "1" RequestID : > identified by
+OperationRequest "*" -- "1" Patient : > has
+OperationRequest "*" -- "1" Staff : > requested by
+OperationRequest "*" -- "1" OperationType : > has
+OperationRequest "*" -- "1" DeadlineDate : > has
+OperationRequest "*" -- "1" OperationPriority : > has
+
+OperationType "1" -- "1" OperationTypeID : > identified by
+OperationType "1" -- "1" OperationTypeName : > has
+OperationType "1" -- "1" RequiredStaff : > needs
+OperationType "1" -- "1..*" OperationPhaseDetails : > has
+OperationPhaseDetails "1" -- "1" OperationPhase : > has
+OperationPhaseDetails "1" -- "1" Time : > has
+
+@enduml

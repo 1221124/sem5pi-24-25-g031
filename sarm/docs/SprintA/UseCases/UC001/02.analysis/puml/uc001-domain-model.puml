@@ -1,0 +1,53 @@
+@startuml uc001-domain-model
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+top to bottom direction
+left to right direction
+
+hide circle
+hide methods
+
+title Domain Model (DM) - UC001
+
+package "User Aggregate" {
+    class User <<root entity>>
+    class Username <<value object>>
+    note right of Username: same as the user's email
+    class Email <<value object>>
+    class Role <<value object>> {
+        ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+    }
+    note right of Role: in this Use Case, only Backoffice Roles are considered (ADMIN, DOCTOR, NURSE, TECHNICIAN)
+}
+
+package StaffAggregate {
+    class Staff <<root entity>>
+    class StaffID <<value object>>
+    note right of StaffID: unique identifier
+    class LicenseNumber <<value object>>
+    note right of LicenseNumber: unique
+    class AvailabilitySlots <<value object>>
+    class AppointmentSlots <<value object>>
+    class DeactivateTime <<value object>>
+}
+
+class Admin <<conceptual class>>
+
+Admin "1" --> "*" User: creates >
+
+User "1" --> "1" Username: has >
+User "1" --> "1" Email: has >
+User "*" --> "1" Role: has >
+
+Staff --> User: references >
+Staff "1" --> "1" StaffID: has >
+Staff "1" --> "1" LicenseNumber: has >
+Staff "1" --> "1" AvailabilitySlots: has >
+Staff "1" --> "1" AppointmentSlots: has >
+Staff "1" --> "1" DeactivateTime: has >
+
+@enduml

@@ -1,0 +1,64 @@
+
+
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+autonumber
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC008
+
+actor Admin as ADM
+participant FrontEnd as FE <<presentation>>
+
+
+activate ADM
+
+    ADM -> FE: asks to create a new patient profile
+
+    activate FE
+
+        FE --> ADM: asks to insert the first and last names of\n the patient as well as the full name
+    deactivate FE
+
+    ADM -> FE : Insert required fields
+    activate FE
+
+        FE --> ADM: asks to insert the date of birth of the patient
+    deactivate FE
+
+    ADM -> FE : Insert required field
+    activate FE
+
+        FE --> ADM: asks to insert the gender of the patient
+    deactivate FE
+
+    ADM -> FE : Insert required field
+    activate FE
+
+        FE --> ADM: asks to insert the contact information\n (email, phone number) of the patient
+    deactivate FE
+
+    ADM -> FE : Insert required fields
+    activate FE
+
+        FE -> FE: validates email and phone number
+
+    FE --> ADM: ask to insert emergency contact
+    deactivate FE
+
+    ADM -> FE: insert required field
+    activate FE
+
+        FE -> FE: generate unique patient ID
+        FE -> FE: creates patient profile
+        FE --> ADM: show operation success/error
+    deactivate FE
+
+
+deactivate ADM
+
+
+@enduml

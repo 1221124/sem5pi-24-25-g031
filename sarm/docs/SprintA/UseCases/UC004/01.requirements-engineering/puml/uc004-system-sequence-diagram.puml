@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC004
+actor Patient as Patient
+participant ":System" as System
+
+activate Patient
+
+    Patient -> System: I want to update my user profile
+    activate System
+    
+    loop number of updated data
+
+            System --> Patient: list patient data and asks to select \none to update
+        deactivate System
+
+        Patient -> System: Send updated data
+        activate System
+
+        opt if data is sensitive
+            System --> Patient: send email to confirm
+            deactivate System
+
+            Patient -> System: Confirm email
+            activate System
+    end
+
+    end
+ 
+    System --> Patient: Updated data saved
+
+    System --> System: Log Changes
+deactivate Patient
+
+@enduml

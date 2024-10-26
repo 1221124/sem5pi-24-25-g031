@@ -1,0 +1,74 @@
+@startuml uc020-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC020
+
+participant ":OperationTypeController" as Controller
+participant ":OperationTypeService" as Service
+participant "creatingDto:CreatingOperationTypeDto" as CreatingDto
+participant ":IOperationTypeRepository" as IRepo
+participant "operationType:OperationType" as Domain
+participant "OperationTypeMapper" as Mapper
+participant "dto:OperationTypeDto" as Dto
+
+-> Controller: POST /api/operationtype
+
+activate Controller
+
+    Controller -> Service: AddAsync(creatingDto)
+
+    activate Service
+
+        Service -> CreatingDto: getName()
+
+        activate CreatingDto
+
+            CreatingDto --> Service: name
+
+        deactivate CreatingDto
+
+        Service -> IRepo: GetByNameAsync(name)
+
+        activate IRepo
+
+            IRepo --> Service: null
+
+        deactivate IRepo
+
+        Service -> Domain: new OperationType(creatingDto.Name, creatingDto.Specialization, creatingDto.RequiredStaff, creatingDto.PhasesDuration)
+
+        activate Domain
+
+            Domain --> Service: operationType
+
+        deactivate Domain
+
+        Service -> IRepo: AddAsync(operationType)
+
+        activate IRepo
+
+            IRepo --> Service: operationType
+
+        deactivate IRepo
+
+        Service -> Mapper: ToDto(operationType)
+
+        activate Mapper
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
+
+        Service --> Controller: dto
+
+    deactivate Service
+
+    <-- Controller: 201 Created
+
+deactivate Controller
+
+@enduml

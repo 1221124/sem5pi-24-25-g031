@@ -1,0 +1,65 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC011
+
+class PatientController {
+  + GetByCriteria(searchCriteria): List<Patient>
+}
+
+
+class PatientService {
+  + GetByCriteriaAsync(searchCriteria): Task<List<Patient>>
+}
+
+class Patient {
+  - FullName: FullName
+  - ContactInformation: ContactInformation
+  - DateOfBirth: SystemDate
+  - Gender: Gender
+  - MedicalCondition: MedicalCondition
+  - MedicalRecordNumber: String
+  - ContactInformation: ContactInformation
+  - EmergencyContact: int
+  - AppointmentHistory: AppointmentHistory
+    'TODO: Review AppointmentHistory type and Medical Conditions
+}
+
+class FullName{
+    + FirstName: String
+    + LastName: String
+}
+
+enum Gender {
+  Male, Female
+}
+
+class ContactInformation{
+    + PhoneNumber: String
+    + Email: String
+}
+
+interface IPatientRepository {
+  
+}
+
+interface IRepository {
+  + GetByCriteriaAsync(searchCriteria): Task<List<Patient>>
+}
+
+
+'class Database {
+'  + save(Patient patient): void
+'}
+
+PatientService --> Patient : uses
+PatientController --> PatientService : uses
+PatientService --> IPatientRepository : removes patient from
+IPatientRepository --> IRepository : implements
+Patient --> ContactInformation : has
+Patient --> FullName : has
+Patient --> Gender : has
+@enduml

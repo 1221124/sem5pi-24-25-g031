@@ -1,0 +1,120 @@
+@startuml uc022-class-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+title Class Diagram (CD) - UC022
+
+class OperationTypeController {
+    +SoftDelete(id: Guid): Task<ActionResult<OperationTypeDto>>
+}
+
+class OperationTypeService {
+    +InactivateAsync(id: OperationTypeId): Task<OperationTypeDto>
+}
+
+interface IOperationTypeRepository {
+    +GetByIdAsync(id: OperationTypeId): Task<OperationType>
+    +InactivateAsync(id: OperationTypeId): Task<OperationType>
+}
+
+class OperationType {
+    +Id: OperationTypeID
+    +Name: Name
+    +Status: bool
+    +Specialization: Specialization
+    +RequiredStaff: List<RequiredStaff>
+    +PhasesDuration: PhasesDuration
+    +ChangeName(name: Name): void
+    +ChangeStatus(status: bool): void
+    +ChangeSpecialization(specialization: Specialization): void
+    +ChangeRequiredStaff(requiredStaff: List<RequiredStaff>): void
+    +ChangePhasesDuration(phasesDuration: PhasesDuration): void
+}
+
+class OperationTypeDto {
+    +Id: OperationTypeID
+    +Name: Name
+    +Status: bool
+    +Specialization: Specialization
+    +RequiredStaff: List<RequiredStaff>
+    +PhasesDuration: PhasesDuration
+}
+
+class RequiredStaff {
+    - _staff: Dictionary<Role, StaffQuantity>
+}
+note right of RequiredStaff
+    Role can only be a staff role: Doctor, Nurse or Assistant
+end note
+
+class Quantity {
+    +Quantity: int
+}
+note right of Quantity
+    Quantity must be greater than 0
+end note
+
+class Specialization {
+    +Designation: Designation
+}
+
+class PhasesDuration {
+    - _phases: Dictionary<Phase, Duration>
+}
+
+enum Phase {
+    PREPARATION, SURGERY, CLEANING
+}
+
+class Duration {
+    +Minutes: int
+}
+
+' class Name {
+'     +Name: string
+' }
+
+' class OperationTypeID {
+'     +Id: Guid
+' }
+
+' enum Role {
+'     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+' }
+
+OperationTypeController .> OperationTypeService : > uses
+OperationTypeController ----> OperationTypeDto : > returns
+
+OperationTypeService -> IOperationTypeRepository : > uses
+OperationTypeService ---> OperationType : > updates
+OperationTypeService ---> OperationTypeDto : > creates
+
+IOperationTypeRepository --> OperationType : > saves in database
+
+' OperationType --> OperationTypeID : > has
+' OperationType --> Name : > has
+' OperationType --> Specialization : > has
+OperationType --> RequiredStaff : > has
+OperationType --> PhasesDuration : > has
+
+' OperationTypeDto --> OperationTypeID : > has
+' OperationTypeDto --> Name : > has
+' OperationTypeDto --> Status : > has
+' OperationTypeDto --> Specialization : > has
+OperationTypeDto --> RequiredStaff : > has several
+OperationTypeDto --> PhasesDuration : > has
+
+RequiredStaff --> Role: has
+RequiredStaff --> Specialization : > has
+RequiredStaff --> Quantity : > has
+
+PhasesDuration --> Phase : > has
+PhasesDuration --> Duration : > has
+
+@enduml

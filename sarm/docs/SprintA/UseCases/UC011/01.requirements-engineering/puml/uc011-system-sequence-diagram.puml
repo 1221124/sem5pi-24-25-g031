@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC011
+actor Admin as Admin
+participant ":System" as System
+
+activate Admin
+
+    Admin -> System: I want to search a patient profile
+    activate System
+
+loop number of seach criteria
+
+        System --> Admin: asks for search criteria
+    deactivate System
+
+    Admin -> System : gives search criteria
+    activate System
+
+end loop
+
+        System --> Admin: returns patient list
+    deactivate System
+
+    opt wants to filter
+
+        Admin -> System: gives filter criteria
+        activate System
+
+            System --> Admin: returns filtered patient list
+        deactivate System 
+
+    end 
+
+
+deactivate Admin
+
+@enduml

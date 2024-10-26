@@ -1,0 +1,51 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC012
+
+participant ":Routing" as Routing
+participant ":StaffController" as Controller <<controller>>
+participant ":StaffService" as Service <<service>>
+participant "Staff" as Staff <<entity>>
+participant ":IStaffRepository" as IRepository <<interface>>
+participant "StaffMapper" as Mapper <<mapper>>
+participant "StaffDTO" as StaffDTO <<dto>>
+
+-> Routing: POST /api/operationtype
+activate Routing
+
+Routing -> Controller: Create(staffDTO)
+activate Controller
+
+    Controller -> Service: AddAsync(staffDTO)
+    activate Service
+
+        Service -> Staff: new Staff(staffDTO.FullName, staffDTO.ContactInformation, staffDTO.Specialization)
+        activate Staff
+            Staff --> Service: staff
+        deactivate Staff
+
+        Service -> IRepository: AddAsync(staff)
+        activate IRepository
+            IRepository --> Service: staff
+        deactivate IRepository
+
+        Service -> Mapper: ToDto(staff) 
+        activate Mapper
+            Mapper --> Service: dto
+        deactivate Mapper
+
+        Service --> Controller: dto
+    deactivate Service
+
+Controller --> Routing: 201 Created 
+deactivate Controller
+
+<- Routing: 201 Created
+deactivate Routing
+
+@enduml

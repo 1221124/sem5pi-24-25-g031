@@ -1,0 +1,64 @@
+@startuml "uc016-system-sequence-diagram"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC016
+actor Doctor as Doc
+participant ":System" as Sys
+
+activate Doc
+    Doc -> Sys: Requests operation
+    
+    activate Sys
+        Sys -> Sys : Identifies Doctor by their ID
+        activate Sys
+            deactivate Sys
+
+        Sys -> Sys : Obtains all Patient's active in the system
+        activate Sys    
+            deactivate Sys
+        
+        Sys --> Doc : Displays Patients' IDs
+        deactivate Sys
+
+    Doc -> Sys : Select a Patient's ID
+
+    activate Sys
+        Sys -> Sys : Obtains Doctor's specializations
+        activate Sys
+            deactivate Sys
+
+        Sys --> Doc : Display operation's types according to Doctor's specializations
+        deactivate Sys 
+    
+    Doc -> Sys : Selects an operation type
+    activate Sys
+        Sys -> Sys : Obtains priority levels
+        activate Sys
+            deactivate Sys
+
+        Sys --> Doc : Display priority levels
+        deactivate Sys
+    
+    Doc -> Sys : Selects a priority
+    activate Sys
+        Sys --> Doc : Requests suggested deadline
+        deactivate Sys
+
+    Doc -> Sys : Provides suggested deadline
+    activate Sys
+
+        Sys -> Sys : Logs operation request in the system
+        activate Sys
+            deactivate Sys
+
+        Sys -> Sys :  Logs operation into the Patient's medical history
+        activate Sys
+            deactivate Sys
+
+        Sys --> Doc : Confirms operation resquest
+        deactivate Sys
+deactivate Doc
+
+@enduml

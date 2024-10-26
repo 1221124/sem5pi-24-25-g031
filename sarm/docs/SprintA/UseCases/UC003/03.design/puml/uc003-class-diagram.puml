@@ -1,0 +1,196 @@
+@startuml uc003-class-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC003
+
+class UserController {
+    +Create(dto: CreatingUserDto): Task<ActionResult<UserDto>>
+}
+
+class UserService {
+    +AddAsync(dto: CreatingUserDto): Task<UserDto>
+}
+
+class IAMService {
+    +Redirect(): Task<ActionResult<RegisterToken>>
+}
+
+class RegisterToken {
+    +Email: Email
+    ' +Role: Role
+}
+
+interface IPatientRepository {
+    +GetByEmailAsync(email: Email): Task<Patient>
+    +UpdateAsync(patient: Patient): Task<Patient>
+}
+
+interface IUserRepository {
+    +AddAsync(dto: CreatingUserDto): Task<User>
+}
+
+class CreatingUserDto {
+    +Email: Email
+    +getEmail(): Email
+    +setEmail(email: Email): void
+}
+
+class User {
+    +UserId: UserId
+    +Username: Username
+    +Email: Email
+    +Role: Role
+    +UserStatus: UserStatus
+}
+
+class UserDto {
+    +Email: Email
+    +Role: Role
+    +UserStatus: UserStatus
+}
+
+class UserMapper {
+    +ToUser(dto: UserDto): User
+    +ToUserDto(user: User): UserDto
+}
+
+class Patient {
+    +PatientId: PatientId
+    +UserId: UserId
+    note right of Patient: optional
+    +FullName: FullName
+    +DateOfBirth: DateOfBirth
+    +Gender: Gender
+    +MedicalRecordNumber: MedicalRecordNumber
+    +ContactInformation: ContactInformation
+    +MedicalCondition: MedicalCondition
+    +EmergencyContact: EmergencyContact
+'    +AppointmentHistory: AppointmentHistory
+}
+
+' class Username {
+'     +value: String
+' }
+
+' class Email {
+'     +address: String
+' }
+
+' enum Role {
+'     ADMIN
+'     DOCTOR
+'     NURSE
+'     TECHNICIAN
+'     PATIENT
+' }
+' note right of Role: in this Use Case, only Patient role is considered
+
+' enum UserStatus {
+'     ACTIVE
+'     INACTIVE
+'     PENDING
+'     BLOCKED
+' }
+' note right of UserStatus: when a patient user is created, its status is ACTIVE
+
+' class FullName {
+'     +FirstName: Name
+'     +LastName: Name
+' }
+
+' class Name {
+'     +value: String
+' }
+
+' class DateOfBirth {
+'     +value: Date
+' }
+' note right of DateOfBirth: must be in the past
+
+' enum Gender {
+'     MALE, FEMALE
+' }
+
+' class MedicalRecordNumber {
+'     +value: String
+' }
+' note right of MedicalRecordNumber: format - YYYYMMnnnnnn (YYYY = year, MM = month, nnnnnn = sequential number)
+
+' class ContactInformation {
+'     +PhoneNumber: PhoneNumber
+'     +Email: Email
+' }
+
+' class PhoneNumber {
+'     +Value: String
+'     +CountryCode: CountryCode
+'     +Number: int
+' }
+' note right of PhoneNumber: format - +CCC NNNNNNNNN (CCC = country code, NNNNNNNNN = phone number - integer greater than 0)
+
+' class CountryCode {
+'     +Code: String
+' }
+
+' class EmergencyContact {
+'     +PhoneNumber: PhoneNumber
+' }
+
+'class AppointmentHistory {
+'    +value: List<Appointment>
+'}
+
+UserController ..> UserService : > uses
+UserController ..> IAMService : > uses
+
+' UserController --> CreatingUserDto : > receives
+' UserController --> UserDto : > returns
+
+UserService --> IUserRepository : > uses
+UserService --> IPatientRepository : > uses
+
+UserService --> CreatingUserDto : > receives
+UserService --> UserDto : > returns
+
+IAMService --> RegisterToken : > returns
+
+UserMapper --> User : > maps
+UserMapper --> UserDto : > maps
+
+IUserRepository --> User: > saves
+IPatientRepository --> Patient: > saves
+
+' CreatingUserDto --> Email: has >
+
+Patient "1" -> "1" User: creates his own >
+
+' Patient "1" --> "1" PatientId: has >
+' Patient "1" --> "1" FullName: has >
+' Patient "1" --> "1" DateOfBirth: has >
+' Patient "*" --> "1" Gender: has >
+' Patient "1" --> "1" MedicalRecordNumber: has >
+' Patient "1" --> "1" ContactInformation: has >
+' Patient "0..*" --> "0..*" MedicalCondition: can have >
+' Patient "*" --> "1" EmergencyContact: has >
+' 'Patient "1" --> "1" AppointmentHistory: has >
+
+' ContactInformation "1" --> "1" PhoneNumber: has >
+' ContactInformation "1" --> "1" Email: has >
+
+' EmergencyContact "1" --> "1" PhoneNumber: has >
+
+' FullName "1" --> "2" Name: has >
+
+' PhoneNumber "1" --> "1" CountryCode: has >
+
+' User "1" --> "1" UserId: has >
+' User "1" --> "1" Username: has >
+' User "1" --> "1" Email: has >
+' User "*" --> "1" Role: has >
+' User "*" --> "1" UserStatus: has >
+
+@enduml

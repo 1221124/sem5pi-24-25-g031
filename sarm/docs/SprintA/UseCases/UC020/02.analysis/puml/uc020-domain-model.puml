@@ -1,0 +1,56 @@
+@startuml uc020-domain-model
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+top to bottom direction
+left to right direction
+
+hide circle
+hide methods
+
+title Domain Model (DM) - UC020
+
+package "OperationTypeAggregate" {
+    class OperationType <<root entity>>
+    class OperationTypeID <<value object>>
+    note right of OperationTypeID: unique identifier
+    class RequiredStaff <<value object>>
+    class PhaseDetails <<value object>>
+    class Phase <<value object>> {
+        ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
+    }
+    class Duration <<value object>>
+    class Quantity <<value object>>
+}
+
+class Admin <<conceptual class>>
+class Name <<value object>>
+enum Specialization <<value object>> {
+    ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+} 
+enum Role {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT 
+}
+note right of Role: in this Use Case, only Staff roles are considered (DOCTOR, NURSE, TECHNICIAN)
+enum Status <<value object>> {
+    ACTIVE, INACTIVE
+}
+
+Admin "1" -- "*" OperationType : creates >
+
+OperationType "1" -- "1" OperationTypeID : > identified by
+OperationType "1" -- "1" Name : > has
+OperationType "*" -- "1" Specialization : > has
+OperationType "1" -- "*" RequiredStaff : > needs
+OperationType "1" -- "1..*" PhaseDetails : > has
+OperationType "*" -- "1" Status : > has
+RequiredStaff "1" -- "1" Role : > has
+RequiredStaff "1" -- "1" Specialization : > has
+RequiredStaff "1" -- "1" Quantity : > this many
+PhaseDetails "1" -- "1" Phase : > has
+PhaseDetails "1" -- "1" Duration : > has
+
+@enduml

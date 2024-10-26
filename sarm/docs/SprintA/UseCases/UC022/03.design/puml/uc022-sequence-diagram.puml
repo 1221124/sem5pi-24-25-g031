@@ -1,0 +1,65 @@
+@startuml uc022-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC022
+
+participant ":OperationTypeController" as Controller
+participant ":OperationTypeService" as Service
+participant ":IOperationTypeRepository" as IRepo
+participant "operationType:OperationType" as Domain
+participant "Mapper" as Mapper
+participant "dto: OperationTypeDto" as Dto
+
+-> Controller: DELETE /api/operationtype
+
+activate Controller
+
+    Controller -> Service: InactivateAsync(dto)
+
+    activate Service
+
+        Service -> IRepo: GetByIdAsync(id)
+
+        activate IRepo
+
+            IRepo --> Service: operationType
+
+        deactivate IRepo
+
+        Service -> Domain: SetStatus(INACTIVE)
+        
+        activate Domain
+
+            Domain --> Service: void
+
+        deactivate Domain
+
+        Service -> Mapper: ToDto(operationType)
+
+        activate Mapper
+
+            Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Status, operationType.Specialization, operationType.RequiredStaff, operationType.PhasesDuration)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
+
+        Service --> Controller: dto
+
+    deactivate Service
+
+    <-- Controller: 200 OK
+
+deactivate Controller
+
+@enduml

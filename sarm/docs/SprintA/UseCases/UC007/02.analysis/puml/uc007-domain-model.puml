@@ -1,0 +1,43 @@
+@startuml "uc007-domain-model"
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+hide methods
+hide circle
+
+
+title Domain Model (DM) - UC007
+
+package UserAggregate #MediumAquaMarine {
+  class User <<root entity>>
+  class Username <<value object>>
+  class Email <<value object>>
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+}
+note top of UserAggregate: managed using an IAM\n(external to the system)
+
+package PatientAggregate #LightSalmon {
+  class Patient <<root entity>>
+  class MedicalRecordNumber <<value object>>
+  note right of MedicalRecordNumber: unique identifier (format: YYYYMMnnnnnn - YYYY = year, MM = month, nnnnnn = sequential number)
+  class InactivityTime <<value object>>
+}
+
+User "1" -- "1" Username : > identified by
+User "1" -- "1" Email : > has
+User "*" -- "1" Role : > has assigned
+
+User "0..1" <-- "1" Patient : < references
+
+Patient "*" -- "1" MedicalRecordNumber : > has
+Patient "*" -- "1" InactivityTime : > has
+
+@enduml

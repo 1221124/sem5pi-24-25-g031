@@ -1,0 +1,103 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC010
+
+
+participant "Routing" as Routing 
+participant "PAtientController" as Controller
+participant "PatientService" as Service
+participant "IPatientRepository" as IPatientRepository
+participant "IRepository" as IRepository
+participant "PatientDTO" as PatientDTO
+
+opt if the admin wants to search for a patient 
+
+    loop for each search criteria
+
+      note right of Routing
+        the "searchCriteria" can be any of the following: name, email, 
+        phone number, medical record number, date of birth, gender.
+        The method "GetByCriteria" will be called for each search criteria.
+        "searchCriteria" is from the type e.g "Name"
+      end note
+
+      -> Routing: GET/Patients/{searchCriteria}
+      activate Routing
+
+        Routing -> Controller: GetByCriteria(searchCriteria)
+        activate Controller
+
+          Controller -> Service: GetByCriteriaAsync(searchCriteria)
+          activate Service
+
+            Service -> IPatientRepository: GetByCriteriaAsync(searchCriteria)
+            activate IPatientRepository
+
+              IPatientRepository -> IRepository: GetByCriteriaAsync(searchCriteria)
+              activate IRepository
+
+                  IRepository --> IPatientRepository: Task<List<TEntity>>
+              deactivate IRepository
+
+              IPatientRepository --> Service: Task<List<Patient>>
+            deactivate IPatientRepository
+
+            Service -> Service: List<Patient> allPatients.addAll(List<Patient>)
+    end
+
+            Service -> Service: allPatients.Distinct()
+
+            Service --> Controller: allPatients
+          deactivate Service
+
+          Controller --> Routing: allPatients
+        deactivate Controller
+
+        <- Routing : allPatients
+      deactivate Routing
+
+end opt
+
+-> Routing: GET/Patients{id}
+activate Routing
+
+    Routing -> Controller: GetGetById(id)
+    activate Controller
+
+        Controller -> Service: GetByIdAsync(new PatientId(id))
+        activate Service
+
+            Service -> IPatientRepository: GetByIdAsync(id)
+            activate IPatientRepository
+
+                IPatientRepository -> IRepository: GetByIdAsync(id)
+                activate IRepository
+
+                    IRepository --> IPatientRepository: Task<Patient>
+                deactivate IRepository
+
+                IPatientRepository --> Service: Task<Patient>
+            deactivate IPatientRepository
+
+            Service -> PatientDTO**: create(patient details)
+            activate PatientDTO
+
+                PatientDTO --> Service: patientDTO
+            deactivate PatientDTO
+
+        Service --> Controller: patientDTO
+    deactivate Service
+
+    Controller --> Routing: Task<ActionResult<PatientDTO>>
+deactivate Controller
+
+<- Routing : Task<ActionResult<PatientDTO>>
+
+deactivate Routing
+
+@enduml

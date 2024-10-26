@@ -1,0 +1,64 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+top to bottom direction
+left to right direction
+
+hide circle
+hide methods
+
+title Domain Model (DM) - UC002
+
+package UserAggregate {
+  class User <<root entity>>
+  class UserId <<value object>>
+  note right of UserId: unique identifier
+  class Username <<value object>>
+  note right of Username: same as the user's email
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+  class UserStatus <<value object>> {
+    ACTIVE, INACTIVE, PENDING, BLOCKED
+  }
+}
+
+package StaffAggregate {
+  class Staff <<root entity>>
+  class StaffID <<value object>>
+  note right of StaffID: unique identifier
+  class LicenseNumber <<value object>>
+  note right of LicenseNumber: unique
+}
+
+class Admin
+note top of Admin: conceptual class
+class Doctor
+note top of Doctor: conceptual class
+class Nurse
+note top of Nurse: conceptual class
+class Technician
+note top of Technician: conceptual class
+
+User "0..1" <-- "0..1" Staff : < references
+
+User "1" -- "1" UserId : > identified by
+User "1" -- "1" Username : > has
+User "1" -- "1" Email : > has
+User "*" -- "1" Role : > has assigned
+User "*" -- "1" UserStatus : > has
+
+Admin "1" -- "*" User : > manages
+Admin "1" -- "*" Staff : > manages
+
+Doctor "1" -- "1" Staff : > is
+Nurse "1" -- "1" Staff : > is
+Technician "1" -- "1" Staff : > is
+
+Staff "1" -- "1" StaffID : > identified by
+Staff "1" -- "1" LicenseNumber : > has
+
+@enduml

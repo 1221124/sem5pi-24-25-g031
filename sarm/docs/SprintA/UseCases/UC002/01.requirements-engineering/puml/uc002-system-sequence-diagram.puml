@@ -1,0 +1,49 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC002
+actor "Backoffice User" as BU
+participant ":System" as System
+participant ":IAM" as IAM
+
+activate BU
+
+    BU -> System: Request password reset
+
+    activate System
+        System -> IAM: Verify user's email
+        activate IAM
+            IAM --> System: Email verified
+            System -> IAM: Generate password reset token
+            IAM --> System: Token generated
+        deactivate IAM
+            System --> BU: Send password reset link via email
+    deactivate System
+
+    BU -> System: Click reset link
+
+    activate System
+        System -> IAM: Verify token
+        activate IAM
+            IAM --> System: Token verified
+        deactivate IAM
+            System --> BU: Redirect to reset password page
+    deactivate System
+
+    BU -> System: Enter new password
+
+    activate System
+        System -> IAM: Validate password complexity
+        activate IAM
+            IAM --> System: Password validated
+            System -> IAM: Update password
+            IAM --> System: Password updated
+        deactivate IAM
+            System --> BU: Password updated successfully
+    deactivate System
+
+deactivate BU
+
+@enduml

@@ -1,0 +1,9 @@
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.csproj.AssemblyReference.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.AssemblyInfoInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.AssemblyInfo.cs
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.csproj.CoreCompileInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.RazorAssemblyInfo.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.RazorAssemblyInfo.cs
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g061\obj\Debug\net7.0\DDDNetCore.sourcelink.json

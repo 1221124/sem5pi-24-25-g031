@@ -1,0 +1,111 @@
+@startuml "uc017-class-diagram"
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC017
+
+class OperationRequestController {
+    +UpdateAsync(operationRequestDTO)
+}
+
+class OperationRequestService {
+    +UpdateAsync(operationRequestDTO)
+}
+
+class OperationRequestDTO {
+    -operationID: int
+    -suggestedDealine: DateTime
+    -priority: Priority
+    -specialization: Specialization
+    +OperationRequestDTO(operationID, specialization)
+    +OperationRequestDTO(operationID, priority)
+    +OperationRequestDTO(operationID, suggestedDealine)
+}
+
+class OperationRequest {
+    -operationID: int
+    -suggestedDealine: DateTime
+    -priority: Priority
+    -specialization: Specialization
+    +UpdateSuggestedDealine(suggestedDealine)
+    +UpdatePriority(priority)
+    +UpdateSpecialization(specialization)
+}
+
+class StaffRepository {
+    +GetOperationAsync(operationId)
+    +SaveChangesAsync(operation)
+}
+
+class StaffRepositoryInterface {
+    +GetOperationAsync(operationId)
+    +SaveChangesAsync(operation)
+}
+
+class OperationRequestRepository {
+    +GetOperationAsync(operationId)
+    +SaveChangesAsync(operation)
+}
+
+class OperationRequestInterface {
+    +GetOperationAsync(operationId)
+    +SaveChangesAsync(operation)
+}
+
+class DateTime {
+    -date: Date
+    -time: Time
+}
+
+class Date {
+    -day: int
+    -month: int
+    -year: int
+}
+
+class Time {
+    -hours: int
+    -minutes: int
+    -seconds: int
+}
+
+enum Specialization {
+    + ANAESTHESIOLOGY
+    + CARDIOLOGY
+    + ORTHOPEDICS
+    + Specialization(specialization: int)
+}
+
+enum Priority {
+    + ELECTIVE
+    + URGENT
+    + EMERGENCY
+    + Priority(priority: int)
+}
+
+OperationRequestController "1" -- "1" OperationRequestService : > uses
+
+OperationRequestService "1" -- "1" OperationRequestDTO : > uses
+OperationRequestService "1" -- "1" OperationRequest : > uses
+OperationRequestService "1" -- "1" StaffRepository : > uses
+OperationRequestService "1" -- "1" OperationRequestRepository : > uses
+OperationRequestRepository "1" -- "1" OperationRequestInterface : > uses
+
+StaffRepository "1" -- "1" StaffRepositoryInterface : > uses
+
+OperationRequestDTO "1" -- "1" DateTime : > has
+OperationRequestDTO "1" -- "1" Specialization : > has
+OperationRequestDTO "1" -- "1" Priority : > has
+
+OperationRequest "1" -- "1" DateTime : > has
+OperationRequest "1" -- "1" Specialization : > has
+OperationRequest "1" -- "1" Priority : > has
+
+DateTime "1" -- "1" Date : > has
+DateTime "1" -- "1" Time : > has
+
+
+
+@enduml

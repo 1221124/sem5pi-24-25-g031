@@ -1,0 +1,69 @@
+@startuml "uc019-class-diagram"
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+title Class Diagram (CD) - UC019
+
+
+class OperationRequestController {
+    -OperationRequestService operationRequestService
+    -AuthenticationService authenticationService
+    +SearchByOperationTypeAsync(operationRequestDTO: OperationRequestDTO): Task
+    +SearchByPatientNameAsync(operationRequestDTO: OperationRequestDTO): Task
+    +SearchByPriorityAsync(operationRequestDTO: OperationRequestDTO): Task
+    +SearchByStatusAsync(operationRequestDTO: OperationRequestDTO): Task
+}
+
+class OperationRequestService {
+    -OperationRequestRepository operationRequestRepository
+    -StaffRepository staffRepository
+    +SearchByOperationTypeAsync(operationRequestDTO: OperationRequestDTO): Task
+    +SearchByPatientNameAsync(operationRequestDTO: OperationRequestDTO): Task
+    +SearchByPriorityAsync(operationRequestDTO: OperationRequestDTO): Task
+    +SearchByStatusAsync(operationRequestDTO: OperationRequestDTO): Task
+}
+
+class OperationRequestDTO {
+    -operationRequestID: string
+    -patientName: string
+    -status: string
+    +OperationRequestDTO(operationRequestID: string)
+}
+
+interface OperationRequestRepository {
+    +GetOperationTypeAsync(staff: Staff, operationType: string): Task<List<OperationRequest>>
+    +GetPatientNameAsync(staff: Staff, patientName: string): Task<List<OperationRequest>>
+    +GetPriorityAsync(staff: Staff, priority: string): Task<List<OperationRequest>>
+    +GetStatusAsync(staff: Staff, status: string): Task<List<OperationRequest>>
+}
+
+interface StaffRepository {
+    +GetStaffAsync(staffId: string): Task<Staff>
+}
+
+class Staff {
+    -staffId: string
+    +Staff(staffId: string)
+}
+
+class OperationRequest {
+    -operationRequestID: string
+    +OperationRequest(operationRequestID: string)
+}
+
+class AuthenticationService {
+    +AuthenticateAsync(staffId: string): Task
+}
+
+OperationRequestController --> OperationRequestService: <<uses>>
+OperationRequestController --> AuthenticationService  : <<uses>>
+OperationRequestService --> OperationRequestRepository: <<calls>>
+OperationRequestService --> StaffRepository: <<calls>>
+OperationRequestService --> OperationRequestDTO: <<creates>>
+OperationRequestRepository --> OperationRequest: <<has>>
+StaffRepository --> Staff: <<has>>
+
+
+@enduml

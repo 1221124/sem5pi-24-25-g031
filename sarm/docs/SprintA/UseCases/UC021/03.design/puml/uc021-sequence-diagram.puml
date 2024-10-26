@@ -1,0 +1,137 @@
+@startuml uc021-sequence-diagram
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+title Sequence Diagram (SD) - UC021
+
+participant ":OperationTypeController" as Controller
+participant ":OperationTypeService" as Service
+participant "dto: OperationTypeDto" as Dto
+participant ":IOperationTypeRepository" as IRepo
+participant "operationType:OperationType" as Domain
+participant "Mapper" as Mapper
+
+-> Controller: PUT /api/operationtype
+
+activate Controller
+
+    Controller -> Service: UpdateAsync(dto)
+
+    activate Service
+
+        Service -> Dto: GetId()
+
+        activate Dto
+
+            Dto --> Service: id
+
+        deactivate Dto
+
+        Service -> IRepo: GetByIdAsync(id)
+
+        activate IRepo
+
+            IRepo --> Service: operationType
+
+        deactivate IRepo
+
+        Service -> Dto: GetName()
+
+        activate Dto
+
+            Dto --> Service: name
+
+        deactivate Dto
+
+        Service -> Dto: GetSpecialization()
+
+        activate Dto
+
+            Dto --> Service: specialization
+
+        deactivate Dto
+
+        Service -> Dto: GetRequiredStaff()
+
+        activate Dto
+
+            Dto --> Service: requiredStaff
+
+        deactivate Dto
+
+        Service -> Dto: GetPhasesDuration()
+
+        activate Dto
+
+            Dto --> Service: phasesDuration
+
+        deactivate Dto
+
+        Service -> Domain: SetName(name)
+
+        activate Domain
+
+            Domain --> Service: void
+
+        deactivate Domain
+
+        Service -> Domain: SetSpecialization(specialization)
+
+        activate Domain
+
+            Domain --> Service: void
+
+        deactivate Domain
+
+        Service -> Domain: SetRequiredStaff(requiredStaff)
+
+        activate Domain
+
+            Domain --> Service: void
+
+        deactivate Domain
+
+        Service -> Domain: SetPhasesDuration(phasesDuration)
+
+        activate Domain
+
+            Domain --> Service: void
+
+        deactivate Domain
+
+        Service -> IRepo: UpdateAsync(operationType)
+
+        activate IRepo
+
+            IRepo --> Service: operationType
+
+        deactivate IRepo
+
+        Service -> Mapper: ToDto(operationType)
+
+        activate Mapper
+
+            Mapper -> Dto: new OperationTypeDto(operationType.Name, operationType.Specialization, operationType.RequiredStaff, operationType.PhasesDuration)
+
+            activate Dto
+
+                Dto --> Mapper: dto
+
+            deactivate Dto
+
+            Mapper --> Service: dto
+
+        deactivate Mapper
+
+        Service --> Controller: dto
+
+    deactivate Service
+
+    <-- Controller : 200 OK
+
+deactivate Controller
+
+@enduml

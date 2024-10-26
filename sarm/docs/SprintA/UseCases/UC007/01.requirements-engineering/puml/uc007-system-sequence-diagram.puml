@@ -1,0 +1,49 @@
+@startuml "uc007-system-sequence-diagram"
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - UC007
+
+actor Patient as Patient
+participant ":System" as System
+participant "IAM Provider" as IAM
+
+activate Patient
+    Patient -> System: Wants to login
+    activate System
+        System --> Patient: Provides IAM Provider
+        deactivate System
+
+    Patient -> System: Select IAM Provider
+    activate System
+        System --> Patient: Redirect to IAM Provider
+        deactivate System
+
+    Patient -> IAM: Provide credentials
+    note left of IAM
+        credentials : {username, password}
+    end note
+    activate IAM
+        IAM --> System: Token 
+        deactivate IAM
+    activate System
+        System -> System: Validate Token
+        activate System
+            deactivate System
+
+        System --> Patient: Token Valid
+        deactivate System
+
+    Patient -> System: Create Session
+    activate System
+        System --> Patient: Access Patient's data 
+        deactivate System
+
+    alt max inactivity time reached
+        Patient -> System: Session Expired after inactivity
+        activate System
+            System --> Patient: Re-authentication required
+        deactivate System
+    end
+@enduml
