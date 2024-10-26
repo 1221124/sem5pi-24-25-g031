@@ -1,5 +1,3 @@
-using System;
-
 namespace Domain.OperationRequests
 {
     public enum RequestStatus

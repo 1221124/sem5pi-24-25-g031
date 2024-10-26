@@ -1,5 +1,3 @@
-using Domain.Shared;
-
 namespace Domain.OperationRequests
 {
     public class UpdatingOperationRequestDto

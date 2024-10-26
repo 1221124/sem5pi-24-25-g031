@@ -11,17 +11,17 @@ namespace Domain.OperationRequests
         {
         }
 
-        public OperationRequestId(String value) : base(value)
+        public OperationRequestId(string value) : base(value)
         {
         }
 
         override
-        protected  Object createFromString(String text){
+        protected  Object createFromString(string text){
             return new Guid(text);
         }
 
         override
-        public String AsString(){
+        public string AsString(){
             Guid obj = (Guid) base.ObjValue;
             return obj.ToString();
         }

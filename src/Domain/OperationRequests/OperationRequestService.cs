@@ -2,7 +2,6 @@ using DDDNetCore.Domain.Patients;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.DBLogs;
-using Domain.Staffs;
 using Domain.Patients;
 
 namespace Domain.OperationRequests
@@ -18,39 +17,54 @@ namespace Domain.OperationRequests
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo,
         PatientService patientService, DBLogService logService)
         {
-            _unitOfWork = unitOfWork;
-            _repo = repo;
+            this._unitOfWork = unitOfWork;
+            this._repo = repo;
             _patientService = patientService;
             _logService = logService;
         }        
 
-        public async Task<OperationRequestDto?> AddAsync(OperationRequest operationRequest)
+        public async Task<OperationRequestDto> AddAsync(CreatingOperationRequestDto requestDto)
         {
-            try{
-                await _repo.AddAsync(operationRequest);
-                
-                Console.WriteLine("Operation Request added successfully");
+            // try{
+            //     OperationRequest operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto);
+            //
+            //     if (operationRequest == null)
+            //         return null;
+            //     
+            //     if (string.IsNullOrEmpty(operationRequest.DoctorId.ToString()) || 
+            //         string.IsNullOrEmpty(operationRequest.PatientId.ToString()) ||
+            //         string.IsNullOrEmpty(operationRequest.OperationTypeId.ToString())) {
+            //         throw new ArgumentException("One of the required properties is null or empty.");
+            //     }
+            //     
+            //     Console.WriteLine("Operation antes");
+            //     await _repo.AddAsync(operationRequest);
+            //     
+            //     Console.WriteLine("Operation despues");
+            //     
+            //     await _unitOfWork.CommitAsync();
+            //
+            //     Console.WriteLine("Operation despues 2");
+            //
+            //     // _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, operationRequest);
+            //     return OperationRequestMapper.ToDto(operationRequest);
+            // } catch (ArgumentException ae) {
+            //     Console.WriteLine("Argument exception: " + ae.Message);
+            //     Console.WriteLine(ae.StackTrace);
+            //     return null;
+            // }catch (Exception e){
+            //     Console.WriteLine("Error adding Operation Request: " + e.Message);
+            //     // _logService.LogError(OperationRequestEntityType, e.ToString());
+            //     return null;     
+            // }
 
-                await _unitOfWork.CommitAsync();
+            var operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto);
 
+            await this._repo.AddAsync(operationRequest);
 
-                Console.WriteLine("Operation Request commited successfully");
+            await this._unitOfWork.CommitAsync();
 
-                // _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, operationRequest);
-
-                /*_patientService.UpdateAsync(
-                    new PatientDto(
-                        category.PatientId, dto.AppointmentHistory.add(operationRequestId)
-                        )
-                    );
-                );*/
-
-                return OperationRequestMapper.ToDto(operationRequest);
-
-            }catch (Exception){
-                // _logService.LogError(OperationRequestEntityType, e.ToString());
-                return null;     
-            }
+            return OperationRequestMapper.ToDto(operationRequest);
         }
 
         public async Task<OperationRequestDto?> GetByIdAsync(OperationRequestId operationRequestId)

@@ -42,17 +42,17 @@ namespace Domain.OperationRequests
             );
         }
 
-        public static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto, StaffDto staff, PatientDto patient, OperationTypeDto operationType) {
+        public static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto) {
             return new OperationRequest(
-                new StaffId(staff.Id),
-                new PatientId(patient.Id),
-                new OperationTypeId(operationType.Id),
+                dto.StaffId,
+                dto.PatientId,
+                dto.OperationTypeId,
                 dto.DeadlineDate,
                 dto.Priority
             );
         }
 
-        public static OperationRequest ToEntityFromUpdating(UpdatingOperationRequestDto dto, OperationRequestDto operation){
+        /*public static OperationRequest ToEntityFromUpdating(UpdatingOperationRequestDto dto, OperationRequestDto operation){
             
             dto.DeadlineDate ??= operation.DeadlineDate;
             dto.Priority ??= operation.Priority;
@@ -68,7 +68,7 @@ namespace Domain.OperationRequests
                 dto.RequestStatus
             );
 
-        }
+        }*/
 
         public static List<OperationRequestDto> ToDtoList(List<OperationRequest> operationRequests)
         {
@@ -88,11 +88,6 @@ namespace Domain.OperationRequests
         public static List<OperationRequest> ToEntityList(List<OperationRequestDto> dtoList)
         {
             return dtoList.ConvertAll(dto => ToEntity(dto));
-        }
-
-        internal static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto)
-        {
-            throw new NotImplementedException();
         }
     }
 }
