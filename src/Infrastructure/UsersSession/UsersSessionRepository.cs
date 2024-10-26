@@ -57,6 +57,11 @@ namespace Infrastructure.UsersSession
                 _objs.Remove(session);
             }
         }
+
+        public async Task<UserSession?> GetByIdTokenAsync(string token)
+        {
+            return await _objs.FirstOrDefaultAsync(s => s.IdToken == token);
+        }
     }
 }
         

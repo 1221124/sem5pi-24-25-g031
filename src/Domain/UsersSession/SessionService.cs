@@ -59,5 +59,18 @@ namespace Domain.UsersSession
                 throw new Exception("Error removing session: " + e.Message);
             }
         }
+
+        public Task<UserSession?> GetByIdTokenAsync(string token)
+        {
+            try
+            {
+                var session =_sessions.GetByIdTokenAsync(token);
+                return session;
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Error removing session: " + e.Message);
+            }
+        }
     }
 }

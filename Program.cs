@@ -22,6 +22,7 @@ using Domain.Emails;
 using Domain.IAM;
 using Infrastructure.UsersSession;
 using Domain.UsersSession;
+using Domain.Authz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,6 +99,9 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseMiddleware<TokenInjectionMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

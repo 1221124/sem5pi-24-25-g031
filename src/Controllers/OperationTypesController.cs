@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.OperationTypes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
@@ -17,6 +18,7 @@ namespace Controllers
 
         // GET: api/OperationTypes
         [HttpGet]
+        [Authorize(Roles = "ADMIN")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
         {
             return await _service.GetAllAsync();
