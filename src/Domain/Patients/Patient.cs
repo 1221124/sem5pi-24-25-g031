@@ -62,12 +62,13 @@ namespace Domain.Patients
       ContactInformation = contactInformation;
     }
 
-    public Patient(FullName fullName, DateOfBirth dateOfBirth, ContactInformation contactInformation)
+    public Patient(FullName fullName, DateOfBirth dateOfBirth, ContactInformation contactInformation, Gender gender)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
       DateOfBirth = dateOfBirth; 
       ContactInformation = contactInformation;
+      Gender = gender;
     }
 
     public Patient(Guid guid, Email email, PhoneNumber phoneNumber)

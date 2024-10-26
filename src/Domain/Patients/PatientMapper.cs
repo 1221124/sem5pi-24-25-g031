@@ -11,7 +11,8 @@ namespace Domain.Patients
             return new Patient(
                 dto.Fullname,
                 dto.BirthDate,
-                dto.ContactInformation
+                dto.ContactInformation,
+                dto.Gender
             );
         }
         
