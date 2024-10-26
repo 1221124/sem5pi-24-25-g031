@@ -50,7 +50,7 @@ namespace Controllers
         }
 
         //Procurar por searchCriteria
-        [HttpGet("search")]
+        [HttpGet("search/name")]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySearchCriteriaName([FromQuery] String fullName)
         {
             var names = fullName.Split('-');
@@ -77,6 +77,18 @@ namespace Controllers
         public async Task<ActionResult<StaffDto>> GetBySearchCriteriaEmail(String email)
         {
             var staffList = await _service.SearchByEmailAsync(new Email(email)); 
+
+            if (staffList == null)
+            {
+                return NotFound();
+            }
+            return Ok(staffList);
+        }
+        
+        [HttpGet("search/specialization")] 
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySpecializationAsync([FromQuery] String specialization)
+        {
+            var staffList = await _service.SearchBySpecializationAsync(SpecializationUtils.FromString(specialization)); 
 
             if (staffList == null)
             {
@@ -154,7 +166,7 @@ namespace Controllers
             }
         }
 
-        // DELETE: api/Staff/5
+        /*// DELETE: api/Staff/5
         [HttpDelete("{id}/hard")]
         public async Task<ActionResult<StaffDto>> HardDelete(Guid id)
         {
@@ -173,6 +185,6 @@ namespace Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
-        }
+        }*/
     }
 }
