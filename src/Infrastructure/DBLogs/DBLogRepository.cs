@@ -14,5 +14,11 @@ namespace Infrastructure.DBLogs
         {
             this._objs = context.DBLogs;
         }
+        
+        public async Task<List<DBLog?>> GetByEntityLogTypeAsync(EntityType entityType, DBLogType logType)
+        {
+            return (await _objs
+                .AsQueryable().Where(x=> entityType.Equals(x.LogType)).Where(x=>logType.Equals(x.LogType)).ToListAsync())!;
+        }
     }
 }
