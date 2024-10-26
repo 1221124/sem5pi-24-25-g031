@@ -52,6 +52,24 @@ namespace Domain.OperationRequests
             );
         }
 
+        public static OperationRequest ToEntityFromUpdating(UpdatingOperationRequestDto dto, OperationRequestDto operation){
+            
+            dto.DeadlineDate ??= operation.DeadlineDate;
+            dto.Priority ??= operation.Priority;
+            dto.RequestStatus ??= operation.Status;
+
+            return new OperationRequest(
+                operation.Id,
+                operation.DoctorId,
+                operation.PatientId,
+                operation.OperationTypeId,
+                dto.DeadlineDate,
+                dto.Priority,
+                dto.RequestStatus
+            );
+
+        }
+
         public static List<OperationRequestDto> ToDtoList(List<OperationRequest> operationRequests)
         {
             return operationRequests.ConvertAll(ToDto);

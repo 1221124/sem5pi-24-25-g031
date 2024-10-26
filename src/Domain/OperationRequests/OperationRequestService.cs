@@ -15,8 +15,7 @@ namespace Domain.OperationRequests
         private static readonly EntityType OperationRequestEntityType = EntityType.OPERATION_REQUEST;
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo,
-        OperationTypeService operationTypeService, PatientService patientService, StaffService staffService, 
-        DBLogService logService)
+        PatientService patientService, DBLogService logService)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
@@ -24,11 +23,17 @@ namespace Domain.OperationRequests
             _logService = logService;
         }        
 
-        public async Task<OperationRequestDto> AddAsync(OperationRequest operationRequest)
+        public async Task<OperationRequestDto?> AddAsync(OperationRequest operationRequest)
         {
             try{
                 await _repo.AddAsync(operationRequest);
+                
+                Console.WriteLine("Operation Request added successfully");
+
                 await _unitOfWork.CommitAsync();
+
+
+                Console.WriteLine("Operation Request commited successfully");
 
                 // _logService.LogAction(OperationRequestEntityType, DBLogType.CREATE, operationRequest);
 
@@ -43,26 +48,26 @@ namespace Domain.OperationRequests
 
             }catch (Exception){
                 // _logService.LogError(OperationRequestEntityType, e.ToString());
-                return OperationRequestMapper.ToDto(operationRequest);     
+                return null;     
             }
         }
 
-        public async Task<OperationRequestDto> GetByIdAsync(string id)
+        public async Task<OperationRequestDto?> GetByIdAsync(OperationRequestId operationRequestId)
         {
             try
             {
-                OperationRequestId operationRequestId = new(id);
+                //OperationRequestId operationRequestId = new(id);
 
-                var category = await this._repo.GetByIdAsync(id);
+                var category = await this._repo.GetByIdAsync(operationRequestId);
 
                 if (category == null)
-                    return OperationRequestMapper.ToDto(operationRequestId);
+                    return null;
 
                 return OperationRequestMapper.ToDto(category);
             }
             catch (Exception)
             {
-                return OperationRequestMapper.ToDto(new OperationRequestId(id));
+                return null;
             }
         }
 

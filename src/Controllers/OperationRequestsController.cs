@@ -56,7 +56,10 @@ namespace Controllers
         public ActionResult<OperationRequest> Get(string id)
         {  
             try{
-                var operationRequestDto = _operationRequestService.GetByIdAsync(id);
+                if(id == null)
+                    return BadRequest("Operation request ID is required.");
+
+                var operationRequestDto = _operationRequestService.GetByIdAsync(new OperationRequestId(id));
 
                     if (operationRequestDto == null)
                         return NotFound();
@@ -78,24 +81,37 @@ namespace Controllers
                     return BadRequest("Operation request data is required.");
                 }
 
-                var staff = await _staffService.GetByEmailAsync(requestDto.StaffEmail);
+                var staff = await _staffService.GetByEmailAsync(new(requestDto.StaffEmail.Value));
                 if(staff == null)
                     return BadRequest("Invalid staff provided.");
 
-                var patient = await _patientService.GetByEmailAsync(requestDto.PatientEmail);
+                Console.WriteLine("Staff");
+
+                var patient = await _patientService.GetByEmailAsync(new(requestDto.PatientEmail.Value));
                 if(patient == null)
                     return BadRequest("Invalid patient provided.");
 
-                var operationType = await _operationTypeService.GetByNameAsync(requestDto.OperationTypeName);
+
+                Console.WriteLine("Patient");
+                 
+                var operationType = await _operationTypeService.GetByNameAsync(new(requestDto.OperationTypeName.Value));
                 if(operationType == null)
                     return BadRequest("Invalid operation type provided.");
 
+                Console.WriteLine("OperationType");
+
                 var operationRequest = await  _operationRequestService.AddAsync(OperationRequestMapper.ToEntityFromCreating(requestDto, staff, patient, operationType));
-            
+
+                Console.WriteLine("OperationRequest");
+
                 if(operationRequest == null){
                     //_DBLogService.LogError(OperationRequestEntityType, "Error in OperationRequestController.Create");
                     return NotFound();
-                } return Ok(operationRequest);
+                } 
+
+                Console.WriteLine("OK");
+                
+                return Ok(operationRequest);
                 
             }catch(Exception ex){
                 //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
@@ -105,7 +121,7 @@ namespace Controllers
 
         //PUT api/operationrequest/update
         [HttpPost("update")]
-        public async Task<IActionResult> Update(OperationRequestDto dto)
+        public async Task<IActionResult> Update(UpdatingOperationRequestDto dto)
         {
             try{
                 if (dto == null){
@@ -113,10 +129,15 @@ namespace Controllers
                     return BadRequest("Operation request data is required.");
                 }
 
-                var operationRequest = await _operationRequestService.UpdateAsync(OperationRequestMapper.ToEntity(dto));
+                var operationRequestDto = await _operationRequestService.GetByIdAsync(dto.Id);
+                if(operationRequestDto == null)
+                    return NotFound();
+
+                var operationRequest = await _operationRequestService.UpdateAsync(OperationRequestMapper.ToEntityFromUpdating(dto, operationRequestDto));
 
                 if(operationRequest == null) return NotFound();
                 return Ok("Operation request updated successfully.");
+
             }catch(Exception ex){
                 //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
                 return BadRequest("Error in Update: " + ex.Message);

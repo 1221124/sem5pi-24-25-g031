@@ -9,10 +9,12 @@ namespace Domain.OperationRequests
 {
     public class OperationRequest : Entity<OperationRequestId>, IAggregateRoot
     {
-        public PatientId PatientId { get; set; }
+        private DateTime? deadlineDate;
+        private Priority? priority;
+        private RequestStatus? requestStatus;
 
         public StaffId DoctorId { get; set; }
-
+        public PatientId PatientId { get; set; }
         public OperationTypeId OperationTypeId { get; set; }
         public DateTime DeadlineDate { get; set; }
         public Priority Priority { get; set; }
@@ -59,6 +61,17 @@ namespace Domain.OperationRequests
             OperationTypeId = operationTypeId;
             DeadlineDate = dateTime;
             Priority = priority;
+        }
+
+        public OperationRequest(Guid id, StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DateTime? deadlineDate, Priority? priority, RequestStatus? status)
+        {
+            Id = id;
+            DoctorId = doctorId;
+            PatientId = patientId;
+            OperationTypeId = operationTypeId;
+            DeadlineDate = deadlineDate ?? throw new ArgumentNullException(nameof(deadlineDate));
+            Priority = priority ?? throw new ArgumentNullException(nameof(priority));
+            Status = status ?? throw new ArgumentNullException(nameof(status));
         }
 
         internal void ChangeDeadlineDate(DateTime deadlineDate)
