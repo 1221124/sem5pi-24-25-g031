@@ -15,6 +15,10 @@ namespace Domain.Patients
         {
         }
 
+        public PatientId() : base(Guid.NewGuid())
+        {
+        }
+
         override
         protected  Object createFromString(String text){
             return new Guid(text);
