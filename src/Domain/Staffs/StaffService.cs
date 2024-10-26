@@ -191,6 +191,15 @@ namespace Domain.Staffs
                     throw new Exception("Failed to change specialization", ex);
                 }
 
+                try
+                {
+                    newStaff.ChangeUserId(staff.UserId);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to change specialization", ex);
+                }
+
 
                 // await _repo.UpdateAsync(newStaff);
                 await _unitOfWork.CommitAsync();

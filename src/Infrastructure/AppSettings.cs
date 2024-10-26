@@ -14,6 +14,7 @@ namespace Infrastructure
         public static string IAMRedirectUri { get; private set; }
         public static string IAMLoginUrl { get; private set; }
         public static string IAMLogoutUrl { get; private set; }
+        public static string VerifyEmailUrl { get; private set; }
 
         public static void Initialize(IConfiguration configuration)
         {
@@ -27,6 +28,7 @@ namespace Infrastructure
             IAMRedirectUri = configuration["IAM:redirect_uri"];
             IAMLoginUrl = configuration["IAM:LoginURL"];
             IAMLogoutUrl = configuration["IAM:LogoutURL"];
+            VerifyEmailUrl = configuration["VerifyEmailUrl"];
         }
     }
 }

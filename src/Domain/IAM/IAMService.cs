@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using Domain.Shared;
 using Infrastructure;
 using Newtonsoft.Json;
@@ -12,6 +13,24 @@ namespace Domain.IAM
         {
             _httpClient = httpClient;
         }
+
+        // public async Task<bool> UserExistsAsync(Email email)
+        // {
+        //     var accessToken = "SEU_ACCESS_TOKEN";
+        //     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        //     var response = await _httpClient.GetAsync($"{AppSettings.IAMDomain}/api/v2/users-by-email?email={email.Value}");
+
+        //     if (!response.IsSuccessStatusCode)
+        //     {
+        //         throw new Exception("Failed to check if user exists. Status code: " + response.StatusCode);
+        //     }
+
+        //     var responseContent = await response.Content.ReadAsStringAsync();
+        //     var userExistsResponse = JsonConvert.DeserializeObject<UserExistsResponse>(responseContent);
+
+        //     return userExistsResponse != null && userExistsResponse.Length > 0 && userExistsResponse.Users.Any(user => user.Email == email.Value);
+        // }
 
         public async Task<TokenResponse> ExchangeCodeForTokenAsync(string code)
         {
@@ -66,6 +85,21 @@ namespace Domain.IAM
 
             return emailClaim.Value;
         }
+    }
+
+    public class UserExistsResponse
+    {
+        [JsonProperty("length")]
+        public int Length { get; set; }
+
+        [JsonProperty("users")]
+        public List<Auth0User> Users { get; set; }
+    }
+
+    public class Auth0User
+    {
+        [JsonProperty("email")]
+        public string Email { get; set; }
     }
 
     public class TokenResponse

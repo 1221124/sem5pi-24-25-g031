@@ -1,42 +1,63 @@
 
-using MailKit.Net.Smtp;
-using MimeKit;
+using Domain.Shared;
+using System.Security.Cryptography;
+using Infrastructure;
+using RestSharp;
 
 namespace Domain.Emails
 {
     public class EmailService
     {
-        private readonly string _smtpServer;
-        private readonly int _port;
         private readonly string _fromEmail;
-        private readonly string _password;
+        private readonly string _apiKey;
 
-        public EmailService(string smtpServer, int port, string fromEmail, string password)
+        public EmailService(string fromEmail, string apiKey)
         {
-            _smtpServer = smtpServer;
-            _port = port;
             _fromEmail = fromEmail;
-            _password = password;
+            _apiKey = apiKey;
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Your Name", _fromEmail));
-            message.To.Add(new MailboxAddress("", toEmail));
-            message.Subject = subject;
-
-            message.Body = new TextPart("html")
+            var client = new RestClient("https://api.sendinblue.com/v3/smtp/email");
+            var request = new RestRequest("", Method.Post);
+            request.AddHeader("api-key", _apiKey);
+            request.AddJsonBody(new
             {
-                Text = body
-            };
+                sender = new { email = _fromEmail },
+                to = new[] { new { email = toEmail } },
+                subject = subject,
+                htmlContent = body
+            });
 
-            using (var client = new SmtpClient())
+            var response = await client.ExecuteAsync<dynamic>(request);
+
+            if (!response.IsSuccessful)
             {
-                await client.ConnectAsync(_smtpServer, _port, true);
-                await client.AuthenticateAsync(_fromEmail, _password);
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
+                throw new Exception($"Error sending email: {response.Content}");
+            }
+        }
+
+        public async Task<(string subject, string body)> GenerateVerificationEmailContent(Email email)
+        {
+            var subject = "Please verify your registration in our system";
+            var link = GenerateLink(email.Value);
+            var body = $"Hi, {email.Value}!\n\nYou have been successfully registered! Click on the link below to verify your email and gain access to our system: {link}.\n\nSARM G031";
+
+            return (subject, body);
+        }
+
+        public string GenerateLink(string email)
+        {
+            return $"{AppSettings.VerifyEmailUrl}?email={email}&token={GenerateToken()}";
+        }
+
+        public string GenerateToken()
+        {
+            using (var hmac = new HMACSHA256())
+            {
+                var token = Convert.ToBase64String(hmac.Key);
+                return token;
             }
         }
     }

@@ -7,6 +7,7 @@ using Domain.Emails;
 using Infrastructure;
 using Domain.IAM;
 using Domain.UsersSession;
+using System.Text.RegularExpressions;
 
 namespace Controllers
 {
@@ -67,17 +68,18 @@ namespace Controllers
 
                 var email = _iamService.GetEmailFromIdToken(idToken.IdToken);
 
-                if (!email.EndsWith(AppSettings.EmailDomain))
+                if(email.Trim().ToLower().EndsWith("isep.ipp.pt".Trim().ToLower()))
                 {
+                    var user = await _service.GetByEmailAsync(email);
+                    if (user == null)
+                    {
+                        return Ok("Registration in IAM sucessful. Please, wait for the administrator to create your account in our system.");
+                    }
+                    return await LoginBackofficeUser(email);
+                } else {
                     return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient));
                 }
-                
-                if(email.EndsWith(AppSettings.EmailDomain))
-                {
-                    return await LoginBackofficeUser(email);
-                }
 
-                return Ok();
             } catch (Exception ex) {
                 return BadRequest(new { Message = ex.Message });
             }
@@ -122,6 +124,11 @@ namespace Controllers
         [HttpPost("backoffice/create")]
         public async Task<ActionResult<UserDto>> CreateBackofficeUser([FromBody] CreatingUserDto dto)
         {
+            // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
+            // if (!iamUserExists) {
+            //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
+            // }
+
             var staff = await _staffService.GetByEmailAsync(dto.Email);
             if (staff == null) {
                 return BadRequest("Staff profile not found.");
@@ -132,10 +139,16 @@ namespace Controllers
                 return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
             }
 
+            (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
+            await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
+
             user = await _service.AddAsync(dto);
 
             staff.UserId = new UserId(user.Id);
             await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntity(staff));
+
+            // (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
+            // await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
 
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
@@ -195,6 +208,22 @@ namespace Controllers
             {
                 return BadRequest(new { ex.Message });
             }
+        }
+
+        // POST: api/Users/verify
+        [HttpPost("api/users/verify")]
+        public async Task<ActionResult<UserDto>> VerifyEmail([FromQuery] Email email)
+        {
+            var user = await _service.GetByEmailAsync(email);
+
+            if (user != null)
+            {
+                user.UserStatus = UserStatus.Active;
+                await _service.UpdateAsync(user);
+                return Ok(user);
+            }
+
+            return NotFound("User not found.");
         }
 
         // Inactivate: api/Users/5

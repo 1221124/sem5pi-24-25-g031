@@ -18,7 +18,7 @@ namespace Infrastructure.Users
         public async Task<User> GetByEmailAsync(Email email)
         {
             return await this._objs
-                .AsQueryable().Where(x => email.Equals(x.Email)).FirstOrDefaultAsync();
+                .AsQueryable().Where(x => email.Value.Equals(x.Email.Value)).FirstOrDefaultAsync();
         }
     }
 }

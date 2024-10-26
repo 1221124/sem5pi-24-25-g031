@@ -67,7 +67,7 @@ builder.Services.AddTransient<SessionService>();
 builder.Services.AddSingleton<PatientCleanupService>();
 builder.Services.AddMemoryCache();
 
-builder.Services.AddSingleton(new EmailService("smtp.gmail.com", 587, AppSettings.Email, AppSettings.Password));
+builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", "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"));
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>

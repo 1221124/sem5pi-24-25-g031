@@ -85,6 +85,11 @@ namespace Domain.Staffs
             SlotAvailability = slotAvailability;
         }
 
+        public void ChangeUserId(UserId userId)
+        {
+            UserId = userId;
+        }
+
         public void MarkAsInative()
         {
             Status = Status.Inactive;

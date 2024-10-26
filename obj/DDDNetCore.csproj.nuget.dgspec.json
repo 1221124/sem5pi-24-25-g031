@@ -103,6 +103,18 @@
               "target": "Package",
               "version": "[8.0.5, )"
             },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[112.1.0, )"
+            },
+            "SendinBlue": {
+              "target": "Package",
+              "version": "[1.3.0, )"
+            },
+            "SendinBlue.Api": {
+              "target": "Package",
+              "version": "[0.1.1, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"

@@ -3383,6 +3383,44 @@
           "lib/netstandard2.0/NuGet.Versioning.dll": {}
         }
       },
+      "RestSharp/112.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/RestSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/RestSharp.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "SendInBlue/1.3.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.1"
+        },
+        "compile": {
+          "lib/net472/SendInBlue.dll": {}
+        },
+        "runtime": {
+          "lib/net472/SendInBlue.dll": {}
+        }
+      },
+      "Sendinblue.Api/0.1.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.1",
+          "RestSharp": "106.2.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/Sendinblue.Api.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Sendinblue.Api.dll": {}
+        }
+      },
       "Swashbuckle.AspNetCore/6.4.0": {
         "type": "package",
         "dependencies": {
@@ -9374,6 +9412,55 @@
         "nuget.versioning.nuspec"
       ]
     },
+    "RestSharp/112.1.0": {
+      "sha512": "bOUGNZqhhv/QeCXHTKEUil846yBjwWXpzPKjO67kFvaAOoF361z7jLY5BMnuZ6WD2WQRA750sNMcK7MSPCQ5Mg==",
+      "type": "package",
+      "path": "restsharp/112.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net471/RestSharp.dll",
+        "lib/net471/RestSharp.xml",
+        "lib/net48/RestSharp.dll",
+        "lib/net48/RestSharp.xml",
+        "lib/net6.0/RestSharp.dll",
+        "lib/net6.0/RestSharp.xml",
+        "lib/net7.0/RestSharp.dll",
+        "lib/net7.0/RestSharp.xml",
+        "lib/net8.0/RestSharp.dll",
+        "lib/net8.0/RestSharp.xml",
+        "lib/netstandard2.0/RestSharp.dll",
+        "lib/netstandard2.0/RestSharp.xml",
+        "restsharp.112.1.0.nupkg.sha512",
+        "restsharp.nuspec",
+        "restsharp.png"
+      ]
+    },
+    "SendInBlue/1.3.0": {
+      "sha512": "gIH70QtvziLeuiYbpbstq2odsK4auCjuwrfpWbtQOMNxCZL2zgR7yG4hm2t8AHDg3Vs9zrQlembf5GYGkCb+cQ==",
+      "type": "package",
+      "path": "sendinblue/1.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net472/SendInBlue.dll",
+        "sendinblue.1.3.0.nupkg.sha512",
+        "sendinblue.nuspec"
+      ]
+    },
+    "Sendinblue.Api/0.1.1": {
+      "sha512": "IFTJBPYhchH9JaRD7QZmU7hCvd1ngtddtPJ6Xn8wyk5+6jBsvZOiYJmG1ZgOXAuu3lied1J0tWHeDRUbs6HHBg==",
+      "type": "package",
+      "path": "sendinblue.api/0.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Sendinblue.Api.dll",
+        "sendinblue.api.0.1.1.nupkg.sha512",
+        "sendinblue.api.nuspec"
+      ]
+    },
     "Swashbuckle.AspNetCore/6.4.0": {
       "sha512": "eUBr4TW0up6oKDA5Xwkul289uqSMgY0xGN4pnbOIBqCcN9VKGGaPvHX3vWaG/hvocfGDP+MGzMA0bBBKz2fkmQ==",
       "type": "package",
@@ -10901,6 +10988,9 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.8",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.8",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 8.0.5",
+      "RestSharp >= 112.1.0",
+      "SendinBlue >= 1.3.0",
+      "SendinBlue.Api >= 0.1.1",
       "Swashbuckle.AspNetCore >= 6.4.0",
       "System.IdentityModel.Tokens.Jwt >= 8.1.2"
     ]
@@ -11007,6 +11097,18 @@
             "target": "Package",
             "version": "[8.0.5, )"
           },
+          "RestSharp": {
+            "target": "Package",
+            "version": "[112.1.0, )"
+          },
+          "SendinBlue": {
+            "target": "Package",
+            "version": "[1.3.0, )"
+          },
+          "SendinBlue.Api": {
+            "target": "Package",
+            "version": "[0.1.1, )"
+          },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[6.4.0, )"
@@ -11038,5 +11140,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'SendInBlue 1.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "libraryId": "SendInBlue",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
