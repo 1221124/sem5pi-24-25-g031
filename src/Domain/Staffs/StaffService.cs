@@ -255,5 +255,30 @@ namespace Domain.Staffs
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
+
+        public async Task<List<StaffDto>> SearchByNameAsync(FullName fullName)
+        {
+            try
+            {
+                List<Staff> staff = await _repo.GetByFullNameAsync(fullName);
+
+                if (staff == null || staff.Count == 0)
+                    return new List<StaffDto>();
+
+
+                List<StaffDto> listDto = StaffMapper.ToDtoList(staff);
+
+                return listDto;
+
+            }
+            catch (Exception e)
+            {
+                _dbLogService.LogError(StaffEntityType, e.ToString());
+                return new List<StaffDto>();
+            }
+          
+            
+            
+        }
     }
 }
