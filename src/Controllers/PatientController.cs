@@ -17,11 +17,14 @@ namespace src.Controllers
         private readonly int pageSize = 2;
         private readonly PatientService _service;
         private readonly DBLogService _dbLogService;
+        private readonly IUnitOfWork _unitOfWork;
         
-        public PatientController(PatientService service, DBLogService dbLogService)
+        public PatientController(PatientService service, DBLogService dbLogService, IUnitOfWork unitOfWork)
         {
             _service = service;
             _dbLogService = dbLogService; // Certifique-se de inicializá-lo
+            _unitOfWork = unitOfWork;
+            
         }
 
         
@@ -211,6 +214,35 @@ namespace src.Controllers
                 return BadRequest(new {Message = ex.Message});
             }
         }
+        
+        //GET: api/Patients/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
+        [HttpGet("sensitiveInfo")]
+        public async Task<ActionResult<PatientDto>> VerifySensitiveInfo([FromQuery] string email, [FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
+        {
+            var patientDto = await _service.GetByEmailAsync(new Email(email));
+
+            var patient =  PatientMapper.ToEntity(patientDto);
+            
+            if (!patient.IsTokenValid(token))
+            {
+                return NotFound("Invalid token");
+            }
+            
+            if (!string.IsNullOrEmpty(pendingPhoneNumber))
+            {
+                patient.ContactInformation.PhoneNumber = new PhoneNumber(pendingPhoneNumber);
+            }
+            if (!string.IsNullOrEmpty(pendingEmail))
+            {
+                patient.ContactInformation.Email = pendingEmail;
+            }
+            
+            patient.ClearVerificationToken();
+            _unitOfWork.CommitAsync();
+            
+            return PatientMapper.ToDto(patient);
+        }
+
         
         // DELETE: api/Patient/5
         [HttpDelete("{id}")]
