@@ -255,6 +255,24 @@ namespace Domain.Staffs
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
+        
+        public async Task<StaffDto> SearchByEmailAsync(Email email)
+        {
+            try
+            {
+                var staff = await _repo.GetByEmailAsync(email);
+
+                if (staff == null)
+                    return null;
+                
+                return StaffMapper.ToDto(staff);
+            }
+            catch (Exception e)
+            {
+                _dbLogService.LogError(StaffEntityType, e.ToString());
+                return null;
+            }
+        }
 
         public async Task<List<StaffDto>> SearchByNameAsync(FullName fullName)
         {
@@ -277,17 +295,19 @@ namespace Domain.Staffs
                 return null;
             }
         }
-
-        public async Task<StaffDto> SearchByEmailAsync(Email email)
+        
+        public async Task<List<StaffDto>> SearchBySpecializationAsync(Specialization specialization)
         {
             try
             {
-                var staff = await _repo.GetByEmailAsync(email);
+                var staff = await _repo.GetBySpecializationAsync(specialization);
 
                 if (staff == null)
                     return null;
                 
-                return StaffMapper.ToDto(staff);
+                List<StaffDto> listDto = StaffMapper.ToDtoList(staff);
+
+                return listDto;
             }
             catch (Exception e)
             {
