@@ -1,6 +1,8 @@
+using Domain.Patients;
 using Domain.Shared;
+using Domain.Users;
 
-namespace Domain.Patients
+namespace DDDNetCore.Domain.Patients
 {
     public class UpdatingPatientDto
     {
@@ -12,8 +14,13 @@ namespace Domain.Patients
         public PhoneNumber? PhoneNumber { get; set; }
         public AppointmentHistory? AppointmentHistory { get; set; }
         public List<MedicalConditions>? MedicalConditions { get; set; }
+        public UserId? UserId { get; set; }
+        public string? VerificationToken { get;  set; }
+        public DateTime? TokenExpiryDate { get;  set; }
+        public PhoneNumber? PendingPhoneNumber { get; set; }
+        public Email? PendingEmail { get; set; }
         
-        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, List<MedicalConditions>? medicalConditions)
+        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, List<MedicalConditions>? medicalConditions, UserId? userId, string? verificationToken, DateTime? tokenExpiryDate)
         {
             EmailId = emailId;
             FirstName = firstName;
@@ -22,6 +29,9 @@ namespace Domain.Patients
             PhoneNumber = phoneNumber;
             AppointmentHistory = appointmentHistory;
             MedicalConditions = medicalConditions;
+            UserId = userId;
+            VerificationToken = verificationToken;
+            TokenExpiryDate = tokenExpiryDate;
         }
         
         public UpdatingPatientDto(Email email)

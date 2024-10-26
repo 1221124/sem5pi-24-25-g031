@@ -1,19 +1,15 @@
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Domain.Emails;
 using Domain.DBLogs;
-using Domain.OperationTypes;
+using Domain.Emails;
+using Domain.Patients;
 using Domain.Shared;
 using Domain.Users;
-using FirebaseAdmin.Auth;
-using Google.Type;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Sendinblue.Api.Business;
 using DateTime = System.DateTime;
 using Date = System.DateOnly;
 using PhoneNumber = Domain.Shared.PhoneNumber;
 
-namespace Domain.Patients
+namespace DDDNetCore.Domain.Patients
 {
     public class PatientService
     {
@@ -21,21 +17,27 @@ namespace Domain.Patients
         private readonly IPatientRepository _repo;
         private readonly DBLogService _dbLogService;
         private readonly UserService _userService;
+        private readonly EmailService _emailService;
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo)
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, DBLogService dbLogService, UserService userService, EmailService emailService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
+            _dbLogService = dbLogService;
+            _userService = userService;
+            _emailService = emailService;
         }
 
         public async Task<List<PatientDto>> GetAllAsync()
         {
             var list = await this._repo.GetAllAsync();
             
-            List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId ));
+            //List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId ));
 
-            return listDto;
+            return PatientMapper.toDtoList(list);
+            //return listDto;
         }
+        
 
         public async Task<PatientDto> GetByIdAsync(PatientId id)
         {
@@ -44,7 +46,9 @@ namespace Domain.Patients
             if(patient == null)
                 return null;
 
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+            //return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+            
+            return PatientMapper.ToDto(patient);
         }
 
         public async Task<List<PatientDto>> GetByNameAsync(FullName name)
@@ -189,7 +193,8 @@ namespace Domain.Patients
                 
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.CREATE, p.Id );
                 
-                return new PatientDto (p.Id.AsGuid(), p.FullName, p.DateOfBirth, p.Gender, medicalRecordNumber, p.ContactInformation, p.MedicalConditions, p.EmergencyContact, p.UserId );
+                return PatientMapper.ToDto(p);
+                //return new PatientDto (p.Id.AsGuid(), p.FullName, p.DateOfBirth, p.Gender, medicalRecordNumber, p.ContactInformation, p.MedicalConditions, p.EmergencyContact, p.UserId, p.VerificationToken, p.TokenExpiryDate);
             }catch(Exception e)
             {
                 Console.WriteLine(e.Message);
@@ -201,7 +206,7 @@ namespace Domain.Patients
         public async Task<PatientDto?> UpdateAsync(UpdatingPatientDto dto)
         {
             var patient = await _repo.GetByEmailAsync(dto.EmailId); 
-
+            
             if (patient == null)
                 return null;   
             try
@@ -215,7 +220,6 @@ namespace Domain.Patients
                         throw new Exception("Phone number already exists");
                     }
                 }
-
                 if (dto.Email != null)
                 {
                     var emailToCheck = dto.Email;
@@ -226,16 +230,61 @@ namespace Domain.Patients
                         throw new Exception("Email already exists");
                     } 
                 }
+                
+                
+                if (dto.PhoneNumber != null || dto.Email != null)
+                {
+                    var token = Guid.NewGuid().ToString();
+                    patient.SetVerificationToken(token);
+                    
+                    dto.VerificationToken = token;
+                    dto.TokenExpiryDate = patient.TokenExpiryDate;
+
+                    if (dto.PhoneNumber != null) dto.PendingPhoneNumber = dto.PhoneNumber;
+                    if (dto.Email != null) dto.PendingEmail = dto.Email;
+                    
+                    var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(token, dto);
+                    await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
+                    
+                    patient.UpdatePatient(PatientMapper.ToEntity(dto));
+                    await _unitOfWork.CommitAsync();
+                }
 
                 patient.UpdatePatient(PatientMapper.ToEntity(dto));
                 await _unitOfWork.CommitAsync();
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id.AsGuid() );
-                return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+                return PatientMapper.ToDto(patient);
+                //return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
             }catch(Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
             }
+        }
+        
+        //GET: api/Patients/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
+        [HttpGet("sensitiveInfo")]
+        public async Task<ActionResult<PatientDto>> VerifySensitiveInfo([FromQuery] string email, [FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
+        {
+            var patient = await _repo.GetByEmailAsync(new Email(email));
+            
+            if (patient != null == !patient.IsTokenValid(token))
+            {
+                return null;
+            }
+            
+            if (!string.IsNullOrEmpty(pendingPhoneNumber))
+            {
+                patient.ContactInformation.PhoneNumber = new PhoneNumber(pendingPhoneNumber);
+            }
+            if (!string.IsNullOrEmpty(pendingEmail))
+            {
+                patient.ContactInformation.Email = pendingEmail;
+            }
+            
+            patient.ClearVerificationToken();
+            
+            return PatientMapper.ToDto(patient);
         }
 
         public async Task<PatientDto> PatientDeleteAsync(PatientId id)

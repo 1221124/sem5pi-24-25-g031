@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Patients;
 using Domain.Shared;
 
 namespace Domain.Patients
@@ -26,7 +27,10 @@ namespace Domain.Patients
                 dto.ContactInformation.Email,
                 dto.ContactInformation.PhoneNumber,
                 dto.AppointmentHistory,
-                dto.MedicalConditions
+                dto.MedicalConditions,
+                dto.UserId,
+                dto.VerificationToken,
+                dto.TokenExpiryDate
             );
         }
         public static List<PatientDto> toDtoList(List<Patient> patients)
@@ -46,7 +50,9 @@ namespace Domain.Patients
                 patient.ContactInformation,
                 patient.MedicalConditions,
                 patient.EmergencyContact,
-                patient.UserId
+                patient.UserId,
+                patient.VerificationToken,
+                patient.TokenExpiryDate
             );
         }
         

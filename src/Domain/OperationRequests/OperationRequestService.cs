@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Patients;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.DBLogs;

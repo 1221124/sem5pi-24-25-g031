@@ -17,6 +17,8 @@ namespace Domain.Patients
     public EmergencyContact? EmergencyContact { get; set; }
     public AppointmentHistory? AppointmentHistory { get; set; }
     public UserId? UserId { get; set; }
+    public string? VerificationToken { get; set; }
+    public DateTime? TokenExpiryDate { get; set; }
 
     public Patient() { }
     
@@ -210,6 +212,39 @@ namespace Domain.Patients
       {
         this.AppointmentHistory = p.AppointmentHistory;
       }
+      if (p.UserId != null)
+      {
+        this.UserId = p.UserId;
+      }
+      if(this.VerificationToken != null)
+      {
+        this.VerificationToken = p.VerificationToken;
+      }
+      if(this.TokenExpiryDate != null)
+      {
+        this.TokenExpiryDate = p.TokenExpiryDate;
+      }
     }
+    
+    // Método para definir o token e a data de expiração
+    public void SetVerificationToken(string token, int expirationHours = 24)
+    {
+      VerificationToken = token;
+      TokenExpiryDate = DateTime.UtcNow.AddHours(expirationHours);
+    }
+
+    // Método para verificar se o token é válido
+    public bool IsTokenValid(string token)
+    {
+      return VerificationToken == token && TokenExpiryDate > DateTime.UtcNow;
+    }
+
+    // Método para remover o token após a validação
+    public void ClearVerificationToken()
+    {
+      VerificationToken = null;
+      TokenExpiryDate = null;
+    }
+    
   }
 }

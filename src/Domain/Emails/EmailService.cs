@@ -1,6 +1,7 @@
 
 using Domain.Shared;
 using System.Security.Cryptography;
+using DDDNetCore.Domain.Patients;
 using Infrastructure;
 using RestSharp;
 
@@ -46,11 +47,25 @@ namespace Domain.Emails
 
             return (subject, body);
         }
+        
+        public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfo(string token, UpdatingPatientDto dto)
+        {
+            var subject = "Please verify that you want to change sensitive information";
+            var link = GenerateLinkSensitiveInfo(dto.Email.Value, token, dto.PendingPhoneNumber, dto.PendingEmail);
+            var body = $"Hi, {dto.Email.Value}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
+
+            return (subject ,body);
+        }
 
         public string GenerateLink(string email)
         {
             // return $"{AppSettings.VerifyEmailUrl}?email={email}&token={GenerateToken()}";
             return $"http://localhost:5500/api/Users/verify?email={email}&token={GenerateToken()}";
+        }
+        
+        public string GenerateLinkSensitiveInfo(string email, string token, PhoneNumber phoneNumber, Email newEmail)
+        {
+            return $"http://localhost:5500/api/Patient/sensitiveInfo?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}";
         }
 
         public string GenerateToken()
