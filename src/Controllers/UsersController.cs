@@ -213,8 +213,10 @@ namespace Controllers
 
         // GET: api/Users/verify
         [HttpGet("verify")]
-        public async Task<ActionResult<UserDto>> VerifyEmail([FromQuery] string email)
+        public async Task<ActionResult<UserDto>> VerifyEmail([FromQuery] string token)
         {
+            var email = _emailService.DecodeToken(token);
+            
             var user = await _service.GetByEmailAsync(new Email(email));
 
             if (user != null)

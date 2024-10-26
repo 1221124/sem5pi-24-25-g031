@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using DDDNetCore.Domain.Patients;
 using Infrastructure;
 using RestSharp;
+using System.Text;
 
 namespace Domain.Emails
 {
@@ -59,8 +60,7 @@ namespace Domain.Emails
 
         public string GenerateLink(string email)
         {
-            // return $"{AppSettings.VerifyEmailUrl}?email={email}&token={GenerateToken()}";
-            return $"http://localhost:5500/api/Users/verify?email={email}&token={GenerateToken()}";
+            return $"http://localhost:5500/api/Users/verify?token={EncodeToken(email)}";
         }
         
         public string GenerateLinkSensitiveInfo(string email, string token, PhoneNumber phoneNumber, Email newEmail)
@@ -75,6 +75,16 @@ namespace Domain.Emails
                 var token = Convert.ToBase64String(hmac.Key);
                 return token;
             }
+        }
+
+        public string EncodeToken(string email)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(email));
+        }
+    
+        public string DecodeToken(string token)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(token));
         }
     }
 

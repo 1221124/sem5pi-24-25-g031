@@ -83,6 +83,7 @@ namespace Domain.Users
 
             User.Email = dto.Email;
             User.Role = dto.Role;
+            User.UserStatus = dto.UserStatus;
 
             await this._unitOfWork.CommitAsync();
 
