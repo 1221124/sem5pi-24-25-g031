@@ -1,4 +1,5 @@
-﻿using Infrastructure;
+﻿using DDDNetCore.Domain.Patients;
+using Infrastructure;
 using Infrastructure.OperationTypes;
 using Infrastructure.OperationRequests;
 using Infrastructure.Users;
@@ -63,6 +64,7 @@ builder.Services.AddTransient<UsersSessionRepository>();
 builder.Services.AddTransient<IUserSessionRepository, UsersSessionRepository>();
 builder.Services.AddTransient<SessionService>();
 
+builder.Services.AddSingleton<PatientCleanupService>();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(new EmailService("smtp.gmail.com", 587, AppSettings.Email, AppSettings.Password));
