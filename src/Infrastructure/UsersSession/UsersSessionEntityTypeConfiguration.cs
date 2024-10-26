@@ -30,6 +30,15 @@ namespace Infrastructure.UsersSession
                     v => RoleUtils.ToString(v),
                     v => RoleUtils.FromString(v)
                     );
+
+            builder.Property(x => x.ExpiresIn)
+                .HasColumnName("ExpiresIn")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            builder.Property(x => x.IdToken)
+                .HasColumnName("IdToken")
+                .IsRequired();
         }
     }
 }

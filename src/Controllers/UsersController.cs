@@ -65,9 +65,11 @@ namespace Controllers
             }
 
             try {
-                var idToken = await _iamService.ExchangeCodeForTokenAsync(code);
+                var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code);
 
-                var email = _iamService.GetEmailFromIdToken(idToken.IdToken);
+                var idToken = tokenResponse.IdToken;
+
+                var email = _iamService.GetEmailFromIdToken(idToken);
 
                 if(email.Trim().ToLower().EndsWith("isep.ipp.pt".Trim().ToLower()))
                 {
@@ -76,9 +78,9 @@ namespace Controllers
                     {
                         return Ok("Registration in IAM sucessful. Please, wait for the administrator to create your account in our system.");
                     }
-                    return await LoginBackofficeUser(email);
+                    return await LoginBackofficeUser(email, idToken);
                 } else {
-                    return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient));
+                    return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient), idToken);
                 }
 
             } catch (Exception ex) {
@@ -88,7 +90,7 @@ namespace Controllers
 
         // POST: api/Users/patient/login
         [HttpPost("patient/login")]
-        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto)
+        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto, string idToken)
         {
             // var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code, "http://localhost:5500/api/patient/register");
 
@@ -110,7 +112,8 @@ namespace Controllers
                 var userSession = new UserSession(
                     new UserId(user.Id),
                     user.Email,
-                    user.Role
+                    user.Role,
+                    idToken
                 );
 
                 await _sessionService.CreateSessionAsync(userSession);
@@ -140,23 +143,20 @@ namespace Controllers
                 return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
             }
 
-            (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
-            await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
-
             user = await _service.AddAsync(dto);
 
             staff.UserId = new UserId(user.Id);
             await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntity(staff));
 
-            // (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
-            // await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
+            (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
+            await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
 
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
         // POST: api/Users/backoffice/login
         [HttpPost("backoffice/login")]
-        public async Task<ActionResult<UserDto>> LoginBackofficeUser(string sEmail)
+        public async Task<ActionResult<UserDto>> LoginBackofficeUser(string sEmail, string idToken)
         {
             Email email = new(sEmail);
 
@@ -177,7 +177,8 @@ namespace Controllers
                         var userSession = new UserSession(
                             new UserId(user.Id),
                             user.Email,
-                            user.Role                         
+                            user.Role,
+                            idToken                         
                         );
 
                         await _sessionService.CreateSessionAsync(userSession);
