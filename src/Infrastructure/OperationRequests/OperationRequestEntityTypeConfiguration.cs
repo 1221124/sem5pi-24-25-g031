@@ -1,37 +1,36 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.OperationRequests;
-using System;
 
 namespace Infrastructure.OperationRequests
 {
-    internal class OperationRequestEntityTypeConfiguration : IEntityTypeConfiguration<OperationRequest>
+    public class OperationRequestEntityTypeConfiguration : IEntityTypeConfiguration<OperationRequest>
     {
         public void Configure(EntityTypeBuilder<OperationRequest> builder)
-        {           
-            builder.HasKey(b => b.Id);
-
-            builder.Property(p => p.PatientId)
-                .IsRequired()
-                .HasColumnName("PatientId");
-
-            builder.Property(p => p.DoctorId)
+        {
+            builder.HasKey(o => o.Id);
+            
+            builder.Property(o => o.DoctorId)
                 .IsRequired()
                 .HasColumnName("StaffId");
-
-            builder.Property(p => p.OperationTypeId)
+            
+            builder.Property(o => o.PatientId)
+                .IsRequired()
+                .HasColumnName("PatientId");
+            
+            builder.Property(o => o.OperationTypeId)
                 .IsRequired()
                 .HasColumnName("OperationTypeId");
-
-            builder.Property(p => p.DeadlineDate)
+            
+            builder.Property(o => o.DeadlineDate)
                 .IsRequired()
                 .HasColumnName("DeadlineDate")
                 .HasConversion(
-                    v => v.ToString("yyyy-MM-dd"),
-                    v => DateTime.Parse(v)
+                    v => v.Date,
+                    v => new DeadlineDate(v)
                 );
-
-            builder.Property(p => p.Priority)
+            
+            builder.Property(o => o.Priority)
                 .IsRequired()
                 .HasColumnName("Priority")
                 .HasConversion(
@@ -39,9 +38,9 @@ namespace Infrastructure.OperationRequests
                     v => PriorityUtils.FromString(v)
                 );
             
-            builder.Property(p => p.Status)
+            builder.Property(o => o.Status)
                 .IsRequired()
-                .HasColumnName("Status")
+                .HasColumnName("RequestStatus")
                 .HasConversion(
                     v => RequestStatusUtils.ToString(v),
                     v => RequestStatusUtils.FromString(v)
