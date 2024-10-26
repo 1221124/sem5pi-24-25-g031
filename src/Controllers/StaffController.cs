@@ -7,6 +7,7 @@ using Domain.Staffs;
 using Infrastructure;
 using System.Threading.Tasks;
 using Domain.DBLogs;
+using Domain.Patients;
 
 namespace Controllers
 {
@@ -49,8 +50,8 @@ namespace Controllers
         }
 
         //Procurar por searchCriteria
-        [HttpGet("name={fullName}")]
-        public async Task<ActionResult<StaffDto>> GetBySearchCriteriaName(String fullName)
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetBySearchCriteriaName([FromQuery] String fullName)
         {
             var names = fullName.Split('-');
             

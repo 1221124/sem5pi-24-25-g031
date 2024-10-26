@@ -260,10 +260,10 @@ namespace Domain.Staffs
         {
             try
             {
-                List<Staff> staff = await _repo.GetByFullNameAsync(fullName);
+                var staff = await _repo.GetByFullNameAsync(new Name(fullName.FirstName), new Name(fullName.LastName));
 
-                if (staff == null || staff.Count == 0)
-                    return new List<StaffDto>();
+                if (staff == null)
+                    return null;
 
 
                 List<StaffDto> listDto = StaffMapper.ToDtoList(staff);
@@ -274,7 +274,7 @@ namespace Domain.Staffs
             catch (Exception e)
             {
                 _dbLogService.LogError(StaffEntityType, e.ToString());
-                return new List<StaffDto>();
+                return null;
             }
           
             
