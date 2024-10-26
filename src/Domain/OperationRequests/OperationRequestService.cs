@@ -178,7 +178,7 @@ namespace Domain.OperationRequests
                 await _repo.UpdateAsync(op);
                 await _unitOfWork.CommitAsync();
 
-                _logService.LogAction(OperationRequestEntityType, DBLogType.UPDATE, op);
+                _logService.LogAction(OperationRequestEntityType, DBLogType.UPDATE, op.Id.AsGuid());
                 return OperationRequestMapper.ToDto(op);
 
             }
@@ -201,7 +201,7 @@ namespace Domain.OperationRequests
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
-                _logService.LogAction(OperationRequestEntityType, DBLogType.DELETE, category);
+                _logService.LogAction(OperationRequestEntityType, DBLogType.DELETE, category.Id.AsGuid());
 
                 return OperationRequestMapper.ToDto(id);
 

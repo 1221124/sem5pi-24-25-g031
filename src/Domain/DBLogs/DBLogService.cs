@@ -36,62 +36,11 @@ namespace Domain.DBLogs
             await CreateLogAsync(log);
         }
 
-        public async void LogAction<T>(EntityType entityType, DBLogType logType, T category) where T : class
+        public async void LogAction(EntityType entityType, DBLogType logType, Guid guid) 
         {
-            //Guid userId = Guid.Empty;
-            Guid entityId = Guid.Empty;
 
             try{
-                    switch (entityType)
-                    {
-                        case EntityType.OPERATION_REQUEST:
-                            OperationRequest? operationRequest = category as OperationRequest;
-
-                            if (operationRequest != null)
-                            {
-                                entityId = operationRequest.Id.AsGuid();
-                            }
-
-                            break;
-                        
-                        case EntityType.PATIENT:
-                            Patient? patient = category as Patient;
-
-                            if(patient != null){
-                                entityId = patient.Id.AsGuid();
-                            }
-
-                            break;
-                        
-                        case EntityType.STAFF:
-                            Staff? staff = category as Staff;
-
-                            if(staff != null){
-                                entityId = staff.Id.AsGuid();
-                            }
-
-                            break;
-
-                        case EntityType.USER:
-                            User? user = category as User;
-
-                            if(user != null){
-                                entityId = user.Id.AsGuid();
-                            }
-
-                            break;
-                        
-                        case EntityType.OPERATION_TYPE:
-                            OperationType? operationType = category as OperationType;
-
-                            if(operationType != null){
-                                entityId = operationType.Id.AsGuid();
-                            }
-
-                            break;
-                    }
-
-                    DBLog log = new DBLog(entityType, logType, entityId);
+                    DBLog log = new DBLog(entityType, logType, guid);
 
                     if (log == null){
                         LogError(EntityType.LOG, "Error creating log");

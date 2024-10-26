@@ -36,7 +36,11 @@ namespace Domain.Patients
                 patient.Id.AsGuid(),
                 patient.FullName,
                 patient.DateOfBirth,
+                patient.Gender,
+                patient.MedicalRecordNumber,
                 patient.ContactInformation,
+                patient.MedicalConditions,
+                patient.EmergencyContact,
                 patient.UserId
             );
         }

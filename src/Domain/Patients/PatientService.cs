@@ -6,6 +6,7 @@ using Domain.DBLogs;
 using Domain.Shared;
 using Domain.Users;
 using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Domain.Patients
 {
@@ -90,7 +91,7 @@ namespace Domain.Patients
 
         public async Task<PatientDto?> UpdateAsync(UpdatingPatientDto dto)
         {
-            var patient = await this._repo.GetByEmailAsync(dto.EmailId); 
+            var patient = await _repo.GetByEmailAsync(dto.EmailId); 
 
             if (patient == null)
                 return null;   
@@ -112,13 +113,14 @@ namespace Domain.Patients
                     var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
                     if (byEmailAsync != null)
                     {
+                        
                         throw new Exception("Email already exists");
                     } 
                 }
 
                 patient.UpdatePatient(PatientMapper.ToEntity(dto));
                 await _unitOfWork.CommitAsync();
-                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id );
+                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id.AsGuid() );
                 return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
             }catch(Exception e)
             {
@@ -129,11 +131,7 @@ namespace Domain.Patients
 
         public async Task<PatientDto> DeleteAsync(PatientId id)
         {
-            //sends email to confirm the action
             var patient = await this._repo.GetByIdAsync(id); 
-            
-            //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
-            //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
             
             if (patient == null)
                 return null;
@@ -142,14 +140,14 @@ namespace Domain.Patients
             {
                 await Task.Delay(TimeSpan.FromMinutes(1));
                 
-                this._repo.Remove(patient);
-                await this._unitOfWork.CommitAsync();
-                _dbLogService.LogAction(EntityType.PATIENT, DBLogType.DELETE, patient.Id );
+                _repo.Remove(patient);
+                await _unitOfWork.CommitAsync();
+                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.DELETE, patient);
                 //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
                 //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
             });
-    
-            return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+
+            return PatientMapper.ToDto(patient);
         }    
     }
 }
