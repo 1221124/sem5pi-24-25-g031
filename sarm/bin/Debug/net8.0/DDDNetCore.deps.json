@@ -22,6 +22,7 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "8.0.5",
+          "Newtonsoft.Json": "13.0.3",
           "RestSharp": "112.1.0",
           "SendInBlue": "1.3.0",
           "Sendinblue.Api": "0.1.1",

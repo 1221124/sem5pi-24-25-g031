@@ -70,7 +70,7 @@ namespace Controllers
                 var idToken = tokenResponse.IdToken;
 
                 var email = _iamService.GetEmailFromIdToken(idToken);
-                var role = _iamService.GetRoleFromIdToken(idToken);
+                // var role = _iamService.GetRoleFromIdToken(idToken);
 
                 if (email.Trim().ToLower().Equals("1221124@isep.ipp.pt".Trim().ToLower()))
                 {
@@ -78,7 +78,7 @@ namespace Controllers
                     if (user == null) {
                         return await CreateAdminUser(new CreatingUserDto(new Email(email), Role.Admin));
                     } else {
-                        return await LoginAdminUser(email, idToken, role);
+                        return await LoginAdminUser(email, idToken);
                     }
                 }
 
@@ -89,9 +89,9 @@ namespace Controllers
                     {
                         return Ok("Registration in IAM sucessful. Please, wait for the administrator to create your account in our system.");
                     }
-                    return await LoginBackofficeUser(email, idToken, role);
+                    return await LoginBackofficeUser(email, idToken);
                 } else {
-                    return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient), idToken, role);
+                    return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient), idToken);
                 }
 
             } catch (Exception ex) {
@@ -101,7 +101,7 @@ namespace Controllers
 
         // POST: api/Users/patient/login
         [HttpPost("patient/login")]
-        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto, string idToken, string role)
+        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto, string idToken)
         {
             var patientDto = await _patientService.GetByEmailAsync(dto.Email);
 
@@ -124,7 +124,7 @@ namespace Controllers
                 );
 
     	        HttpContext.Session.SetString("idToken", idToken);
-                HttpContext.Session.SetString("role", role);
+                // HttpContext.Session.SetString("role", role);
 
                 await _sessionService.CreateSessionAsync(userSession);
 
@@ -154,7 +154,7 @@ namespace Controllers
 
         // POST: api/Users/admin/login
         [HttpPost("admin/login")]
-        public async Task<ActionResult<UserDto>> LoginAdminUser(string sEmail, string idToken, string role)
+        public async Task<ActionResult<UserDto>> LoginAdminUser(string sEmail, string idToken)
         {
             Email email = new(sEmail);
 
@@ -174,7 +174,7 @@ namespace Controllers
             );
 
             HttpContext.Session.SetString("idToken", idToken);
-            HttpContext.Session.SetString("role", role);
+            // HttpContext.Session.SetString("role", role);
 
             await _sessionService.CreateSessionAsync(userSession);
 
@@ -213,7 +213,7 @@ namespace Controllers
 
         // POST: api/Users/backoffice/login
         [HttpPost("backoffice/login")]
-        public async Task<ActionResult<UserDto>> LoginBackofficeUser(string sEmail, string idToken, string role)
+        public async Task<ActionResult<UserDto>> LoginBackofficeUser(string sEmail, string idToken)
         {
             Email email = new(sEmail);
 
@@ -239,7 +239,7 @@ namespace Controllers
                         );
                         
                         HttpContext.Session.SetString("idToken", idToken);
-                        HttpContext.Session.SetString("role", role);
+                        // HttpContext.Session.SetString("role", role);
 
                         await _sessionService.CreateSessionAsync(userSession);
 

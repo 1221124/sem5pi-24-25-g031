@@ -25,6 +25,7 @@ using Domain.UsersSession;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Domain.Authz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -122,6 +123,8 @@ app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+// app.UseMiddleware<IdTokenHeaderMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -13,7 +13,7 @@ namespace Controllers
     {
         private readonly OperationTypeService _service;
         private readonly SessionService _sessionService;
-        private readonly AuthorizationService _authorizationService;
+        // private readonly AuthorizationService _authorizationService;
 
         public OperationTypesController(OperationTypeService service, SessionService sessionService)
         {
@@ -23,24 +23,24 @@ namespace Controllers
 
         // GET: api/OperationTypes
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
         {
-            var idToken = HttpContext.Session.GetString("idToken");
-            if (string.IsNullOrEmpty(idToken))
-            {
-                return Unauthorized();
-            }
+            // var idToken = HttpContext.Session.GetString("idToken");
+            // if (string.IsNullOrEmpty(idToken))
+            // {
+            //     return Unauthorized();
+            // }
 
-            var authorizeAttributes = (AuthorizeAttribute[])this.GetType()
-                .GetMethod(nameof(GetAll))
-                .GetCustomAttributes(typeof(AuthorizeAttribute), true);
+            // var authorizeAttributes = (AuthorizeAttribute[])this.GetType()
+            //     .GetMethod(nameof(GetAll))
+            //     .GetCustomAttributes(typeof(AuthorizeAttribute), true);
 
-            bool isAuthorized = _authorizationService.IsAuthorized(idToken, authorizeAttributes[0].Roles);
-            if (!isAuthorized)
-            {
-                return Unauthorized();
-            }
+            // bool isAuthorized = _authorizationService.IsAuthorized(idToken, authorizeAttributes[0].Roles);
+            // if (!isAuthorized)
+            // {
+            //     return Unauthorized();
+            // }
 
             return await _service.GetAllAsync();
         }
