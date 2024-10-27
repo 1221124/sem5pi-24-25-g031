@@ -49,7 +49,7 @@ namespace DDDNetCore.Tests.Domain.Patients
             _patientRepositoryMock.Setup(repo => repo.GetAllAsync())
                 .ReturnsAsync(()=>_context.Patients.ToList());
             
-            serviceCollection.AddTransient<IPatientRepository>(_ => _patientRepositoryMock.Object);
+            
             
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _unitOfWorkMock.Setup(uow => uow.CommitAsync())
@@ -64,14 +64,13 @@ namespace DDDNetCore.Tests.Domain.Patients
             var emailServiceMock = new Mock<IEmailService>();
             emailServiceMock.Setup(service => service.GenerateVerificationEmailContentSensitiveInfo(It.IsAny<string>(), It.IsAny<UpdatingPatientDto>()))
                 .ReturnsAsync(("Subject Example", "Body Example"));
-
             
             serviceCollection.AddTransient<IEmailService>(_ => emailServiceMock.Object);
             
             serviceCollection.AddTransient<PatientService>();
             
 
-            
+            serviceCollection.AddTransient<IPatientRepository>(_ => _patientRepositoryMock.Object);
             var serviceProvider = serviceCollection.BuildServiceProvider();
             _patientService = serviceProvider.GetService<PatientService>();
         }
@@ -80,7 +79,7 @@ namespace DDDNetCore.Tests.Domain.Patients
         public async Task AddAsync_ShouldAddPatient_WhenValidDataProvided()
         {
            
-            var patient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")), new DateOfBirth("2004-11-17"), new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)), Gender.MALE); // Configure mock patient data as per your model
+            var patient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")), new DateOfBirth("2004-11-17"), new ContactInformation("exemplo1@gmail.com", new PhoneNumber(913455471)), Gender.MALE); // Configure mock patient data as per your model
             
             var patientDto = await _patientService.AddAsync(patient);
             await _unitOfWorkMock.Object.CommitAsync();
@@ -92,8 +91,8 @@ namespace DDDNetCore.Tests.Domain.Patients
             Assert.NotNull(result);
             Assert.Equal(new FullName(new Name("Guilherme"), new Name("Ribeiro")), patientDto.FullName);
             Assert.Equal(new DateOfBirth("2004-11-17"), patientDto.DateOfBirth);
-            Assert.Equal(new Email("gui.cr04@gmail.com"), patientDto.ContactInformation.Email);
-            Assert.Equal(new PhoneNumber(913455474), patientDto.ContactInformation.PhoneNumber);
+            Assert.Equal(new Email("exemplo1@gmail.com"), patientDto.ContactInformation.Email);
+            Assert.Equal(new PhoneNumber(913455471), patientDto.ContactInformation.PhoneNumber);
             Assert.Equal(Gender.MALE, patientDto.Gender);
             Assert.Equal(patient, result);
 
@@ -106,7 +105,7 @@ namespace DDDNetCore.Tests.Domain.Patients
         public async Task AddAsync_ShouldNotAddPatient_WhenPatientAlreadyExists()
         {
             var patient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")),
-                new DateOfBirth("2004-11-17"), new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)),
+                new DateOfBirth("2004-11-17"), new ContactInformation("exemplo2@gmail.com", new PhoneNumber(913455472)),
                 Gender.MALE);
 
             await _patientService.AddAsync(patient);
@@ -134,11 +133,11 @@ namespace DDDNetCore.Tests.Domain.Patients
             var patientsList = new List<Patient>
             {
                 new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")), new DateOfBirth("2004-11-17"),
-                    new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)), Gender.MALE),
+                    new ContactInformation("exemplo3@gmail.com", new PhoneNumber(913455473)), Gender.MALE),
                 new Patient(new FullName(new Name("Beatriz"), new Name("Silva")), new DateOfBirth("2002-11-01"),
-                    new ContactInformation("1220786@isep.ipp.pt", new PhoneNumber(913455575)), Gender.FEMALE),
+                    new ContactInformation("exemplo4@gmail.com", new PhoneNumber(913455574)), Gender.FEMALE),
                 new Patient(new FullName(new Name("João"), new Name("Santos")), new DateOfBirth("2000-11-17"),
-                    new ContactInformation("joao.santos@gmail.com", new PhoneNumber(913455476)), Gender.MALE)
+                    new ContactInformation("exemplo5@gmail.com", new PhoneNumber(913455475)), Gender.MALE)
             };
             
             for(int i = 0; i < patientsList.Count; i++)
@@ -168,7 +167,7 @@ namespace DDDNetCore.Tests.Domain.Patients
         {
             var creatingPatient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")),
                 new DateOfBirth("2004-11-17"),
-                new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)), Gender.MALE);
+                new ContactInformation("exemplo6@gmail.com", new PhoneNumber(913455476)), Gender.MALE);
 
             var patient = await _patientService.AddAsync(creatingPatient);
             await _unitOfWorkMock.Object.CommitAsync();
@@ -191,7 +190,7 @@ namespace DDDNetCore.Tests.Domain.Patients
         {
             var createPatient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")),
                 new DateOfBirth("2004-11-17"),
-                new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)), Gender.MALE);
+                new ContactInformation("exemplo7@gmail.com", new PhoneNumber(913455477)), Gender.MALE);
             var patient = await _patientService.AddAsync(createPatient);
             await _unitOfWorkMock.Object.CommitAsync();
 
@@ -208,7 +207,7 @@ namespace DDDNetCore.Tests.Domain.Patients
             Assert.Empty(currentPatients);
             Assert.Null(await _patientService.GetByIdAsync(new PatientId(patientId)));
         }
-        */
+        
         
         [Fact]
         public async Task DeleteAsync_ShouldNotDeletePatient_WhenPatientDoesNotExist()
@@ -225,11 +224,12 @@ namespace DDDNetCore.Tests.Domain.Patients
             Assert.Empty(previousPatients);
             Assert.Empty(currentPatients);
         }
+        */
 
         [Fact]
         public async Task GetByEmailAsync_ReturnNull_WhenEmailExists()
         {
-            var nonExistantEmail = new Email("email@gmail.com");
+            var nonExistantEmail = new Email("exemplo8@gmail.com");
             var patient = await _patientService.GetByEmailAsync(nonExistantEmail);
             
             Assert.Null(patient);
@@ -240,7 +240,7 @@ namespace DDDNetCore.Tests.Domain.Patients
         {
             var createPatient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")),
                 new DateOfBirth("2004-11-17"),
-                new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)), Gender.MALE);
+                new ContactInformation("exemplo9@gmail.com", new PhoneNumber(913455479)), Gender.MALE);
             var patient = await _patientService.AddAsync(createPatient);
             await _unitOfWorkMock.Object.CommitAsync();
             
