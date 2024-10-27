@@ -1,149 +1,213 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Threading.Tasks;
-// using Domain.OperationTypes;
-// using Domain.Shared;
-// using Infrastructure;
-// using Microsoft.EntityFrameworkCore;
-// using Xunit;
-//
-// namespace IntegrationTests
-// {
-//     public class OperationTypeServiceIntegrationTest : IDisposable
-//     {
-//         private readonly SARMDbContext _context;
-//         private readonly OperationTypeService _service;
-//
-//         public OperationTypeServiceIntegrationTest()
-//         {
-//             // Configurar o DbContext para usar uma base de dados em memória
-//             var options = new DbContextOptionsBuilder<SARMDbContext>()
-//                 .UseInMemoryDatabase(databaseName: "TestDatabase")
-//                 .Options;
-//
-//             _context = new SARMDbContext(options);
-//
-//             // Inicializar repositório e serviço
-//             var repository = new OperationTypeRepository(_context);
-//             _service = new OperationTypeService(new UnitOfWork(_context), repository);
-//         }
-//
-//         public void Dispose()
-//         {
-//             _context.Database.EnsureDeleted();
-//             _context.Dispose();
-//         }
-//
-//         [Fact]
-//         public async Task AddAsync_ShouldAddOperationType()
-//         {
-//             // Arrange
-//             var newOperationType = new CreatingOperationTypeDto
-//             {
-//                 Name = "TestOperation",
-//                 Specialization = Specialization.Orthopedics,
-//                 RequiredStaff = new List<RequiredStaffDto> { new RequiredStaffDto { Role = "Doctor", Quantity = 1 } },
-//                 PhasesDuration = 60
-//             };
-//
-//             // Act
-//             var result = await _service.AddAsync(newOperationType);
-//
-//             // Assert
-//             Assert.NotNull(result);
-//             Assert.Equal("TestOperation", result.Name);
-//             Assert.Equal(Specialization.Orthopedics, result.Specialization);
-//         }
-//
-//         [Fact]
-//         public async Task GetByIdAsync_ShouldReturnOperationType_WhenExists()
-//         {
-//             // Arrange
-//             var operationType = new OperationType(new Name("ExistingOperation"), Specialization.Cardiology, Status.Active);
-//             await _context.OperationTypes.AddAsync(operationType);
-//             await _context.SaveChangesAsync();
-//
-//             // Act
-//             var result = await _service.GetByIdAsync(operationType.Id);
-//
-//             // Assert
-//             Assert.NotNull(result);
-//             Assert.Equal("ExistingOperation", result.Name);
-//             Assert.Equal(Specialization.Cardiology, result.Specialization);
-//         }
-//
-//         [Fact]
-//         public async Task GetByNameAsync_ShouldReturnOperationType_WhenExists()
-//         {
-//             // Arrange
-//             var operationType = new OperationType(new Name("UniqueName"), Specialization.Neurology, Status.Active);
-//             await _context.OperationTypes.AddAsync(operationType);
-//             await _context.SaveChangesAsync();
-//
-//             // Act
-//             var result = await _service.GetByNameAsync(new Name("UniqueName"));
-//
-//             // Assert
-//             Assert.NotNull(result);
-//             Assert.Equal("UniqueName", result.Name);
-//         }
-//
-//         [Fact]
-//         public async Task UpdateAsync_ShouldUpdateOperationType()
-//         {
-//             // Arrange
-//             var operationType = new OperationType(new Name("UpdatableOperation"), Specialization.Pediatrics, Status.Active);
-//             await _context.OperationTypes.AddAsync(operationType);
-//             await _context.SaveChangesAsync();
-//
-//             var updatedDto = new OperationTypeDto
-//             {
-//                 Id = operationType.Id,
-//                 Name = "UpdatedOperation",
-//                 Specialization = Specialization.Orthopedics,
-//                 RequiredStaff = new List<RequiredStaffDto> { new RequiredStaffDto { Role = "Nurse", Quantity = 2 } },
-//                 PhasesDuration = 90
-//             };
-//
-//             // Act
-//             var result = await _service.UpdateAsync(updatedDto);
-//
-//             // Assert
-//             Assert.NotNull(result);
-//             Assert.Equal("UpdatedOperation", result.Name);
-//             Assert.Equal(Specialization.Orthopedics, result.Specialization);
-//         }
-//
-//         [Fact]
-//         public async Task InactivateAsync_ShouldSetStatusToInactive()
-//         {
-//             // Arrange
-//             var operationType = new OperationType(new Name("InactivatableOperation"), Specialization.Gynecology, Status.Active);
-//             await _context.OperationTypes.AddAsync(operationType);
-//             await _context.SaveChangesAsync();
-//
-//             // Act
-//             var result = await _service.InactivateAsync(operationType.Id);
-//
-//             // Assert
-//             Assert.NotNull(result);
-//             Assert.Equal(Status.Inactive, result.Status);
-//         }
-//
-//         [Fact]
-//         public async Task DeleteAsync_ShouldRemoveOperationType()
-//         {
-//             // Arrange
-//             var operationType = new OperationType(new Name("DeletableOperation"), Specialization.Urology, Status.Active);
-//             await _context.OperationTypes.AddAsync(operationType);
-//             await _context.SaveChangesAsync();
-//
-//             // Act
-//             var result = await _service.DeleteAsync(operationType.Id);
-//
-//             // Assert
-//             var deletedOperationType = await _context.OperationTypes.FindAsync(operationType.Id);
-//             Assert.Null(deletedOperationType);
-//         }
-//     }
-// }
+using Xunit;
+using System.Threading.Tasks;
+using Domain.Shared;
+using Microsoft.Extensions.DependencyInjection;
+using Domain.OperationTypes;
+using Infrastructure.OperationTypes;
+using DDDNetCore.Tests.Infrastructure;
+using System.Collections.Generic;
+
+namespace DDDNetCore.Tests.Domain.OperationTypes
+{
+    public class OperationTypeServiceIntegrationTest : IClassFixture<TestDatabaseFixture>
+    {
+         private readonly OperationTypeService _OperationTypeService;
+        private readonly TestDbContext _context;
+
+        public OperationTypeServiceIntegrationTest(TestDatabaseFixture fixture)
+        {
+            _context = fixture.Context;
+            fixture.Reset();
+
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddTransient<IOperationTypeRepository, OperationTypeRepository>(provider =>
+                new OperationTypeRepository(_context));
+
+            serviceCollection.AddTransient<IUnitOfWork, TestUnitOfWork>(provider =>
+                new TestUnitOfWork(_context));
+
+            serviceCollection.AddTransient<OperationTypeService>();
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            _OperationTypeService = serviceProvider.GetService<OperationTypeService>();
+        }
+
+        [Fact]
+        public async Task Create_ShouldCreateOperationType_WhenAdminRegistersOperationTypeWithRoleAsync()
+        {
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            {
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+            },
+            new PhasesDuration(new Dictionary<Phase, Quantity>
+            {
+                { Phase.Preparation, new Quantity(30) },
+                { Phase.Surgery, new Quantity(120) },
+                { Phase.Cleaning, new Quantity(60) }
+            }));
+
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _context.SaveChangesAsync();
+
+            var OperationTypes = await _OperationTypeService.GetAllAsync();
+            var addedOperationType = await _OperationTypeService.GetByNameAsync(new Name("ACL"));
+
+            Assert.NotNull(addedOperationType);
+            Assert.Equal(new Name("ACL"), OperationType.Name);
+
+            Assert.Single(OperationTypes);
+            Assert.Equal(addedOperationType.Name, OperationType.Name);
+            Assert.Equal(addedOperationType.Specialization, OperationType.Specialization);
+            Assert.Equal(addedOperationType.RequiredStaff, OperationType.RequiredStaff);
+            Assert.Equal(addedOperationType.PhasesDuration, OperationType.PhasesDuration);
+        }
+
+        [Fact]
+        public async Task Create_NotRegistered_WhenOperationTypeAlreadyExistsAsync()
+        {
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            {
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+            },
+            new PhasesDuration(new Dictionary<Phase, Quantity>
+            {
+                { Phase.Preparation, new Quantity(30) },
+                { Phase.Surgery, new Quantity(120) },
+                { Phase.Cleaning, new Quantity(60) }
+            }));
+
+            await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _context.SaveChangesAsync();
+
+            await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _context.SaveChangesAsync();
+
+            var OperationTypes = await _OperationTypeService.GetAllAsync();
+
+            Assert.Single(OperationTypes);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_ReturnsOperationType_WhenIdExists()
+        {
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            {
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+            },
+            new PhasesDuration(new Dictionary<Phase, Quantity>
+            {
+                { Phase.Preparation, new Quantity(30) },
+                { Phase.Surgery, new Quantity(120) },
+                { Phase.Cleaning, new Quantity(60) }
+            }));
+            var createdOperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _context.SaveChangesAsync();
+
+            var OperationTypeId = createdOperationType.Id;
+            var OperationType = await _OperationTypeService.GetByIdAsync(new OperationTypeId(OperationTypeId));
+
+            Assert.NotNull(OperationType);
+            Assert.Equal(createdOperationType.Name, OperationType.Name);
+            Assert.Equal(createdOperationType.Specialization, OperationType.Specialization);
+            Assert.Equal(createdOperationType.RequiredStaff, OperationType.RequiredStaff);
+            Assert.Equal(createdOperationType.PhasesDuration, OperationType.PhasesDuration);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_ReturnsAllOperationTypes()
+        {
+            var creatingOperationTypeDto1 = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            {
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+            },
+            new PhasesDuration(new Dictionary<Phase, Quantity>
+            {
+                { Phase.Preparation, new Quantity(30) },
+                { Phase.Surgery, new Quantity(120) },
+                { Phase.Cleaning, new Quantity(60) }
+            }));
+
+            var creatingOperationTypeDto2 = new CreatingOperationTypeDto("Knee", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            {
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+            },
+            new PhasesDuration(new Dictionary<Phase, Quantity>
+            {
+                { Phase.Preparation, new Quantity(30) },
+                { Phase.Surgery, new Quantity(120) },
+                { Phase.Cleaning, new Quantity(60) }
+            }));
+
+            await _OperationTypeService.AddAsync(creatingOperationTypeDto1);
+            await _context.SaveChangesAsync();
+            await _OperationTypeService.AddAsync(creatingOperationTypeDto2);
+            await _context.SaveChangesAsync();
+
+            var OperationTypes = await _OperationTypeService.GetAllAsync();
+
+            Assert.NotNull(OperationTypes);
+            Assert.Equal(2, OperationTypes.Count);
+            Assert.Contains(OperationTypes, u => u.Name.Value == "ACL");
+            Assert.Contains(OperationTypes, u => u.Name.Value == "Knee");
+        }
+
+        [Fact]
+        public async Task InactivateAsync_InactivatesOperationTypeInDatabase()
+        {
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            {
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+            },
+            new PhasesDuration(new Dictionary<Phase, Quantity>
+            {
+                { Phase.Preparation, new Quantity(30) },
+                { Phase.Surgery, new Quantity(120) },
+                { Phase.Cleaning, new Quantity(60) }
+            }));
+            var createdOperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _context.SaveChangesAsync();
+
+            var OperationTypeId = createdOperationType.Id;
+            await _OperationTypeService.InactivateAsync(new OperationTypeId(OperationTypeId));
+            await _context.SaveChangesAsync();
+
+            var OperationType = await _OperationTypeService.GetByIdAsync(new OperationTypeId(OperationTypeId));
+
+            Assert.NotNull(OperationType);
+            Assert.True(OperationType.Status == Status.Inactive);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_DeletesOperationTypeFromDatabase()
+        {
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            {
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+            },
+            new PhasesDuration(new Dictionary<Phase, Quantity>
+            {
+                { Phase.Preparation, new Quantity(30) },
+                { Phase.Surgery, new Quantity(120) },
+                { Phase.Cleaning, new Quantity(60) }
+            }));
+            var createdOperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _context.SaveChangesAsync();
+
+            var OperationTypeId = createdOperationType.Id;
+            await _OperationTypeService.DeleteAsync(new OperationTypeId(OperationTypeId));
+            await _context.SaveChangesAsync();
+
+            var OperationType = await _OperationTypeService.GetByIdAsync(new OperationTypeId(OperationTypeId));
+
+            Assert.Null(OperationType);
+        }
+    }
+}

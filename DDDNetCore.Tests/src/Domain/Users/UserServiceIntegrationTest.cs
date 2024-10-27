@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Domain.Users;
 using Infrastructure.Users;
 using DDDNetCore.Tests.Infrastructure;
-using System;
 
 namespace DDDNetCore.Tests.Domain.Users
 {
