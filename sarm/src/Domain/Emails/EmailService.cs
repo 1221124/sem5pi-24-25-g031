@@ -53,10 +53,31 @@ namespace Domain.Emails
         public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfo(string token, UpdatingPatientDto dto)
         {
             var subject = "Please verify that you want to change sensitive information";
-            var link = GenerateLinkSensitiveInfo(dto.EmailId.Value, token, dto.PendingPhoneNumber, dto.PendingEmail);
+            var link = GenerateLinkRemoveSensitiveInfo(dto.EmailId.Value, token);
             var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);
+        }
+        
+        public async Task<(string subject, string body)> GenerateVerificationRemoveEmailContentSensitiveInfo(string token, UpdatingPatientDto dto)
+        {
+            var subject = "Please verify that you want to delete your patient profile";
+            var link = GenerateLinkSensitiveInfo(dto.EmailId.Value, token, dto.PendingPhoneNumber, dto.PendingEmail);
+            var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to delete your patient profile. Click on the link below to change it: {link}.\n\nSARM G031";
+
+            return (subject ,body);
+        }
+        
+        public string GenerateLinkRemoveSensitiveInfo(string email, string token)
+        {
+            var uriBuilder = new UriBuilder($"http://localhost:5500/api/Patient/removePatient");
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            query["email"] = email;
+            query["token"] = token;
+            
+            uriBuilder.Query = query.ToString();
+            return uriBuilder.ToString();
         }
 
         public string GenerateLink(string email)

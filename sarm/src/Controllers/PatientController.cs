@@ -277,9 +277,10 @@ namespace DDDNetCore.Controllers
         }
 
         
-        // DELETE: api/Patient/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> AdminDelete(Guid id)
+        
+        // DELETE: api/Patient/admin/5
+        [HttpDelete("patient/{id}")]
+        public async Task<ActionResult> PatientDelete(Guid id)
         {
             try
             {
@@ -297,10 +298,31 @@ namespace DDDNetCore.Controllers
             }
         }
         
-        /*
-        // DELETE: api/Patient/
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> PatientDelete(Guid id)
+        //GET: api/Patients/removePatient/?email={email}&token={token}
+        [HttpGet("removePatient")]
+        public async Task<ActionResult<PatientDto>> VerifySensitiveRemoveInfo([FromQuery] string email, [FromQuery] string token)
+        {
+            var patientDto = await _service.GetByEmailAsync(new Email(email));
+
+            var patient =  PatientMapper.ToEntity(patientDto);
+            
+            if (!patient.IsTokenValid(token))
+            {
+                return NotFound("Invalid token");
+            }
+            
+            patient.VerificationToken = null;
+            patient.TokenExpiryDate = null;
+            
+            await _unitOfWork.CommitAsync();
+            
+            return PatientMapper.ToDto(patient);
+        }
+
+        
+        // DELETE: api/Patient/patient/5
+        [HttpDelete("admin/{id}")]
+        public async Task<ActionResult> AdminDelete(Guid id)
         {
             try
             {
@@ -317,6 +339,6 @@ namespace DDDNetCore.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        */
+        
     }
 }

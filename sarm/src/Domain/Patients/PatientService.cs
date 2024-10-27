@@ -363,6 +363,20 @@ namespace DDDNetCore.Domain.Patients
             
             if (patient == null)
                 return null;
+
+            var dto = PatientMapper.ToDto(patient);
+            var creatingPatientDto = PatientMapper.ToUpdatingPatientDto(dto);
+            
+            var token = Guid.NewGuid().ToString();
+            patient.SetVerificationToken(token);
+            await _unitOfWork.CommitAsync();
+                    
+            creatingPatientDto.VerificationToken = token;
+            creatingPatientDto.TokenExpiryDate = patient.TokenExpiryDate;
+                    
+            var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(token, creatingPatientDto);
+            await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
+            
             
             _repo.Remove(patient);
             await _unitOfWork.CommitAsync();
