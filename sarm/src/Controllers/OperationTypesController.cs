@@ -11,6 +11,7 @@ namespace Controllers
     [ApiController]
     public class OperationTypesController : ControllerBase
     {
+        private readonly int pageSize = 2;
         private readonly OperationTypeService _service;
         private readonly SessionService _sessionService;
         // private readonly AuthorizationService _authorizationService;
@@ -21,10 +22,10 @@ namespace Controllers
             _sessionService = sessionService;
         }
 
-        // GET: api/OperationTypes
+        // GET: api/OperationTypes?pageNumber={pageNumber}
         [HttpGet]
         // [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll([FromQuery] string? pageNumber)
         {
             // var idToken = HttpContext.Session.GetString("idToken");
             // if (string.IsNullOrEmpty(idToken))
@@ -42,7 +43,23 @@ namespace Controllers
             //     return Unauthorized();
             // }
 
-            return await _service.GetAllAsync();
+            var operationTypes = await _service.GetAllAsync();
+            
+            if (operationTypes == null)
+            {
+                return NotFound();
+            }
+
+            if (pageNumber != null)
+            {
+                var paginatedOperationTypes = operationTypes
+                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return paginatedOperationTypes;
+            }
+
+            return Ok(operationTypes);
         }
 
         // GET: api/OperationTypes/{id}
@@ -73,9 +90,9 @@ namespace Controllers
             return operationType;
         }
 
-        // GET: api/OperationTypes/specialization/{specialization}
+        // GET: api/OperationTypes/specialization/{specialization}?pageNumber={pageNumber}
         [HttpGet("specialization/{specialization}")]
-        public async Task<ActionResult<List<OperationTypeDto>>> GetBySpecialization(Specialization specialization)
+        public async Task<ActionResult<List<OperationTypeDto>>> GetBySpecialization(Specialization specialization, [FromQuery] string? pageNumber)
         {
             var operationTypes = await _service.GetBySpecializationAsync(specialization);
 
@@ -84,18 +101,36 @@ namespace Controllers
                 return NotFound();
             }
 
+            if (pageNumber != null)
+            {
+                var paginatedOperationTypes = operationTypes
+                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return paginatedOperationTypes;
+            }
+
             return operationTypes;
         }
 
-        // GET: api/OperationTypes/status/{status}
+        // GET: api/OperationTypes/status/{status}?pageNumber={pageNumber}
         [HttpGet("status/{status}")]
-        public async Task<ActionResult<List<OperationTypeDto>>> GetByStatus(Status status)
+        public async Task<ActionResult<List<OperationTypeDto>>> GetByStatus(Status status, [FromQuery] string? pageNumber)
         {
             var operationTypes = await _service.GetByStatusAsync(status);
 
             if (operationTypes == null)
             {
                 return NotFound();
+            }
+
+            if (pageNumber != null)
+            {
+                var paginatedOperationTypes = operationTypes
+                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return paginatedOperationTypes;
             }
 
             return operationTypes;

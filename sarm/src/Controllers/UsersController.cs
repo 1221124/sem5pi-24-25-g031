@@ -22,6 +22,7 @@ namespace Controllers
         private readonly IAMService _iamService;
         private readonly EmailService _emailService;
         private readonly SessionService _sessionService;
+        private readonly int pageSize = 2;
 
         public UsersController(UserService service, StaffService staffService, PatientService patientService, 
         IAMService iAMService, EmailService emailService, SessionService sessionService)
@@ -34,11 +35,27 @@ namespace Controllers
             _sessionService = sessionService;
         }
 
-        // GET: api/Users
+        // GET: api/Users?pageNumber={pageNumber}
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAll([FromQuery] string? pageNumber)
         {
-            return await _service.GetAllAsync();
+            var users = await _service.GetAllAsync();
+            
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            if (pageNumber != null)
+            {
+                var paginatedUsers = users
+                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return paginatedUsers;
+            }
+
+            return Ok(users);
         }
 
         // GET: api/Users/5
