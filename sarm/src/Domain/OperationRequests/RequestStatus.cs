@@ -22,10 +22,10 @@ namespace Domain.OperationRequests
 
         public static RequestStatus FromString(this string status)
         {
-            return status switch{
-                "Pending" => RequestStatus.PENDING,
-                "Accepted" => RequestStatus.ACCEPTED,
-                "Rejected" => RequestStatus.REJECTED,
+            return status.ToLower() switch{
+                "pending" => RequestStatus.PENDING,
+                "accepted" => RequestStatus.ACCEPTED,
+                "rejected" => RequestStatus.REJECTED,
                 _ => throw new ArgumentException("Invalid request status value")
             };
         }

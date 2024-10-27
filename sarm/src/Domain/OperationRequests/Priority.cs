@@ -22,11 +22,11 @@ namespace Domain.OperationRequests
 
         public static Priority FromString(this string priority)
         {
-            return priority switch
+            return priority.ToLower() switch
             {
-                "Elective" => Priority.ELECTIVE,
-                "Urgent" => Priority.URGENT,
-                "Emergency" => Priority.EMERGENCY,
+                "elective" => Priority.ELECTIVE,
+                "urgent" => Priority.URGENT,
+                "emergency" => Priority.EMERGENCY,
                 _ => throw new ArgumentException("Invalid priority value")
             };
         }

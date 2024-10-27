@@ -45,14 +45,12 @@ namespace Domain.OperationRequests
         {
             try
             {
-                //OperationRequestId operationRequestId = new(id);
-
                 var category = await this._repo.GetByIdAsync(operationRequestId);
-
+                
                 if (category == null)
                     return null;
 
-                return OperationRequestMapper.ToDto(category);
+                return null;
             }
             catch (Exception)
             {
@@ -86,17 +84,39 @@ namespace Domain.OperationRequests
             {
                 var patients = await this._patientService.GetAllAsync();
                 var operations = await this._repo.GetAllAsync();
-                var list = patients.Where(x => x.FullName.Equals(fullName)).ToList();
+                //var list = patients.Where(x => x.FullName.Equals(fullName)).ToList();
 
+                if (patients == null ||patients.Count == 0 || operations == null || operations.Count == 0)
+                {
+                    return null;
+                }
+                
+                List<OperationRequest> list = new();
+                
+                foreach (var pat in patients)
+                {
+                    if(pat.FullName.FirstName.Value.Equals(fullName.FirstName.Value) && 
+                       pat.FullName.LastName.Value.Equals(fullName.LastName.Value))
+                    {
+                        foreach (var op in operations)
+                        {
+                            if (op.PatientId.AsGuid().Equals(pat.Id))
+                            {
+                                list.Add(op);
+                            }
+                        }
+                    }
+                }
+                
 
-                if (patients == null ||patients.Count == 0 || operations == null || operations.Count == 0 ||list == null || list.Count == 0)
+                if (list == null || list.Count == 0)
                 {
                     return null;
                 }
 
-                var final = operations.Where(x => list.Any(y => y.Id.Equals(x.PatientId.AsGuid()))).ToList();
+                //var final = operations.Where(x => list.Any(y => y.Id.Equals(x.PatientId.AsGuid()))).ToList();
 
-                return OperationRequestMapper.ToDtoList(final);
+                return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
             {
@@ -169,27 +189,27 @@ namespace Domain.OperationRequests
             }
         }
 
-        public async Task<OperationRequestDto> DeleteAsync(OperationRequestId id)
+        public async Task<OperationRequestDto?> DeleteAsync(OperationRequestId id)
         {
             try
             {
                 var category = await this._repo.GetByIdAsync(id);
 
                 if (category == null)
-                    return OperationRequestMapper.ToDto(id);
+                    return null;
 
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
-                _logService.LogAction(OperationRequestEntityType, DBLogType.DELETE, category.Id.AsGuid());
+                //_logService.LogAction(OperationRequestEntityType, DBLogType.DELETE, category.Id.AsGuid());
 
                 return OperationRequestMapper.ToDto(id);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                _logService.LogError(OperationRequestEntityType, e.ToString());
-                return OperationRequestMapper.ToDto(id);
+                //_logService.LogError(OperationRequestEntityType, e.ToString());
+                return null;
             }
         }
     }
