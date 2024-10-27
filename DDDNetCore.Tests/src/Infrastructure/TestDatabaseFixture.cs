@@ -12,7 +12,7 @@ namespace DDDNetCore.Tests.Infrastructure
         public TestDatabaseFixture()
         {
             var options = new DbContextOptionsBuilder<TestDbContext>()
-                .UseInMemoryDatabase("TestDatabase")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>()
                 .Options;
 
@@ -24,6 +24,12 @@ namespace DDDNetCore.Tests.Infrastructure
         {
             Context.Database.EnsureDeleted();
             Context.Dispose();
+        }
+
+        public void Reset()
+        {
+            Context.Database.EnsureDeleted();
+            Context.Database.EnsureCreated();
         }
     }
 }

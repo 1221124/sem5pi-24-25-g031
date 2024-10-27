@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Domain.Users;
 using DDDNetCore.Tests.Infrastructure;
 using System.Linq;
+using System;
 
 namespace DDDNetCore.Tests.Domain.Users
 {
@@ -21,6 +22,7 @@ namespace DDDNetCore.Tests.Domain.Users
         public UserServiceUnitTest(TestDatabaseFixture fixture)
         {
             _context = fixture.Context;
+            fixture.Reset();
 
             var serviceCollection = new ServiceCollection();
 

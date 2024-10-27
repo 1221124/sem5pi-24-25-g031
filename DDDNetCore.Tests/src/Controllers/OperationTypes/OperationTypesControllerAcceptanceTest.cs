@@ -10,31 +10,32 @@
 // using Newtonsoft.Json;
 // using Domain.OperationTypes;
 // using Xunit;
-//
+// using Microsoft.VisualStudio.TestPlatform.TestHost;
+// using System.Linq;
+
 // namespace OperationTypes
 // {
 //     [TestClass]
-//     public class OperationTypesControllerAcceptanceTest : IClassFixture<WebApplicationFactory<Startup>>
+//     public class OperationTypesControllerAcceptanceTest : IClassFixture<WebApplicationFactory<Program>>
 //     {
-//         private readonly WebApplicationFactory<Startup> _factory;
+//         private readonly WebApplicationFactory<Program> _factory;
 //         private readonly HttpClient _client;
-//
+
 //         public OperationTypesControllerAcceptanceTest()
 //         {
-//             _factory = new WebApplicationFactory<Startup>()
+//             _factory = new WebApplicationFactory<Program>()
 //                 .WithWebHostBuilder(builder =>
 //                 {
 //                     builder.ConfigureServices(services =>
 //                     {
-//                         // Remover o contexto do banco de dados real
 //                         var descriptor = services.SingleOrDefault(
 //                             d => d.ServiceType == typeof(DbContextOptions<SARMDbContext>));
-//
+
 //                         if (descriptor != null)
 //                         {
 //                             services.Remove(descriptor);
 //                         }
-//
+
 //                         // Adicionar o contexto de banco de dados em memória para testes
 //                         services.AddDbContext<SARMDbContext>(options =>
 //                         {
@@ -42,10 +43,10 @@
 //                         });
 //                     });
 //                 });
-//
+
 //             _client = _factory.CreateClient();
 //         }
-//
+
 //         [TestMethod]
 //         public async Task CreateOperationType_ReturnsCreatedResponse()
 //         {
@@ -59,14 +60,14 @@
 //                 PhasesDuration = new List<int> { 10, 20, 30 }
 //             };
 //             var content = new StringContent(JsonConvert.SerializeObject(newOperationType), Encoding.UTF8, "application/json");
-//
+
 //             // Act
 //             var response = await _client.PostAsync("/api/OperationTypes", content);
-//
+
 //             // Assert
 //             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
 //         }
-//
+
 //         [TestMethod]
 //         public async Task GetOperationTypeById_ReturnsOperationType()
 //         {
@@ -82,16 +83,16 @@
 //             var content = new StringContent(JsonConvert.SerializeObject(newOperationType), Encoding.UTF8, "application/json");
 //             var postResponse = await _client.PostAsync("/api/OperationTypes", content);
 //             var operationType = JsonConvert.DeserializeObject<OperationTypeDto>(await postResponse.Content.ReadAsStringAsync());
-//
+
 //             // Act
 //             var getResponse = await _client.GetAsync($"/api/OperationTypes/id/{operationType.Id}");
-//
+
 //             // Assert
 //             Assert.AreEqual(HttpStatusCode.OK, getResponse.StatusCode);
 //             var returnedOperationType = JsonConvert.DeserializeObject<OperationTypeDto>(await getResponse.Content.ReadAsStringAsync());
 //             Assert.AreEqual(newOperationType.Name, returnedOperationType.Name);
 //         }
-//
+
 //         [TestMethod]
 //         public async Task UpdateOperationType_ReturnsUpdatedOperationType()
 //         {
@@ -107,19 +108,19 @@
 //             var content = new StringContent(JsonConvert.SerializeObject(newOperationType), Encoding.UTF8, "application/json");
 //             var postResponse = await _client.PostAsync("/api/OperationTypes", content);
 //             var operationType = JsonConvert.DeserializeObject<OperationTypeDto>(await postResponse.Content.ReadAsStringAsync());
-//
+
 //             operationType.Name = "UpdatedOperationType";
 //             content = new StringContent(JsonConvert.SerializeObject(operationType), Encoding.UTF8, "application/json");
-//
+
 //             // Act
 //             var updateResponse = await _client.PutAsync($"/api/OperationTypes/{operationType.Id}", content);
-//
+
 //             // Assert
 //             Assert.AreEqual(HttpStatusCode.OK, updateResponse.StatusCode);
 //             var updatedOperationType = JsonConvert.DeserializeObject<OperationTypeDto>(await updateResponse.Content.ReadAsStringAsync());
 //             Assert.AreEqual("UpdatedOperationType", updatedOperationType.Name);
 //         }
-//
+
 //         [TestMethod]
 //         public async Task DeleteOperationType_ReturnsNotFoundAfterDeletion()
 //         {
@@ -135,11 +136,11 @@
 //             var content = new StringContent(JsonConvert.SerializeObject(newOperationType), Encoding.UTF8, "application/json");
 //             var postResponse = await _client.PostAsync("/api/OperationTypes", content);
 //             var operationType = JsonConvert.DeserializeObject<OperationTypeDto>(await postResponse.Content.ReadAsStringAsync());
-//
+
 //             // Act
 //             var deleteResponse = await _client.DeleteAsync($"/api/OperationTypes/{operationType.Id}/hard");
 //             var getResponse = await _client.GetAsync($"/api/OperationTypes/id/{operationType.Id}");
-//
+
 //             // Assert
 //             Assert.AreEqual(HttpStatusCode.OK, deleteResponse.StatusCode);
 //             Assert.AreEqual(HttpStatusCode.NotFound, getResponse.StatusCode);
