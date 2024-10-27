@@ -62,6 +62,7 @@ namespace Infrastructure.UsersSession
         {
             return await _objs.FirstOrDefaultAsync(s => s.IdToken == token);
         }
+
     }
 }
         

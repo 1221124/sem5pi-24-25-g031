@@ -70,6 +70,17 @@ namespace Controllers
                 var idToken = tokenResponse.IdToken;
 
                 var email = _iamService.GetEmailFromIdToken(idToken);
+                var role = _iamService.GetRoleFromIdToken(idToken);
+
+                if (email.Trim().ToLower().Equals("1221124@isep.ipp.pt".Trim().ToLower()))
+                {
+                    var user = await _service.GetByEmailAsync(email);
+                    if (user == null) {
+                        return await CreateAdminUser(new CreatingUserDto(new Email(email), Role.Admin));
+                    } else {
+                        return await LoginAdminUser(email, idToken, role);
+                    }
+                }
 
                 if(email.Trim().ToLower().EndsWith("isep.ipp.pt".Trim().ToLower()))
                 {
@@ -78,9 +89,9 @@ namespace Controllers
                     {
                         return Ok("Registration in IAM sucessful. Please, wait for the administrator to create your account in our system.");
                     }
-                    return await LoginBackofficeUser(email, idToken);
+                    return await LoginBackofficeUser(email, idToken, role);
                 } else {
-                    return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient), idToken);
+                    return await CreateOrLoginPatientUser(new CreatingUserDto(new Email(email), Role.Patient), idToken, role);
                 }
 
             } catch (Exception ex) {
@@ -90,12 +101,8 @@ namespace Controllers
 
         // POST: api/Users/patient/login
         [HttpPost("patient/login")]
-        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto, string idToken)
+        public async Task<ActionResult<UserDto>> CreateOrLoginPatientUser([FromBody] CreatingUserDto dto, string idToken, string role)
         {
-            // var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code, "http://localhost:5500/api/patient/register");
-
-            // var email = await _iamService.GetUserInfoFromTokenAsync(tokenResponse.IdToken);
-
             var patientDto = await _patientService.GetByEmailAsync(dto.Email);
 
             if (patientDto != null)
@@ -116,12 +123,62 @@ namespace Controllers
                     idToken
                 );
 
+    	        HttpContext.Session.SetString("idToken", idToken);
+                HttpContext.Session.SetString("role", role);
+
                 await _sessionService.CreateSessionAsync(userSession);
-                
+
                 return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
             }
 
             return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
+        }
+
+        // POST: api/Users/admin/create
+        [HttpPost("admin/create")]
+        public async Task<ActionResult<UserDto>> CreateAdminUser([FromBody] CreatingUserDto dto)
+        {
+            var user = await _service.GetByEmailAsync(dto.Email);
+            if (user != null) {
+                return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+            }
+
+            user = await _service.AddAsync(dto);
+
+            user.UserStatus = UserStatus.Active;
+
+            await _service.UpdateAsync(user);
+
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        }
+
+        // POST: api/Users/admin/login
+        [HttpPost("admin/login")]
+        public async Task<ActionResult<UserDto>> LoginAdminUser(string sEmail, string idToken, string role)
+        {
+            Email email = new(sEmail);
+
+            var user = await _service.GetByEmailAsync(email);
+
+            if (user == null)
+                return BadRequest(new { Message = $"User with email {email.Value} not found." });
+
+            if (user.Role != Role.Admin)
+                return Forbid();
+
+            var userSession = new UserSession(
+                new UserId(user.Id),
+                user.Email,
+                user.Role,
+                idToken
+            );
+
+            HttpContext.Session.SetString("idToken", idToken);
+            HttpContext.Session.SetString("role", role);
+
+            await _sessionService.CreateSessionAsync(userSession);
+
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
         // POST: api/Users/backoffice/create
@@ -156,7 +213,7 @@ namespace Controllers
 
         // POST: api/Users/backoffice/login
         [HttpPost("backoffice/login")]
-        public async Task<ActionResult<UserDto>> LoginBackofficeUser(string sEmail, string idToken)
+        public async Task<ActionResult<UserDto>> LoginBackofficeUser(string sEmail, string idToken, string role)
         {
             Email email = new(sEmail);
 
@@ -180,6 +237,9 @@ namespace Controllers
                             user.Role,
                             idToken                         
                         );
+                        
+                        HttpContext.Session.SetString("idToken", idToken);
+                        HttpContext.Session.SetString("role", role);
 
                         await _sessionService.CreateSessionAsync(userSession);
 

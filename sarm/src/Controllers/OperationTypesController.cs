@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Microsoft.AspNetCore.Authorization;
+using Domain.UsersSession;
+using Domain.Authz;
 
 namespace Controllers
 {
@@ -10,17 +12,36 @@ namespace Controllers
     public class OperationTypesController : ControllerBase
     {
         private readonly OperationTypeService _service;
+        private readonly SessionService _sessionService;
+        private readonly AuthorizationService _authorizationService;
 
-        public OperationTypesController(OperationTypeService service)
+        public OperationTypesController(OperationTypeService service, SessionService sessionService)
         {
             _service = service;
+            _sessionService = sessionService;
         }
 
         // GET: api/OperationTypes
         [HttpGet]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
         {
+            var idToken = HttpContext.Session.GetString("idToken");
+            if (string.IsNullOrEmpty(idToken))
+            {
+                return Unauthorized();
+            }
+
+            var authorizeAttributes = (AuthorizeAttribute[])this.GetType()
+                .GetMethod(nameof(GetAll))
+                .GetCustomAttributes(typeof(AuthorizeAttribute), true);
+
+            bool isAuthorized = _authorizationService.IsAuthorized(idToken, authorizeAttributes[0].Roles);
+            if (!isAuthorized)
+            {
+                return Unauthorized();
+            }
+
             return await _service.GetAllAsync();
         }
 

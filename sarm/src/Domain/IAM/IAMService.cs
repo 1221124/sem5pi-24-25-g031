@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using Domain.Shared;
+using Domain.Users;
+using Domain.UsersSession;
 using Infrastructure;
 using Newtonsoft.Json;
 
@@ -85,22 +87,45 @@ namespace Domain.IAM
 
             return emailClaim.Value;
         }
+        
+        public string GetRoleFromIdToken(string idToken)
+        {
+            if (string.IsNullOrWhiteSpace(idToken))
+            {
+                throw new Exception("ID token cannot be null or empty.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            if (!handler.CanReadToken(idToken))
+            {
+                throw new Exception("Invalid ID token.");
+            }
+
+            var jwtToken = handler.ReadJwtToken(idToken);
+            var roleClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "https://dev-sagir8s22k2ehmk0.us.auth0.com/roles");
+            if (roleClaim == null)
+            {
+                throw new Exception("Role claim not found in ID token.");
+            }
+
+            return roleClaim.Value;
+        }
     }
 
-    public class UserExistsResponse
-    {
-        [JsonProperty("length")]
-        public int Length { get; set; }
+    // public class UserExistsResponse
+    // {
+    //     [JsonProperty("length")]
+    //     public int Length { get; set; }
 
-        [JsonProperty("users")]
-        public List<Auth0User> Users { get; set; }
-    }
+    //     [JsonProperty("users")]
+    //     public List<Auth0User> Users { get; set; }
+    // }
 
-    public class Auth0User
-    {
-        [JsonProperty("email")]
-        public string Email { get; set; }
-    }
+    // public class Auth0User
+    // {
+    //     [JsonProperty("email")]
+    //     public string Email { get; set; }
+    // }
 
     public class TokenResponse
     {

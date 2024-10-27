@@ -8,9 +8,9 @@ namespace Domain.UsersSession
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        private readonly UsersSessionRepository _sessions;
+        private readonly IUserSessionRepository _sessions;
 
-        public SessionService(IUnitOfWork unitOfWork, UsersSessionRepository usersSessionRepository)
+        public SessionService(IUnitOfWork unitOfWork, IUserSessionRepository usersSessionRepository)
         {
             _unitOfWork = unitOfWork;
             _sessions = usersSessionRepository;

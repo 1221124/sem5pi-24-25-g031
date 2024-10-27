@@ -22,7 +22,9 @@ using Domain.Emails;
 using Domain.IAM;
 using Infrastructure.UsersSession;
 using Domain.UsersSession;
-using Domain.Authz;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,17 @@ builder.Services.AddDbContext<SARMDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
@@ -72,12 +85,20 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", "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"));
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = AppSettings.IAMDomain;
-        options.Audience = AppSettings.IAMClientId;
-    });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = "https://dev-sagir8s22k2ehmk0.us.auth0.com/",
+                ValidAudience = AppSettings.IAMClientId,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.IAMClientSecret))
+            };
+        });
 
 var app = builder.Build();
 
@@ -97,10 +118,10 @@ else
     app.UseHsts();
 }
 
+app.UseSession();
+
 app.UseHttpsRedirection();
 app.UseRouting();
-
-app.UseMiddleware<TokenInjectionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

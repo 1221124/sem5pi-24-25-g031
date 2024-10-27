@@ -111,8 +111,8 @@ namespace Domain.Users
             if (User == null)
                 return null;
 
-            if (User.UserStatus == UserStatus.Active)
-                throw new BusinessRuleValidationException("It is not possible to delete an active user.");
+            // if (User.UserStatus == UserStatus.Active)
+            //     throw new BusinessRuleValidationException("It is not possible to delete an active user.");
             
             this._repo.Remove(User);
             await this._unitOfWork.CommitAsync();
