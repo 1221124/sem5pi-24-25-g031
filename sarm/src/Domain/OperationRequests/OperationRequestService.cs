@@ -41,7 +41,7 @@ namespace Domain.OperationRequests
             }
         }
 
-        public async Task<OperationRequestDto?> GetByIdAsync(OperationRequestId operationRequestId)
+        public async Task<OperationRequestDto> GetByIdAsync(OperationRequestId operationRequestId)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace Domain.OperationRequests
                 if (category == null)
                     return null;
 
-                return null;
+                return OperationRequestMapper.ToDto(category);
             }
             catch (Exception)
             {

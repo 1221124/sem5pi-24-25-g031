@@ -46,24 +46,16 @@ namespace Controllers
 
         // GET api/operationrequest/5
         [HttpGet("id/{id}")]
-        public ActionResult<OperationRequest> Get(string id)
-        {  
-            try{
-                if(id == null)
-                    return BadRequest("Operation request ID is required.");
+        public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
+        {
+            var operationRequest = await _operationRequestService.GetByIdAsync(new OperationRequestId(id));
 
-                var operationRequestId = new OperationRequestId(id);
-                
-                var operationRequestDto = _operationRequestService.GetByIdAsync(operationRequestId);
-
-                if (operationRequestDto == null)
-                    return NotFound();
-
-                return Ok(operationRequestDto);
-
-            }catch(Exception ex){
-                return BadRequest("Error: " + ex.Message);
+            if (operationRequest == null)
+            {
+                return NotFound();
             }
+
+            return Ok(operationRequest);
         }
         
         // GET api/operationrequest/patientname
@@ -155,64 +147,59 @@ namespace Controllers
         }
         
         
-        // Body{staffId, patientId, suggestedDeadline, priority, status}
+        // POST: api/OperationTypes
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatingOperationRequestDto requestDto)
+        public async Task<ActionResult<OperationRequestDto>> Create([FromBody] CreatingOperationRequestDto dto)
         {
-            if (requestDto == null)
+            if (dto == null)
             {
-                return BadRequest("Operation Request data is required.");
+                return BadRequest("Creating Operation Type DTO cannot be null");
             }
 
-            try
+            var operationRequest = await _operationRequestService.AddAsync(dto);
+
+            if (operationRequest == null)
             {
-                var operationRequest = await _operationRequestService.AddAsync(requestDto);
-                
-                if(operationRequest == null)
-                   return BadRequest("Operation Request could not be created.");
-                
-                return Ok(operationRequest);
+                return BadRequest("Operation Request was not created.");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return CreatedAtAction(nameof(GetById), new { id = operationRequest.Id }, operationRequest);
         }
 
         //PUT api/operationrequest/update
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromBody] UpdatingOperationRequestDto dto)
+        public async Task<ActionResult<OperationRequestDto>> Update([FromBody] UpdatingOperationRequestDto dto)
         {
             try{
-                if (dto == null){
+                if (dto == null) {
                     //_DBLogService.LogError(EntityType.OPERATION_REQUEST, "Operation request data is required.");
                     return BadRequest("Operation request data is required.");
                 }
 
                 var operationRequest = await _operationRequestService.UpdateAsync(dto);
 
-                if(operationRequest == null) return NotFound();
+                if(operationRequest == null)
+                    return NotFound();
+
                 return Ok("Operation request updated successfully.");
 
             }catch(Exception ex){
                 //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
                 return BadRequest("Error in Update: " + ex.Message);
             }
-        }   
+        }
 
         // DELETE api/operationrequest/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<ActionResult<OperationRequestDto>> Delete(Guid id)
         {
             try{   
-                var operationRequestId = new OperationRequestId(id);
-
-                var operationRequestDto = _operationRequestService.DeleteAsync(operationRequestId);
+                var operationRequestDto = await _operationRequestService.DeleteAsync(new OperationRequestId(id));
 
                 if (operationRequestDto == null)
                     return NotFound();
                 
-                return Ok("Operation Request was deleted successfully.");
+                return Ok("Operation request deleted successfully.");
             }
             catch(Exception ex)
             {

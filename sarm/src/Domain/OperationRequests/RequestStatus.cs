@@ -13,9 +13,9 @@ namespace Domain.OperationRequests
         {
             return status switch
             {
-                RequestStatus.PENDING => "Pending",
-                RequestStatus.ACCEPTED => "Accepted",
-                RequestStatus.REJECTED => "Rejected",
+                RequestStatus.PENDING => "pending",
+                RequestStatus.ACCEPTED => "accepted",
+                RequestStatus.REJECTED => "rejected",
                 _ => string.Empty,
             };
         }
