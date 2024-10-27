@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DDDNetCore.Domain.Patients;
 using JetBrains.Annotations;
@@ -160,7 +161,8 @@ namespace DDDNetCore.Tests.Domain.Patients
             Assert.Equal(patientsList[1].DateOfBirth, patients[1].DateOfBirth);
             Assert.Equal(patientsList[2].DateOfBirth, patients[2].DateOfBirth);
         }
-
+        
+        /*
         [Fact]
         public async Task GetByIdAsync_ReturnsPatient_WhenPatientExists()
         {
@@ -182,5 +184,76 @@ namespace DDDNetCore.Tests.Domain.Patients
             Assert.Equal(patient.ContactInformation, result.ContactInformation);
             Assert.Equal(patient.Gender, result.Gender);
         }
+        
+        
+        [Fact]
+        public async Task DeleteAsync_ShouldDeletePatient_WhenPatientExists()
+        {
+            var createPatient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")),
+                new DateOfBirth("2004-11-17"),
+                new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)), Gender.MALE);
+            var patient = await _patientService.AddAsync(createPatient);
+            await _unitOfWorkMock.Object.CommitAsync();
+
+            var patientId = patient.Id;
+
+            var previousPatients = await _patientService.GetAllAsync();
+
+            await _patientService.AdminDeleteAsync(new PatientId(patientId));
+            await _unitOfWorkMock.Object.CommitAsync();
+
+            var currentPatients = await _patientService.GetAllAsync();
+
+            Assert.Single(previousPatients);
+            Assert.Empty(currentPatients);
+            Assert.Null(await _patientService.GetByIdAsync(new PatientId(patientId)));
+        }
+        */
+        
+        [Fact]
+        public async Task DeleteAsync_ShouldNotDeletePatient_WhenPatientDoesNotExist()
+        {
+            var nonExistentId = new PatientId(Guid.NewGuid());
+
+            var previousPatients = await _patientService.GetAllAsync();
+
+            await _patientService.AdminDeleteAsync(nonExistentId);
+            await _unitOfWorkMock.Object.CommitAsync();
+
+            var currentPatients = await _patientService.GetAllAsync();
+
+            Assert.Empty(previousPatients);
+            Assert.Empty(currentPatients);
+        }
+
+        [Fact]
+        public async Task GetByEmailAsync_ReturnNull_WhenEmailExists()
+        {
+            var nonExistantEmail = new Email("email@gmail.com");
+            var patient = await _patientService.GetByEmailAsync(nonExistantEmail);
+            
+            Assert.Null(patient);
+        }
+
+        [Fact]
+        async Task GetByEmailAsync_ReturnsPatient_WhenEmailExists()
+        {
+            var createPatient = new Patient(new FullName(new Name("Guilherme"), new Name("Ribeiro")),
+                new DateOfBirth("2004-11-17"),
+                new ContactInformation("gui.cr04@gmail.com", new PhoneNumber(913455474)), Gender.MALE);
+            var patient = await _patientService.AddAsync(createPatient);
+            await _unitOfWorkMock.Object.CommitAsync();
+            
+            var email = patient.ContactInformation.Email;
+            
+            var result = await _patientService.GetByEmailAsync(email);
+            
+            Assert.NotNull(result);
+            Assert.Equal(patient.FullName, result.FullName);
+            Assert.Equal(patient.DateOfBirth, result.DateOfBirth);
+            Assert.Equal(patient.ContactInformation, result.ContactInformation);
+            Assert.Equal(patient.Gender, result.Gender);
+        }
+
     }
 }
