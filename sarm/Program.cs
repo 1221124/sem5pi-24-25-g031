@@ -81,6 +81,8 @@ builder.Services.AddTransient<UsersSessionRepository>();
 builder.Services.AddTransient<IUserSessionRepository, UsersSessionRepository>();
 builder.Services.AddTransient<SessionService>();
 
+builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.com", "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"));
+
 builder.Services.AddSingleton<PatientCleanupService>();
 builder.Services.AddMemoryCache();
 
