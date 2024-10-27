@@ -38,7 +38,8 @@ namespace Infrastructure.UsersSession
 
             builder.Property(x => x.IdToken)
                 .HasColumnName("IdToken")
-                .IsRequired();
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
         }
     }
 }

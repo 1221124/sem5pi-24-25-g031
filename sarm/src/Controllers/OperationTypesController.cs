@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.OperationTypes;
-using Microsoft.AspNetCore.Authorization;
 using Domain.UsersSession;
 using Domain.Authz;
 
@@ -11,38 +10,60 @@ namespace Controllers
     [ApiController]
     public class OperationTypesController : ControllerBase
     {
+        private readonly int pageSize = 2;
         private readonly OperationTypeService _service;
         private readonly SessionService _sessionService;
-        // private readonly AuthorizationService _authorizationService;
+        private readonly AuthorizationService _authorizationService;
 
-        public OperationTypesController(OperationTypeService service, SessionService sessionService)
+        public OperationTypesController(OperationTypeService service, SessionService sessionService, AuthorizationService authorizationService)
         {
             _service = service;
             _sessionService = sessionService;
+            _authorizationService = authorizationService;
         }
 
-        // GET: api/OperationTypes
+        // GET: api/OperationTypes?pageNumber={pageNumber}
         [HttpGet]
         // [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
+        // [RequiredRole("Admin")]
+        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll([FromQuery] string? pageNumber)
         {
             // var idToken = HttpContext.Session.GetString("idToken");
             // if (string.IsNullOrEmpty(idToken))
             // {
-            //     return Unauthorized();
+            //     return Unauthorized("No idToken found in session");
             // }
 
             // var authorizeAttributes = (AuthorizeAttribute[])this.GetType()
             //     .GetMethod(nameof(GetAll))
             //     .GetCustomAttributes(typeof(AuthorizeAttribute), true);
 
-            // bool isAuthorized = _authorizationService.IsAuthorized(idToken, authorizeAttributes[0].Roles);
+            // var requiredRole = (RequiredRoleAttribute)Attribute.GetCustomAttribute(
+            //     GetType().GetMethod(nameof(GetAll)), typeof(RequiredRoleAttribute));
+
+            // bool isAuthorized = _authorizationService.IsAuthorized(idToken, requiredRole.Role);
             // if (!isAuthorized)
             // {
-            //     return Unauthorized();
+            //     return Unauthorized("User is not authorized");
             // }
 
-            return await _service.GetAllAsync();
+            var operationTypes = await _service.GetAllAsync();
+            
+            if (operationTypes == null)
+            {
+                return NotFound();
+            }
+
+            if (pageNumber != null)
+            {
+                var paginatedOperationTypes = operationTypes
+                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return paginatedOperationTypes;
+            }
+
+            return Ok(operationTypes);
         }
 
         // GET: api/OperationTypes/{id}
@@ -73,9 +94,9 @@ namespace Controllers
             return operationType;
         }
 
-        // GET: api/OperationTypes/specialization/{specialization}
+        // GET: api/OperationTypes/specialization/{specialization}?pageNumber={pageNumber}
         [HttpGet("specialization/{specialization}")]
-        public async Task<ActionResult<List<OperationTypeDto>>> GetBySpecialization(Specialization specialization)
+        public async Task<ActionResult<List<OperationTypeDto>>> GetBySpecialization(Specialization specialization, [FromQuery] string? pageNumber)
         {
             var operationTypes = await _service.GetBySpecializationAsync(specialization);
 
@@ -84,18 +105,36 @@ namespace Controllers
                 return NotFound();
             }
 
+            if (pageNumber != null)
+            {
+                var paginatedOperationTypes = operationTypes
+                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return paginatedOperationTypes;
+            }
+
             return operationTypes;
         }
 
-        // GET: api/OperationTypes/status/{status}
+        // GET: api/OperationTypes/status/{status}?pageNumber={pageNumber}
         [HttpGet("status/{status}")]
-        public async Task<ActionResult<List<OperationTypeDto>>> GetByStatus(Status status)
+        public async Task<ActionResult<List<OperationTypeDto>>> GetByStatus(Status status, [FromQuery] string? pageNumber)
         {
             var operationTypes = await _service.GetByStatusAsync(status);
 
             if (operationTypes == null)
             {
                 return NotFound();
+            }
+
+            if (pageNumber != null)
+            {
+                var paginatedOperationTypes = operationTypes
+                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return paginatedOperationTypes;
             }
 
             return operationTypes;

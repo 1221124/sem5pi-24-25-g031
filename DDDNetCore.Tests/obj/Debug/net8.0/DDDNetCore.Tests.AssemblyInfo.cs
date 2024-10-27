@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DDDNetCore.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a66a9f8426902a2a50193a02175a25b51f7bd8d7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4b94cc51094b99e7607222f90713200fb6e5349")]
 [assembly: System.Reflection.AssemblyProductAttribute("DDDNetCore.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DDDNetCore.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

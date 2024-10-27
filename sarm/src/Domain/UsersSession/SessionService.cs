@@ -16,15 +16,29 @@ namespace Domain.UsersSession
             _sessions = usersSessionRepository;
         }
 
-        public Task CreateSessionAsync(UserSession session)
+        public async Task<UserSession> CreateSessionAsync(UserSession session)
         {
             try
             {
-               _sessions.AddOrUpdate(session.UserId, session, (key, oldValue) => session);
+            //    _sessions.AddOrUpdate(session.UserId, session, (key, oldValue) => session);
 
-               _unitOfWork.CommitAsync();
+                var userSession = _sessions.GetByUserIdAsync(session.UserId).Result;
 
-               return Task.CompletedTask;
+                if(userSession != null)
+                {
+                    userSession.Email = session.Email;
+                    userSession.Role = session.Role;
+                    userSession.IdToken = session.IdToken;
+                    userSession.ExpiresIn = session.ExpiresIn;
+                }
+                else
+                {
+                    userSession = await _sessions.AddAsync(session);
+                }
+
+                await _unitOfWork.CommitAsync();
+
+                return userSession;
             }
             catch(Exception e)
             {
