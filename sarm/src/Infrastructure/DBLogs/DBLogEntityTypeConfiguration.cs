@@ -5,11 +5,11 @@ using Domain.DBLogs;
 
 namespace Infrastructure.DBLogs
 {
-    internal class DBLogEntityTypeConfiguration : IEntityTypeConfiguration<DBLog>
+    public class DBLogEntityTypeConfiguration : IEntityTypeConfiguration<DBLog>
     {
         public void Configure(EntityTypeBuilder<DBLog> builder)
         {
-            builder.HasKey(b => b.Id);
+            builder.HasKey(p => p.Id);
 
             builder.Property(p => p.EntityType)
                 .IsRequired()

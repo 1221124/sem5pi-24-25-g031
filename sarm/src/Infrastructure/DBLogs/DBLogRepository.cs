@@ -10,7 +10,7 @@ namespace Infrastructure.DBLogs
 
         private readonly DbSet<DBLog> _objs; 
 
-        public DBLogRepository(SARMDbContext context) : base(context.OperationRequests)
+        public DBLogRepository(SARMDbContext context) : base(context.DBLogs)
         {
             this._objs = context.DBLogs;
         }

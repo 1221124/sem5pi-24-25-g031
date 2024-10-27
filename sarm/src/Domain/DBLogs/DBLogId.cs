@@ -14,7 +14,7 @@ namespace Domain.DBLogs
         }
 
         override
-        protected object createFromString(string text)
+        public object createFromString(string text)
         {
             return new Guid(text);
         }

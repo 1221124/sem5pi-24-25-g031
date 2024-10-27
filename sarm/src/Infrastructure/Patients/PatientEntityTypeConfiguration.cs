@@ -13,7 +13,7 @@ using PhoneNumber = Domain.Shared.PhoneNumber;
 
 namespace Infrastructure.Patients
 {
-    internal class PatientEntityTypeConfiguration : IEntityTypeConfiguration<Patient>
+    public class PatientEntityTypeConfiguration : IEntityTypeConfiguration<Patient>
     {
         public void Configure(EntityTypeBuilder<Patient> builder)
         {

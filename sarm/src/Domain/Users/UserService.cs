@@ -67,6 +67,12 @@ namespace Domain.Users
         {
             var User = UserMapper.ToEntityFromCreating(dto);
 
+            var userWithEmail = await this._repo.GetByEmailAsync(User.Email);
+            if (userWithEmail != null) {
+                return null;
+                throw new BusinessRuleValidationException("User already exists.");
+            }
+
             await this._repo.AddAsync(User);
 
             await this._unitOfWork.CommitAsync();

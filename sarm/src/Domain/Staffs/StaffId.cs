@@ -23,7 +23,7 @@ namespace Domain.Staffs
 
 
         override
-        protected object createFromString(string text)
+        public object createFromString(string text)
         {
             return new Guid(text);
         }

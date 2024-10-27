@@ -13,13 +13,6 @@ C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debu
 C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.csproj.CoreCompileInputs.cache
 C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.sourcelink.json
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\bin\Debug\net8.0\.msCoverageSourceRootsMapping_DDDNetCore.Tests
-C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.csproj.AssemblyReference.cache
-C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\MvcTestingAppManifest.json
-C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfoInputs.cache
-C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfo.cs
-C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.csproj.CoreCompileInputs.cache
-C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.sourcelink.json
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\bin\Debug\net8.0\testhost.dll
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\bin\Debug\net8.0\DDDNetCore.deps.json
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\bin\Debug\net8.0\DDDNetCore.runtimeconfig.json
@@ -755,6 +748,13 @@ C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projet
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\bin\Debug\net8.0\DDDNetCore.pdb
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
+C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.csproj.AssemblyReference.cache
+C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\MvcTestingAppManifest.json
+C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfoInputs.cache
+C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfo.cs
+C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.csproj.CoreCompileInputs.cache
+C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.sourcelink.json
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCo.9AC6A2C6.Up2Date
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.dll
 C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\obj\Debug\net8.0\refint\DDDNetCore.Tests.dll

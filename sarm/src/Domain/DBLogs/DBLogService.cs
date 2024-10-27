@@ -1,32 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Domain.DBLogs;
-using Domain.Users;
-using Domain.OperationRequests;
-using Domain.Patients;
-using Domain.Staffs;
-using Domain.Shared;
-using Infrastructure;
-using Domain.OperationTypes;
-
 namespace Domain.DBLogs
 {
     public class DBLogService
     {
 
         private readonly IDBLogRepository _logRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IStaffRepository _staffRepository;
-        private readonly IPatientRepository _patientRepository;
 
-        public DBLogService(IDBLogRepository logRepository, IUserRepository userRepository,
-                            IStaffRepository staffRepository, IPatientRepository patientRepository)
+        public DBLogService(IDBLogRepository logRepository)
         {
             _logRepository = logRepository;
-            _userRepository = userRepository;
-            _staffRepository = staffRepository;
-            _patientRepository = patientRepository;
         }
 
         public async void LogError(EntityType entityType, string message)
