@@ -18,6 +18,7 @@ namespace DDDNetCore.Domain.Patients
         private readonly DBLogService _dbLogService;
         private readonly UserService _userService;
         private readonly EmailService _emailService;
+        private const int PageSize = 2;
 
         public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, DBLogService dbLogService, UserService userService, EmailService emailService)
         {
@@ -157,6 +158,92 @@ namespace DDDNetCore.Domain.Patients
                 List<PatientDto> listDto = PatientMapper.toDtoList(listPatient);
 
                 return listDto;
+
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+        
+        public async Task<List<PatientDto?>?> SearchByFilterAsync([FromQuery] string? fullName, string? email, string? phoneNumber, string? medicalRecordNumber, string? dateOfBirth, string? gender, string? pageNumber)
+        {
+            try
+            {
+                     // Initialize a base query
+                List<PatientDto?>? patientsQuery = (await GetAllAsync())!;
+    
+                // Filter by fullName if provided
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    var names = fullName.Split("-");
+                    if (names.Length != 2)
+                    {
+                        return null;
+                    }
+    
+                    var firstName = names[0];
+                    var lastName = names[1];
+                    patientsQuery = patientsQuery
+                        .Where(p => p.FullName.FirstName == firstName && p.FullName.LastName == lastName)
+                        .ToList();
+                }
+    
+                // Filter by gender if provided
+                if (!string.IsNullOrEmpty(gender))
+                {
+                    patientsQuery = patientsQuery
+                        .Where(p => p.Gender.Equals(GenderUtils.FromString(gender)))
+                        .ToList();
+                }
+    
+                // Filter by email if provided
+                if (!string.IsNullOrEmpty(email))
+                {
+                    patientsQuery = patientsQuery
+                        .Where(p => p.ContactInformation.Email.Value == email)
+                        .ToList();
+                }
+    
+                // Filter by phone number if provided
+                if (!string.IsNullOrEmpty(phoneNumber))
+                {
+                    patientsQuery = patientsQuery
+                        .Where(p => p.ContactInformation.PhoneNumber.Value == new PhoneNumber(phoneNumber).Value)
+                        .ToList();
+                }
+    
+                // Filter by medical record number if provided
+                if (!string.IsNullOrEmpty(medicalRecordNumber))
+                {
+                    patientsQuery = patientsQuery
+                        .Where(p => p.MedicalRecordNumber.Value == medicalRecordNumber)
+                        .ToList();
+                }
+    
+                // Filter by date of birth if provided
+                if (!string.IsNullOrEmpty(dateOfBirth))
+                {
+                        patientsQuery = patientsQuery
+                            .Where(p => p.DateOfBirth.Equals(new DateOfBirth(dateOfBirth)))
+                            .ToList();
+                }
+                
+                if (patientsQuery.Count != 0)
+                {
+                    if (pageNumber != null)
+                    {
+                        List<PatientDto?> paginatedPatients = patientsQuery
+                            .Skip((int.Parse(pageNumber)) * PageSize)
+                            .Take(PageSize)
+                            .ToList();
+                        return paginatedPatients;
+                    }
+                    return patientsQuery;
+            
+                }
+
+                return null;
 
             }catch(Exception e)
             {
