@@ -45,17 +45,19 @@ namespace Controllers
         }
 
         // GET api/operationrequest/5
-        [HttpGet("{id}")]
+        [HttpGet("id/{id}")]
         public ActionResult<OperationRequest> Get(string id)
         {  
             try{
                 if(id == null)
                     return BadRequest("Operation request ID is required.");
 
-                var operationRequestDto = _operationRequestService.GetByIdAsync(new OperationRequestId(id));
+                var operationRequestId = new OperationRequestId(id);
+                
+                var operationRequestDto = _operationRequestService.GetByIdAsync(operationRequestId);
 
-                    if (operationRequestDto == null)
-                        return NotFound();
+                if (operationRequestDto == null)
+                    return NotFound();
 
                 return Ok(operationRequestDto);
 
@@ -65,12 +67,21 @@ namespace Controllers
         }
         
         // GET api/operationrequest/patientname
-        [HttpPost("patientname/{name}")]
-        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByPatientName(FullName name, int pageNumber)
+        [HttpGet("patientname/{fullName}")]
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByPatientName(string fullName, int pageNumber)
         {
             try{
-                if(name == null)
+                if(fullName == null)
                     return BadRequest("Patient name is required.");
+                
+                var names = fullName.Split("-");
+
+                if (names.Length != 2)
+                {
+                    return BadRequest("Full name format is invalid. Expected format: FirstName%2LastName");
+                }
+                
+                var name = new FullName(new Name(names[0]), new Name(names[1]));
 
                 var operationRequests = await _operationRequestService.GetByPatientNameAsync(name);
 
@@ -90,14 +101,16 @@ namespace Controllers
         }
         
         // GET api/operationrequest/operationtype
-        [HttpPost("operationtype/{operationType}")]
-        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByOperationType(OperationTypeId operationType, int pageNumber)
+        [HttpGet("operationtype/{operationType}")]
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByOperationType(string operationType, int pageNumber)
         {
             try{
                 if(operationType == null)
                     return BadRequest("Operation type is required.");
 
-                var operationRequests = await _operationRequestService.GetByOperationTypeAsync(operationType);
+                var id = new OperationTypeId(operationType);
+                
+                var operationRequests = await _operationRequestService.GetByOperationTypeAsync(id);
 
                 if(operationRequests == null)
                     return NotFound();
@@ -115,14 +128,16 @@ namespace Controllers
         }
 
         // GET api/operationrequest/status
-        [HttpPost("status/{status}")]
-        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByStatus(RequestStatus status, int pageNumber)
+        [HttpGet("status/{status}")]
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByStatus(string status, int pageNumber)
         {
             try{
                 if(status == null)
                     return BadRequest("Status is required.");
 
-                var operationRequests = await _operationRequestService.GetByRequestStatusAsync(status);
+                var requestStatus = Enum.Parse<RequestStatus>(status);
+                
+                var operationRequests = await _operationRequestService.GetByRequestStatusAsync(requestStatus);
 
                 if(operationRequests == null)
                     return NotFound();
@@ -153,8 +168,8 @@ namespace Controllers
             {
                 var operationRequest = await _operationRequestService.AddAsync(requestDto);
                 
-                //if(operationRequest == null)
-                   // return BadRequest("Operation Request could not be created.");
+                if(operationRequest == null)
+                   return BadRequest("Operation Request could not be created.");
                 
                 return Ok(operationRequest);
             }
@@ -165,12 +180,12 @@ namespace Controllers
         }
 
         //PUT api/operationrequest/update
-        [HttpPost("update")]
-        public async Task<IActionResult> Update(UpdatingOperationRequestDto dto)
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromBody] UpdatingOperationRequestDto dto)
         {
             try{
                 if (dto == null){
-                    _DBLogService.LogError(EntityType.OPERATION_REQUEST, "Operation request data is required.");
+                    //_DBLogService.LogError(EntityType.OPERATION_REQUEST, "Operation request data is required.");
                     return BadRequest("Operation request data is required.");
                 }
 
@@ -186,19 +201,21 @@ namespace Controllers
         }   
 
         // DELETE api/operationrequest/5
-        [HttpDelete("delete/{id}")]
-        public IActionResult Delete(OperationRequestDto dto)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(string id)
         {
             try{   
-                var operationRequestId = new OperationRequestId(dto.Id);
+                var operationRequestId = new OperationRequestId(id);
 
                 var operationRequestDto = _operationRequestService.DeleteAsync(operationRequestId);
 
                 if (operationRequestDto == null)
                     return NotFound();
-                    else
-                    return Ok("Operation Request was deleted successfully.");
-            }catch(Exception ex){
+                
+                return Ok("Operation Request was deleted successfully.");
+            }
+            catch(Exception ex)
+            {
                 //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
                 return BadRequest("Error in Delete: " + ex.Message); 
             }
