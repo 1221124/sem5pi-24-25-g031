@@ -29,17 +29,26 @@ namespace DDDNetCore.Controllers
 
         // GET: api/Patient/?pageNumber=1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll(int pageNumber)
+        public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll([FromQuery] string? pageNumber)
         {
             var patients = await _service.GetAllAsync();
             
-            var paginatedPatients = patients
-                .Skip((pageNumber - 1) * PageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                .Take(PageSize)                    // Seleciona a quantidade especificada de itens para a página atual
-                .ToList();                         // Converte o resultado em uma lista para fácil manipulação
+            if (patients == null)
+            {
+                return NotFound();
+            }
 
+            if (pageNumber != null)
+            {
+                var paginatedPatients = patients
+                    .Skip((int.Parse(pageNumber)) * PageSize)
+                    .Take(PageSize)
+                    .ToList();
+                return paginatedPatients;
+            }
 
-            return paginatedPatients;
+            return patients;
+
         }
         
         //GET: api/Patient/5
@@ -180,81 +189,18 @@ namespace DDDNetCore.Controllers
                                                                                 [FromQuery] string? pageNumber)
         {
             // Initialize a base query
-            var patientsQuery = await _service.GetAllAsync();
 
-            // Filter by fullName if provided
-            if (!string.IsNullOrEmpty(fullName))
-            {
-                var names = fullName.Split("-");
-                if (names.Length != 2)
-                {
-                    return BadRequest("Full name format is invalid. Expected format: FirstName-LastName");
-                }
-
-                var firstName = names[0];
-                var lastName = names[1];
-                patientsQuery = patientsQuery
-                    .Where(p => p.FullName.FirstName == firstName && p.FullName.LastName == lastName)
-                    .ToList();
-            }
-
-            // Filter by gender if provided
-            if (!string.IsNullOrEmpty(gender))
-            {
-                patientsQuery = patientsQuery
-                    .Where(p => p.Gender.Equals(GenderUtils.FromString(gender)))
-                    .ToList();
-            }
-
-            // Filter by email if provided
-            if (!string.IsNullOrEmpty(email))
-            {
-                patientsQuery = patientsQuery
-                    .Where(p => p.ContactInformation.Email.Value == email)
-                    .ToList();
-            }
-
-            // Filter by phone number if provided
-            if (!string.IsNullOrEmpty(phoneNumber))
-            {
-                patientsQuery = patientsQuery
-                    .Where(p => p.ContactInformation.PhoneNumber.Value == new PhoneNumber(phoneNumber).Value)
-                    .ToList();
-            }
-
-            // Filter by medical record number if provided
-            if (!string.IsNullOrEmpty(medicalRecordNumber))
-            {
-                patientsQuery = patientsQuery
-                    .Where(p => p.MedicalRecordNumber.Value == medicalRecordNumber)
-                    .ToList();
-            }
-
-            // Filter by date of birth if provided
-            if (!string.IsNullOrEmpty(dateOfBirth))
-            {
-                    patientsQuery = patientsQuery
-                        .Where(p => p.DateOfBirth.Equals(dateOfBirth))
-                        .ToList();
-            }
-        
-            // Pagination
-            if (patientsQuery.Count != 0)
-            {
-                if (pageNumber != null)
-                {
-                    var pageSize = 2;
-                    var paginatedPatients = patientsQuery
-                        .Skip((int.Parse(pageNumber)) * pageSize)
-                        .Take(pageSize)
-                        .ToList();
-                }
-                return patientsQuery;
+            List<PatientDto?>? patientsQuery = await _service.SearchByFilterAsync(fullName, email, phoneNumber, medicalRecordNumber, dateOfBirth, gender, pageNumber);
             
+            if(patientsQuery == null)
+            {
+                return NotFound("Patients not found with that search criteria");
             }
-            return NotFound("No patients match the specified search criteria.");
-            
+
+            return Ok(patientsQuery);
+
         }
+        
 
         // POST: api/Patient/{ "fullname", "dateOfBirth", "contactInformation" } 
         [HttpPost]
