@@ -14,6 +14,7 @@ namespace Domain.Authz
 
         public bool IsAuthorized(string idToken, string? roles)
         {
+            roles = roles.ToUpper();
             var session = _sessionRepo.GetByIdTokenAsync(idToken).Result;
 
             if (session == null)

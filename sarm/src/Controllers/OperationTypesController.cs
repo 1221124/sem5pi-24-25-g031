@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.OperationTypes;
-using Microsoft.AspNetCore.Authorization;
 using Domain.UsersSession;
 using Domain.Authz;
 
@@ -14,33 +13,38 @@ namespace Controllers
         private readonly int pageSize = 2;
         private readonly OperationTypeService _service;
         private readonly SessionService _sessionService;
-        // private readonly AuthorizationService _authorizationService;
+        private readonly AuthorizationService _authorizationService;
 
-        public OperationTypesController(OperationTypeService service, SessionService sessionService)
+        public OperationTypesController(OperationTypeService service, SessionService sessionService, AuthorizationService authorizationService)
         {
             _service = service;
             _sessionService = sessionService;
+            _authorizationService = authorizationService;
         }
 
         // GET: api/OperationTypes?pageNumber={pageNumber}
         [HttpGet]
         // [Authorize(Roles = "Admin")]
+        // [RequiredRole("Admin")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll([FromQuery] string? pageNumber)
         {
             // var idToken = HttpContext.Session.GetString("idToken");
             // if (string.IsNullOrEmpty(idToken))
             // {
-            //     return Unauthorized();
+            //     return Unauthorized("No idToken found in session");
             // }
 
             // var authorizeAttributes = (AuthorizeAttribute[])this.GetType()
             //     .GetMethod(nameof(GetAll))
             //     .GetCustomAttributes(typeof(AuthorizeAttribute), true);
 
-            // bool isAuthorized = _authorizationService.IsAuthorized(idToken, authorizeAttributes[0].Roles);
+            // var requiredRole = (RequiredRoleAttribute)Attribute.GetCustomAttribute(
+            //     GetType().GetMethod(nameof(GetAll)), typeof(RequiredRoleAttribute));
+
+            // bool isAuthorized = _authorizationService.IsAuthorized(idToken, requiredRole.Role);
             // if (!isAuthorized)
             // {
-            //     return Unauthorized();
+            //     return Unauthorized("User is not authorized");
             // }
 
             var operationTypes = await _service.GetAllAsync();

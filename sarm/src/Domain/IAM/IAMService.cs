@@ -51,7 +51,8 @@ namespace Domain.IAM
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception("Failed to exchange authorization code for token.");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to exchange authorization code for token. Error: {errorContent}");
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -88,28 +89,28 @@ namespace Domain.IAM
             return emailClaim.Value;
         }
         
-        public string GetRoleFromIdToken(string idToken)
-        {
-            if (string.IsNullOrWhiteSpace(idToken))
-            {
-                throw new Exception("ID token cannot be null or empty.");
-            }
+        // public string GetRoleFromIdToken(string idToken)
+        // {
+        //     if (string.IsNullOrWhiteSpace(idToken))
+        //     {
+        //         throw new Exception("ID token cannot be null or empty.");
+        //     }
 
-            var handler = new JwtSecurityTokenHandler();
-            if (!handler.CanReadToken(idToken))
-            {
-                throw new Exception("Invalid ID token.");
-            }
+        //     var handler = new JwtSecurityTokenHandler();
+        //     if (!handler.CanReadToken(idToken))
+        //     {
+        //         throw new Exception("Invalid ID token.");
+        //     }
 
-            var jwtToken = handler.ReadJwtToken(idToken);
-            var roleClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "https://dev-sagir8s22k2ehmk0.us.auth0.com/roles");
-            if (roleClaim == null)
-            {
-                throw new Exception("Role claim not found in ID token.");
-            }
+        //     var jwtToken = handler.ReadJwtToken(idToken);
+        //     var roleClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "https://dev-sagir8s22k2ehmk0.us.auth0.com/roles");
+        //     if (roleClaim == null)
+        //     {
+        //         throw new Exception("Role claim not found in ID token.");
+        //     }
 
-            return roleClaim.Value;
-        }
+        //     return roleClaim.Value;
+        // }
     }
 
     // public class UserExistsResponse
