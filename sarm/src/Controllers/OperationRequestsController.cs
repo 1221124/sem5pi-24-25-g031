@@ -10,6 +10,7 @@ namespace Controllers
     [ApiController]
     public class OperationRequestController : ControllerBase
     {
+        private readonly int pageSize = 2;
         private readonly OperationRequestService _operationRequestService;
         private readonly DBLogService _DBLogService;
         private static readonly EntityType OperationRequestEntityType = EntityType.OPERATION_REQUEST;
@@ -23,14 +24,19 @@ namespace Controllers
 
         // GET api/operationrequest
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OperationRequest>>> Get()
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> Get(int pageNumber)
         {
             try{
                 var operationRequests = await _operationRequestService.GetAllAsync();
                 if(operationRequests == null)
                     return NotFound();
+                
+                var paginated = operationRequests
+                    .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                    .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                    .ToList();                         // Converte o resultado em uma lista para fácil manipulação
 
-                return Ok(operationRequests);
+                return Ok(paginated);
 
             }catch(Exception ex){
                 //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
@@ -60,7 +66,7 @@ namespace Controllers
         
         // GET api/operationrequest/patientname
         [HttpPost("patientname/{name}")]
-        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByPatientName(FullName name)
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByPatientName(FullName name, int pageNumber)
         {
             try{
                 if(name == null)
@@ -71,7 +77,12 @@ namespace Controllers
                 if(operationRequests == null)
                     return NotFound();
 
-                return Ok(operationRequests);
+                var paginated = operationRequests
+                    .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                    .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                    .ToList();  
+
+                return Ok(paginated);
 
             }catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);
@@ -80,7 +91,7 @@ namespace Controllers
         
         // GET api/operationrequest/operationtype
         [HttpPost("operationtype/{operationType}")]
-        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByOperationType(OperationTypeId operationType)
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByOperationType(OperationTypeId operationType, int pageNumber)
         {
             try{
                 if(operationType == null)
@@ -91,7 +102,12 @@ namespace Controllers
                 if(operationRequests == null)
                     return NotFound();
 
-                return Ok(operationRequests);
+                var paginated = operationRequests
+                    .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                    .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                    .ToList();  
+
+                return Ok(paginated);
 
             }catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);
@@ -100,7 +116,7 @@ namespace Controllers
 
         // GET api/operationrequest/status
         [HttpPost("status/{status}")]
-        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByStatus(RequestStatus status)
+        public async Task<ActionResult<IEnumerable<OperationRequest>>> GetByStatus(RequestStatus status, int pageNumber)
         {
             try{
                 if(status == null)
@@ -111,7 +127,12 @@ namespace Controllers
                 if(operationRequests == null)
                     return NotFound();
 
-                return Ok(operationRequests);
+                var paginated = operationRequests
+                    .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                    .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                    .ToList();
+
+                return Ok(paginated);
 
             }catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);
