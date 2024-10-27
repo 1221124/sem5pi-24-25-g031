@@ -64,6 +64,15 @@ namespace Domain.Patients
             ContactInformation = contactInformation;
         }
 
+        public PatientDto(FullName fullName, DateOfBirth dateOfBirth, ContactInformation contactInformation,
+            Gender? gender)
+        {
+            FullName = fullName;
+            DateOfBirth = dateOfBirth;
+            ContactInformation = contactInformation;
+            Gender = gender;
+        }
+
         public PatientDto(Guid guid){
             Id = guid;
         }

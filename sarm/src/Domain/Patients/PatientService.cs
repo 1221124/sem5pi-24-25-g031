@@ -15,17 +15,17 @@ namespace DDDNetCore.Domain.Patients
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
-        private readonly DBLogService _dbLogService;
-        private readonly UserService _userService;
-        private readonly EmailService _emailService;
+        //private readonly DBLogService _dbLogService;
+        //private readonly UserService _userService;
+        private readonly IEmailService _emailService;
         private const int PageSize = 2;
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, DBLogService dbLogService, UserService userService, EmailService emailService)
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, /*DBLogService dbLogService, UserService userService,*/ IEmailService emailService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
-            _dbLogService = dbLogService;
-            _userService = userService;
+            //_dbLogService = dbLogService;
+            //_userService = userService;
             _emailService = emailService;
         }
 

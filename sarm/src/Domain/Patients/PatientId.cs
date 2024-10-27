@@ -14,7 +14,8 @@ namespace Domain.Patients
         public PatientId(String value) : base(value)
         {
         }
-
+        
+        
         public PatientId() : base(Guid.NewGuid())
         {
         }

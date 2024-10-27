@@ -44,5 +44,22 @@ namespace Domain.Patients
             }
             return new DateOfBirth(dateOfBirth);
         }
+        public override bool Equals(object? obj)
+        {
+            // Check if the object is a DateOfBirth instance
+            if (obj is DateOfBirth other)
+            {
+                // Compare the BirthDate property
+                return BirthDate == other.BirthDate;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            // Use the hash code of the BirthDate
+            return BirthDate.GetHashCode();
+        }
+        
     }
 }

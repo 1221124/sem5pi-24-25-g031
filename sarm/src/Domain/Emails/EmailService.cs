@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Domain.Emails
 {
-    public class EmailService
+    public class EmailService: IEmailService
     {
         private readonly string _fromEmail;
         private readonly string _apiKey;

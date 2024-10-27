@@ -25,5 +25,18 @@ namespace Domain.Shared
         {
             return $"{fullName.FirstName} {fullName.LastName}";
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is FullName other)
+            {
+                return FirstName.Value.Equals(other.FirstName) && LastName.Value.Equals(other.LastName);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(FirstName, LastName);
+        }
     }
 }
