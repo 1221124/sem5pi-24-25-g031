@@ -190,11 +190,6 @@ namespace Controllers
             //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
             // }
 
-            var staff = await _staffService.GetByEmailAsync(dto.Email);
-            if (staff == null) {
-                return BadRequest("Staff profile not found.");
-            }
-
             var user = await _service.GetByEmailAsync(dto.Email);
             if (user != null) {
                 return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
@@ -202,8 +197,11 @@ namespace Controllers
 
             user = await _service.AddAsync(dto);
 
-            staff.UserId = new UserId(user.Id);
-            await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntity(staff));
+            var staff = await _staffService.GetByEmailAsync(dto.Email);
+            if (staff != null) {
+                staff.UserId = new UserId(user.Id);
+                await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntity(staff));
+            }
 
             (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
             await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
@@ -252,8 +250,8 @@ namespace Controllers
             }
         }
 
-        // PUT: api/Users/5
-        [HttpPut("{id}")]
+        // PUT: api/Users
+        [HttpPut()]
         public async Task<ActionResult<UserDto>> Update(UserDto dto)
         {
             try

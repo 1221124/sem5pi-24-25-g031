@@ -78,7 +78,7 @@ namespace Domain.OperationTypes
 
         public async Task<OperationTypeDto> UpdateAsync(OperationTypeDto dto)
         {
-            var operationType = await this._repo.GetByNameAsync(dto.Name);
+            var operationType = await this._repo.GetByIdAsync(new OperationTypeId(dto.Id));
 
             if (operationType == null)
                 return null;   

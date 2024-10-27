@@ -45,8 +45,8 @@ namespace Controllers
             return await _service.GetAllAsync();
         }
 
-        // GET: api/OperationTypes/id/{id}
-        [HttpGet("id/{id}")]
+        // GET: api/OperationTypes/{id}
+        [HttpGet("{id}")]
         public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
         {
             var operationType = await _service.GetByIdAsync(new OperationTypeId(id));
@@ -122,8 +122,8 @@ namespace Controllers
         }
 
         
-        // PUT: api/OperationTypes/5
-        [HttpPut("{id}")]
+        // PUT: api/OperationTypes
+        [HttpPut()]
         public async Task<ActionResult<OperationTypeDto>> Update(OperationTypeDto dto)
         {
             try

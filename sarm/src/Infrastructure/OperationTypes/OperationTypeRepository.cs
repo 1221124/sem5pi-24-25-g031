@@ -20,9 +20,8 @@ namespace Infrastructure.OperationTypes
 
         public async Task<OperationType> GetByNameAsync(Name name)
         {
-            string nameValue = name.Value;
             return await this._objs
-                .AsQueryable().Where(x => nameValue.Equals(x.Name.Value)).FirstOrDefaultAsync();
+                .AsQueryable().Where(x => name.Equals(x.Name)).FirstOrDefaultAsync();
         }
 
         public async Task<List<OperationType>> GetBySpecializationAsync(Specialization specialization)
