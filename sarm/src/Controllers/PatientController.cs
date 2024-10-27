@@ -1,20 +1,17 @@
-using Domain.Shared;
-using Microsoft.AspNetCore.Mvc;
-using Domain.Patients;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using DDDNetCore.Domain.Patients;
 using Domain.DBLogs;
+using Domain.Patients;
+using Domain.Shared;
+using Microsoft.AspNetCore.Mvc;
 using Date = System.DateOnly;
 
-namespace src.Controllers
+namespace DDDNetCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class PatientController: ControllerBase
     {
-        private readonly int pageSize = 2;
+        private const int PageSize = 2;
         private readonly PatientService _service;
         private readonly DBLogService _dbLogService;
         private readonly IUnitOfWork _unitOfWork;
@@ -28,7 +25,7 @@ namespace src.Controllers
         }
 
         
-        private static readonly EntityType patientEntityType = EntityType.PATIENT;
+        private static readonly EntityType PatientEntityType = EntityType.PATIENT;
 
         // GET: api/Patient/?pageNumber=1
         [HttpGet]
@@ -37,8 +34,8 @@ namespace src.Controllers
             var patients = await _service.GetAllAsync();
             
             var paginatedPatients = patients
-                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .Skip((pageNumber - 1) * PageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(PageSize)                    // Seleciona a quantidade especificada de itens para a página atual
                 .ToList();                         // Converte o resultado em uma lista para fácil manipulação
 
 
@@ -59,6 +56,7 @@ namespace src.Controllers
             return patient;
         }
         
+        /*
         // GET: api/Patient/name/{name}/?pageNumber=1
         [HttpGet("name/{fullName}")]
         public async Task<ActionResult<IEnumerable<PatientDto>>> GetByName(string fullName, int pageNumber)
@@ -82,8 +80,8 @@ namespace src.Controllers
             }
             
             var paginatedPatients = patient
-                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .Skip((pageNumber - 1) * PageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(PageSize)                    // Seleciona a quantidade especificada de itens para a página atual
                 .ToList();                         // Converte o resultado em uma lista para fácil manipulação
             
             return paginatedPatients;
@@ -144,8 +142,8 @@ namespace src.Controllers
             }
             
             var paginatedPatients = patient
-                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .Skip((pageNumber - 1) * PageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(PageSize)                    // Seleciona a quantidade especificada de itens para a página atual
                 .ToList();                         // Converte o resultado em uma lista para fácil manipulação
 
             return paginatedPatients;
@@ -163,11 +161,99 @@ namespace src.Controllers
             }
             
             var paginatedPatients = patient
-                .Skip((pageNumber - 1) * pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                .Take(pageSize)                    // Seleciona a quantidade especificada de itens para a página atual
+                .Skip((pageNumber - 1) * PageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
+                .Take(PageSize)                    // Seleciona a quantidade especificada de itens para a página atual
                 .ToList();                         // Converte o resultado em uma lista para fácil manipulação
 
             return paginatedPatients;
+        }
+        */
+        
+        //GET: api/Patient/filter/?fullName={fullName}&email={email}&phoneNumber={phoneNumber}&medicalRecordNumber={medicalRecorsNumber}&dateOfBirth={dateOfBirth}&gender={gender}&pageNumber={pageNumber}
+        [HttpGet("filter")]
+        public async Task<ActionResult<IEnumerable<PatientDto>>> SearchByFilter([FromQuery] string? fullName,
+                                                                                [FromQuery] string? email, 
+                                                                                [FromQuery] string? phoneNumber, 
+                                                                                [FromQuery] string? medicalRecordNumber,
+                                                                                [FromQuery] string? dateOfBirth, 
+                                                                                [FromQuery] string? gender,
+                                                                                [FromQuery] string? pageNumber)
+        {
+            // Initialize a base query
+            var patientsQuery = await _service.GetAllAsync();
+
+            // Filter by fullName if provided
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                var names = fullName.Split("-");
+                if (names.Length != 2)
+                {
+                    return BadRequest("Full name format is invalid. Expected format: FirstName-LastName");
+                }
+
+                var firstName = names[0];
+                var lastName = names[1];
+                patientsQuery = patientsQuery
+                    .Where(p => p.FullName.FirstName == firstName && p.FullName.LastName == lastName)
+                    .ToList();
+            }
+
+            // Filter by gender if provided
+            if (!string.IsNullOrEmpty(gender))
+            {
+                patientsQuery = patientsQuery
+                    .Where(p => p.Gender.Equals(GenderUtils.FromString(gender)))
+                    .ToList();
+            }
+
+            // Filter by email if provided
+            if (!string.IsNullOrEmpty(email))
+            {
+                patientsQuery = patientsQuery
+                    .Where(p => p.ContactInformation.Email.Value == email)
+                    .ToList();
+            }
+
+            // Filter by phone number if provided
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                patientsQuery = patientsQuery
+                    .Where(p => p.ContactInformation.PhoneNumber.Value == new PhoneNumber(phoneNumber).Value)
+                    .ToList();
+            }
+
+            // Filter by medical record number if provided
+            if (!string.IsNullOrEmpty(medicalRecordNumber))
+            {
+                patientsQuery = patientsQuery
+                    .Where(p => p.MedicalRecordNumber.Value == medicalRecordNumber)
+                    .ToList();
+            }
+
+            // Filter by date of birth if provided
+            if (!string.IsNullOrEmpty(dateOfBirth))
+            {
+                    patientsQuery = patientsQuery
+                        .Where(p => p.DateOfBirth.Equals(dateOfBirth))
+                        .ToList();
+            }
+        
+            // Pagination
+            if (patientsQuery.Count != 0)
+            {
+                if (pageNumber != null)
+                {
+                    var pageSize = 2;
+                    var paginatedPatients = patientsQuery
+                        .Skip((int.Parse(pageNumber)) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+                }
+                return patientsQuery;
+            
+            }
+            return NotFound("No patients match the specified search criteria.");
+            
         }
 
         // POST: api/Patient/{ "fullname", "dateOfBirth", "contactInformation" } 
@@ -191,10 +277,9 @@ namespace src.Controllers
         }
 
         // PUT: api/Patient/5
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult<PatientDto>> Update(UpdatingPatientDto dto)
         {
-            
             try
             {
                 if (dto == null)
@@ -237,8 +322,10 @@ namespace src.Controllers
                 patient.ContactInformation.Email = pendingEmail;
             }
             
-            patient.ClearVerificationToken();
-            _unitOfWork.CommitAsync();
+            patient.VerificationToken = null;
+            patient.TokenExpiryDate = null;
+            
+            await _unitOfWork.CommitAsync();
             
             return PatientMapper.ToDto(patient);
         }

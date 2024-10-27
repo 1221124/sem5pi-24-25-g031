@@ -205,12 +205,25 @@ namespace DDDNetCore.Domain.Patients
 
         public async Task<PatientDto?> UpdateAsync(UpdatingPatientDto dto)
         {
-            var patient = await _repo.GetByEmailAsync(dto.EmailId); //ainda tem os argumentos antigos
             
-            if (patient == null)
-                return null;   
             try
             {
+                var patient = await _repo.GetByEmailAsync(dto.EmailId); //ainda tem os argumentos antigos
+            
+                if (patient == null)
+                    return null;   
+                
+                if(dto.MedicalConditions != null)
+                    patient.ChangeMedicalConditions(dto.MedicalConditions);
+                
+                if(dto is { FirstName: not null, LastName: not null })
+                    patient.ChangeFullName(new FullName(dto.FirstName, dto.LastName));
+                
+                if(dto.AppointmentHistory != null)
+                    patient.ChangeAppointmentHistory(dto.AppointmentHistory);
+                
+                await _unitOfWork.CommitAsync();
+                
                 if (dto.PhoneNumber != null)
                 {
                     var phoneNumberToCheck = dto.PhoneNumber;
