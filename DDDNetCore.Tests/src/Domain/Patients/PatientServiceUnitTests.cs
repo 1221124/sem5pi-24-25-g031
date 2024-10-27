@@ -32,6 +32,7 @@ namespace DDDNetCore.Tests.Domain.Patients
         public PatientServiceUnitTest(TestDatabaseFixture fixture)
         {
             _context = fixture.Context;
+            fixture.Reset();
             
             var serviceCollection = new ServiceCollection();
             
