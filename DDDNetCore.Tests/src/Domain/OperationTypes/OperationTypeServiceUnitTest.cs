@@ -6,7 +6,7 @@ using Domain.Shared;
 using Moq;
 using Xunit;
 
-namespace Tests.Domain.OperationTypes
+namespace OperationTypes
 {
     public class OperationTypeServiceUnitTest
     {

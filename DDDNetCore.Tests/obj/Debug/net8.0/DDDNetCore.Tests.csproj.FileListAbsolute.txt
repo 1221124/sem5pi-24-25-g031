@@ -1,0 +1,14 @@
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\bin\Debug\net8.0\.msCoverageSourceRootsMapping_DDDNetCore.Tests
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\DDDNetCore.Tests.csproj.AssemblyReference.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\DDDNetCore.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfoInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfo.cs
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\DDDNetCore.Tests.csproj.CoreCompileInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\test\obj\Debug\net8.0\DDDNetCore.Tests.sourcelink.json
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\bin\Debug\net8.0\.msCoverageSourceRootsMapping_DDDNetCore.Tests
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.csproj.AssemblyReference.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfoInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.AssemblyInfo.cs
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.csproj.CoreCompileInputs.cache
+C:\Users\david\Desktop\ISEP\3ano1sem\sem5pi-24-25-g031\DDDNetCore.Tests\obj\Debug\net8.0\DDDNetCore.Tests.sourcelink.json

@@ -6,7 +6,7 @@ using Domain.Shared;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Users
+namespace Domain.Users
 {
     public class UserServiceUnitTest
     {
