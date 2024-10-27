@@ -13,9 +13,9 @@ namespace Domain.OperationRequests
         {
             return priority switch
             {
-                Priority.ELECTIVE => "Elective",
-                Priority.URGENT => "Urgent",
-                Priority.EMERGENCY => "Emergency",
+                Priority.ELECTIVE => "elective",
+                Priority.URGENT => "urgent",
+                Priority.EMERGENCY => "emergency",
                 _ => string.Empty
             };
         }
