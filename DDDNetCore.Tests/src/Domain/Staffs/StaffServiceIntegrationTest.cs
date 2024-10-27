@@ -71,7 +71,7 @@ namespace DDDNetCore.Tests.Domain.Staffs
         [Fact]
         public async Task GetByIdAsync_ShouldReturnStaff_WhenStaffExists()
         {
-            var staffDto = CreateSampleStaffDto("test3@domain.com");
+            var staffDto = CreateSampleStaffDto("test2@domain.com");
             var staff = ConvertToStaff(staffDto);
 
             var createdStaff = await _staffService.AddAsync(staff, staffDto.RoleFirstChar);
@@ -86,7 +86,7 @@ namespace DDDNetCore.Tests.Domain.Staffs
         [Fact]
         public async Task InactivateAsync_ShouldInactivateStaff_WhenEmailExists()
         {
-            var staffDto = CreateSampleStaffDto("test4@domain.com");
+            var staffDto = CreateSampleStaffDto("test3@domain.com");
             var staff = ConvertToStaff(staffDto);
 
             var createdStaff = await _staffService.AddAsync(staff, staffDto.RoleFirstChar);
@@ -104,7 +104,7 @@ namespace DDDNetCore.Tests.Domain.Staffs
         [Fact]
         public async Task DeleteAsync_ShouldRemoveStaff_WhenStaffIsInactive()
         {
-            var staffDto = CreateSampleStaffDto("test5@domain.com");
+            var staffDto = CreateSampleStaffDto("test4@domain.com");
             var staff = ConvertToStaff(staffDto);
 
             var createdStaff = await _staffService.AddAsync(staff, staffDto.RoleFirstChar);

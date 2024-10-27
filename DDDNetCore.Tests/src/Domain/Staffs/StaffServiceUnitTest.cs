@@ -127,7 +127,7 @@ namespace DDDNetCore.Tests.Domain.Staffs
         [Fact]
         public async Task GetByEmailAsync_ReturnsNull_WhenEmailDoesNotExist()
         {
-            var email = new Email("nonexistent@example.com");
+            var email = new Email("emailNotExists@example.com");
 
             _staffRepositoryMock.Setup(repo => repo.GetByEmailAsync(email)).ReturnsAsync((Staff)null);
 
