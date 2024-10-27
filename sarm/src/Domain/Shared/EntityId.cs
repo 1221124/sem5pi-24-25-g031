@@ -7,7 +7,7 @@ namespace Domain.Shared
     /// </summary>
     public abstract class EntityId: IEquatable<EntityId>, IComparable<EntityId>
     {
-        protected Object ObjValue {get;}
+        public Object ObjValue {get;}
 
         public String Value { 
             get { 
@@ -17,7 +17,7 @@ namespace Domain.Shared
                 } 
         }
 
-        protected EntityId(Object value)
+        public EntityId(Object value)
         {
             if (value.GetType() == typeof(String))
                 this.ObjValue = createFromString((String)value);
@@ -26,7 +26,7 @@ namespace Domain.Shared
         }
 
        
-        protected abstract Object createFromString(String text);
+        public abstract Object createFromString(String text);
         
         public abstract String AsString();
 

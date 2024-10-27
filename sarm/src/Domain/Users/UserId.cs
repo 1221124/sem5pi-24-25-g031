@@ -15,7 +15,7 @@ namespace Domain.Users
         }
 
         override
-        protected object createFromString(string text)
+        public object createFromString(string text)
         {
             return new Guid(text);
         }

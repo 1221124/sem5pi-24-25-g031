@@ -15,7 +15,7 @@ namespace Domain.OperationRequests
         }
 
         override
-        protected  Object createFromString(string text){
+        public  Object createFromString(string text){
             return new Guid(text);
         }
 
