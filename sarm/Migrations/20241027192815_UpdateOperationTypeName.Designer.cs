@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(SARMDbContext))]
-    partial class SARMDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241027192815_UpdateOperationTypeName")]
+    partial class UpdateOperationTypeName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,11 +94,6 @@ namespace DDDNetCore.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PhasesDuration")
                         .IsRequired()
@@ -234,6 +232,31 @@ namespace DDDNetCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UsersSessions");
+                });
+
+            modelBuilder.Entity("Domain.OperationTypes.OperationType", b =>
+                {
+                    b.OwnsOne("Domain.Shared.Name", "Name", b1 =>
+                        {
+                            b1.Property<string>("OperationTypeId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Name");
+
+                            b1.HasKey("OperationTypeId");
+
+                            b1.ToTable("OperationTypes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OperationTypeId");
+                        });
+
+                    b.Navigation("Name")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Patients.Patient", b =>

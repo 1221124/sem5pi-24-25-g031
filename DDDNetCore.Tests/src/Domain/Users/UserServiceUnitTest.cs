@@ -1,8 +1,6 @@
 using Xunit;
 using System.Threading.Tasks;
 using Domain.Shared;
-using Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using Domain.Users;

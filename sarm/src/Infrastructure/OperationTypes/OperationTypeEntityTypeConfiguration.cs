@@ -11,13 +11,13 @@ namespace Infrastructure.OperationTypes
         {
             builder.HasKey(o => o.Id);
 
-            builder.OwnsOne(o => o.Name, name =>
-            {
-                name.Property(n => n.Value)
-                    .HasColumnName("Name")
-                    .IsRequired()
-                    .HasMaxLength(100);
-            });
+            builder.Property(o => o.Name)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasConversion(
+                    v => (string)v,
+                    v => (Name)v
+                );
 
             builder.Property(o => o.Specialization)
                 .IsRequired()

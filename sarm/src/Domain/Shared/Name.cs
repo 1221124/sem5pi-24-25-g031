@@ -18,5 +18,15 @@ namespace Domain.Shared
         {
             return name.Value;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return Value == ((Name)obj).Value;
+        }
     }
 }

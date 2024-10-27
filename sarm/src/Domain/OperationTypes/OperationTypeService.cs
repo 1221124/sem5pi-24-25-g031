@@ -66,6 +66,9 @@ namespace Domain.OperationTypes
         {
             var operationType = OperationTypeMapper.ToEntityFromCreating(dto);
 
+            if (await this._repo.GetByNameAsync(operationType.Name) != null)
+                return null;
+
             await this._repo.AddAsync(operationType);
 
             await this._unitOfWork.CommitAsync();
