@@ -122,16 +122,6 @@ namespace Infrastructure.Patients
                     v => v.Value.ToString(),
                     v => new UserId(Guid.Parse(v))
                 );
-            builder.Property(p => p.VerificationToken)
-                .HasColumnName("VerificationToken")
-                .IsRequired(false);
-            builder.Property(p=> p.TokenExpiryDate)
-                .HasColumnName("TokenExpiryDate")
-                .IsRequired(false)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => v == null ? (DateTime?)null : DateTime.Parse(v)
-                );
         }
     }
 }
