@@ -254,11 +254,6 @@ namespace DDDNetCore.Controllers
 
             var patient =  PatientMapper.ToEntity(patientDto);
             
-            if (!patient.IsTokenValid(token))
-            {
-                return NotFound("Invalid token");
-            }
-            
             if (!string.IsNullOrEmpty(pendingPhoneNumber))
             {
                 patient.ContactInformation.PhoneNumber = new PhoneNumber(pendingPhoneNumber);
@@ -268,9 +263,6 @@ namespace DDDNetCore.Controllers
                 patient.ContactInformation.Email = pendingEmail;
             }
             
-            patient.VerificationToken = null;
-            patient.TokenExpiryDate = null;
-            
             await _unitOfWork.CommitAsync();
             
             return PatientMapper.ToDto(patient);
@@ -278,7 +270,7 @@ namespace DDDNetCore.Controllers
 
         
         
-        // DELETE: api/Patient/admin/5
+        // DELETE: api/Patient/patient/5
         [HttpDelete("patient/{id}")]
         public async Task<ActionResult> PatientDelete(Guid id)
         {
@@ -305,14 +297,6 @@ namespace DDDNetCore.Controllers
             var patientDto = await _service.GetByEmailAsync(new Email(email));
 
             var patient =  PatientMapper.ToEntity(patientDto);
-            
-            if (!patient.IsTokenValid(token))
-            {
-                return NotFound("Invalid token");
-            }
-            
-            patient.VerificationToken = null;
-            patient.TokenExpiryDate = null;
             
             await _unitOfWork.CommitAsync();
             
