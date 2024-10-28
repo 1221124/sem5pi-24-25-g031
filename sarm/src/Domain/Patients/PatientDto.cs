@@ -20,7 +20,7 @@ namespace Domain.Patients
         public string? VerificationToken { get; set; }
         public DateTime? TokenExpiryDate { get; set; }
 
-        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions>? medicalConditions, EmergencyContact? emergencyContact,UserId? userId, string? verificationToken, DateTime? tokenExpiryDate)
+        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions>? medicalConditions, EmergencyContact? emergencyContact,UserId? userId)
         {
             Id = id; 
             FullName = fullName;
@@ -31,8 +31,6 @@ namespace Domain.Patients
             MedicalConditions = medicalConditions;
             EmergencyContact = emergencyContact;
             UserId = userId;
-            VerificationToken = verificationToken;
-            TokenExpiryDate = tokenExpiryDate;
         }
         
         public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,AppointmentHistory appointmentHistory,UserId userId)

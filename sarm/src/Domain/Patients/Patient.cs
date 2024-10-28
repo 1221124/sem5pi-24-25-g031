@@ -17,8 +17,6 @@ namespace Domain.Patients
     public EmergencyContact? EmergencyContact { get; set; }
     public AppointmentHistory? AppointmentHistory { get; set; }
     public UserId? UserId { get; set; }
-    public string? VerificationToken { get; set; }
-    public DateTime? TokenExpiryDate { get; set; }
 
     public Patient() { }
     
@@ -36,7 +34,7 @@ namespace Domain.Patients
       UserId = userId;
     }
     
-    public Patient(Guid guid ,FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId,  string? verificationToken, DateTime? tokenExpiryDate)
+    public Patient(Guid guid ,FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
     {
       Id = new PatientId(guid);
       FullName = fullName;
@@ -48,8 +46,6 @@ namespace Domain.Patients
       EmergencyContact = emergencyContact;
       AppointmentHistory = appointmentHistory;
       UserId = userId;
-      VerificationToken = verificationToken;
-      TokenExpiryDate = tokenExpiryDate;
     }
         
     public Patient (FullName fullName, DateOfBirth dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
@@ -81,15 +77,13 @@ namespace Domain.Patients
       ContactInformation = new ContactInformation(email, phoneNumber);
     }
     
-    public Patient(Guid guid, Name FirstName, Name LastName, Email email, PhoneNumber phoneNumber, AppointmentHistory appointmentHistory, List<MedicalConditions> medicalConditions, string? verificationToken, DateTime? tokenExpiryDate)
+    public Patient(Guid guid, Name FirstName, Name LastName, Email email, PhoneNumber phoneNumber, AppointmentHistory appointmentHistory, List<MedicalConditions> medicalConditions)
     {
       Id = new PatientId(guid);
       FullName = new FullName(FirstName, LastName);
       ContactInformation = new ContactInformation(email, phoneNumber);
       AppointmentHistory = appointmentHistory;
       MedicalConditions = medicalConditions;
-      VerificationToken = verificationToken;
-      TokenExpiryDate = tokenExpiryDate;
     }
 
     public override string ToString()
@@ -220,34 +214,6 @@ namespace Domain.Patients
       {
         this.UserId = p.UserId;
       }
-      if(this.VerificationToken != null)
-      {
-        this.VerificationToken = p.VerificationToken;
-      }
-      if(this.TokenExpiryDate != null)
-      {
-        this.TokenExpiryDate = p.TokenExpiryDate;
-      }
-    }
-    
-    // Método para definir o token e a data de expiração
-    public void SetVerificationToken(string token, int expirationHours = 24)
-    {
-      VerificationToken = token;
-      TokenExpiryDate = DateTime.UtcNow.AddHours(expirationHours);
-    }
-
-    // Método para verificar se o token é válido
-    public bool IsTokenValid(string token)
-    {
-      return VerificationToken == token && TokenExpiryDate > DateTime.UtcNow;
-    }
-
-    // Método para remover o token após a validação
-    public void ClearVerificationToken()
-    {
-      VerificationToken = null;
-      TokenExpiryDate = null;
     }
     
   }

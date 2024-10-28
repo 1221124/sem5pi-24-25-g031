@@ -62,7 +62,7 @@ namespace Domain.Emails
         public async Task<(string subject, string body)> GenerateVerificationRemoveEmailContentSensitiveInfo(string token, UpdatingPatientDto dto)
         {
             var subject = "Please verify that you want to delete your patient profile";
-            var link = GenerateLinkSensitiveInfo(dto.EmailId.Value, token, dto.PendingPhoneNumber, dto.PendingEmail);
+            var link = GenerateLinkRemoveSensitiveInfo(dto.EmailId.Value, token);
             var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to delete your patient profile. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);

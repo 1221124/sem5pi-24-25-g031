@@ -333,18 +333,14 @@ namespace DDDNetCore.Domain.Patients
                 
                 if (dto.PhoneNumber != null || dto.Email != null)
                 {
-                    var token = Guid.NewGuid().ToString();
-                    patient.SetVerificationToken(token);
+                   
                     await _unitOfWork.CommitAsync();
-                    
-                    dto.VerificationToken = token;
-                    dto.TokenExpiryDate = patient.TokenExpiryDate;
 
                     if (dto.PhoneNumber != null) dto.PendingPhoneNumber = dto.PhoneNumber;
                     if (dto.Email != null) dto.PendingEmail = dto.Email;
                     
-                    var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(token, dto);
-                    await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
+                    //var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(token, dto);
+                    //await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
                 }
                 
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id.AsGuid() );
@@ -366,16 +362,9 @@ namespace DDDNetCore.Domain.Patients
 
             var dto = PatientMapper.ToDto(patient);
             var creatingPatientDto = PatientMapper.ToUpdatingPatientDto(dto);
-            
-            var token = Guid.NewGuid().ToString();
-            patient.SetVerificationToken(token);
-            await _unitOfWork.CommitAsync();
                     
-            creatingPatientDto.VerificationToken = token;
-            creatingPatientDto.TokenExpiryDate = patient.TokenExpiryDate;
-                    
-            var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(token, creatingPatientDto);
-            await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
+            //var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(token, creatingPatientDto);
+            //await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
             
             
             _repo.Remove(patient);

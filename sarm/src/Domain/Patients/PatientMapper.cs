@@ -50,9 +50,7 @@ namespace Domain.Patients
                 patient.ContactInformation,
                 patient.MedicalConditions,
                 patient.EmergencyContact,
-                patient.UserId,
-                patient.VerificationToken,
-                patient.TokenExpiryDate
+                patient.UserId
             );
         }
         
@@ -65,9 +63,7 @@ namespace Domain.Patients
                 dto.Email,
                 dto.PhoneNumber,
                 dto.AppointmentHistory,
-                dto.MedicalConditions,
-                dto.VerificationToken,
-                dto.TokenExpiryDate
+                dto.MedicalConditions
             );
         }
 
@@ -83,9 +79,7 @@ namespace Domain.Patients
                 dto.MedicalConditions,
                 dto.EmergencyContact,
                 dto.AppointmentHistory,
-                dto.UserId,
-                dto.VerificationToken,
-                dto.TokenExpiryDate
+                dto.UserId
             );
         }
     }
