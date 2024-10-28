@@ -140,17 +140,9 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("MedicalRecordNumber");
 
-                    b.Property<string>("TokenExpiryDate")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("TokenExpiryDate");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("UserId");
-
-                    b.Property<string>("VerificationToken")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("VerificationToken");
 
                     b.HasKey("Id");
 
