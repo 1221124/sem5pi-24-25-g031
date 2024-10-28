@@ -1,8 +1,10 @@
 using DDDNetCore.Domain.Patients;
 using Domain.DBLogs;
+using Domain.Emails;
 using Domain.Patients;
 using Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Date = System.DateOnly;
 
 namespace DDDNetCore.Controllers
@@ -14,14 +16,15 @@ namespace DDDNetCore.Controllers
         private const int PageSize = 2;
         private readonly PatientService _service;
         private readonly DBLogService _dbLogService;
+        private readonly IEmailService _emailService;
         private readonly IUnitOfWork _unitOfWork;
         
-        public PatientController(PatientService service, DBLogService dbLogService, IUnitOfWork unitOfWork)
+        public PatientController(PatientService service, DBLogService dbLogService, IUnitOfWork unitOfWork, EmailService emailService)
         {
             _service = service;
             _dbLogService = dbLogService; // Certifique-se de inicializá-lo
             _unitOfWork = unitOfWork;
-            
+            _emailService = emailService;
         }
 
         
@@ -238,6 +241,12 @@ namespace DDDNetCore.Controllers
                 {
                     return NotFound("Patient not found");
                 }
+
+                if (dto.PhoneNumber == null && dto.Email == null) return Ok(patient);
+                
+                var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(dto);
+                await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
+
                 return Ok(patient);
             }
             catch (BusinessRuleValidationException ex)

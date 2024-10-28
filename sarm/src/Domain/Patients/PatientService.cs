@@ -333,14 +333,8 @@ namespace DDDNetCore.Domain.Patients
                 
                 if (dto.PhoneNumber != null || dto.Email != null)
                 {
-                   
-                    await _unitOfWork.CommitAsync();
-
                     if (dto.PhoneNumber != null) dto.PendingPhoneNumber = dto.PhoneNumber;
                     if (dto.Email != null) dto.PendingEmail = dto.Email;
-                    
-                    //var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(token, dto);
-                    //await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
                 }
                 
                 //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id.AsGuid() );

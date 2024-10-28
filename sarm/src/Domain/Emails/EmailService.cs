@@ -50,48 +50,34 @@ namespace Domain.Emails
             return (subject, body);
         }
         
-        public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfo(string token, UpdatingPatientDto dto)
+        public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfo(UpdatingPatientDto dto)
         {
             var subject = "Please verify that you want to change sensitive information";
-            var link = GenerateLinkRemoveSensitiveInfo(dto.EmailId.Value, token);
+            var link = GenerateLinkSensitiveInfo(dto.EmailId.Value, dto.PendingPhoneNumber, dto.PendingEmail);
             var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);
         }
         
-        public async Task<(string subject, string body)> GenerateVerificationRemoveEmailContentSensitiveInfo(string token, UpdatingPatientDto dto)
+        public async Task<(string subject, string body)> GenerateVerificationRemoveEmailContentSensitiveInfo(UpdatingPatientDto dto)
         {
             var subject = "Please verify that you want to delete your patient profile";
-            var link = GenerateLinkRemoveSensitiveInfo(dto.EmailId.Value, token);
+            var link = GenerateLinkRemoveSensitiveInfo(dto.EmailId.Value);
             var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to delete your patient profile. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);
         }
         
-        public string GenerateLinkRemoveSensitiveInfo(string email, string token)
-        {
-            var uriBuilder = new UriBuilder($"http://localhost:5500/api/Patient/removePatient");
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            query["email"] = email;
-            query["token"] = token;
-            
-            uriBuilder.Query = query.ToString();
-            return uriBuilder.ToString();
-        }
 
         public string GenerateLink(string email)
         {
             return $"http://localhost:5500/api/Users/verify?token={EncodeToken(email)}";
         }
         
-        public string GenerateLinkSensitiveInfo(string email, string token, PhoneNumber? phoneNumber, Email? newEmail)
+        public string GenerateLinkSensitiveInfo(string email, PhoneNumber? phoneNumber, Email? newEmail)
         {
-            var uriBuilder = new UriBuilder($"http://localhost:5500/api/Patient/sensitiveInfo");
+            var uriBuilder = new UriBuilder($"http://localhost:5500/api/Patient/sensitiveInfo?token={EncodeToken(email)}");
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            query["email"] = email;
-            query["token"] = token;
             
             if (phoneNumber != null)
             {
@@ -104,6 +90,11 @@ namespace Domain.Emails
             
             uriBuilder.Query = query.ToString();
             return uriBuilder.ToString();
+        }
+        
+        public string GenerateLinkRemoveSensitiveInfo(string email)
+        {
+            return $"http://localhost:5500/api/Users/verify?removePatient={EncodeToken(email)}";
         }
 
         public string GenerateToken()
