@@ -6,14 +6,12 @@ using Infrastructure.OperationRequests;
 using Infrastructure.Users;
 using Infrastructure.Patients;
 using Infrastructure.StaffRepository;
-using Infrastructure.DBLogs;
 using Domain.OperationTypes;
 using Domain.OperationRequests;
 using Domain.Users;
 using Domain.Patients;
 using Domain.Staffs;
 using Domain.Shared;
-using Domain.DBLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Infrastructure.Shared;
@@ -26,6 +24,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Domain.Authz;
+using Domain.DbLogs;
+using Infrastructure.DbLogs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,8 +74,8 @@ builder.Services.AddTransient<StaffService>();
 
 builder.Services.AddHttpClient<IAMService>();
 
-builder.Services.AddTransient<IDBLogRepository, DBLogRepository>();
-builder.Services.AddTransient<DBLogService>();
+builder.Services.AddTransient<IDbLogRepository, DbLogRepository>();
+builder.Services.AddTransient<DbLogService>();
 
 builder.Services.AddTransient<UsersSessionRepository>();
 builder.Services.AddTransient<IUserSessionRepository, UsersSessionRepository>();
@@ -85,7 +85,7 @@ builder.Services.AddTransient<AuthorizationService>();
 
 builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.com", "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"));
 
-builder.Services.AddSingleton<PatientCleanupService>();
+//builder.Services.AddSingleton<PatientCleanupService>();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", "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"));
