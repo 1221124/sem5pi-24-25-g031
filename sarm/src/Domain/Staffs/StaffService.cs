@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using Domain.DbLogs;
 using Domain.DBLogs;
 using Domain.Shared;
 using Domain.Users;
@@ -17,19 +18,16 @@ namespace Domain.Staffs
         private readonly IStaffRepository _repo;
 
         private readonly IUserRepository _userRepo;
+        
+        private readonly DbLogService _dbLogService;
 
-        private readonly IDBLogRepository _logRepo;
+        private static readonly EntityType StaffEntityType = EntityType.OperationRequest;
 
-        private readonly DBLogService _dbLogService;
-
-        private static readonly EntityType StaffEntityType = EntityType.OPERATION_REQUEST;
-
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, IUserRepository userRepo, IDBLogRepository logRepo, DBLogService dbLogService)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, IUserRepository userRepo, DbLogService dbLogService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             this._userRepo = userRepo;
-            this._logRepo = logRepo;
             this._dbLogService = dbLogService;
         }
 
@@ -92,7 +90,7 @@ namespace Domain.Staffs
             }
             catch (Exception e)
             {
-                _dbLogService.LogError(StaffEntityType, e.ToString());
+                //_dbLogService.LogError(StaffEntityType, e.ToString());
                 return null;
             }
         }
@@ -159,7 +157,7 @@ namespace Domain.Staffs
 
                 if (newStaff == null)
                 {
-                    _dbLogService.LogError(StaffEntityType, "Unable to find {staff " + staff.Id + "}");
+                    //_dbLogService.LogError(StaffEntityType, "Unable to find {staff " + staff.Id + "}");
                     return StaffMapper.ToDto(staff);
                 }
 
@@ -219,7 +217,7 @@ namespace Domain.Staffs
             }
             catch (Exception e)
             {
-                _dbLogService.LogError(StaffEntityType, e.ToString());
+                //_dbLogService.LogError(StaffEntityType, e.ToString());
                 return StaffMapper.ToDto(staff);
             }
         }
@@ -269,7 +267,7 @@ namespace Domain.Staffs
             }
             catch (Exception e)
             {
-                _dbLogService.LogError(StaffEntityType, e.ToString());
+                //_dbLogService.LogError(StaffEntityType, e.ToString());
                 return null;
             }
         }
@@ -291,7 +289,7 @@ namespace Domain.Staffs
             }
             catch (Exception e)
             {
-                _dbLogService.LogError(StaffEntityType, e.ToString());
+                //_dbLogService.LogError(StaffEntityType, e.ToString());
                 return null;
             }
         }
@@ -311,7 +309,7 @@ namespace Domain.Staffs
             }
             catch (Exception e)
             {
-                _dbLogService.LogError(StaffEntityType, e.ToString());
+                //_dbLogService.LogError(StaffEntityType, e.ToString());
                 return null;
             }
         }

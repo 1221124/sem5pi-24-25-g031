@@ -1,4 +1,5 @@
 using DDDNetCore.Domain.Patients;
+using Domain.DbLogs;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.DBLogs;
@@ -10,11 +11,10 @@ namespace Domain.OperationRequests
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationRequestRepository _repo;
         private readonly PatientService _patientService;
-        private readonly DBLogService _logService;
-        private static readonly EntityType OperationRequestEntityType = EntityType.OPERATION_REQUEST;
+        private readonly DbLogService _logService;
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo,
-        PatientService patientService, DBLogService logService)
+        PatientService patientService, DbLogService logService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
@@ -36,7 +36,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(OperationRequestEntityType, e.ToString());
+                _logService.LogError(EntityType.OperationRequest, DbLogType.Create, e.ToString());
                 return null;
             }
         }
@@ -78,25 +78,23 @@ namespace Domain.OperationRequests
             }
         }
 
-        public async Task<List<OperationRequestDto>?> GetByPatientNameAsync(FullName fullName)
+        public async Task<List<OperationRequestDto>> GetByPatientNameAsync(FullName fullName)
         {
             try
             {
                 var patients = await this._patientService.GetAllAsync();
                 var operations = await this._repo.GetAllAsync();
-                //var list = patients.Where(x => x.FullName.Equals(fullName)).ToList();
 
                 if (patients == null ||patients.Count == 0 || operations == null || operations.Count == 0)
                 {
-                    return null;
+                    return [];
                 }
                 
                 List<OperationRequest> list = new();
-                
+
                 foreach (var pat in patients)
                 {
-                    if(pat.FullName.FirstName.Value.Equals(fullName.FirstName.Value) && 
-                       pat.FullName.LastName.Value.Equals(fullName.LastName.Value))
+                    if (pat.FullName.Equals(fullName))
                     {
                         foreach (var op in operations)
                         {
@@ -107,37 +105,34 @@ namespace Domain.OperationRequests
                         }
                     }
                 }
-                
 
-                if (list == null || list.Count == 0)
+                if (list == null)
                 {
-                    return null;
+                    return [];
                 }
-
-                //var final = operations.Where(x => list.Any(y => y.Id.Equals(x.PatientId.AsGuid()))).ToList();
-
+                
                 return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
             {
-                return null;
+                return [];
             }
         }
 
-        public async Task<List<OperationRequestDto>?> GetByOperationTypeAsync(OperationTypeId operationType)
+        public async Task<List<OperationRequestDto>> GetByOperationTypeAsync(OperationTypeId operationType)
         {
             try
             {
                 var list = await _repo.GetByOperationType(operationType);
 
                 if (list == null)
-                    return null;
+                    return [];
 
                 return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
             {
-                return null;
+                return [];
             }
         }
 
@@ -148,18 +143,21 @@ namespace Domain.OperationRequests
                 var list = await _repo.GetByStatusId(requestStatus);
 
                 if (list == null)
-                    return null;
+                    return [];
 
                 return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
             {
-                return null;
+                return [];
             }
         }
 
         public async Task<OperationRequestDto?> UpdateAsync(UpdatingOperationRequestDto dto)
         {
+            var entity = EntityType.OperationRequest;
+            var log = DbLogType.Update;
+            
             try
             {
                 var operationRequest = await _repo.GetByIdAsync(dto.Id);
@@ -167,7 +165,7 @@ namespace Domain.OperationRequests
                 var newOperationRequest = OperationRequestMapper.ToEntityFromUpdating(dto, operationRequest);
 
                 if(operationRequest == null){
-                    _logService.LogError(OperationRequestEntityType, "Unable to find {operationRequest " + newOperationRequest.Id  + "}");
+                    _logService.LogError(entity, log, "Unable to update {" + newOperationRequest.Id  + "}");
                     return null;
                 }
 
@@ -178,37 +176,42 @@ namespace Domain.OperationRequests
                 await _repo.UpdateAsync(operationRequest);
                 await _unitOfWork.CommitAsync();
 
-                _logService.LogAction(OperationRequestEntityType, DBLogType.UPDATE, operationRequest.Id.AsGuid());
+                _logService.LogAction(entity, log, "Updated {" + operationRequest.Id + "}");
                 return OperationRequestMapper.ToDto(operationRequest);
 
             }
             catch (Exception e)
             {
-                _logService.LogError(OperationRequestEntityType, e.ToString());
+                _logService.LogError(entity, log, e.ToString());
                 return null;
             }
         }
 
         public async Task<OperationRequestDto?> DeleteAsync(OperationRequestId id)
         {
+            var entity = EntityType.OperationRequest;
+            var log = DbLogType.Delete;
+            
             try
             {
                 var category = await this._repo.GetByIdAsync(id);
 
-                if (category == null)
+                if (category == null){
+                    _logService.LogAction(entity, log, "Unable to delete {" + id + "}");
                     return null;
-
+                }
+                
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
-                //_logService.LogAction(OperationRequestEntityType, DBLogType.DELETE, category.Id.AsGuid());
+                _logService.LogAction(entity, log, "Deleted {" + id + "}");
 
                 return OperationRequestMapper.ToDto(id);
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //_logService.LogError(OperationRequestEntityType, e.ToString());
+                _logService.LogError(entity, log, e.ToString());
                 return null;
             }
         }
