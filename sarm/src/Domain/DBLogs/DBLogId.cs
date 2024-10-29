@@ -1,18 +1,25 @@
-using System;
+using System.Text.Json.Serialization;
 using Domain.Shared;
 
 namespace Domain.DBLogs
 {
-    public class DBLogId : EntityId
+    public class DbLogId : EntityId
     {
-        public DBLogId(Guid value) : base(value)
+        //public new Guid Value => (Guid)base.ObjValue;
+        
+        [JsonConstructor]
+        public DbLogId(Guid value) : base(value)
         {
         }
 
-        public DBLogId(string value) : base(value)
+        public DbLogId(string value) : base(value)
         {
         }
 
+        public DbLogId() : base(Guid.NewGuid())
+        {
+        }
+        
         override
         public object createFromString(string text)
         {

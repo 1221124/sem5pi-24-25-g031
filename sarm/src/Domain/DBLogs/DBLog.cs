@@ -1,33 +1,32 @@
-using System;
+using DDDNetCore.Domain.DBLogs;
+using Domain.DBLogs;
 using Domain.Shared;
-using Domain.Users;
 
-namespace Domain.DBLogs
+namespace Domain.DbLogs
 {
-    public class DBLog : Entity<DBLogId>, IAggregateRoot
+    public class DbLog : Entity<DbLogId>, IAggregateRoot
     {
         public EntityType EntityType { get; }
-        public DBLogType LogType { get; }
+        public DbLogType LogType { get; }
         public DateTime TimeStamp { get; }
-        //public Guid PerformedBy { get; }
-        public Guid Affected { get; }
-        public string? Message { get; }
+        public Guid? Affected { get; }
+        public Message Message { get; }
 
             
-        public DBLog(EntityType entityType, DBLogType logType, /*Guid performedBy,*/ Guid affected)
+        public DbLog(EntityType entityType, DbLogType logType, Message message)
         {
-            Id = new DBLogId(Guid.NewGuid());
+            Id = new DbLogId(Guid.NewGuid());
             EntityType = entityType;
             LogType = logType;
             TimeStamp = DateTime.Now;   
-            //PerformedBy = performedBy;
-            Affected = affected;
+            Message = message;
         }
 
-        public DBLog(EntityType entityType, string message){
-            Id = new DBLogId(Guid.NewGuid());
+        public DbLog(EntityType entityType, DbLogType logType, Guid affected, Message message){
+            Id = new DbLogId(Guid.NewGuid());
             EntityType = entityType;
-            LogType = DBLogType.ERROR;
+            LogType = logType;
+            Affected = affected;
             TimeStamp = DateTime.Now;
             Message = message;
         }

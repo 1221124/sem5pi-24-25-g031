@@ -1,36 +1,41 @@
-
 using System;
 
 namespace Domain.DBLogs
 {
-    public enum EntityType{
-        USER,
-        PATIENT,
-        STAFF,
-        OPERATION_REQUEST,
-        OPERATION_TYPE,
-        APPOINTMENT,
-        SURGERY_ROOM,
-        LOG
+    public enum EntityType
+    {
+        User,
+        Patient,
+        Staff,
+        OperationRequest,
+        OperationType,
+        Appointment,
+        SurgeryRoom,
+        Log
     }
 
-    public class EntityTypeName{
-        public static string Get(EntityType entityType){
-            switch(entityType){
-                case EntityType.USER:
+    public class EntityTypeName
+    {
+        public static string Get(EntityType entityType)
+        {
+            switch (entityType)
+            {
+                case EntityType.User:
                     return "User";
-                case EntityType.PATIENT:
+                case EntityType.Patient:
                     return "Patient";
-                case EntityType.STAFF:
+                case EntityType.Staff:
                     return "Staff";
-                case EntityType.OPERATION_REQUEST:
+                case EntityType.OperationRequest:
                     return "Operation Request";
-                case EntityType.OPERATION_TYPE:
+                case EntityType.OperationType:
                     return "Operation Type";
-                case EntityType.APPOINTMENT:
+                case EntityType.Appointment:
                     return "Appointment";
-                case EntityType.SURGERY_ROOM:
+                case EntityType.SurgeryRoom:
                     return "Surgery Room";
+                case EntityType.Log:
+                    return "Log";
                 default:
                     throw new ArgumentException("Invalid entity type");
             }

@@ -1,12 +1,13 @@
-namespace DBLogs{
+namespace Domain.DBLogs
+{
     public enum UpdateType
     {
-        PATIENT_NAME,
-        PATIENT_MEDICAL_RECORD_NUMBER,
-        STATUS,
-        DEADLINE_DATE,
-        PRIORITY,
-        DATE_RANGE
+        PatientName,
+        PatientMedicalRecordNumber,
+        Status,
+        DeadlineDate,
+        Priority,
+        DateRange
     }
 
     public class UpdateTypeName
@@ -15,17 +16,17 @@ namespace DBLogs{
         {
             switch (type)
             {
-                case UpdateType.PATIENT_NAME:
+                case UpdateType.PatientName:
                     return "Patient Name";
-                case UpdateType.PATIENT_MEDICAL_RECORD_NUMBER:
+                case UpdateType.PatientMedicalRecordNumber:
                     return "Patient Medical Record Number";
-                case UpdateType.STATUS:
+                case UpdateType.Status:
                     return "Status";
-                case UpdateType.DEADLINE_DATE:
+                case UpdateType.DeadlineDate:
                     return "Deadline Date";
-                case UpdateType.PRIORITY:
+                case UpdateType.Priority:
                     return "Priority";
-                case UpdateType.DATE_RANGE:
+                case UpdateType.DateRange:
                     return "Date Range";
                 default:
                     return "Invalid.";

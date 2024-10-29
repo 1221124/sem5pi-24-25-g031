@@ -1,9 +1,11 @@
+using Domain.DBLogs;
 using Domain.Shared;
 
 
-namespace Domain.DBLogs
+namespace Domain.DbLogs
 {
-    public interface IDBLogRepository : IRepository<DBLog, DBLogId>
+    public interface IDbLogRepository : IRepository<DbLog, DbLogId> 
     {
+        
     }
 }
