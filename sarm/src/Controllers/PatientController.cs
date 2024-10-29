@@ -1,11 +1,10 @@
 using DDDNetCore.Domain.Patients;
+using Domain.DbLogs;
 using Domain.DBLogs;
 using Domain.Emails;
 using Domain.Patients;
 using Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
-using Date = System.DateOnly;
 
 namespace DDDNetCore.Controllers
 {
@@ -15,11 +14,12 @@ namespace DDDNetCore.Controllers
     {
         private const int PageSize = 2;
         private readonly PatientService _service;
-        private readonly DBLogService _dbLogService;
         private readonly IEmailService _emailService;
+        
+        private readonly DbLogService _dbLogService;
         private readonly IUnitOfWork _unitOfWork;
         
-        public PatientController(PatientService service, DBLogService dbLogService, IUnitOfWork unitOfWork, EmailService emailService)
+        public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, EmailService emailService)
         {
             _service = service;
             _dbLogService = dbLogService; // Certifique-se de inicializá-lo
@@ -28,7 +28,7 @@ namespace DDDNetCore.Controllers
         }
 
         
-        private static readonly EntityType PatientEntityType = EntityType.PATIENT;
+        private static readonly EntityType PatientEntityType = EntityType.Patient;
 
         // GET: api/Patient/?pageNumber=1
         [HttpGet]

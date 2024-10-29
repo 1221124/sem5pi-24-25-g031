@@ -20,9 +20,9 @@ namespace Controllers
 
         private readonly IStaffRepository _repo;
 
-        private readonly DBLogService _DBLogService;
+        //private readonly DbLogService _DBLogService;
 
-        private static readonly EntityType StaffEntityType = EntityType.STAFF;
+        private static readonly EntityType StaffEntityType = EntityType.Staff;
 
         public StaffController(StaffService service)
         {
@@ -147,7 +147,7 @@ namespace Controllers
         {
             if (dto == null)
             {
-                _DBLogService.LogError(EntityType.STAFF, "Staff data is required.");
+                //_DBLogService.LogError(EntityType.STAFF, "Staff data is required.");
                 return BadRequest("Staff data is required.");
             }
             var staff = await _service.GetByEmailAsync(oldEmail); 

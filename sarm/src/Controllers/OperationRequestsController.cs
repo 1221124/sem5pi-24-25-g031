@@ -1,3 +1,4 @@
+using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
 using Domain.OperationRequests;
 using Domain.DBLogs;
@@ -12,16 +13,14 @@ namespace Controllers
     {
         private readonly int pageSize = 2;
         private readonly OperationRequestService _operationRequestService;
-        private readonly DBLogService _DBLogService;
-        private static readonly EntityType OperationRequestEntityType = EntityType.OPERATION_REQUEST;
+        private readonly DbLogService _logService;
 
-        public OperationRequestController(OperationRequestService operationRequestService, DBLogService dBLogService)
+        public OperationRequestController(OperationRequestService operationRequestService, DbLogService logService)
         {
             _operationRequestService = operationRequestService;
-            _DBLogService = dBLogService;
+            _logService = logService;
         }
-
-
+        
         // GET api/operationrequest
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OperationRequest>>> Get(int pageNumber)
@@ -39,7 +38,6 @@ namespace Controllers
                 return Ok(paginated);
 
             }catch(Exception ex){
-                //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
                 return BadRequest("Error: " + ex.Message);
             }
         }
@@ -48,14 +46,20 @@ namespace Controllers
         [HttpGet("id/{id}")]
         public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
         {
-            var operationRequest = await _operationRequestService.GetByIdAsync(new OperationRequestId(id));
-
-            if (operationRequest == null)
+            try
             {
-                return NotFound();
-            }
+                var operationRequest = await _operationRequestService.GetByIdAsync(new OperationRequestId(id));
 
-            return Ok(operationRequest);
+                if (operationRequest == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(operationRequest);
+            }catch(Exception ex)
+            {
+                return BadRequest("Error: " + ex.Message);
+            }
         }
         
         // GET api/operationrequest/patientname
@@ -114,7 +118,9 @@ namespace Controllers
 
                 return Ok(paginated);
 
-            }catch(Exception ex){
+            }
+            catch(Exception ex)
+            {
                 return BadRequest("Error: " + ex.Message);
             }
         }
@@ -141,7 +147,9 @@ namespace Controllers
 
                 return Ok(paginated);
 
-            }catch(Exception ex){
+            }
+            catch(Exception ex)
+            {
                 return BadRequest("Error: " + ex.Message);
             }
         }
@@ -151,19 +159,33 @@ namespace Controllers
         [HttpPost]
         public async Task<ActionResult<OperationRequestDto>> Create([FromBody] CreatingOperationRequestDto dto)
         {
-            if (dto == null)
+            var entity = EntityType.OperationRequest;
+            var log = DbLogType.Create;
+            
+            try
             {
-                return BadRequest("Creating Operation Type DTO cannot be null");
+                if (dto == null)
+                {
+                    _logService.LogError(entity, log,"Creating Operation Type DTO cannot be null");
+                    return BadRequest("Creating Operation Type DTO cannot be null");
+                }
+
+                var operationRequest = await _operationRequestService.AddAsync(dto);
+
+                if (operationRequest == null)
+                {
+                    _logService.LogError(EntityType.OperationRequest, DbLogType.Create,
+                        "Operation Request was not created.");
+                    return BadRequest("Operation Request was not created.");
+                }
+
+                return CreatedAtAction(nameof(GetById), new { id = operationRequest.Id }, operationRequest);
             }
-
-            var operationRequest = await _operationRequestService.AddAsync(dto);
-
-            if (operationRequest == null)
+            catch (Exception ex)
             {
-                return BadRequest("Operation Request was not created.");
+                _logService.LogError(entity, log, "Error in Create: " + ex.Message);
+                return BadRequest("Error in Create: " + ex.Message);
             }
-
-            return CreatedAtAction(nameof(GetById), new { id = operationRequest.Id }, operationRequest);
         }
 
         //PUT api/operationrequest/update
@@ -172,7 +194,7 @@ namespace Controllers
         {
             try{
                 if (dto == null) {
-                    //_DBLogService.LogError(EntityType.OPERATION_REQUEST, "Operation request data is required.");
+                    _logService.LogError(EntityType.OperationRequest, DbLogType.Update,"Operation request data is required.");
                     return BadRequest("Operation request data is required.");
                 }
 
@@ -203,7 +225,7 @@ namespace Controllers
             }
             catch(Exception ex)
             {
-                //_DBLogService.LogError(OperationRequestEntityType, ex.Message);
+                _logService.LogError(EntityType.OperationType, DbLogType.Delete, ex.Message);
                 return BadRequest("Error in Delete: " + ex.Message); 
             }
         }
