@@ -1,13 +1,14 @@
+using DDDNetCore.Domain.DBLogs;
+using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.DBLogs;
 
 
-namespace Infrastructure.DBLogs
+namespace Infrastructure.DbLogs
 {
-    public class DBLogEntityTypeConfiguration : IEntityTypeConfiguration<DBLog>
+    public class DbLogEntityTypeConfiguration : IEntityTypeConfiguration<DbLog>
     {
-        public void Configure(EntityTypeBuilder<DBLog> builder)
+        public void Configure(EntityTypeBuilder<DbLog> builder)
         {
             builder.HasKey(p => p.Id);
 
@@ -19,14 +20,18 @@ namespace Infrastructure.DBLogs
                 .IsRequired()
                 .HasColumnName("LogType");
 
-            // builder.Property(p => p.PerformedBy)
-            //     .HasColumnName("PerformedBy");
-            
+
             builder.Property(p => p.Affected)
                 .HasColumnName("Affected");
 
             builder.Property(p => p.Message)
-                .HasColumnName("Message");
+                .IsRequired()
+                .HasColumnName("Message")
+                .HasConversion(
+                    v => v.Value,
+                    v => new Message(v)
+                    )
+                ;
         }
     }
 }

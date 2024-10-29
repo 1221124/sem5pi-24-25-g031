@@ -1,3 +1,4 @@
+using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;
 
 using Domain.OperationTypes;
@@ -11,16 +12,15 @@ using Domain.Users;
 using Infrastructure.Patients;
 using Domain.Staffs;
 using Infrastructure.Staffs;
-using Domain.DBLogs;
-using Infrastructure.DBLogs;
 using Infrastructure.UsersSession;
 using Domain.UsersSession;
+using Infrastructure.DbLogs;
 
 namespace Infrastructure
 {
     public class SARMDbContext : DbContext
     {
-        public DbSet<DBLog> DBLogs { get; set; }
+        public DbSet<DbLog> DbLogs { get; set; }
         public DbSet<OperationType> OperationTypes { get; set; }
         public DbSet<OperationRequest> OperationRequests { get; set; }
         public DbSet<User> Users { get; set; }
@@ -48,7 +48,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new DBLogEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new DbLogEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UsersSessionEntityTypeConfiguration());
         }
     }
