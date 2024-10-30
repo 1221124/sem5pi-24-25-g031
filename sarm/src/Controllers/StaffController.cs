@@ -18,15 +18,19 @@ namespace Controllers
 
         private readonly IStaffRepository _repo;
 
-        private readonly DbLogService _DBLogService;
+        private readonly DbLogService _dbLogService;
 
         private static readonly EntityType StaffEntityType = EntityType.Staff;
 
         private readonly IUnitOfWork _unitOfWork;
         
-        public StaffController(StaffService service)
+        public StaffController(StaffService service, IEmailService iemailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService)
         {
             _service = service;
+            _emailService = iemailService;
+            _repo = repo;
+            _dbLogService = dbLogService;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Staff/?pageNumber=1
@@ -149,8 +153,8 @@ namespace Controllers
             {
                 if (dto == null)
                 {
-                    //_DBLogService.LogError(EntityType.Staff, "Staff data is required.");
-                    return BadRequest("Staff data is required.");
+                    _dbLogService.LogAction(EntityType.Staff, DbLogType.Update,"Staff data is required.");
+                    return BadRequest("Invalid UpdatingStaffDto");
                 }
                 
                 var staff = await _service.GetByEmailAsync(oldEmail);
@@ -160,16 +164,11 @@ namespace Controllers
                     return NotFound("Staff not found");
                 }
 
-                var updateStaff = await _service.UpdateAsync(oldEmail, StaffMapper.ToEntityFromUpdating(staff));
-
-                if (updateStaff == null)
-                {
-                    return NotFound("Staff not found");
-                }
+                var updateStaff = await _service.UpdateAsync(oldEmail, dto);
                 
                 if (dto.PhoneNumber == null && dto.Email == null) return Ok(staff);
 
-                var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfoStaff(dto);
+                var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfoStaff(oldEmail, dto);
                 await _emailService.SendEmailAsync(oldEmail, subject, body);
 
                 return Ok(staff);
@@ -185,12 +184,18 @@ namespace Controllers
         
         //GET: api/Staff/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
         [HttpGet("sensitiveInfo")]
-        public async Task<ActionResult<StaffDto>> VerifySensitiveInfo([FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
+        public async Task<ActionResult<StaffDto?>> VerifySensitiveInfo([FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
         {
-            var emailDecode = _emailService.DecodeToken(token);
+            Console.WriteLine(pendingPhoneNumber);
+            Console.WriteLine(pendingEmail);
             
-            var staffDto = await _service.GetByEmailAsync(new Email(emailDecode));
+            var emailDecode = _emailService.DecodeToken(token); //1220786
+            
+            var staffDto = await _service.GetByEmailAsync(new Email(emailDecode)); //1220784
 
+            if (staffDto == null)
+                return null;
+            
             var staff =  StaffMapper.ToEntity(staffDto);
             
             if (!string.IsNullOrEmpty(pendingPhoneNumber))
