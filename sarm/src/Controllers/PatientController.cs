@@ -3,6 +3,7 @@ using Domain.DbLogs;
 using Domain.Emails;
 using Domain.Patients;
 using Domain.Shared;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDNetCore.Controllers
@@ -232,6 +233,7 @@ namespace DDDNetCore.Controllers
             {
                 if (dto == null)
                 {
+                    _dbLogService.LogAction( EntityType.Patient, DbLogType.Update, "Patient data is required.");
                     return BadRequest("Invalid UpdatingPatientDto");
                 }
                 var patient = await _service.UpdateAsync(dto);
@@ -250,6 +252,7 @@ namespace DDDNetCore.Controllers
             }
             catch (BusinessRuleValidationException ex)
             {
+                _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, ex.Message);
                 return BadRequest(new {Message = ex.Message});
             }
         }
