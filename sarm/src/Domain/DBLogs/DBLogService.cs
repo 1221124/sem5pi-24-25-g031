@@ -14,9 +14,12 @@ namespace Domain.DbLogs
             _unitOfWork = unitOfWork;
         }
 
-        public async void LogError(EntityType entityType, DbLogType dbLogType, Message message)
+        private async void LogError(Message message)
         {
-            var log = new DbLog(entityType, dbLogType, message);
+            var entityTypeName = new EntityTypeName(EntityType.Log);
+            var logTypeName = new DbLogTypeName(DbLogType.Error);
+            
+            var log = new DbLog(entityTypeName, logTypeName, message);
 
             await CreateLogAsync(log);
         }
@@ -25,23 +28,23 @@ namespace Domain.DbLogs
         {
             try
             {
-                var log = new DbLog(entityType, logType, message:"Action: " + message);
+                //var log = new DbLog(entityType, logType, message:"Action: " + message);
 
+                var entityTypeName = new EntityTypeName(entityType);
+                var logTypeName = new DbLogTypeName(logType);
+
+                var log = new DbLog(entityTypeName, logTypeName, message);
+                
                 if (log == null)
                 {
-                    LogError(EntityType.Log, DbLogType.Error, "Error creating log: log value 'null'.");
+                    LogError("Error creating log: log value 'null'.");
                 }
                 else _ = await CreateLogAsync(log);
             }
             catch (Exception e)
             {
-                LogError(EntityType.Log, DbLogType.Error, e.Message);
+                LogError(e.Message);
             }
-        }
-
-        public async Task<IEnumerable<DbLog>> GetLogsAsync()
-        {
-            return await _logRepository.GetAllAsync();
         }
 
         private async Task<DbLog> CreateLogAsync(DbLog log)
@@ -54,7 +57,7 @@ namespace Domain.DbLogs
             }
             catch(Exception e)
             {
-                LogError(EntityType.Log, DbLogType.Error, e.Message);
+                LogError(e.Message);
                 return null;
             }
         }

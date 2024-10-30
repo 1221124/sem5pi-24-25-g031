@@ -10,6 +10,18 @@ namespace Domain.DbLogs
 
     public class DbLogTypeName
     {
+        public string Value { get; }
+        
+        public DbLogTypeName(DbLogType value)
+        {
+            Value = ValueOf(value);
+        }
+        
+        public DbLogTypeName(string value)
+        {
+            Value = value;
+        }
+        
         public static string ValueOf(DbLogType logType)
         {
             switch (logType)

@@ -14,7 +14,19 @@ namespace Domain.DbLogs
 
     public class EntityTypeName
     {
-        public static string Get(EntityType entityType)
+        public string Value { get; }
+
+        public EntityTypeName(EntityType value)
+        {
+            Value = ValueOf(value);
+        }
+        
+        public EntityTypeName(string value)
+        {
+            Value = value;
+        }
+
+        public static string ValueOf(EntityType entityType)
         {
             switch (entityType)
             {
