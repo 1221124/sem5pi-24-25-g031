@@ -6,7 +6,8 @@ namespace Domain.DbLogs
         Update,
         Delete,
         Error,
-        PreDelete
+        PreDelete,
+        Deactivate
     }
 
     public class DbLogTypeName
@@ -37,6 +38,8 @@ namespace Domain.DbLogs
                     return "Error";
                 case DbLogType.PreDelete:
                     return "PreDelete";
+                case DbLogType.Deactivate:
+                    return "Deactivate";
                 default:
                     throw new ArgumentException("Invalid log type");
             }
