@@ -1,4 +1,4 @@
-using Domain.DBLogs;
+using Domain.DbLogs;
 using Domain.Emails;
 using Domain.Patients;
 using Domain.Shared;
