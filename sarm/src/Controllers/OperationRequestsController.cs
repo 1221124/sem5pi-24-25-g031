@@ -1,7 +1,6 @@
 using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
 using Domain.OperationRequests;
-using Domain.DbLogs;
 using Domain.OperationTypes;
 using Domain.Shared;
 
@@ -166,7 +165,7 @@ namespace Controllers
             {
                 if (dto == null)
                 {
-                    _logService.LogError(entity, log,"Creating Operation Type DTO cannot be null");
+                    _logService.LogAction(entity, log,"Creating Operation Type DTO cannot be null");
                     return BadRequest("Creating Operation Type DTO cannot be null");
                 }
 
@@ -174,7 +173,7 @@ namespace Controllers
 
                 if (operationRequest == null)
                 {
-                    _logService.LogError(EntityType.OperationRequest, DbLogType.Create,
+                    _logService.LogAction(EntityType.OperationRequest, DbLogType.Create,
                         "Operation Request was not created.");
                     return BadRequest("Operation Request was not created.");
                 }
@@ -183,7 +182,7 @@ namespace Controllers
             }
             catch (Exception ex)
             {
-                _logService.LogError(entity, log, "Error in Create: " + ex.Message);
+                _logService.LogAction(entity, log, "Error in Create: " + ex.Message);
                 return BadRequest("Error in Create: " + ex.Message);
             }
         }
@@ -194,7 +193,7 @@ namespace Controllers
         {
             try{
                 if (dto == null) {
-                    _logService.LogError(EntityType.OperationRequest, DbLogType.Update,"Operation request data is required.");
+                    _logService.LogAction(EntityType.OperationRequest, DbLogType.Update,"Operation request data is required.");
                     return BadRequest("Operation request data is required.");
                 }
 
@@ -225,7 +224,7 @@ namespace Controllers
             }
             catch(Exception ex)
             {
-                _logService.LogError(EntityType.OperationType, DbLogType.Delete, ex.Message);
+                _logService.LogAction(EntityType.OperationType, DbLogType.Delete, ex.Message);
                 return BadRequest("Error in Delete: " + ex.Message); 
             }
         }
