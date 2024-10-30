@@ -170,9 +170,9 @@ namespace Controllers
                 if (dto.PhoneNumber == null && dto.Email == null) return Ok(staff);
 
                 var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfoStaff(dto);
-                await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
+                await _emailService.SendEmailAsync(oldEmail, subject, body);
 
-                return Ok("Staff profile updated successfully.");
+                return Ok(staff);
             }
             catch (BusinessRuleValidationException ex)
             {
@@ -185,11 +185,11 @@ namespace Controllers
         
         //GET: api/Staff/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
         [HttpGet("sensitiveInfo")]
-        public async Task<ActionResult<StaffDto>> VerifySensitiveInfo([FromQuery] string email, [FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
+        public async Task<ActionResult<StaffDto>> VerifySensitiveInfo([FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
         {
-            //var email = _emailService.DecodeToken(token);
+            var emailDecode = _emailService.DecodeToken(token);
             
-            var staffDto = await _service.GetByEmailAsync(new Email(email));
+            var staffDto = await _service.GetByEmailAsync(new Email(emailDecode));
 
             var staff =  StaffMapper.ToEntity(staffDto);
             

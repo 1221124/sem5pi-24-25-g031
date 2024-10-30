@@ -184,7 +184,7 @@ namespace Controllers
             var staff = await _staffService.GetByEmailAsync(dto.Email);
             if (staff != null) {
                 staff.UserId = new UserId(user.Id);
-                await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntity(staff));
+                await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntityFromUpdating(staff));
             }
 
             (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
