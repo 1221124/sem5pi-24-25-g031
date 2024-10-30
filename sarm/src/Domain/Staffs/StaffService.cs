@@ -148,7 +148,7 @@ namespace Domain.Staffs
                 return StaffMapper.ToDto(dto);
             }
         }
-        public async Task<StaffDto> UpdateAsync(string oldEmail, Staff staff)
+        public async Task<StaffDto> UpdateAsync(string oldEmail, UpdatingStaffDto dto)
         {
             try
             {
@@ -156,49 +156,52 @@ namespace Domain.Staffs
 
                 if (newStaff == null)
                 {
-                    //_dbLogService.LogError(StaffEntityType, "Unable to find {staff " + staff.Id + "}");
-                    return StaffMapper.ToDto(staff);
+                    return null;
                 }
 
-                try
-                {
-                    newStaff.ChangeSlotAvailability(staff.SlotAvailability);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Failed to change slot availability", ex);
-                }
-
-                try
-                {
-                    newStaff.ChangeSpecialization(staff.Specialization);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Failed to change specialization", ex);
-                }
-
-                try
-                {
-                    newStaff.ChangeUserId(staff.UserId);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Failed to change specialization", ex);
-                }
-
-
-                // await _repo.UpdateAsync(newStaff);
+                if(dto.AvailabilitySlots != null)
+                    newStaff.ChangeSlotAvailability(dto.AvailabilitySlots);
+                
+                if(dto.AvailabilitySlots != null)
+                    newStaff.ChangeSpecialization(dto.Specialization);
+                
                 await _unitOfWork.CommitAsync();
 
                 //_dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);
+
+                if (dto.PhoneNumber != null)
+                {
+                    var phoneNumberToCheck = dto.PhoneNumber;
+                    var byPhoneNumberAsync = await _repo.GetByPhoneNumberAsync(phoneNumberToCheck);
+                    if (byPhoneNumberAsync != null)
+                    {
+                        throw new Exception("Phone number already exists");
+                    }
+                }
+                if (dto.Email != null)
+                {
+                    var emailToCheck = dto.Email;
+                    var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
+                    if (byEmailAsync != null)
+                    {
+                        
+                        throw new Exception("Email already exists");
+                    } 
+                }
+
+                if (dto.PhoneNumber != null || dto.Email != null)
+                {
+                    if (dto.PhoneNumber != null) dto.PendingPhoneNumber = dto.PhoneNumber;
+                    if (dto.Email != null) dto.PendingEmail = dto.Email;
+                }
 
                 return StaffMapper.ToDto(newStaff);
             }
             catch (Exception e)
             {
                 //_dbLogService.LogError(StaffEntityType, e.ToString());
-                return StaffMapper.ToDto(staff);
+                Console.WriteLine(e.Message);
+                return null;
             }
         }
 

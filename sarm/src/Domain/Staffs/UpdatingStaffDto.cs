@@ -10,7 +10,6 @@ namespace Domain.Staffs
         public PhoneNumber PhoneNumber { get; set; }
         public List<Slot> AvailabilitySlots { get; set; }
         public Specialization Specialization { get; set; }
-        
         public PhoneNumber? PendingPhoneNumber { get; set; }
         public Email? PendingEmail { get; set; }
 

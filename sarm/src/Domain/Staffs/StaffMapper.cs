@@ -43,13 +43,12 @@ namespace Domain.Staffs
             );
         }
 
-        public static Staff ToEntityFromUpdating(UpdatingStaffDto dto, StaffDto staff)
+        public static UpdatingStaffDto ToEntityFromUpdating(StaffDto dto)
         {
-            return new Staff(
-                staff.Id,
-                dto.Email,
-                dto.PhoneNumber,
-                dto.AvailabilitySlots,
+            return new UpdatingStaffDto(
+                dto.ContactInformation.Email,
+                dto.ContactInformation.PhoneNumber,
+                dto.SlotAvailability,
                 dto.Specialization
             );
         }
