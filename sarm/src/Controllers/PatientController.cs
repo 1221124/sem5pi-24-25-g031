@@ -22,7 +22,7 @@ namespace DDDNetCore.Controllers
         public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, EmailService emailService)
         {
             _service = service;
-            _dbLogService = dbLogService; // Certifique-se de inicializá-lo
+            _dbLogService = dbLogService;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
         }
@@ -293,12 +293,16 @@ namespace DDDNetCore.Controllers
 
                 if (patient == null)
                 {
+                    _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Patient not found");
+                    await _unitOfWork.CommitAsync();
                     return NotFound();
                 }
                 return Ok(patient);
             }
             catch (BusinessRuleValidationException ex)
             {
+                _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, ex.Message);
+                await _unitOfWork.CommitAsync();
                 return BadRequest(new { Message = ex.Message });
             }
         }
@@ -310,9 +314,9 @@ namespace DDDNetCore.Controllers
             var email = _emailService.DecodeToken(token);
             
             var patientDto = await _service.GetByEmailAsync(new Email(email));
-            
+            await _unitOfWork.CommitAsync();
 
-            await _service.DeleteAsync(new PatientId(patientDto.Id));
+            _dbLogService.LogAction(EntityType.Patient, DbLogType.PreDelete, "Pre-Deleted {" + new PatientId(patientDto.Id).Value + "}");
             await _unitOfWork.CommitAsync();
 
             return Ok(patientDto);
