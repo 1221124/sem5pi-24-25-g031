@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Domain.DbLogs;
-using Domain.DBLogs;
 using Domain.Shared;
 using Domain.Users;
 using Infrastructure.Staffs;
@@ -161,16 +160,6 @@ namespace Domain.Staffs
                     return StaffMapper.ToDto(staff);
                 }
 
-                // change all field
-                try
-                {
-                    newStaff.ChangeContactInformation(staff.ContactInformation);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Failed to change contact information", ex);
-                }
-
                 try
                 {
                     newStaff.ChangeSlotAvailability(staff.SlotAvailability);
@@ -203,15 +192,6 @@ namespace Domain.Staffs
                 await _unitOfWork.CommitAsync();
 
                 //_dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);
-
-                /*if(DBLogType.UPDATE)
-                {
-                    string toEmail = newStaff.ContactInformation.Email; // Assuming the contact information has an Email field
-                    string subject = "Your contact information has been updated";
-                    string body = $"Dear {newStaff.Name}, your contact information has been successfully updated.";
-                    
-                    await _emailService.SendEmailAsync(toEmail, subject, body);
-                }*/
 
                 return StaffMapper.ToDto(newStaff);
             }

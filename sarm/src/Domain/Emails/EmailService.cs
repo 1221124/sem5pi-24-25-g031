@@ -6,6 +6,7 @@ using DDDNetCore.Domain.Patients;
 using Infrastructure;
 using RestSharp;
 using System.Text;
+using Domain.Staffs;
 
 namespace Domain.Emails
 {
@@ -53,7 +54,8 @@ namespace Domain.Emails
         public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfo(UpdatingPatientDto dto)
         {
             var subject = "Please verify that you want to change sensitive information";
-            var link = GenerateLinkSensitiveInfo(dto.EmailId.Value, dto.PendingPhoneNumber, dto.PendingEmail);
+            var baseUrl = "Patient";
+            var link = GenerateLinkSensitiveInfo(baseUrl, dto.EmailId.Value, dto.PendingPhoneNumber, dto.PendingEmail);
             var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);
@@ -68,15 +70,26 @@ namespace Domain.Emails
             return (subject ,body);
         }
         
+        public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfoStaff(UpdatingStaffDto dto)
+        {
+            var subject = "Please verify that you want to change sensitive information";
+            var baseUrl = "Staff";
+            var link = GenerateLinkSensitiveInfo(baseUrl, dto.Email.Value, dto.PendingPhoneNumber, dto.PendingEmail);
+            var body = $"Hi, {dto.Email.Value}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
+
+            return (subject ,body);
+        }
+        
 
         public string GenerateLink(string email)
         {
             return $"http://localhost:5500/api/Users/verify?token={EncodeToken(email)}";
         }
         
-        public string GenerateLinkSensitiveInfo(string email, PhoneNumber? phoneNumber, Email? newEmail)
+        
+        public string GenerateLinkSensitiveInfo(string baseUrl, string email, PhoneNumber? phoneNumber, Email? newEmail)
         {
-            var uriBuilder = new UriBuilder($"http://localhost:5500/api/Patient/sensitiveInfo?token={EncodeToken(email)}");
+            var uriBuilder = new UriBuilder($"http://localhost:5500/api/{baseUrl}/sensitiveInfo?token={EncodeToken(email)}");
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             
             if (phoneNumber != null)
