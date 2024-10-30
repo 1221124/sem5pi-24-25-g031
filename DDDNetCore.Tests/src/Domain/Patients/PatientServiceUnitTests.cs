@@ -63,7 +63,7 @@ namespace DDDNetCore.Tests.Domain.Patients
                 .Returns(Task.CompletedTask);
             
             var emailServiceMock = new Mock<IEmailService>();
-            emailServiceMock.Setup(service => service.GenerateVerificationEmailContentSensitiveInfo(It.IsAny<string>(), It.IsAny<UpdatingPatientDto>()))
+            emailServiceMock.Setup(service => service.GenerateVerificationEmailContentSensitiveInfo(It.IsAny<UpdatingPatientDto>()))
                 .ReturnsAsync(("Subject Example", "Body Example"));
             
             serviceCollection.AddTransient<IEmailService>(_ => emailServiceMock.Object);
