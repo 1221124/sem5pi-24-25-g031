@@ -350,19 +350,28 @@ namespace DDDNetCore.Domain.Patients
         
         public async Task<PatientDto> PatientDeleteAsync(PatientId id)
         {
-            var patient = await this._repo.GetByIdAsync(id); 
+            try
+            {
+                var patient = await this._repo.GetByIdAsync(id); 
             
-            if (patient == null)
-                return null;
+                if (patient == null)
+                    return null;
 
-            var dto = PatientMapper.ToDto(patient);
-            var creatingPatientDto = PatientMapper.ToUpdatingPatientDto(dto);
+                var dto = PatientMapper.ToDto(patient);
+                var creatingPatientDto = PatientMapper.ToUpdatingPatientDto(dto);
                     
-            var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
-            await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
-            
-            
-            return PatientMapper.ToDto(patient);
+                var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
+                await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
+                await _unitOfWork.CommitAsync();
+                
+                return PatientMapper.ToDto(patient);
+            }
+            catch (Exception e)
+            {
+                _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, e.Message);
+                await _unitOfWork.CommitAsync();
+                return null;
+            }
         }    
         
         public async Task<PatientDto> AdminDeleteAsync(PatientId id)
@@ -383,9 +392,7 @@ namespace DDDNetCore.Domain.Patients
             await _unitOfWork.CommitAsync();
             
             //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.INACTIVATE, patient);
-            //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
-            //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
-            
+             
             return PatientMapper.ToDto(patient);
         }
 
