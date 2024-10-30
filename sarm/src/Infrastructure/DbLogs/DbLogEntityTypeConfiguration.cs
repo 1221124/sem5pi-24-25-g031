@@ -3,7 +3,6 @@ using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-
 namespace Infrastructure.DbLogs
 {
     public class DbLogEntityTypeConfiguration : IEntityTypeConfiguration<DbLog>
@@ -14,15 +13,30 @@ namespace Infrastructure.DbLogs
 
             builder.Property(p => p.EntityType)
                 .IsRequired()
-                .HasColumnName("EntityType");
+                .HasColumnName("EntityType")
+                .HasConversion(
+                    v => v.Value,
+                    v => new EntityTypeName(v)
+                    )
+                ;
 
             builder.Property(p => p.LogType)
                 .IsRequired()
-                .HasColumnName("LogType");
+                .HasColumnName("LogType")
+                .HasConversion(
+                    v => v.Value,
+                    v => new DbLogTypeName(v)
+                    )
+                ;
 
-
-            builder.Property(p => p.Affected)
-                .HasColumnName("Affected");
+            builder.Property(p => p.TimeStamp)
+                .IsRequired()
+                .HasColumnName("TimeStamp")
+                .HasConversion(
+                    v=> v.Date, 
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Local)
+                    )
+                ;
 
             builder.Property(p => p.Message)
                 .IsRequired()
