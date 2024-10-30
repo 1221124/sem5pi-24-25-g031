@@ -16,7 +16,7 @@ namespace Domain.DbLogs
             Id = new DbLogId(Guid.NewGuid());
             EntityType = entityType;
             LogType = logType;
-            TimeStamp = DateTime.Now.Date;   
+            TimeStamp = DateTime.Now;   
             Message = message;
         }
     }

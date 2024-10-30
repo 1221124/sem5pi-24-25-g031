@@ -33,8 +33,8 @@ namespace Infrastructure.DbLogs
                 .IsRequired()
                 .HasColumnName("TimeStamp")
                 .HasConversion(
-                    v=> v.Date, 
-                    v => DateTime.SpecifyKind(v, DateTimeKind.Local)
+                    v => v.ToString("\"yyyy-MM-dd HH:mm:ss\""), 
+                    v => DateTime.Parse(v) 
                     )
                 ;
 
