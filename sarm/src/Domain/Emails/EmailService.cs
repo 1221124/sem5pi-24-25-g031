@@ -70,12 +70,12 @@ namespace Domain.Emails
             return (subject ,body);
         }
         
-        public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfoStaff(UpdatingStaffDto dto)
+        public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfoStaff(String oldEmail, UpdatingStaffDto dto)
         {
             var subject = "Please verify that you want to change sensitive information";
             var baseUrl = "Staff";
-            var link = GenerateLinkSensitiveInfo(baseUrl, dto.Email.Value, dto.PendingPhoneNumber, dto.PendingEmail);
-            var body = $"Hi, {dto.Email.Value}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
+            var link = GenerateLinkSensitiveInfo(baseUrl, oldEmail, dto.PendingPhoneNumber, dto.PendingEmail);
+            var body = $"Hi, {oldEmail}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);
         }
