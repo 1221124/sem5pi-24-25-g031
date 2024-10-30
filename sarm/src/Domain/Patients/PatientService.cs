@@ -292,25 +292,24 @@ namespace DDDNetCore.Domain.Patients
 
         public async Task<PatientDto?> UpdateAsync(UpdatingPatientDto dto)
         {
-            
             try
             {
                 var patient = await _repo.GetByEmailAsync(dto.EmailId); //ainda tem os argumentos antigos
             
                 if (patient == null)
-                    return null;   
+                    return null;
                 
                 if(dto.MedicalConditions != null)
                     patient.ChangeMedicalConditions(dto.MedicalConditions);
-                
+            
                 if(dto is { FirstName: not null, LastName: not null })
                     patient.ChangeFullName(new FullName(dto.FirstName, dto.LastName));
-                
+            
                 if(dto.AppointmentHistory != null)
                     patient.ChangeAppointmentHistory(dto.AppointmentHistory);
-                
+            
                 await _unitOfWork.CommitAsync();
-                
+            
                 if (dto.PhoneNumber != null)
                 {
                     var phoneNumberToCheck = dto.PhoneNumber;
@@ -357,22 +356,16 @@ namespace DDDNetCore.Domain.Patients
             var dto = PatientMapper.ToDto(patient);
             var creatingPatientDto = PatientMapper.ToUpdatingPatientDto(dto);
                     
-            //var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(token, creatingPatientDto);
-            //await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
+            var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
+            await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
             
-            
-            _repo.Remove(patient);
-            await _unitOfWork.CommitAsync();
-            //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.DELETE, patient);
-            //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
-            //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
             
             return PatientMapper.ToDto(patient);
         }    
         
         public async Task<PatientDto> AdminDeleteAsync(PatientId id)
         {
-            var patient = await this._repo.GetByIdAsync(id); 
+            var patient = await _repo.GetByIdAsync(id); 
             
             if (patient == null)
                 return null;
@@ -393,5 +386,31 @@ namespace DDDNetCore.Domain.Patients
             
             return PatientMapper.ToDto(patient);
         }
+
+        public async Task<PatientDto?> DeleteAsync(PatientId patientId)
+        {
+            try
+            {
+                if(patientId == null)
+                    return null;
+                
+                var patient = await _repo.GetByIdAsync(patientId);
+                
+                if (patientId == null)
+                    return null;
+
+                _repo.Remove(patient);
+                await _unitOfWork.CommitAsync();
+                
+                return PatientMapper.ToDto(patient);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+            
+        }
+
     }
+    
 }

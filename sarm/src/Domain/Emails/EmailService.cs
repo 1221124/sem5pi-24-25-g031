@@ -94,7 +94,7 @@ namespace Domain.Emails
         
         public string GenerateLinkRemoveSensitiveInfo(string email)
         {
-            return $"http://localhost:5500/api/Users/verify?removePatient={EncodeToken(email)}";
+            return $"http://localhost:5500/api/Patient/removePatient?token={EncodeToken(email)}";
         }
 
         public string GenerateToken()
