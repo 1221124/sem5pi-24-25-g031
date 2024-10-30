@@ -160,7 +160,7 @@ namespace Controllers
                     return NotFound("Staff not found");
                 }
 
-                var updateStaff = await _service.UpdateAsync(oldEmail, StaffMapper.ToEntity(staff));
+                var updateStaff = await _service.UpdateAsync(oldEmail, StaffMapper.ToEntityFromUpdating(staff));
 
                 if (updateStaff == null)
                 {
