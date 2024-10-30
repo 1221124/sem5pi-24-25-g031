@@ -1,4 +1,4 @@
-﻿namespace DDDNetCore.Domain.DBLogs;
+﻿namespace DDDNetCore.Domain.DbLogs;
 
 public class Message
 {

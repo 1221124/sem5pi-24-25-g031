@@ -1,16 +1,17 @@
-using DDDNetCore.Domain.DBLogs;
-using Domain.DBLogs;
+using DDDNetCore.Domain.DbLogs;
+using Domain.Shared;
 
 namespace Domain.DbLogs
 {
     public class DbLogService
     {
         private readonly IDbLogRepository _logRepository;
-
-
-        public DbLogService(IDbLogRepository logRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        
+        public DbLogService(IDbLogRepository logRepository, IUnitOfWork unitOfWork)
         {
             _logRepository = logRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async void LogError(EntityType entityType, DbLogType dbLogType, Message message)
@@ -45,7 +46,17 @@ namespace Domain.DbLogs
 
         private async Task<DbLog> CreateLogAsync(DbLog log)
         {
-            return await _logRepository.AddAsync(log);
+            try
+            {
+                await _logRepository.AddAsync(log);
+                await _unitOfWork.CommitAsync();
+                return log;
+            }
+            catch(Exception e)
+            {
+                LogError(EntityType.Log, DbLogType.Error, e.Message);
+                return null;
+            }
         }
     }
 }

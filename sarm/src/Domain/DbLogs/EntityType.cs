@@ -1,6 +1,4 @@
-using System;
-
-namespace Domain.DBLogs
+namespace Domain.DbLogs
 {
     public enum EntityType
     {

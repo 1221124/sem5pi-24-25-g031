@@ -1,5 +1,4 @@
-using DDDNetCore.Domain.DBLogs;
-using Domain.DBLogs;
+using DDDNetCore.Domain.DbLogs;
 using Domain.Shared;
 
 namespace Domain.DbLogs

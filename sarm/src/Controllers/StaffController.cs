@@ -6,7 +6,7 @@ using Domain.Shared;
 using Domain.Staffs;
 using Infrastructure;
 using System.Threading.Tasks;
-using Domain.DBLogs;
+using Domain.DbLogs;
 using Domain.Patients;
 
 namespace Controllers

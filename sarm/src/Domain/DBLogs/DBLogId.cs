@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Domain.Shared;
 
-namespace Domain.DBLogs
+namespace Domain.DbLogs
 {
     public class DbLogId : EntityId
     {

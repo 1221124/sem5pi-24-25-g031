@@ -1,8 +1,4 @@
-﻿using DDDNetCore.Domain.Patients;
-using Domain.DbLogs;
-using Domain.DBLogs;
-using Domain.Emails;
-using Domain.Patients;
+﻿using Domain.DbLogs;
 using Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,7 +1,7 @@
 using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
 using Domain.OperationRequests;
-using Domain.DBLogs;
+using Domain.DbLogs;
 using Domain.OperationTypes;
 using Domain.Shared;
 
