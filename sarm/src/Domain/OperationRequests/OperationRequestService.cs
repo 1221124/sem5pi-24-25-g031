@@ -2,7 +2,7 @@ using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using Domain.Shared;
 using Domain.OperationTypes;
-using Domain.DBLogs;
+using Domain.DbLogs;
 
 namespace Domain.OperationRequests
 {

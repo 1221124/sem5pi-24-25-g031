@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System;
-using System.Linq.Expressions;
 using Domain.Shared;
 using Domain.Staffs;
-using Infrastructure;
-using System.Threading.Tasks;
 using Domain.DbLogs;
+using Domain.Emails;
 using Domain.Patients;
 
 namespace Controllers
@@ -17,13 +13,17 @@ namespace Controllers
     {
         private readonly int pageSize = 2;
         private readonly StaffService _service;
+        
+        private readonly IEmailService _emailService; 
 
         private readonly IStaffRepository _repo;
 
-        //private readonly DbLogService _DBLogService;
+        private readonly DbLogService _DBLogService;
 
         private static readonly EntityType StaffEntityType = EntityType.Staff;
 
+        private readonly IUnitOfWork _unitOfWork;
+        
         public StaffController(StaffService service)
         {
             _service = service;
@@ -145,17 +145,68 @@ namespace Controllers
         [HttpPut("update/{oldEmail}")]
         public async Task<ActionResult<StaffDto>> Update(string oldEmail, [FromBody] UpdatingStaffDto dto)
         {
-            if (dto == null)
+            try
             {
-                //_DBLogService.LogError(EntityType.STAFF, "Staff data is required.");
-                return BadRequest("Staff data is required.");
-            }
-            var staff = await _service.GetByEmailAsync(oldEmail); 
-            
-            await _service.UpdateAsync(oldEmail, StaffMapper.ToEntityFromUpdating(dto, staff));
+                if (dto == null)
+                {
+                    //_DBLogService.LogError(EntityType.Staff, "Staff data is required.");
+                    return BadRequest("Staff data is required.");
+                }
+                
+                var staff = await _service.GetByEmailAsync(oldEmail);
+                
+                if (staff == null)
+                {
+                    return NotFound("Staff not found");
+                }
 
-            return Ok("Staff profile updated successfully.");
+                var updateStaff = await _service.UpdateAsync(oldEmail, StaffMapper.ToEntity(staff));
+
+                if (updateStaff == null)
+                {
+                    return NotFound("Staff not found");
+                }
+                
+                if (dto.PhoneNumber == null && dto.Email == null) return Ok(staff);
+
+                var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfoStaff(dto);
+                await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
+
+                return Ok("Staff profile updated successfully.");
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
         }
+        
+       
+        
+        //GET: api/Staff/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
+        [HttpGet("sensitiveInfo")]
+        public async Task<ActionResult<StaffDto>> VerifySensitiveInfo([FromQuery] string email, [FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
+        {
+            //var email = _emailService.DecodeToken(token);
+            
+            var staffDto = await _service.GetByEmailAsync(new Email(email));
+
+            var staff =  StaffMapper.ToEntity(staffDto);
+            
+            if (!string.IsNullOrEmpty(pendingPhoneNumber))
+            {
+                staff.ContactInformation.PhoneNumber = new PhoneNumber(pendingPhoneNumber);
+            }
+            if (!string.IsNullOrEmpty(pendingEmail))
+            {
+                staff.ContactInformation.Email = pendingEmail;
+            }
+            
+            await _unitOfWork.CommitAsync();
+            
+            return StaffMapper.ToDto(staff);
+        }
+
 
         [HttpDelete("{email}")]
         public async Task<ActionResult<StaffId>> SoftDelete(String email)
