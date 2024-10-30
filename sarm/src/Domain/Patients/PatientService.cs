@@ -362,7 +362,6 @@ namespace DDDNetCore.Domain.Patients
                     
                 var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
                 await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
-                await _unitOfWork.CommitAsync();
                 
                 return PatientMapper.ToDto(patient);
             }

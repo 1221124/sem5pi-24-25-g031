@@ -314,10 +314,8 @@ namespace DDDNetCore.Controllers
             var email = _emailService.DecodeToken(token);
             
             var patientDto = await _service.GetByEmailAsync(new Email(email));
-            await _unitOfWork.CommitAsync();
 
             _dbLogService.LogAction(EntityType.Patient, DbLogType.PreDelete, "Pre-Deleted {" + new PatientId(patientDto.Id).Value + "}");
-            await _unitOfWork.CommitAsync();
 
             return Ok(patientDto);
         }

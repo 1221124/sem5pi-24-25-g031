@@ -24,7 +24,7 @@ namespace DDDNetCore.Domain.Patients
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _timer = new Timer(async state => await CheckAndDeletePatients(stoppingToken), null, TimeSpan.Zero, TimeSpan.FromMinutes(4));
+            _timer = new Timer(async state => await CheckAndDeletePatients(stoppingToken), null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
             return Task.CompletedTask; 
         }
         private async Task CheckAndDeletePatients(CancellationToken stoppingToken)
@@ -37,13 +37,13 @@ namespace DDDNetCore.Domain.Patients
                 var dbLogsToDelete = await repository.GetByEntityLogTypeAsync(EntityType.Patient, DbLogType.Delete);
                 foreach (var dbLog in dbLogsToDelete)
                 {
-                    if (dbLog != null && dbLog.TimeStamp <= thresholdDate && Regex.Match(dbLog.Message, @"Delete\s*\{[^}]*\}").Success)
+                    if (dbLog != null && dbLog.TimeStamp <= thresholdDate && Regex.Match(dbLog.Message, "Delete").Success)
                     {
                         var match = Regex.Match(dbLog.Message, @"\{([^}]*)\}");
                         var messageId = match.Groups[1].Value;
                         var patientId = new PatientId(messageId);
                         await _patientService.AdminDeleteAsync(patientId);
-                        _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, $"Deleted {patientId.Value}");
+                        _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + patientId.Value + "}");
                     }
                 }
             }
