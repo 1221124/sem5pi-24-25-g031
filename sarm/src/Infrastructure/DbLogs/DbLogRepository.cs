@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
 using Domain.DbLogs;
-using Domain.DBLogs;
 using Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 

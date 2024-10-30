@@ -1,4 +1,4 @@
-using DDDNetCore.Domain.DBLogs;
+using DDDNetCore.Domain.DbLogs;
 using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
