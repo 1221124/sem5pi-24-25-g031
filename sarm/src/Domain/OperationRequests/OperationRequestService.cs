@@ -2,7 +2,6 @@ using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using Domain.Shared;
 using Domain.OperationTypes;
-using Domain.DbLogs;
 
 namespace Domain.OperationRequests
 {
@@ -29,19 +28,20 @@ namespace Domain.OperationRequests
                 var operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto);
 
                 await this._repo.AddAsync(operationRequest);
-
                 await this._unitOfWork.CommitAsync();
-
+                
+                _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, "Created {" + operationRequest.Id.Value + "}");
+                
                 return OperationRequestMapper.ToDto(operationRequest);
             }
             catch (Exception e)
             {
-                _logService.LogError(EntityType.OperationRequest, DbLogType.Create, e.ToString());
+                _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, e.ToString());
                 return null;
             }
         }
 
-        public async Task<OperationRequestDto> GetByIdAsync(OperationRequestId operationRequestId)
+        public async Task<OperationRequestDto?> GetByIdAsync(OperationRequestId operationRequestId)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace Domain.OperationRequests
                 var newOperationRequest = OperationRequestMapper.ToEntityFromUpdating(dto, operationRequest);
 
                 if(operationRequest == null){
-                    _logService.LogError(entity, log, "Unable to update {" + newOperationRequest.Id  + "}");
+                    _logService.LogAction(entity, log, "Unable to update {" + newOperationRequest.Id  + "}");
                     return null;
                 }
 
@@ -182,7 +182,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(entity, log, e.ToString());
+                _logService.LogAction(entity, log, e.ToString());
                 return null;
             }
         }
@@ -211,7 +211,7 @@ namespace Domain.OperationRequests
             }
             catch (Exception e)
             {
-                _logService.LogError(entity, log, e.ToString());
+                _logService.LogAction(entity, log, e.ToString());
                 return null;
             }
         }
