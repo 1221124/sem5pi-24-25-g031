@@ -15,16 +15,16 @@ namespace DDDNetCore.Domain.Patients
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
-        //private readonly DBLogService _dbLogService;
+        private readonly DbLogService _dbLogService;
         //private readonly UserService _userService;
         private readonly IEmailService _emailService;
         private const int PageSize = 2;
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, /*DBLogService dbLogService, UserService userService,*/ IEmailService emailService)
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, DbLogService dbLogService,/* UserService userService,*/ IEmailService emailService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
-            //_dbLogService = dbLogService;
+            _dbLogService = dbLogService;
             //_userService = userService;
             _emailService = emailService;
         }
@@ -295,9 +295,12 @@ namespace DDDNetCore.Domain.Patients
             try
             {
                 var patient = await _repo.GetByEmailAsync(dto.EmailId); //ainda tem os argumentos antigos
-            
+
                 if (patient == null)
+                {
+                    _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, "Unable to update because Patient not found");
                     return null;
+                }
                 
                 if(dto.MedicalConditions != null)
                     patient.ChangeMedicalConditions(dto.MedicalConditions);
@@ -325,7 +328,6 @@ namespace DDDNetCore.Domain.Patients
                     var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
                     if (byEmailAsync != null)
                     {
-                        
                         throw new Exception("Email already exists");
                     } 
                 }
@@ -336,12 +338,12 @@ namespace DDDNetCore.Domain.Patients
                     if (dto.Email != null) dto.PendingEmail = dto.Email;
                 }
                 
-                //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.UPDATE, patient.Id.AsGuid() );
+                _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, "Updated {" + patient.Id.Value + "}");
                 return PatientMapper.ToDto(patient);
-                //return new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId );
+                
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, e.Message);
                 return null;
             }
         }
