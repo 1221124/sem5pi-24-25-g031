@@ -167,7 +167,7 @@ namespace Domain.Staffs
                 
                 await _unitOfWork.CommitAsync();
 
-                //_dbLogService.LogAction(StaffEntityType, DBLogType.UPDATE, newStaff.Id);
+                _dbLogService.LogAction(StaffEntityType, DbLogType.Update, "Updated {" + newStaff.Id.Value + "}");
 
                 if (dto.PhoneNumber != null)
                 {
@@ -216,6 +216,8 @@ namespace Domain.Staffs
             staff.MarkAsInative();
 
             await this._unitOfWork.CommitAsync();
+            
+            _dbLogService.LogAction(EntityType.Staff, DbLogType.Deactivate, "Deactivated {" + staff.Id.Value + "}");
 
             return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
         }
