@@ -225,7 +225,7 @@ namespace DDDNetCore.Controllers
             }
         }
 
-        // PUT: api/Patient/5
+        // PUT: api/Patient/patientouUser
         [HttpPut]
         public async Task<ActionResult<PatientDto>> Update(UpdatingPatientDto dto)
         {
@@ -257,8 +257,10 @@ namespace DDDNetCore.Controllers
         
         //GET: api/Patients/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
         [HttpGet("sensitiveInfo")]
-        public async Task<ActionResult<PatientDto>> VerifySensitiveInfo([FromQuery] string email, [FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
+        public async Task<ActionResult<PatientDto>> VerifySensitiveInfo([FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
         {
+            var email = _emailService.DecodeToken(token);
+            
             var patientDto = await _service.GetByEmailAsync(new Email(email));
 
             var patient =  PatientMapper.ToEntity(patientDto);
@@ -299,17 +301,19 @@ namespace DDDNetCore.Controllers
             }
         }
         
-        //GET: api/Patients/removePatient/?email={email}&token={token}
+        //GET: api/Patient/removePatient/?token={token}
         [HttpGet("removePatient")]
-        public async Task<ActionResult<PatientDto>> VerifySensitiveRemoveInfo([FromQuery] string email, [FromQuery] string token)
+        public async Task<ActionResult<PatientDto>> VerifySensitiveRemoveInfo([FromQuery] string token)
         {
+            var email = _emailService.DecodeToken(token);
+            
             var patientDto = await _service.GetByEmailAsync(new Email(email));
+            
 
-            var patient =  PatientMapper.ToEntity(patientDto);
-            
+            await _service.DeleteAsync(new PatientId(patientDto.Id));
             await _unitOfWork.CommitAsync();
-            
-            return PatientMapper.ToDto(patient);
+
+            return Ok(patientDto);
         }
 
         
