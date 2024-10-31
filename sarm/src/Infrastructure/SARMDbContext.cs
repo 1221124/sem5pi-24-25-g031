@@ -1,3 +1,5 @@
+using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Infrastructure.OperationRequests;
 using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;
 

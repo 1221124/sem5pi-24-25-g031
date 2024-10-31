@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DDDNetCore.Domain.OperationRequests;
 using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
@@ -29,8 +30,9 @@ namespace Infrastructure.OperationRequests
             return await _objs
                 .AsQueryable().Where(x => x.OperationTypeId.Equals(operationTypeId)).ToListAsync();
         }
+        
 
-        public async Task<List<OperationRequest>> GetByStatus(RequestStatus status)
+        public async Task<List<OperationRequest>> GetByStatusId(RequestStatus status)
         {
             return await _objs
                 .AsQueryable().Where(x => x.Status.Equals(status)).ToListAsync();
@@ -46,11 +48,6 @@ namespace Infrastructure.OperationRequests
         {
             return await _objs
                 .AsQueryable().Where(x => x.OperationTypeId.Equals(operationTypeId)).ToListAsync();
-        }
-
-        public Task<List<OperationRequest>> GetByStatusId(RequestStatus status)
-        {
-            return Task.Run(() => _objs.Where(x => x.Status.Equals(status)).ToList());
         }
     }
 }

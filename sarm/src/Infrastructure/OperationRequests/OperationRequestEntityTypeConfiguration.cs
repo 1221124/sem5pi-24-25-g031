@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.OperationRequests;
+using Domain.Shared;
 
-namespace Infrastructure.OperationRequests
+namespace DDDNetCore.Infrastructure.OperationRequests
 {
     public class OperationRequestEntityTypeConfiguration : IEntityTypeConfiguration<OperationRequest>
     {
