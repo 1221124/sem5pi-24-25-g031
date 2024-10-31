@@ -85,7 +85,7 @@ namespace Domain.Patients
       AppointmentHistory = appointmentHistory;
       MedicalConditions = medicalConditions;
     }
-
+    
     public override string ToString()
     {
       return $"{Id};{FullName};{DateOfBirth:yyyy-MM-dd};{Gender};{MedicalRecordNumber};{ContactInformation};{string.Join(",", MedicalConditions.Select(m => m.ToString()))};{EmergencyContact};{AppointmentHistory};{UserId}";

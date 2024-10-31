@@ -71,6 +71,12 @@ namespace Domain.Patients
             Gender = gender;
         }
 
+        public PatientDto(Guid guid, FullName fullName)
+        {
+            Id = guid;
+            FullName = fullName;
+        }
+
         public PatientDto(Guid guid){
             Id = guid;
         }
