@@ -1,247 +1,235 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Net;
-// using System.Net.Http;
-// using System.Text;
-// using System.Threading.Tasks;
-// using Domain.OperationRequests;
-// using Domain.DBLogs;
-// using Infrastructure;
-// using Microsoft.AspNetCore.Mvc.Testing;
-// using Microsoft.EntityFrameworkCore;
-// using Microsoft.Extensions.DependencyInjection;
-// using Microsoft.VisualStudio.TestTools.UnitTesting;
-// using Newtonsoft.Json;
-// using System;
-// using System.Net.Http;
-// using System.Text;
-// using System.Threading.Tasks;
-// using Microsoft.AspNetCore.Mvc.Testing;
-// using Microsoft.Extensions.DependencyInjection;
-// using Microsoft.Extensions.DependencyInjection.Extensions;
-// using Microsoft.Extensions.Hosting;
-// using Microsoft.VisualStudio.TestTools.UnitTesting;
-// using Newtonsoft.Json;
-// using Domain.OperationTypes;
-// using Domain.Patients;
-// using Domain.Staffs;
-// using Xunit;
-//
-// namespace OperationRequests
-// {
-//     [TestClass]
-//     public class OperationRequestControllerAcceptanceTest : IClassFixture<WebApplicationFactory<Startup>>
-//     {
-//         private readonly WebApplicationFactory<Startup> _factory;
-//         private readonly HttpClient _client;
-//         private OperationRequestId _operationRequestId = Guid.NewGuid();
-//         private StaffId _staffId = Guid.NewGuid();
-//         private PatientId _patientId = Guid.NewGuid();
-//         private OperationTypeId _operationTypeId = Guid.NewGuid();
-//
-//         public OperationRequestControllerAcceptanceTest()
-//         {
-//             _factory = new WebApplicationFactory<Startup>()
-//                 .WithWebHostBuilder(builder =>
-//                 {
-//                     builder.ConfigureServices(services =>
-//                     {
-//                         var descriptor = services.SingleOrDefault(
-//                             d => d.ServiceType == typeof(DbContextOptions<SARMDbContext>));
-//
-//                         if (descriptor != null)
-//                         {
-//                             services.Remove(descriptor);
-//                         }
-//                         
-//                         services.AddDbContext<SARMDbContext>(options =>
-//                         {
-//                             options.UseInMemoryDatabase("TestDb");
-//                         });
-//                     });
-//                 });
-//
-//             _client = _factory.CreateClient();
-//         }
-//
-//         [TestMethod]
-//         public async Task CreateOperationRequest_ReturnsCreatedResponse()
-//         {
-//             // Arrange
-//             var newOperationRequest = new CreatingOperationRequestDto
-//             {
-//                 StaffId = _staffId,
-//                 PatientId = _patientId,
-//                 OperationTypeId = _operationTypeId,
-//                 DeadlineDate = new DeadlineDate(DateTime.MaxValue),
-//                 Priority = Priority.URGENT
-//             };
-//             var content = new StringContent(JsonConvert.SerializeObject(newOperationRequest), Encoding.UTF8, "application/json");
-//
-//             // Act
-//             var response = await _client.PostAsync("/api/operationrequest", content);
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-//         }
-//
-//         [TestMethod]
-//         public async Task GetAllOperationRequests_ReturnsOkResponse()
-//         {
-//             // Act
-//             var response = await _client.GetAsync("/api/operationrequest");
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-//         }
-//
-//         [TestMethod]
-//         public async Task GetOperationRequestById_ReturnsOperationRequest()
-//         {
-//             // Arrange
-//             var newOperationRequest = new OperationRequestDto
-//             {
-//                 DoctorId = _staffId,
-//                 PatientId = _patientId,
-//                 OperationTypeId = _operationTypeId,
-//                 DeadlineDate = new DeadlineDate(DateTime.MaxValue),
-//                 Priority = Priority.URGENT,
-//                 Status = RequestStatus.PENDING
-//             };
-//             
-//             var content = new StringContent(JsonConvert.SerializeObject(newOperationRequest), Encoding.UTF8, "application/json");
-//             var postResponse = await _client.PostAsync("/api/operationrequest", content);
-//             var operationRequest = JsonConvert.DeserializeObject<OperationRequest>(await postResponse.Content.ReadAsStringAsync());
-//
-//             // Act
-//             var getResponse = await _client.GetAsync($"/api/operationrequest/{operationRequest.Id}");
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, getResponse.StatusCode);
-//             var returnedOperationRequest = JsonConvert.DeserializeObject<OperationRequest>(await getResponse.Content.ReadAsStringAsync());
-//             Assert.AreEqual(operationRequest.Id, returnedOperationRequest.Id);
-//         }
-//
-//         [TestMethod]
-//         public async Task GetOperationRequestByPatientName_ReturnsOkResponse()
-//         {
-//             // Arrange
-//             var newOperationRequest = new OperationRequestDto
-//             {
-//                 DoctorId = _staffId,
-//                 PatientId = _patientId,
-//                 OperationTypeId = _operationTypeId,
-//                 DeadlineDate = new DeadlineDate(DateTime.MaxValue),
-//                 Priority = Priority.URGENT,
-//                 Status = RequestStatus.PENDING
-//             };
-//             var content = new StringContent(JsonConvert.SerializeObject(newOperationRequest), Encoding.UTF8, "application/json");
-//             await _client.PostAsync("/api/operationrequest", content);
-//
-//             // Act
-//             var getResponse = await _client.PostAsync("/api/operationrequest/patientname/JohnDoe", null);
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, getResponse.StatusCode);
-//         }
-//
-//         [TestMethod]
-//         public async Task GetOperationRequestByOperationType_ReturnsOkResponse()
-//         {
-//             // Arrange
-//             var newOperationRequest = new OperationRequestDto
-//             {
-//                 DoctorId = _staffId,
-//                 PatientId = _patientId,
-//                 OperationTypeId = _operationTypeId,
-//                 DeadlineDate = new DeadlineDate(DateTime.MaxValue),
-//                 Priority = Priority.URGENT,
-//                 Status = RequestStatus.PENDING
-//             };
-//             var content = new StringContent(JsonConvert.SerializeObject(newOperationRequest), Encoding.UTF8, "application/json");
-//             await _client.PostAsync("/api/operationrequest", content);
-//
-//             // Act
-//             var getResponse = await _client.PostAsync("/api/operationrequest/operationtype/123", null);
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, getResponse.StatusCode);
-//         }
-//
-//         [TestMethod]
-//         public async Task GetOperationRequestByStatus_ReturnsOkResponse()
-//         {
-//             // Arrange
-//             var newOperationRequest = new OperationRequestDto
-//             {
-//                 DoctorId = _staffId,
-//                 PatientId = _patientId,
-//                 OperationTypeId = _operationTypeId,
-//                 DeadlineDate = new DeadlineDate(DateTime.MaxValue),
-//                 Priority = Priority.URGENT,
-//                 Status = RequestStatus.PENDING
-//             };
-//             var content = new StringContent(JsonConvert.SerializeObject(newOperationRequest), Encoding.UTF8, "application/json");
-//             await _client.PostAsync("/api/operationrequest", content);
-//
-//             // Act
-//             var getResponse = await _client.PostAsync("/api/operationrequest/status/1", null);
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, getResponse.StatusCode);
-//         }
-//
-//         [TestMethod]
-//         public async Task UpdateOperationRequest_ReturnsOkResponse()
-//         {
-//             // Arrange
-//             var newOperationRequest = new OperationRequestDto
-//             {
-//                 Id = _operationRequestId,
-//                 DoctorId = _staffId,
-//                 PatientId = _patientId,
-//                 OperationTypeId = _operationTypeId,
-//                 DeadlineDate = new DeadlineDate(DateTime.MaxValue),
-//                 Priority = Priority.URGENT,
-//                 Status = RequestStatus.PENDING
-//             };
-//             var content = new StringContent(JsonConvert.SerializeObject(newOperationRequest), Encoding.UTF8, "application/json");
-//             var postResponse = await _client.PostAsync("/api/operationrequest", content);
-//             var operationRequest = JsonConvert.DeserializeObject<OperationRequest>(await postResponse.Content.ReadAsStringAsync());
-//
-//             var updatingOperationRequest = new UpdatingOperationRequestDto
-//             {
-//                 Id = _operationRequestId,
-//                 DeadlineDate = new DeadlineDate(DateTime.MaxValue),
-//                 Priority = Priority.URGENT,
-//                 RequestStatus = RequestStatus.PENDING
-//             };
-//             content = new StringContent(JsonConvert.SerializeObject(updatingOperationRequest), Encoding.UTF8, "application/json");
-//
-//             // Act
-//             var updateResponse = await _client.PostAsync("/api/operationrequest/update", content);
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, updateResponse.StatusCode);
-//         }
-//
-//         [TestMethod]
-//         public async Task DeleteOperationRequest_ReturnsOkResponse()
-//         {
-//             // Arrange
-//             var newOperationRequest = new OperationRequestDto
-//             {
-//                 Id = _operationTypeId.AsGuid()
-//             };
-//             var content = new StringContent(JsonConvert.SerializeObject(newOperationRequest), Encoding.UTF8, "application/json");
-//             var postResponse = await _client.PostAsync("/api/operationrequest", content);
-//             var operationRequest = JsonConvert.DeserializeObject<OperationRequest>(await postResponse.Content.ReadAsStringAsync());
-//
-//             // Act
-//             var deleteResponse = await _client.DeleteAsync($"/api/operationrequest/delete/{operationRequest.Id}");
-//
-//             // Assert
-//             Assert.AreEqual(HttpStatusCode.OK, deleteResponse.StatusCode);
-//         }
-//     }
-// }
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using DDDNetCore.Controllers;
+using Domain.DbLogs;
+using Domain.OperationRequests;
+using Domain.OperationTypes;
+using Domain.Patients;
+using Domain.Shared;
+using Domain.Staffs;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using Xunit;
+using IOperationRequestService = DDDNetCore.Domain.OperationRequests.IOperationRequestService;
+
+namespace DDDNetCore.Tests.Controllers.OperationRequests
+{
+    public class OperationRequestControllerAcceptanceTest
+    {
+
+        private const string PageNumber = "1";
+        
+        private readonly OperationRequestController _controller;
+        private readonly Mock<IOperationRequestService> _service = new Mock<IOperationRequestService>();
+        private readonly Mock<IDbLogService> _logService = new Mock<IDbLogService>();
+
+        public OperationRequestControllerAcceptanceTest()
+        {
+            // Setup mocks and controller
+            _controller = new OperationRequestController(_service.Object, _logService.Object);
+
+            _service.Setup(x => x.GetAllAsync())
+                .ReturnsAsync(new List<OperationRequestDto>());
+
+            _service.Setup(x => x.GetByIdAsync(It.IsAny<OperationRequestId>()))
+                .ReturnsAsync(new OperationRequestDto());
+
+            _service.Setup(x => x.AddAsync(It.IsAny<CreatingOperationRequestDto>()))
+                .ReturnsAsync(new OperationRequestDto());
+
+            _service.Setup(x => x.UpdateAsync(It.IsAny<UpdatingOperationRequestDto>()))
+                .ReturnsAsync(new OperationRequestDto());
+
+            _service.Setup(x => x.DeleteAsync(It.IsAny<OperationRequestId>()))
+                .ReturnsAsync(new OperationRequestDto());
+
+            _service.Setup(x => x.GetByRequestStatusAsync(It.IsAny<RequestStatus>()))
+                .ReturnsAsync(new List<OperationRequestDto>());
+
+            _service.Setup(x => x.GetByOperationTypeAsync(It.IsAny<OperationTypeId>()))
+                .ReturnsAsync(new List<OperationRequestDto>());
+
+            _service.Setup(x => x.GetByPatientNameAsync(It.IsAny<FullName>()))
+                .ReturnsAsync(new List<OperationRequestDto>());
+        }
+
+        //GetAll
+        [Fact]
+        public async Task Get_ShouldReturnOk_NoOperationRequests()
+        {
+            // Act
+            var result = await _controller.Get(null);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result); // Check if result is OkObjectResult
+            var returnValue = Assert.IsAssignableFrom<IEnumerable<OperationRequestDto>>(okResult.Value);
+            Assert.Empty(returnValue);
+        }
+
+        [Fact]
+        public async Task Get_ShouldReturnOk_WithOperationRequest()
+        {
+            // Arrange
+            var list = new List<OperationRequestDto>{
+                new OperationRequestDto(
+                    new Guid(),
+                    new PatientId(Guid.NewGuid()),
+                    new StaffId(Guid.NewGuid()),
+                    new OperationTypeId(Guid.NewGuid()),
+                    new DeadlineDate(),
+                    Priority.URGENT,
+                    RequestStatus.PENDING
+                ),
+                
+                new OperationRequestDto(
+                    new Guid(),
+                    new PatientId(Guid.NewGuid()),
+                    new StaffId(Guid.NewGuid()),
+                    new OperationTypeId(Guid.NewGuid()),
+                    new DeadlineDate(),
+                    Priority.ELECTIVE,
+                    RequestStatus.PENDING
+                )
+            };
+            
+            _service.Setup(x => x.GetAllAsync()).ReturnsAsync(() => list); 
+            
+            // Act
+            var result = await _controller.Get(null);
+            
+            // Assert
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task Get_ShouldReturnBadRequest_InvalidPageNumber()
+        {
+            // Act
+            var result = await _controller.Get("invalidPageNumber");
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
+
+        //GetById
+        [Fact]
+        public async Task GetById_ShouldReturnNotFound_NonexistentId()
+        {
+            // Arrange
+            _service.Setup(x => x.GetByIdAsync(It.IsAny<OperationRequestId>()))
+                .ReturnsAsync((OperationRequestDto)null);
+
+            // Act
+            var result = await _controller.GetById(Guid.NewGuid());
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task GetById_ShouldReturnOk_ExistingId()
+        {
+            // Arrange
+            var request = new OperationRequestDto(
+                new Guid()
+            );
+            
+            _service.Setup(x => x.GetByIdAsync(It.IsAny<OperationRequestId>()))
+                .ReturnsAsync(request);
+
+            // Act
+            var result = await _controller.GetById(request.Id);
+            
+            // Assert
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+        
+        //GetByPatientName
+        [Fact]
+        public async Task GetByPatientName_ShouldReturnBadRequest_InvalidNameFormat()
+        {
+            // Act
+            var result = await _controller.GetByPatientName("InvalidName", null);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task GetByPatientName_ShouldReturnOk_ExistingPatientName()
+        {
+            // Arrange
+            var request = new OperationRequestDto(
+                    new Guid(),
+                    new PatientId(Guid.NewGuid()),
+                    new StaffId(Guid.NewGuid()),
+                    new OperationTypeId(Guid.NewGuid()),
+                    new DeadlineDate(),
+                    Priority.ELECTIVE,
+                    RequestStatus.PENDING
+                );
+            
+            var patient = new PatientDto(
+                request.PatientId.AsGuid(),
+                new FullName("John", "Doe")
+                );
+            
+            var list = new List<OperationRequestDto> { request };
+            
+            _service.Setup(x => x.GetByPatientNameAsync(It.IsAny<FullName>()))
+                .ReturnsAsync(() => list);
+            
+            // Act
+            var result = await _controller.GetByPatientName(patient.FullName.FirstName + "-" + patient.FullName.LastName, null);
+            
+            // Assert
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+        
+        [Fact]
+        public async Task GetByPatientName_ShouldReturnNotFound_NonExistingPatientName()
+        {
+            // Arrange
+          var patient = new PatientDto(
+                (new PatientId(Guid.NewGuid())).AsGuid(),
+                new FullName("John", "Doe")
+            );
+          
+            _service.Setup(x => x.GetByPatientNameAsync(It.IsAny<FullName>()))
+                .ReturnsAsync(() => []);
+            
+            // Act
+            var result = await _controller.GetByPatientName(patient.FullName.LastName + "-" + patient.FullName.FirstName, null);
+            
+            // Assert
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+        
+        //Update
+
+        
+        //Create
+        [Fact]
+        public async Task Create_ShouldReturnBadRequest_NullDto()
+        {
+            // Act
+            var result = await _controller.Create(null);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
+
+        //Delete
+        [Fact]
+        public async Task Delete_ShouldReturnOk_SuccessfulDeletion()
+        {
+            // Act
+            var result = await _controller.Delete(Guid.NewGuid());
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+    }
+}
