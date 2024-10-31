@@ -16,7 +16,7 @@ namespace Domain.OperationRequests
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
         
-        public OperationRequestDto(Guid id, PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DeadlineDate deadlineDate, Priority priority)
+        public OperationRequestDto(Guid id, PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
         {
             Id = id;
             PatientId = patientId;
@@ -24,6 +24,7 @@ namespace Domain.OperationRequests
             OperationTypeId = operationTypeId;
             DeadlineDate = deadlineDate;
             Priority = priority;
+            Status = status;
         }
 
         public OperationRequestDto(Guid id)

@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using Domain.Shared;
@@ -5,7 +6,7 @@ using Domain.OperationTypes;
 
 namespace Domain.OperationRequests
 {
-    public class OperationRequestService
+    public class OperationRequestService : IOperationRequestService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationRequestRepository _repo;

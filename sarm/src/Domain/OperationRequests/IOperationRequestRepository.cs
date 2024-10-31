@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
+using DDDNetCore.Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
+using Infrastructure.Shared;
 
 namespace Domain.OperationRequests
 {
