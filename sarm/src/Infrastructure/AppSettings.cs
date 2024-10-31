@@ -9,6 +9,7 @@ namespace Infrastructure
         public static string Email { get; private set; }
         public static string Password { get; private set; }
         public static string IAMDomain { get; private set; }
+        public static string IAMAudience { get; private set; }
         public static string IAMClientId { get; private set; }
         public static string IAMClientSecret { get; private set; }
         public static string IAMRedirectUri { get; private set; }
@@ -25,6 +26,7 @@ namespace Infrastructure
             Password = configuration["SendEmailSettings:Password"];
             IAMDomain = configuration["IAM:Domain"];
             IAMClientId = configuration["IAM:ClientId"];
+            IAMAudience = configuration["IAM:Audience"];
             IAMClientSecret = configuration["IAM:ClientSecret"];
             IAMRedirectUri = configuration["IAM:redirect_uri"];
             IAMLoginUrl = configuration["IAM:LoginURL"];

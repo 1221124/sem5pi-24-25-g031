@@ -100,8 +100,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = "https://dev-sagir8s22k2ehmk0.us.auth0.com/",
-                ValidAudience = AppSettings.IAMClientId,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.IAMClientSecret))
+                ValidAudience = AppSettings.IAMAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.IAMClientSecret)),
+                NameClaimType = "https://api.sarmg031.com/email",
+                RoleClaimType = "https://api.sarmg031.com/roles"
             };
         });
 
@@ -123,12 +125,11 @@ else
     app.UseHsts();
 }
 
-app.UseSession();
-
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseSession();
 
-// app.UseMiddleware<IdTokenHeaderMiddleware>();
+app.UseMiddleware<IdTokenHeaderMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

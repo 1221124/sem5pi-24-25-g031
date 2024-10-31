@@ -9,6 +9,8 @@ using Domain.IAM;
 using Domain.UsersSession;
 using System.Text.RegularExpressions;
 using DDDNetCore.Domain.Patients;
+using Domain.DbLogs;
+using DDDNetCore.Domain.DbLogs;
 
 namespace Controllers
 {
@@ -22,10 +24,11 @@ namespace Controllers
         private readonly IAMService _iamService;
         private readonly EmailService _emailService;
         private readonly SessionService _sessionService;
+        private readonly DbLogService _dbLogService;
         private readonly int pageSize = 2;
 
         public UsersController(UserService service, StaffService staffService, PatientService patientService, 
-        IAMService iAMService, EmailService emailService, SessionService sessionService)
+        IAMService iAMService, EmailService emailService, SessionService sessionService, DbLogService dbLogService)
         {
             _service = service;
             _staffService = staffService;
@@ -33,6 +36,7 @@ namespace Controllers
             _iamService = iAMService;
             _emailService = emailService;
             _sessionService = sessionService;
+            _dbLogService = dbLogService;
         }
 
         // GET: api/Users?pageNumber={pageNumber}
@@ -85,36 +89,87 @@ namespace Controllers
                 var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code);
 
                 var idToken = tokenResponse.IdToken;
+                Console.WriteLine("IdToken: " + idToken);
+                var accessToken = tokenResponse.AccessToken;
+                Console.WriteLine("AccessToken: " + accessToken);
 
-                var email = _iamService.GetEmailFromIdToken(idToken);
-                // var role = _iamService.GetRoleFromIdToken(idToken);
+                var emailAndRole = _iamService.GetClaimsFromToken(idToken);
+
+                Email email = new Email(emailAndRole.Email);
+                if (email == null)
+                {
+                    return BadRequest("Email not found in ID token.");
+                }
+                List<string> roles = emailAndRole.Roles;
+                if (roles.Count == 0)
+                {
+                    return BadRequest("Roles not found in access token.");
+                }
+                Role role = RoleUtils.FromString(roles[0]);
 
                 var user = await _service.GetByEmailAsync(email);
+                var dto = new CreatingUserDto(new Email(email), role);
 
                 if (user != null)
                 {
-                    return await Login(new CreatingUserDto(new Email(email), user.Role), idToken);
+                    return await Login(dto, idToken, accessToken);
                 }
 
-                if (email.Trim().ToLower().Equals(AppSettings.AdminEmail.Trim().ToLower()))
-                {
-                    return await CreateAdminUser(new CreatingUserDto(new Email(email), Role.Admin));
-                }
-                else if(email.Trim().ToLower().EndsWith(AppSettings.EmailDomain.Trim().ToLower()))
-                {
-                    return Ok("Registration in IAM sucessful. Please, wait for the administrator to create your account in our system.");
-                } else {
-                    return await CreatePatientUser(new CreatingUserDto(new Email(email), Role.Patient));
-                }
+                return await Create(dto, idToken, accessToken);
+
+                // if (email.Trim().ToLower().Equals(AppSettings.AdminEmail.Trim().ToLower()))
+                // {
+                //     return await CreateAdminUser(new CreatingUserDto(new Email(email), Role.Admin));
+                // }
+                // else if(email.Trim().ToLower().EndsWith(AppSettings.EmailDomain.Trim().ToLower()))
+                // {
+                //     return Ok("Registration in IAM sucessful. Please, wait for the administrator to create your account in our system.");
+                // } else {
+                //     return await CreatePatientUser(new CreatingUserDto(new Email(email), Role.Patient));
+                // }
 
             } catch (Exception ex) {
                 return BadRequest(new { ex.Message });
             }
         }
 
+        // POST: api/Users/register
+        [HttpPost("register")]
+        public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto, string idToken, string accessToken)
+        {
+            var user = await _service.GetByEmailAsync(dto.Email);
+            if (user != null) {
+                return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+            }
+
+            if (RoleUtils.IsStaff(dto.Role))
+            {
+                return await CreateStaffUser(dto);
+            }
+            else
+            {
+                user = await _service.AddAsync(dto);
+                user.UserStatus = UserStatus.Active;
+                await _service.UpdateAsync(user);
+                
+                if (RoleUtils.IsPatient(dto.Role))
+                {
+                    var patientDto = await _patientService.GetByEmailAsync(dto.Email);
+                    if (patientDto != null)
+                    {
+                        patientDto.UserId = new UserId(user.Id);
+                        await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
+                    }
+                }
+            }
+
+            _dbLogService.LogAction(EntityType.User, DbLogType.Create, new Message($"User {user.Id} created."));
+            return await Login(dto, idToken, accessToken);
+        }
+
         // POST: api/Users/login
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(CreatingUserDto dto, string idToken)
+        public async Task<ActionResult<UserDto>> Login(CreatingUserDto dto, string idToken, string accessToken)
         {
             Email email = dto.Email;
             Role role = dto.Role;
@@ -134,49 +189,56 @@ namespace Controllers
                 idToken
             );
 
-            HttpContext.Session.SetString("idToken", idToken);
-            HttpContext.Session.SetString("role", RoleUtils.ToString(role));
+            HttpContext.Session.SetString("IdToken", idToken);
+            Console.WriteLine("IdToken in session: " + HttpContext.Session.GetString("IdToken"));
+            HttpContext.Session.SetString("AccessToken", accessToken);
+            Console.WriteLine("AccessToken in session: " + HttpContext.Session.GetString("AccessToken"));
 
             await _sessionService.CreateSessionAsync(userSession);
 
             return Ok(user);
         }
 
-        // POST: api/Users/register/admin
-        [HttpPost("register/admin")]
-        public async Task<ActionResult<UserDto>> CreateAdminUser([FromBody] CreatingUserDto dto)
+        // // POST: api/Users/register/admin
+        // [HttpPost("register/admin")]
+        // public async Task<ActionResult<UserDto>> CreateAdminUser([FromBody] CreatingUserDto dto)
+        // {
+        //     // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
+        //     // if (!iamUserExists) {
+        //     //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
+        //     // }
+            
+        //     var user = await _service.GetByEmailAsync(dto.Email);
+        //     if (user != null) {
+        //         return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+        //     }
+
+        //     user = await _service.AddAsync(dto);
+
+        //     user.UserStatus = UserStatus.Active;
+
+        //     await _service.UpdateAsync(user);
+
+        //     return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        // }
+
+        // POST: api/Users/staff
+        [HttpPost("staff")]
+        public async Task<ActionResult<UserDto>> CreateStaffUser(CreatingUserDto dto)
         {
             // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
             // if (!iamUserExists) {
             //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
             // }
-            
+
             var user = await _service.GetByEmailAsync(dto.Email);
             if (user != null) {
                 return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
             }
 
-            user = await _service.AddAsync(dto);
-
-            user.UserStatus = UserStatus.Active;
-
-            await _service.UpdateAsync(user);
-
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-        }
-
-        // POST: api/Users/register/backoffice
-        [HttpPost("register/backoffice")]
-        public async Task<ActionResult<UserDto>> CreateBackofficeUser([FromBody] CreatingUserDto dto)
-        {
-            // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
-            // if (!iamUserExists) {
-            //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
-            // }
-
-            var user = await _service.GetByEmailAsync(dto.Email);
-            if (user != null) {
-                return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+            if (!RoleUtils.IsStaff(dto.Role))
+            {
+                return BadRequest(new { Message = $"Role {dto.Role} is not a staff role." });
             }
 
             user = await _service.AddAsync(dto);
@@ -193,38 +255,38 @@ namespace Controllers
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        // POST: api/Users/register/patient
-        [HttpPost("register/patient")]
-        public async Task<ActionResult<UserDto>> CreatePatientUser([FromBody] CreatingUserDto dto)
-        {
-            // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
-            // if (!iamUserExists) {
-            //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
-            // }
+        // // POST: api/Users/register/patient
+        // [HttpPost("register/patient")]
+        // public async Task<ActionResult<UserDto>> CreatePatientUser([FromBody] CreatingUserDto dto)
+        // {
+        //     // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
+        //     // if (!iamUserExists) {
+        //     //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
+        //     // }
 
-            var user = await _service.GetByEmailAsync(dto.Email);
-            if (user != null) {
-                return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
-            }
+        //     var user = await _service.GetByEmailAsync(dto.Email);
+        //     if (user != null) {
+        //         return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
+        //     }
 
-            user = await _service.AddAsync(dto);
+        //     user = await _service.AddAsync(dto);
 
-            user.UserStatus = UserStatus.Active;
+        //     user.UserStatus = UserStatus.Active;
 
-            await _service.UpdateAsync(user);
+        //     await _service.UpdateAsync(user);
 
-            var patientDto = await _patientService.GetByEmailAsync(dto.Email);
+        //     var patientDto = await _patientService.GetByEmailAsync(dto.Email);
 
-            if (patientDto != null)
-            {
-                patientDto.UserId = new UserId(user.Id);
-                await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
+        //     if (patientDto != null)
+        //     {
+        //         patientDto.UserId = new UserId(user.Id);
+        //         await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
 
-                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-            }
+        //         return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        //     }
 
-            return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
-        }
+        //     return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
+        // }
 
         // PUT: api/Users
         [HttpPut()]

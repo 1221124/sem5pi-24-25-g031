@@ -3,6 +3,9 @@ using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.UsersSession;
 using Domain.Authz;
+using Microsoft.AspNetCore.Authorization;
+using Domain.DbLogs;
+using DDDNetCore.Domain.DbLogs;
 
 namespace Controllers
 {
@@ -13,18 +16,18 @@ namespace Controllers
         private readonly int pageSize = 2;
         private readonly OperationTypeService _service;
         private readonly SessionService _sessionService;
-        private readonly AuthorizationService _authorizationService;
+        private readonly DbLogService _dbLogService;
 
-        public OperationTypesController(OperationTypeService service, SessionService sessionService, AuthorizationService authorizationService)
+        public OperationTypesController(OperationTypeService service, SessionService sessionService, DbLogService dbLogService)
         {
             _service = service;
             _sessionService = sessionService;
-            _authorizationService = authorizationService;
+            _dbLogService = dbLogService;
         }
 
         // GET: api/OperationTypes?pageNumber={pageNumber}
         [HttpGet]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         // [RequiredRole("Admin")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll([FromQuery] string? pageNumber)
         {
@@ -146,17 +149,20 @@ namespace Controllers
         {
             if (dto == null)
             {
+                _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error creating operation type: DTO is null"));
                 return BadRequest("Creating Operation Type DTO cannot be null");
             }
 
             var operationType = await _service.GetByNameAsync(dto.Name);
             if (operationType != null)
             {
+                _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error creating operation type: name already exists"));
                 return BadRequest("Operation Type with this name already exists");
             }
 
             operationType = await _service.AddAsync(dto);
 
+            _dbLogService.LogAction(EntityType.OperationType, DbLogType.Create, new Message($"Create {operationType.Id}"));
             return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
         }
 
@@ -171,8 +177,10 @@ namespace Controllers
                 
                 if (operationType == null)
                 {
+                    _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error updating operation type: operation type not found"));
                     return NotFound();
                 }
+                _dbLogService.LogAction(EntityType.OperationType, DbLogType.Update, new Message($"Update {operationType.Id}"));
                 return Ok(operationType);
             }
             catch(BusinessRuleValidationException ex)
@@ -189,9 +197,11 @@ namespace Controllers
 
             if (operationType == null)
             {
+                _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error inactivating operation type: operation type not found"));
                 return NotFound();
             }
 
+            _dbLogService.LogAction(EntityType.OperationType, DbLogType.Deactivate, new Message($"Deactivate {operationType.Id}"));
             return Ok(operationType);
         }
         
@@ -205,14 +215,16 @@ namespace Controllers
 
                 if (operationType == null)
                 {
+                    _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error deleting operation type: operation type not found"));
                     return NotFound();
                 }
 
+                _dbLogService.LogAction(EntityType.OperationType, DbLogType.Delete, new Message($"Delete {operationType.Id}"));
                 return Ok(operationType);
             }
             catch(BusinessRuleValidationException ex)
             {
-               return BadRequest(new {Message = ex.Message});
+               return BadRequest(new {ex.Message});
             }
         }
     }

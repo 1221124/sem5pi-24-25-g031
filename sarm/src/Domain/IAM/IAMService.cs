@@ -1,38 +1,22 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Domain.Shared;
 using Domain.Users;
 using Domain.UsersSession;
 using Infrastructure;
-using Newtonsoft.Json;
 
 namespace Domain.IAM
 {
     public class IAMService
     {
         private readonly HttpClient _httpClient;
+
         public IAMService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
-
-        // public async Task<bool> UserExistsAsync(Email email)
-        // {
-        //     var accessToken = "SEU_ACCESS_TOKEN";
-        //     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-        //     var response = await _httpClient.GetAsync($"{AppSettings.IAMDomain}/api/v2/users-by-email?email={email.Value}");
-
-        //     if (!response.IsSuccessStatusCode)
-        //     {
-        //         throw new Exception("Failed to check if user exists. Status code: " + response.StatusCode);
-        //     }
-
-        //     var responseContent = await response.Content.ReadAsStringAsync();
-        //     var userExistsResponse = JsonConvert.DeserializeObject<UserExistsResponse>(responseContent);
-
-        //     return userExistsResponse != null && userExistsResponse.Length > 0 && userExistsResponse.Users.Any(user => user.Email == email.Value);
-        // }
 
         public async Task<TokenResponse> ExchangeCodeForTokenAsync(string code)
         {
@@ -56,7 +40,7 @@ namespace Domain.IAM
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseContent);
+            var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseContent);
 
             if (tokenResponse == null || tokenResponse.IdToken == null)
             {
@@ -66,74 +50,42 @@ namespace Domain.IAM
             return tokenResponse;
         }
 
-        public string GetEmailFromIdToken(string idToken)
+        public (string Email, List<string> Roles) GetClaimsFromToken(string token)
         {
-            if (string.IsNullOrWhiteSpace(idToken))
+            if (string.IsNullOrWhiteSpace(token))
             {
-                throw new Exception("ID token cannot be null or empty.");
+                throw new Exception("Token cannot be null or empty.");
             }
 
             var handler = new JwtSecurityTokenHandler();
-            if (!handler.CanReadToken(idToken))
+            if (!handler.CanReadToken(token))
             {
-                throw new Exception("Invalid ID token.");
+                throw new Exception("Invalid token.");
             }
 
-            var jwtToken = handler.ReadJwtToken(idToken);
-            var emailClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "email");
-            if (emailClaim == null)
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var emailClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "https://api.sarmg031.com/email")?.Value;
+            if (string.IsNullOrEmpty(emailClaim))
             {
-                throw new Exception("Email claim not found in ID token.");
+                throw new Exception("Email claim not found in token.");
             }
 
-            return emailClaim.Value;
+            var rolesClaim = jwtToken.Claims
+                .Where(claim => claim.Type == "https://api.sarmg031.com/roles")
+                .Select(claim => claim.Value)
+                .ToList();
+
+            return (emailClaim, rolesClaim);
         }
-        
-        // public string GetRoleFromIdToken(string idToken)
-        // {
-        //     if (string.IsNullOrWhiteSpace(idToken))
-        //     {
-        //         throw new Exception("ID token cannot be null or empty.");
-        //     }
-
-        //     var handler = new JwtSecurityTokenHandler();
-        //     if (!handler.CanReadToken(idToken))
-        //     {
-        //         throw new Exception("Invalid ID token.");
-        //     }
-
-        //     var jwtToken = handler.ReadJwtToken(idToken);
-        //     var roleClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "https://dev-sagir8s22k2ehmk0.us.auth0.com/roles");
-        //     if (roleClaim == null)
-        //     {
-        //         throw new Exception("Role claim not found in ID token.");
-        //     }
-
-        //     return roleClaim.Value;
-        // }
     }
-
-    // public class UserExistsResponse
-    // {
-    //     [JsonProperty("length")]
-    //     public int Length { get; set; }
-
-    //     [JsonProperty("users")]
-    //     public List<Auth0User> Users { get; set; }
-    // }
-
-    // public class Auth0User
-    // {
-    //     [JsonProperty("email")]
-    //     public string Email { get; set; }
-    // }
 
     public class TokenResponse
     {
-        [JsonProperty("access_token")]
+        [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
 
-        [JsonProperty("id_token")]
+        [JsonPropertyName("id_token")]
         public string IdToken { get; set; }
     }
 }
