@@ -4,7 +4,6 @@ using Infrastructure;
 using Infrastructure.OperationTypes;
 using Infrastructure.OperationRequests;
 using Infrastructure.Users;
-using Infrastructure.Patients;
 using Infrastructure.StaffRepository;
 using Domain.OperationTypes;
 using Domain.OperationRequests;
@@ -26,6 +25,8 @@ using System.Text;
 using Domain.Authz;
 using Domain.DbLogs;
 using Infrastructure.DbLogs;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,11 +47,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+    {
+        options.IdleTimeout = TimeSpan.FromMinutes(60);
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+    });
 
 builder.Services.AddHttpContextAccessor();
 
@@ -87,26 +88,73 @@ builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.co
 
 builder.Services.AddTransient<PatientCleanupService>();
 
-builder.Services.AddMemoryCache();
-
 builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", "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"));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddCookie(options =>
+    {
+        options.Events.OnRedirectToLogin = context =>
         {
-            options.TokenValidationParameters = new TokenValidationParameters
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    })
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.Authority = AppSettings.IAMDomain;
+        options.Audience = AppSettings.IAMAudience;
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = "https://dev-sagir8s22k2ehmk0.us.auth0.com/",
-                ValidAudience = AppSettings.IAMAudience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.IAMClientSecret)),
-                NameClaimType = "https://api.sarmg031.com/email",
-                RoleClaimType = "https://api.sarmg031.com/roles"
-            };
-        });
+                var email = context.Principal.FindFirstValue(ClaimTypes.Email);
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    throw new Exception("Auth0 login failed: email not found.");
+                }
+
+                var userService = context.HttpContext.RequestServices.GetRequiredService<UserService>();
+                var userEntity = await userService.GetByEmailAsync(email);
+
+                if (userEntity == null)
+                {
+                    userEntity = await userService.AddAsync(new CreatingUserDto(new Email(email), RoleUtils.GetRoleFromEmail(email)));
+                }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userEntity.Id.ToString()),
+                    new Claim(ClaimTypes.Email, userEntity.Email),
+                    new Claim(ClaimTypes.Role, RoleUtils.ToString(userEntity.Role))
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                context.Principal = principal;
+            }
+        };
+    });
+    // .AddJwtBearer(options =>
+    // {
+    //     options.TokenValidationParameters = new TokenValidationParameters
+    //     {
+    //         ValidateIssuer = true,
+    //         ValidateAudience = true,
+    //         ValidateLifetime = true,
+    //         ValidateIssuerSigningKey = true,
+    //         ValidIssuer = "https://dev-sagir8s22k2ehmk0.us.auth0.com/",
+    //         ValidAudience = AppSettings.IAMAudience,
+    //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.IAMClientSecret)),
+    //         NameClaimType = "https://api.sarmg031.com/email",
+    //         RoleClaimType = "https://api.sarmg031.com/roles"
+    //     };
+    // });
 
 var app = builder.Build();
 
@@ -128,9 +176,10 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
 app.UseSession();
 
-app.UseMiddleware<IdTokenHeaderMiddleware>();
+// app.UseMiddleware<IdTokenHeaderMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

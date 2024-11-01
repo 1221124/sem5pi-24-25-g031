@@ -8,20 +8,20 @@ namespace Domain.UsersSession {
         public Email Email { get; set; }
         public Role Role { get; set; }
         public DateTime ExpiresIn { get; set; }
-        public string IdToken { get; set; }
+        public string Cookie { get; set; }
 
         public UserSession()
         {
         }
         
-        public UserSession(UserId userId, Email email, Role role, string idToken)
+        public UserSession(UserId userId, Email email, Role role, string cookie)
         {
             Id = new UserSessionId(Guid.NewGuid());
             UserId = userId;
             Email = email;
             Role = role;
             ExpiresIn = DateTime.Now.AddMinutes(60);
-            IdToken = idToken;
+            Cookie = cookie;
         }
 
         public bool IsExpired()

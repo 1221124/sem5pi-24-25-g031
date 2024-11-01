@@ -96,6 +96,7 @@ namespace Controllers
                 var emailAndRole = _iamService.GetClaimsFromToken(idToken);
 
                 Email email = new Email(emailAndRole.Email);
+                Console.WriteLine("Callback email: " + email.Value);
                 if (email == null)
                 {
                     return BadRequest("Email not found in ID token.");
@@ -106,6 +107,7 @@ namespace Controllers
                     return BadRequest("Roles not found in access token.");
                 }
                 Role role = RoleUtils.FromString(roles[0]);
+                Console.WriteLine("Callback role: " + RoleUtils.ToString(role));
 
                 var user = await _service.GetByEmailAsync(email);
                 var dto = new CreatingUserDto(new Email(email), role);
@@ -179,22 +181,34 @@ namespace Controllers
             if (user == null)
                 return BadRequest(new { Message = $"User with email {email.Value} not found." });
 
-            if (user.Role != role)
-                return Forbid();
+            // if (user.Role != role)
+            //     return Forbid();
 
-            var userSession = new UserSession(
-                new UserId(user.Id),
-                user.Email,
-                user.Role,
-                idToken
-            );
+            // var userSession = new UserSession(
+            //     new UserId(user.Id),
+            //     user.Email,
+            //     user.Role,
+            //     idToken,
+            //     accessToken
+            // );
 
-            HttpContext.Session.SetString("IdToken", idToken);
-            Console.WriteLine("IdToken in session: " + HttpContext.Session.GetString("IdToken"));
-            HttpContext.Session.SetString("AccessToken", accessToken);
-            Console.WriteLine("AccessToken in session: " + HttpContext.Session.GetString("AccessToken"));
+            // HttpContext.Session.SetString("email", user.Email.Value);
+            // Console.WriteLine("Email in session: " + HttpContext.Session.GetString("email"));
 
-            await _sessionService.CreateSessionAsync(userSession);
+            // await HttpContext.Session.CommitAsync();
+
+            // HttpContext.Session.SetString("IdToken", idToken);
+            // Console.WriteLine("IdToken in session: " + HttpContext.Session.GetString("IdToken"));
+            // Console.WriteLine("Session ID: " + HttpContext.Session.Id);
+
+            // HttpContext.Session.SetString("Authenticated", "true");
+
+            // HttpContext.Session.SetString("AccessToken", accessToken);
+            // Console.WriteLine("AccessToken in session: " + HttpContext.Session.GetString("AccessToken"));
+
+            // await HttpContext.Session.CommitAsync();
+
+            // await _sessionService.CreateSessionAsync(userSession);
 
             return Ok(user);
         }

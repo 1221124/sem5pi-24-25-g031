@@ -33,18 +33,13 @@ namespace Infrastructure.UsersSession
             }
         }
 
-        public async Task<UserSession?> GetByEmailAsync(Email admin)
+        public async Task<UserSession> GetByEmailAsync(Email email)
         {
-            var session = await _objs.FirstOrDefaultAsync(s => s.Email == admin);
-
-            if (session == null)
-            {
-                throw new Exception("Session not found");
-            }
-            else return session;
+            return await this._objs
+                .AsQueryable().Where(x => email.Value.Equals(x.Email.Value)).FirstOrDefaultAsync();
         }
 
-        public async Task<UserSession?> GetByUserIdAsync(UserId userId)
+        public async Task<UserSession> GetByUserIdAsync(UserId userId)
         {
             return await _objs.FirstOrDefaultAsync(s => s.UserId == userId);
         }
@@ -58,9 +53,9 @@ namespace Infrastructure.UsersSession
             }
         }
 
-        public async Task<UserSession?> GetByIdTokenAsync(string token)
+        public async Task<UserSession> GetByCookieAsync(string cookie)
         {
-            return await _objs.FirstOrDefaultAsync(s => s.IdToken == token);
+            return await _objs.FirstOrDefaultAsync(s => s.Cookie == cookie);
         }
 
     }

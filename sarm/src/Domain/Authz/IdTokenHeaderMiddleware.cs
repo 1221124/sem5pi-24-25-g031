@@ -1,44 +1,57 @@
-namespace Domain.Authz
-{
-    public class IdTokenHeaderMiddleware
-    {
-        private readonly RequestDelegate _next;
+// namespace Domain.Authz
+// {
+//     public class IdTokenHeaderMiddleware
+//     {
+//         private readonly RequestDelegate _next;
 
-        public IdTokenHeaderMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+//         public IdTokenHeaderMiddleware(RequestDelegate next)
+//         {
+//             _next = next;
+//         }
 
-        public async Task Invoke(HttpContext context)
-        {
-            Console.WriteLine("IdTokenHeaderMiddleware: Invoked.");
+//         public async Task Invoke(HttpContext context)
+//         {
+//             Console.WriteLine("IdTokenHeaderMiddleware: Invoked.");
 
-            var path = context.Request.Path.Value.ToLower();
-            if (path == "/api/users/callback" || path == "/api/users/register" || path == "/api/users/login")
-            {
-                await _next(context);
-                return;
-            }
+//             // var path = context.Request.Path.Value.ToLower();
+//             // if (path == "/api/Users/callback" || path == "/api/Users/register" || path == "/api/Users/login")
+//             if (context.Request.Path.StartsWithSegments("/api/Users/callback", StringComparison.OrdinalIgnoreCase)
+//             || context.Request.Path.StartsWithSegments("/api/Users/register", StringComparison.OrdinalIgnoreCase)
+//             || context.Request.Path.StartsWithSegments("/api/Users/login", StringComparison.OrdinalIgnoreCase))
+//             // || context.Session.GetString("Authenticated") != "true")
+//             {
+//                 await _next(context);
+//                 return;
+//             }
 
-            var idToken = context.Session.GetString("IdToken");
-            var accessToken = context.Session.GetString("AccessToken");
+//             if (context.Session.IsAvailable)
+//             {
+//                 Console.WriteLine("IdTokenHeaderMiddleware: Session is available.");
+//                 Console.WriteLine($"IdTokenHeaderMiddleware: Session ID - {context.Session.Id}");
+//             }
+//             else
+//             {
+//                 Console.WriteLine("IdTokenHeaderMiddleware: Session is NOT available.");
+//             }
 
-            Console.WriteLine("IdTokenHeaderMiddleware: idToken from session: " + idToken);
-            Console.WriteLine("IdTokenHeaderMiddleware: accessToken from session: " + accessToken);
+//             var accessToken = context.Session.GetString("AccessToken");
+//             Console.WriteLine("IdTokenHeaderMiddleware: accessToken from session: " + accessToken);
 
-            if (!string.IsNullOrEmpty(accessToken))
-            {
-                Console.WriteLine("IdTokenHeaderMiddleware: Adding accessToken to request headers.");
-                context.Request.Headers["Authorization"] = $"Bearer {accessToken}";
-                Console.WriteLine("IdTokenHeaderMiddleware: Added accessToken to request headers.");
-            }
-            else
-            {
-                Console.WriteLine("IdTokenHeaderMiddleware: AccessToken is null or empty.");
-            }
+//             if (string.IsNullOrEmpty(accessToken))
+//             {
+//                 Console.WriteLine("IdTokenHeaderMiddleware: accessToken is null or empty.");
+//                 context.Response.StatusCode = 401;
+//                 return;
+//             }
+//             else
+//             {
+//                 Console.WriteLine("IdTokenHeaderMiddleware: Trying to add access token");
+//                 context.Request.Headers["Authorization"] = $"Bearer {accessToken}";
+//                 Console.WriteLine("IdTokenHeaderMiddleware: Added Authorization header.");
+//             }
 
-            Console.WriteLine("IdTokenHeaderMiddleware: Calling next middleware.");
-            await _next(context);
-        }
-    }
-}
+//             Console.WriteLine("IdTokenHeaderMiddleware: Calling next middleware.");
+//             await _next(context);
+//         }
+//     }
+// }

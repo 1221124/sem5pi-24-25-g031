@@ -20,15 +20,13 @@ namespace Domain.UsersSession
         {
             try
             {
-            //    _sessions.AddOrUpdate(session.UserId, session, (key, oldValue) => session);
-
                 var userSession = _sessions.GetByUserIdAsync(session.UserId).Result;
 
                 if(userSession != null)
                 {
                     userSession.Email = session.Email;
                     userSession.Role = session.Role;
-                    userSession.IdToken = session.IdToken;
+                    userSession.Cookie = session.Cookie;
                     userSession.ExpiresIn = session.ExpiresIn;
                 }
                 else
@@ -46,7 +44,20 @@ namespace Domain.UsersSession
             }
         }
 
-        public Task<UserSession?> GetSessionAsync(UserId userId)
+        public Task<UserSession> GetSessionByEmailAsync(Email email)
+        {
+            try
+            {
+                var session =_sessions.GetByEmailAsync(email);
+                return session;
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Error getting session: " + e.Message);
+            }
+        }
+
+        public Task<UserSession> GetSessionByUserIdAsync(UserId userId)
         {
             try{
                 var session =_sessions.GetByUserIdAsync(userId);
@@ -74,16 +85,16 @@ namespace Domain.UsersSession
             }
         }
 
-        public Task<UserSession?> GetByIdTokenAsync(string token)
+        public Task<UserSession> GetByCookieAsync(string cookie)
         {
             try
             {
-                var session =_sessions.GetByIdTokenAsync(token);
+                var session =_sessions.GetByCookieAsync(cookie);
                 return session;
             }
             catch(Exception e)
             {
-                throw new Exception("Error removing session: " + e.Message);
+                throw new Exception("Error getting session: " + e.Message);
             }
         }
     }

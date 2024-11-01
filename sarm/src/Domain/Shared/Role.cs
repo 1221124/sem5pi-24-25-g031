@@ -1,4 +1,7 @@
 
+
+using Infrastructure;
+
 namespace Domain.Shared
 
 {
@@ -36,11 +39,11 @@ namespace Domain.Shared
         {
             return role switch
             {
-                Role.Admin => "ADMIN",
-                Role.Doctor => "DOCTOR",
-                Role.Nurse => "NURSE",
-                Role.Technician => "TECHNICIAN",
-                Role.Patient => "PATIENT",
+                Role.Admin => "Admin",
+                Role.Doctor => "Doctor",
+                Role.Nurse => "Nurse",
+                Role.Technician => "Technician",
+                Role.Patient => "Patient",
                 _ => throw new System.ArgumentException($"Invalid role: {role}")
             };
         }
@@ -117,6 +120,28 @@ namespace Domain.Shared
         public static bool IsAdmin(Role role)
         {
             return role == Role.Admin;
+        }
+
+        public static Role GetRoleFromEmail(string email)
+        {
+            var emailTrimToLower = email.Trim().ToLower();
+            if (emailTrimToLower.Equals(AppSettings.AdminEmail.Trim().ToLower()))
+            {
+                return Role.Admin;
+            } else if (emailTrimToLower.EndsWith(AppSettings.EmailDomain.Trim().ToLower()))
+            {
+                if (emailTrimToLower.StartsWith("d"))
+                {
+                    return Role.Doctor;
+                } else if (emailTrimToLower.StartsWith("n"))
+                {
+                    return Role.Nurse;
+                } else if (emailTrimToLower.StartsWith("t"))
+                {
+                    return Role.Technician;
+                }
+            }
+            return Role.Patient;
         }
     }
 

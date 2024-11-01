@@ -36,8 +36,8 @@ namespace Infrastructure.UsersSession
                 .HasColumnType("datetime2")
                 .IsRequired();
 
-            builder.Property(x => x.IdToken)
-                .HasColumnName("IdToken")
+            builder.Property(x => x.Cookie)
+                .HasColumnName("Cookie")
                 .IsRequired()
                 .HasColumnType("nvarchar(max)");
         }
