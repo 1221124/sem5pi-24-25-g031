@@ -1,42 +1,37 @@
 using Domain.Shared;
 using Domain.UsersSession;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Domain.Authz
 {
     public class AuthorizationService
     {
-        private readonly IUserSessionRepository _sessionRepo;
+        private readonly IMemoryCache _memoryCache;
 
-        public AuthorizationService(IUserSessionRepository sessionRepo)
+        public AuthorizationService(IMemoryCache memoryCache)
         {
-            _sessionRepo = sessionRepo;
+            _memoryCache = memoryCache;
         }
 
-        public bool IsAuthorized(string idToken, string? roles)
+        public async Task AddTokenToCacheAsync(string accessToken)
         {
-            // roles = roles.ToUpper();
-            // // var session = _sessionRepo.GetByIdTokenAsync(idToken).Result;
+            _memoryCache.Set("accessToken", accessToken, TimeSpan.FromMinutes(60));
+        }
 
-            // if (session == null)
-            // {
-            //     return false;
-            // }
+        public async Task<string> GetTokenFromCacheAsync()
+        {
+            _memoryCache.TryGetValue("accessToken", out string accessToken);
+            return accessToken;
+        }
 
-            // if (roles == null)
-            // {
-            //     return true;
-            // }
+        public async Task RemoveTokenFromCacheAsync()
+        {
+            _memoryCache.Remove("accessToken");
+        }
 
-            // string[] rolesArray = roles.Split(",");
-            // foreach (var role in rolesArray)
-            // {
-            //     if (session.Role == RoleUtils.FromString(role))
-            //     {
-            //         return true;
-            //     }
-            // }
-
-            return false;
+        public async Task<bool> IsTokenInCacheAsync()
+        {
+            return _memoryCache.TryGetValue("accessToken", out string accessToken);
         }
     }
 }

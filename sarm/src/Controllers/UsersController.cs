@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using DDDNetCore.Domain.DbLogs;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Controllers
 {
@@ -25,10 +26,11 @@ namespace Controllers
         private readonly EmailService _emailService;
         private readonly SessionService _sessionService;
         private readonly DbLogService _dbLogService;
+        private readonly IMemoryCache _memoryCache;
         private readonly int pageSize = 2;
 
         public UsersController(UserService service, StaffService staffService, PatientService patientService, 
-        IAMService iAMService, EmailService emailService, SessionService sessionService, DbLogService dbLogService)
+        IAMService iAMService, EmailService emailService, SessionService sessionService, DbLogService dbLogService, IMemoryCache memoryCache)
         {
             _service = service;
             _staffService = staffService;
@@ -37,6 +39,7 @@ namespace Controllers
             _emailService = emailService;
             _sessionService = sessionService;
             _dbLogService = dbLogService;
+            _memoryCache = memoryCache;
         }
 
         // GET: api/Users?pageNumber={pageNumber}
@@ -181,8 +184,17 @@ namespace Controllers
             if (user == null)
                 return BadRequest(new { Message = $"User with email {email.Value} not found." });
 
-            // if (user.Role != role)
-            //     return Forbid();
+            if (idToken == null || accessToken == null)
+                return BadRequest(new { Message = "ID token and access token are required." });
+
+            // var cookieOptions = new CookieOptions
+            // {
+            //     HttpOnly = true,
+            //     Expires = DateTimeOffset.UtcNow.AddMinutes(60)
+            // };
+            // Response.Cookies.Append("accessToken", accessToken, cookieOptions);
+
+             _memoryCache.Set("accessToken", accessToken, TimeSpan.FromMinutes(60));
 
             // var userSession = new UserSession(
             //     new UserId(user.Id),
@@ -192,59 +204,15 @@ namespace Controllers
             //     accessToken
             // );
 
-            // HttpContext.Session.SetString("email", user.Email.Value);
-            // Console.WriteLine("Email in session: " + HttpContext.Session.GetString("email"));
-
-            // await HttpContext.Session.CommitAsync();
-
-            // HttpContext.Session.SetString("IdToken", idToken);
-            // Console.WriteLine("IdToken in session: " + HttpContext.Session.GetString("IdToken"));
-            // Console.WriteLine("Session ID: " + HttpContext.Session.Id);
-
-            // HttpContext.Session.SetString("Authenticated", "true");
-
-            // HttpContext.Session.SetString("AccessToken", accessToken);
-            // Console.WriteLine("AccessToken in session: " + HttpContext.Session.GetString("AccessToken"));
-
-            // await HttpContext.Session.CommitAsync();
-
             // await _sessionService.CreateSessionAsync(userSession);
 
             return Ok(user);
         }
 
-        // // POST: api/Users/register/admin
-        // [HttpPost("register/admin")]
-        // public async Task<ActionResult<UserDto>> CreateAdminUser([FromBody] CreatingUserDto dto)
-        // {
-        //     // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
-        //     // if (!iamUserExists) {
-        //     //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
-        //     // }
-            
-        //     var user = await _service.GetByEmailAsync(dto.Email);
-        //     if (user != null) {
-        //         return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
-        //     }
-
-        //     user = await _service.AddAsync(dto);
-
-        //     user.UserStatus = UserStatus.Active;
-
-        //     await _service.UpdateAsync(user);
-
-        //     return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-        // }
-
         // POST: api/Users/staff
         [HttpPost("staff")]
         public async Task<ActionResult<UserDto>> CreateStaffUser(CreatingUserDto dto)
         {
-            // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
-            // if (!iamUserExists) {
-            //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
-            // }
-
             var user = await _service.GetByEmailAsync(dto.Email);
             if (user != null) {
                 return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
@@ -268,39 +236,6 @@ namespace Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
-
-        // // POST: api/Users/register/patient
-        // [HttpPost("register/patient")]
-        // public async Task<ActionResult<UserDto>> CreatePatientUser([FromBody] CreatingUserDto dto)
-        // {
-        //     // var iamUserExists = await _iamService.UserExistsAsync(dto.Email);
-        //     // if (!iamUserExists) {
-        //     //     return BadRequest(new { Message = $"Backoffice user with email {dto.Email.Value} not registered in the IAM." });
-        //     // }
-
-        //     var user = await _service.GetByEmailAsync(dto.Email);
-        //     if (user != null) {
-        //         return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
-        //     }
-
-        //     user = await _service.AddAsync(dto);
-
-        //     user.UserStatus = UserStatus.Active;
-
-        //     await _service.UpdateAsync(user);
-
-        //     var patientDto = await _patientService.GetByEmailAsync(dto.Email);
-
-        //     if (patientDto != null)
-        //     {
-        //         patientDto.UserId = new UserId(user.Id);
-        //         await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
-
-        //         return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-        //     }
-
-        //     return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
-        // }
 
         // PUT: api/Users
         [HttpPut()]
