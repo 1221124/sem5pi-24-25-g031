@@ -1,2 +1,6 @@
 /obj
 /bin
+/DDDNetCore.Tests/bin
+/DDDNetCore.Tests/obj
+/sarm/bin
+/sarm/obj
