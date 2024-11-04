@@ -68,11 +68,12 @@ This project is a **web-based system** designed to manage surgical appointments 
 
 ## Technologies Used
 
-- **Application**: HTML5 (with .NET framework), CSS and JavaScript
-- **Database**: //TODO: decide the database to use
+- **Frontend**: HTML, CSS and Typescript (with Angular framework)
+- **Backend**: C# (with .NET framework)
+- **Database**: Azure SQL Server
 - **3D Visualization**: Three.js for real-time rendering
-- **Authentication**: IAM //TODO: decide what IAM to use
-- **Compliance**: GDPR Module (custom or integrated with existing libraries)
+- **Authentication**: Auth0 IAM
+- **Compliance**: GDPR Module
 
 ## Usage
 
