@@ -229,7 +229,7 @@ namespace DDDNetCore.Controllers
                 if(operationRequest == null)
                     return NotFound();
 
-                return Ok("Operation request updated successfully.");
+                return Ok(operationRequest);
 
             }catch(Exception ex){
                 await _logService.LogAction(EntityType.OperationRequest, DbLogType.Update, ex.Message);
