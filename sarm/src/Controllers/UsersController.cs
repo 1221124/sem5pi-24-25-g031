@@ -102,7 +102,7 @@ namespace Controllers
                 Console.WriteLine("Callback email: " + email.Value);
                 if (email == null)
                 {
-                    return BadRequest("Email not found in ID token.");
+                    return BadRequest("Email not found in access token.");
                 }
                 List<string> roles = emailAndRole.Roles;
                 if (roles.Count == 0)
@@ -194,7 +194,7 @@ namespace Controllers
             // };
             // Response.Cookies.Append("accessToken", accessToken, cookieOptions);
 
-             _memoryCache.Set("accessToken", accessToken, TimeSpan.FromMinutes(60));
+             _memoryCache.Set("idToken", idToken, TimeSpan.FromMinutes(60));
 
             // var userSession = new UserSession(
             //     new UserId(user.Id),

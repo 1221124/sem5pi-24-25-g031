@@ -36,19 +36,19 @@ namespace Domain.Authz
                 Console.WriteLine("IdTokenHeaderMiddleware: Session is NOT available.");
             }
 
-            _memoryCache.TryGetValue("accessToken", out string accessToken);
+            _memoryCache.TryGetValue("idToken", out string idToken);
 
-            if (string.IsNullOrEmpty(accessToken))
+            if (string.IsNullOrEmpty(idToken))
             {
-                Console.WriteLine("IdTokenHeaderMiddleware: accessToken is null or empty.");
+                Console.WriteLine("IdTokenHeaderMiddleware: idToken is null or empty.");
                 context.Response.StatusCode = 401;
                 return;
             }
             else
             {
-                Console.WriteLine("IdTokenHeaderMiddleware: Found access token in memory cache.");
-                Console.WriteLine("IdTokenHeaderMiddleware: Trying to add access token");
-                context.Request.Headers.Authorization = $"Bearer {accessToken}";
+                Console.WriteLine("IdTokenHeaderMiddleware: Found id token in memory cache.");
+                Console.WriteLine("IdTokenHeaderMiddleware: Trying to add id token");
+                context.Request.Headers["Authorization"] = $"Bearer {idToken}";
                 Console.WriteLine("IdTokenHeaderMiddleware: Added Authorization header.");
             }
 

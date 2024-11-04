@@ -24,12 +24,17 @@ using Microsoft.IdentityModel.Tokens;
 using Domain.Authz;
 using Domain.DbLogs;
 using Infrastructure.DbLogs;
+using Microsoft.OpenApi.Models;
+using System.Text;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 AppSettings.Initialize(builder.Configuration);
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddHttpClient<IAMService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
@@ -41,7 +46,33 @@ builder.Services.AddDbContext<SARMDbContext>(options =>
     .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "V1" });
+
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please insert your Bearer token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+            }
+        });
+    });
 
 builder.Services.AddDistributedMemoryCache();
 
@@ -72,8 +103,6 @@ builder.Services.AddTransient<PatientService>();
 builder.Services.AddTransient<IStaffRepository, StaffRepository>();
 builder.Services.AddTransient<StaffService>();
 
-builder.Services.AddHttpClient<IAMService>();
-
 builder.Services.AddTransient<IDbLogRepository, DbLogRepository>();
 builder.Services.AddTransient<DbLogService>();
 
@@ -89,46 +118,25 @@ builder.Services.AddTransient<PatientCleanupService>();
 
 builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", "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"));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
-        options.Authority = AppSettings.IAMDomain;
-        options.Audience = AppSettings.IAMAudience;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidIssuer = AppSettings.IAMDomain,
-            ValidateAudience = true,
-            ValidAudience = AppSettings.IAMAudience,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
-            {
-                var client = new HttpClient();
-                var keys = client.GetStringAsync("https://dev-sagir8s22k2ehmk0.us.auth0.com/.well-known/jwks.json").Result;
-                return JsonWebKeySet.Create(keys).GetSigningKeys();
-            },
-            // IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.IAMClientSecret)),
-            NameClaimType = "https://api.sarmg031.com/email",
-            RoleClaimType = "https://api.sarmg031.com/roles"
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
         };
         options.Events = new JwtBearerEvents
         {
-            OnAuthenticationFailed = context =>
+            OnTokenValidated = async context =>
             {
-                Console.WriteLine("Invalid token: " + context.Exception.Message);
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = context =>
-            {
-                Console.WriteLine("Token successfully validated!");
-                return Task.CompletedTask;
-            },
-            OnChallenge = context =>
-            {
-                Console.WriteLine("Authentication challenged!");
-                return Task.CompletedTask;
+                Console.WriteLine("Token validated successfully!");
             }
         };
     });
@@ -151,11 +159,34 @@ else
     app.UseHsts();
 }
 
+// app.Use(async (context, next) =>
+// {
+//     var token = context.Request.Headers["Authorization"].ToString();
+//     Console.WriteLine($"Token: {token}");
+
+//     await next.Invoke();
+// });
+
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSession();
 
-app.UseMiddleware<TokenMiddleware>();
+// app.UseMiddleware<TokenMiddleware>();
+using (var scope = app.Services.CreateScope())
+{
+    var iamService = scope.ServiceProvider.GetRequiredService<IAMService>();
+    var publicKey = await iamService.GetPublicKeyAsync();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.Use(async (context, next) =>
+    {
+        var options = context.RequestServices.GetRequiredService<IOptions<JwtBearerOptions>>().Value;
+        options.TokenValidationParameters.IssuerSigningKey = publicKey;
+
+        await next();
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
