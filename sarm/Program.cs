@@ -27,14 +27,13 @@ using Infrastructure.DbLogs;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
 AppSettings.Initialize(builder.Configuration);
 
 builder.Services.AddMemoryCache();
-
-builder.Services.AddHttpClient<IAMService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
@@ -44,6 +43,15 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddDbContext<SARMDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSwagger",
+            builder => builder
+                .AllowAnyOrigin() 
+                .AllowAnyMethod() 
+                .AllowAnyHeader());
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -118,6 +126,14 @@ builder.Services.AddTransient<PatientCleanupService>();
 
 builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", "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"));
 
+builder.Services.AddHttpClient<IAMService>();
+// builder.Services.AddScoped<IAMService>(sp =>
+// {
+//     var service = new IAMService(sp.GetRequiredService<HttpClient>());
+//     // service.LoadPublicKeysAsync().GetAwaiter().GetResult();
+//     return service;
+// });
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -125,20 +141,51 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
+        options.Authority = AppSettings.IAMDomain;
+        options.Audience = AppSettings.IAMAudience;
+        options.RequireHttpsMetadata = true;
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             ValidateIssuer = true,
             ValidIssuer = AppSettings.IAMDomain,
-            ValidateAudience = false,
+            ValidateAudience = true,
             ValidAudience = AppSettings.IAMAudience,
-            ClockSkew = TimeSpan.Zero
+            ValidateLifetime = true,
+            RoleClaimType = $"{AppSettings.IAMAudience}/roles"
         };
+
         options.Events = new JwtBearerEvents
         {
             OnTokenValidated = async context =>
             {
-                Console.WriteLine("Token validated successfully!");
+                var iamService = context.HttpContext.RequestServices.GetRequiredService<IAMService>();
+                var signingKeys = await iamService.LoadPublicKeysAsync();
+
+                var jwtToken = context.SecurityToken as JwtSecurityToken;
+                if (jwtToken == null)
+                {
+                    Console.WriteLine("Jwt Token is null.");
+                    context.Fail("Invalid token.");
+                    await Task.CompletedTask;
+                }
+
+                var jwtHeader = jwtToken?.Header;
+                var kid = jwtHeader?.Kid;
+
+                var signingKey = signingKeys.FirstOrDefault(key => key.KeyId == kid);
+                if (signingKey == null)
+                {
+                    context.Fail("Invalid token: signing key not found.");
+                    return;
+                }
+                context.SecurityToken.SigningKey = signingKey;
+            },
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                return Task.CompletedTask;
             }
         };
     });
@@ -161,34 +208,43 @@ else
     app.UseHsts();
 }
 
-// app.Use(async (context, next) =>
-// {
-//     var token = context.Request.Headers["Authorization"].ToString();
-//     Console.WriteLine($"Token: {token}");
-
-//     await next.Invoke();
-// });
-
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors("AllowSwagger");
 app.UseSession();
 
 // app.UseMiddleware<TokenMiddleware>();
-using (var scope = app.Services.CreateScope())
-{
-    var iamService = scope.ServiceProvider.GetRequiredService<IAMService>();
-    var publicKey = await iamService.GetPublicKeyAsync();
+// app.Use(async (context, next) =>
+// {
+//     var iamService = context.RequestServices.GetRequiredService<IAMService>();
+//     await iamService.LoadPublicKeysAsync();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
-    app.Use(async (context, next) =>
-    {
-        var options = context.RequestServices.GetRequiredService<IOptions<JwtBearerOptions>>().Value;
-        options.TokenValidationParameters.IssuerSigningKey = publicKey;
+//     var options = context.RequestServices.GetRequiredService<IOptions<JwtBearerOptions>>().Value;
 
-        await next();
-    });
-}
+//     if (context.Request.Headers.TryGetValue("Authorization", out var tokenHeader) && !string.IsNullOrWhiteSpace(tokenHeader))
+//     {
+//         var token = tokenHeader.ToString().Replace("Bearer ", "");
+//         var handler = new JwtSecurityTokenHandler();
+//         var jwtToken = handler.ReadJwtToken(token);
+//         var kid = jwtToken.Header["kid"]?.ToString();
+
+//         if (kid != null)
+//         {
+//             var signingKey = iamService.GetPublicKey(kid);
+//             if (signingKey == null)
+//             {
+//                 Console.WriteLine($"Key with kid={kid} not found.");
+//             }
+//             else
+//             {
+//                 Console.WriteLine($"Key with kid={kid} found.");
+//                 options.TokenValidationParameters.IssuerSigningKey = signingKey;
+//             }
+//         }
+//     }
+
+//     await next();
+// });
 
 app.UseAuthentication();
 app.UseAuthorization();

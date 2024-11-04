@@ -15,37 +15,36 @@ namespace Domain.IAM
     public class IAMService
     {
         private readonly HttpClient _httpClient;
-        private SecurityKey _publicKey;
+        private readonly Dictionary<string, SecurityKey> _publicKeys = [];
 
         public IAMService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        public async Task<SecurityKey> GetPublicKeyAsync()
+        public async Task<IEnumerable<SecurityKey>> LoadPublicKeysAsync()
         {
-            if (_publicKey != null)
-                return _publicKey;
-
             try
             {
-                var response = await _httpClient.GetStringAsync($"{AppSettings.IAMDomain}.well-known/jwks.json");
-                // Console.WriteLine($"JWKS Response: {response}");
-                var jwks = JsonConvert.DeserializeObject<JwksResponse>(response);
-                if (jwks?.Keys == null || !jwks.Keys.Any())
+                var jwksUrl = $"{AppSettings.IAMDomain}.well-known/jwks.json";
+                var response = await _httpClient.GetAsync(jwksUrl);
+                response.EnsureSuccessStatusCode();
+
+                var jwksJson = await response.Content.ReadAsStringAsync();
+                var jwks = JsonConvert.DeserializeObject<JwksResponse>(jwksJson);
+                if (jwks?.Keys == null || jwks.Keys.Count == 0)
                 {
                     throw new Exception("No keys found in JWKS.");
                 }
 
-                var rsa = RSA.Create();
-                rsa.ImportParameters(new RSAParameters
+                return jwks.Keys.Select(key => new JsonWebKey
                 {
-                    Modulus = Base64UrlEncoder.DecodeBytes(jwks.Keys[0].N),
-                    Exponent = Base64UrlEncoder.DecodeBytes(jwks.Keys[0].E)
+                    Kty = key.Kty,
+                    Alg = key.Alg,
+                    Use = key.Use,
+                    N = key.N,
+                    E = key.E
                 });
-
-                _publicKey = new RsaSecurityKey(rsa);
-                return _publicKey;
             }
             catch (HttpRequestException ex)
             {
@@ -59,6 +58,20 @@ namespace Domain.IAM
             {
                 throw new Exception("An unexpected error occurred: " + ex.Message);
             }
+        }
+
+        public IEnumerable<SecurityKey> GetPublicKeys()
+        {
+            return _publicKeys.Values;
+        }
+
+        public SecurityKey GetPublicKey(string kid)
+        {
+            if (_publicKeys.TryGetValue(kid, out var publicKey))
+            {
+                return publicKey;
+            }
+            throw new Exception($"No public key found for kid: {kid}");
         }
 
         public async Task<TokenResponse> ExchangeCodeForTokenAsync(string code)
@@ -145,13 +158,11 @@ namespace Domain.IAM
 
     public class Jwk
     {
+        public string Kid { get; set; }
         public string Kty { get; set; }
+        public string Alg { get; set; }
         public string Use { get; set; }
         public string N { get; set; }
         public string E { get; set; }
-        public string Kid { get; set; }
-        public string X5t { get; set; }
-        public List<string> X5c { get; set; }
-        public string Alg { get; set; }
     }
 }
