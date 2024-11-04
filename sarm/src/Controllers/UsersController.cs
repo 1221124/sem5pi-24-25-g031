@@ -96,7 +96,7 @@ namespace Controllers
                 var accessToken = tokenResponse.AccessToken;
                 Console.WriteLine("AccessToken: " + accessToken);
 
-                var emailAndRole = _iamService.GetClaimsFromToken(idToken);
+                var emailAndRole = _iamService.GetClaimsFromToken(accessToken);
 
                 Email email = new Email(emailAndRole.Email);
                 Console.WriteLine("Callback email: " + email.Value);
@@ -194,7 +194,7 @@ namespace Controllers
             // };
             // Response.Cookies.Append("accessToken", accessToken, cookieOptions);
 
-             _memoryCache.Set("idToken", idToken, TimeSpan.FromMinutes(60));
+             _memoryCache.Set("accessToken", accessToken, TimeSpan.FromMinutes(60));
 
             // var userSession = new UserSession(
             //     new UserId(user.Id),

@@ -129,7 +129,9 @@ builder.Services.AddAuthentication(options =>
         {
             ValidateIssuerSigningKey = true,
             ValidateIssuer = true,
+            ValidIssuer = AppSettings.IAMDomain,
             ValidateAudience = false,
+            ValidAudience = AppSettings.IAMAudience,
             ClockSkew = TimeSpan.Zero
         };
         options.Events = new JwtBearerEvents

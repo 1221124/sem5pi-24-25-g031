@@ -30,7 +30,7 @@ namespace Domain.IAM
             try
             {
                 var response = await _httpClient.GetStringAsync($"{AppSettings.IAMDomain}.well-known/jwks.json");
-                Console.WriteLine($"JWKS Response: {response}");
+                // Console.WriteLine($"JWKS Response: {response}");
                 var jwks = JsonConvert.DeserializeObject<JwksResponse>(response);
                 if (jwks?.Keys == null || !jwks.Keys.Any())
                 {
@@ -61,32 +61,6 @@ namespace Domain.IAM
             }
         }
 
-        public async Task<bool> ValidateTokenAsync(string token)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = await GetPublicKeyAsync(),
-                ValidateIssuer = true,
-                ValidIssuer = $"{AppSettings.IAMDomain}",
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            try
-            {
-                var principal = handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-                return true; 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Token validation failed: {ex.Message}");
-                return false; 
-            }
-        }
-
         public async Task<TokenResponse> ExchangeCodeForTokenAsync(string code)
         {
             var requestBody = new Dictionary<string, string>
@@ -95,12 +69,14 @@ namespace Domain.IAM
                 { "client_id", AppSettings.IAMClientId },
                 { "client_secret", AppSettings.IAMClientSecret },
                 { "redirect_uri", AppSettings.IAMRedirectUri },
-                { "grant_type", "authorization_code" }
+                { "grant_type", "authorization_code" },
+                { "audience", AppSettings.IAMAudience },
+                { "scope", "openid email profile" }
             };
 
             var requestContent = new FormUrlEncodedContent(requestBody);
 
-            var response = await _httpClient.PostAsync("https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token", requestContent);
+            var response = await _httpClient.PostAsync($"{AppSettings.IAMDomain}oauth/token", requestContent);
 
             if (!response.IsSuccessStatusCode)
             {

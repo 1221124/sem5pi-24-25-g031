@@ -27,7 +27,7 @@ namespace Controllers
 
         // GET: api/OperationTypes?pageNumber={pageNumber}
         [HttpGet]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         // [RequiredRole("Admin")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll([FromQuery] string? pageNumber)
         {

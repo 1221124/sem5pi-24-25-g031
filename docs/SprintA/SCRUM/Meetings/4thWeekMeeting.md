@@ -1,4 +1,4 @@
-# 3rd Week Meeting - Software Architectural Design Finalization and IAM Decision
+# 4th Week Meeting - Software Architectural Design Finalization and IAM Decision
 
 **Date**: Monday, October 21, 2024  
 **Time**: 14:00h
