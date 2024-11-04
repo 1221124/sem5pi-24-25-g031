@@ -170,14 +170,14 @@ namespace Domain.OperationRequests
                     return null;
                 }
 
-                operationRequest.ChangeDeadlineDate(newOperationRequest.DeadlineDate);
-                operationRequest.ChangePriority(newOperationRequest.Priority);
-                operationRequest.ChangeStatus(newOperationRequest.Status);
+                operationRequest.Update(newOperationRequest);
 
                 await _repo.UpdateAsync(operationRequest);
                 await _unitOfWork.CommitAsync();
 
+
                 _logService.LogAction(entity, log, "Updated {" + operationRequest.Id + "}");
+                
                 return OperationRequestMapper.ToDto(operationRequest);
 
             }

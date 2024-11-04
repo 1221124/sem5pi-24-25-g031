@@ -61,20 +61,19 @@ namespace Domain.OperationRequests
             Status = status ?? throw new ArgumentNullException(nameof(status));
         }
 
-        internal void ChangeDeadlineDate(DeadlineDate deadlineDate)
+        public OperationRequest Update(OperationRequest newOperationRequest)
         {
-            if(DeadlineDate != deadlineDate)
-                DeadlineDate = deadlineDate;
+            if(newOperationRequest.DeadlineDate != null)
+                DeadlineDate = newOperationRequest.DeadlineDate;
+
+            if (newOperationRequest.Priority != null)
+                Priority = newOperationRequest.Priority;
+
+            if (newOperationRequest.Status != null)
+                Status = newOperationRequest.Status;
+
+            return this;
         }
 
-        internal void ChangePriority(Priority priority){
-            if(Priority != priority)
-                Priority = priority;
-        }
-
-        internal void ChangeStatus(RequestStatus status){
-            if(Status != status)
-                Status = status;
-        }
     }
 }
