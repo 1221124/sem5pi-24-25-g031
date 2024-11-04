@@ -16,6 +16,30 @@ namespace Domain.OperationRequests
             RequestStatus = requestStatus ?? null;
         }
         
+        public UpdatingOperationRequestDto(Guid id, RequestStatus? requestStatus)
+        {
+            Id = id;
+            DeadlineDate = null;
+            Priority =  null;
+            RequestStatus = requestStatus ?? null;
+        }
+        
+        public UpdatingOperationRequestDto(Guid id, DeadlineDate? deadlineDate)
+        {
+            Id = id;
+            DeadlineDate = deadlineDate ?? null;
+            Priority = null;
+            RequestStatus = null;
+        }
+        
+        public UpdatingOperationRequestDto(Guid id, Priority? priority)
+        {
+            Id = id;
+            DeadlineDate = null;
+            Priority = priority ?? null;
+            RequestStatus = null;
+        }
+        
         public UpdatingOperationRequestDto()
         {
         }
