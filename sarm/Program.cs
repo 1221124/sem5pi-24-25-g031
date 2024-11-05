@@ -46,7 +46,7 @@ builder.Services.AddDbContext<SARMDbContext>(options =>
 
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowSwagger",
+        options.AddPolicy("AllowAll",
             builder => builder
                 .AllowAnyOrigin() 
                 .AllowAnyMethod() 
@@ -210,7 +210,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowSwagger");
+app.UseCors("AllowAll");
 app.UseSession();
 
 // app.UseMiddleware<TokenMiddleware>();
