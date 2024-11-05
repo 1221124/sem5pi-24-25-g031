@@ -1,0 +1,33 @@
+.operationType {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+}
+
+.operationType h3 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.operationType h4 {
+    margin-top: 10px;
+    color: #2980b9;
+}
+
+.operationType p {
+    margin: 5px 0;
+}
+
+.operationType ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.operationType ul li {
+    padding: 5px;
+    background-color: #ecf0f1;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}

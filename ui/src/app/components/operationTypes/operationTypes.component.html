@@ -1,0 +1,18 @@
+<h2>Operation Types</h2>
+<div *ngFor="let operationType of operationTypes" class="operation-type">
+  <h3>{{ operationType.name }}</h3>
+  <p>Specialization: {{ operationType.specialization }}</p>
+  <p>Status: {{ operationType.status }}</p>
+
+  <h4>Required Staff:</h4>
+  <ul>
+    <li *ngFor="let staff of operationType.requiredStaff">
+      Role: {{ staff.role }}, Specialization: {{ staff.specialization }}, Quantity: {{ staff.quantity }}
+    </li>
+  </ul>
+
+  <h4>Phases Duration:</h4>
+  <p>Preparation: {{ operationType.phasesDuration.preparation }} mins</p>
+  <p>Surgery: {{ operationType.phasesDuration.surgery }} mins</p>
+  <p>Cleaning: {{ operationType.phasesDuration.cleaning }} mins</p>
+</div>
