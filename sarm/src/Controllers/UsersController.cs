@@ -77,81 +77,60 @@ namespace Controllers
             return User;
         }
 
-        // GET: api/Users/callback
-        [HttpGet("callback")]
-        public async Task<ActionResult<UserDto>> HandleCallback([FromQuery] string code)
+        // POST: api/Users/callback
+        [HttpPost("callback")]
+        public async Task<ActionResult<bool>> HandleCallback([FromBody] string idToken, string accessToken)
         {
-            if (string.IsNullOrEmpty(code))
+
+            if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(accessToken))
             {
-                return BadRequest("Authorization code is required.");
+                return BadRequest("Tokens are required.");
             }
 
-            try {
-                var tokenResponse = await _iamService.ExchangeCodeForTokenAsync(code);
-
-                var idToken = tokenResponse.IdToken;
-                Console.WriteLine("IdToken: " + idToken);
-                var accessToken = tokenResponse.AccessToken;
-                Console.WriteLine("AccessToken: " + accessToken);
-
+            try
+            {
                 var emailAndRole = _iamService.GetClaimsFromToken(accessToken);
-
+                
                 Email email = new Email(emailAndRole.Email);
-                Console.WriteLine("Callback email: " + email.Value);
                 if (email == null)
                 {
                     return BadRequest("Email not found in access token.");
                 }
-                List<string> roles = emailAndRole.Roles;
-                if (roles.Count == 0)
-                {
-                    return BadRequest("Roles not found in access token.");
-                }
-                Role role = RoleUtils.FromString(roles[0]);
-                Console.WriteLine("Callback role: " + RoleUtils.ToString(role));
 
                 var user = await _service.GetByEmailAsync(email);
-                var dto = new CreatingUserDto(new Email(email), role);
 
-                if (user != null)
-                {
-                    return await Login(dto, idToken, accessToken);
-                }
-
-                return await Create(dto, idToken, accessToken);
-
-                // if (email.Trim().ToLower().Equals(AppSettings.AdminEmail.Trim().ToLower()))
-                // {
-                //     return await CreateAdminUser(new CreatingUserDto(new Email(email), Role.Admin));
-                // }
-                // else if(email.Trim().ToLower().EndsWith(AppSettings.EmailDomain.Trim().ToLower()))
-                // {
-                //     return Ok("Registration in IAM sucessful. Please, wait for the administrator to create your account in our system.");
-                // } else {
-                //     return await CreatePatientUser(new CreatingUserDto(new Email(email), Role.Patient));
-                // }
-
-            } catch (Exception ex) {
+                return Ok(user != null);
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(new { ex.Message });
             }
         }
 
-        // POST: api/Users/register
-        [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto, string idToken, string accessToken)
+        // POST: api/Users
+        [HttpPost()]
+        public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto)
         {
             var user = await _service.GetByEmailAsync(dto.Email);
             if (user != null) {
                 return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
             }
 
+            user = await _service.AddAsync(dto);
+
             if (RoleUtils.IsStaff(dto.Role))
             {
-                return await CreateStaffUser(dto);
+                var staff = await _staffService.GetByEmailAsync(dto.Email);
+                if (staff != null) {
+                    staff.UserId = new UserId(user.Id);
+                    await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntityFromUpdating(staff));
+                }
+
+                (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
+                await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
             }
             else
             {
-                user = await _service.AddAsync(dto);
                 user.UserStatus = UserStatus.Active;
                 await _service.UpdateAsync(user);
                 
@@ -167,72 +146,22 @@ namespace Controllers
             }
 
             _dbLogService.LogAction(EntityType.User, DbLogType.Create, new Message($"User {user.Id} created."));
-            return await Login(dto, idToken, accessToken);
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
         // POST: api/Users/login
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(CreatingUserDto dto, string idToken, string accessToken)
+        public async Task<ActionResult<UserDto>> Login(string email)
         {
-            Email email = dto.Email;
-            Role role = dto.Role;
-
-            var user = await _service.GetByEmailAsync(email);
+            var user = await _service.GetByEmailAsync(new Email(email));
 
             if (user == null)
-                return BadRequest(new { Message = $"User with email {email.Value} not found." });
+                return BadRequest(new { Message = $"User with email {email} not found." });
 
-            if (idToken == null || accessToken == null)
-                return BadRequest(new { Message = "ID token and access token are required." });
-
-            // var cookieOptions = new CookieOptions
-            // {
-            //     HttpOnly = true,
-            //     Expires = DateTimeOffset.UtcNow.AddMinutes(60)
-            // };
-            // Response.Cookies.Append("accessToken", accessToken, cookieOptions);
-
-             _memoryCache.Set("accessToken", accessToken, TimeSpan.FromMinutes(60));
-
-            // var userSession = new UserSession(
-            //     new UserId(user.Id),
-            //     user.Email,
-            //     user.Role,
-            //     idToken,
-            //     accessToken
-            // );
-
-            // await _sessionService.CreateSessionAsync(userSession);
+            if (user.UserStatus != UserStatus.Active)
+                return BadRequest(new { Message = $"User with email {email} is not active." });
 
             return Ok(user);
-        }
-
-        // POST: api/Users/staff
-        [HttpPost("staff")]
-        public async Task<ActionResult<UserDto>> CreateStaffUser(CreatingUserDto dto)
-        {
-            var user = await _service.GetByEmailAsync(dto.Email);
-            if (user != null) {
-                return BadRequest(new { Message = $"User with email {dto.Email.Value} already exists." });
-            }
-
-            if (!RoleUtils.IsStaff(dto.Role))
-            {
-                return BadRequest(new { Message = $"Role {dto.Role} is not a staff role." });
-            }
-
-            user = await _service.AddAsync(dto);
-
-            var staff = await _staffService.GetByEmailAsync(dto.Email);
-            if (staff != null) {
-                staff.UserId = new UserId(user.Id);
-                await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntityFromUpdating(staff));
-            }
-
-            (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
-            await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
-
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
         // PUT: api/Users

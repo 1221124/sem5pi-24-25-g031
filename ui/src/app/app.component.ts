@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,6 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   redirectToLogin() {
-    window.location.href = 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=code&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:5500/api/Users/callback&scope=openid%20profile%20email&prompt=login';
+    window.location.href = environment.login_url;
   }
 }
