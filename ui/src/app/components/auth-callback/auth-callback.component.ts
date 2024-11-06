@@ -1,32 +1,44 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute} from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-callback',
-  template: `<p>Processing your login...</p>`
+  standalone: true,
+  templateUrl: './auth-callback.component.html',
+  styleUrl: './auth-callback.component.css',
+  imports: [
+    CommonModule
+  ]
 })
 export class AuthCallbackComponent implements OnInit {
   message: string = '';
   isError: boolean = false;
+  // tokenExchanged: boolean = false;
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
+    // if (this.tokenExchanged) {
+    //   return;
+    // }
+    // this.tokenExchanged = true;
     this.route.queryParams.subscribe(params => {
-      const code = params['code'];
+      const code = params['code'] as string;
       
       if (code) {
-        this.authService.exchangeCodeForToken(code).subscribe({
+        this.authService.exchangeCodeForToken(code).pipe(take(1)).subscribe({
           next: (response) => {
             const idToken = response.body?.id_token;
             const accessToken = response.body?.access_token;
       
             if (idToken != null && accessToken != null) {
-              localStorage.setItem('idToken', idToken);
-              localStorage.setItem('accessToken', accessToken);
+              // localStorage.setItem('idToken', idToken);
+              // localStorage.setItem('accessToken', accessToken);
               
               this.authService.handleUserCallback(idToken, accessToken).subscribe({
                 next: (response) => {
@@ -45,10 +57,10 @@ export class AuthCallbackComponent implements OnInit {
                     const role = this.authService.extractRoleFromAccessToken(accessToken) as string;
                     if (email == null) {
                       this.message = 'Email not found in id token';
-                      return;
+                      this.isError = true;
                     } else if (role == null) {
                       this.message = 'Role not found in access token';
-                      return;
+                      this.isError = true;
                     }
                     this.authService.createUser(email, role).subscribe({
                       next: (response) => {

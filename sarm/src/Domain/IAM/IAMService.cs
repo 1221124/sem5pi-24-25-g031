@@ -144,11 +144,18 @@ namespace Domain.IAM
 
     public class TokenResponse
     {
-        [JsonPropertyName("access_token")]
+        // [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
 
-        [JsonPropertyName("id_token")]
+        // [JsonPropertyName("id_token")]
         public string IdToken { get; set; }
+
+        public TokenResponse() {}
+
+        public TokenResponse(string IdToken, string AccessToken) {
+            this.IdToken = IdToken;
+            this.AccessToken = AccessToken;
+        }
     }
 
     public class JwksResponse

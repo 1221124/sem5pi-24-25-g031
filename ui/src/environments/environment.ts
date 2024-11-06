@@ -6,8 +6,8 @@ export const environment = {
     authConfig: {
       clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
       clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
-      redirectUri: 'https://localhost:4200/callback',
+      redirectUri: 'http://localhost:4200/callback',
       authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
       audience: 'https://api.sarmg031.com'
     }
-  };  
+  };

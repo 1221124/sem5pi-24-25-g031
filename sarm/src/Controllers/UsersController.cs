@@ -79,8 +79,10 @@ namespace Controllers
 
         // POST: api/Users/callback
         [HttpPost("callback")]
-        public async Task<ActionResult<bool>> HandleCallback([FromBody] string idToken, string accessToken)
+        public async Task<ActionResult<bool>> HandleCallback([FromBody] TokenResponse body)
         {
+            var idToken = body.IdToken;
+            var accessToken = body.AccessToken;
 
             if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(accessToken))
             {
