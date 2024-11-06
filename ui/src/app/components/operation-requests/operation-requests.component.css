@@ -1,0 +1,82 @@
+/* operation-requests.component.css */
+
+.operationRequests-request {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .operationRequests-request h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+  }
+  
+  .operationRequests-request section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .operationRequests-request form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .operationRequests-request input[type="text"],
+  .operationRequests-request input[type="date"],
+  .operationRequests-request select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  
+  .operationRequests-request input[type="text"]:focus,
+  .operationRequests-request input[type="date"]:focus,
+  .operationRequests-request select:focus {
+    border-color: #007acc;
+    outline: none;
+  }
+  
+  .operationRequests-request label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  
+  .operationRequests-request button {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  .operationRequests-request button[type="button"] {
+    background-color: #007acc;
+    color: #fff;
+  }
+  
+  .operationRequests-request button[type="button"]:hover {
+    background-color: #005f99;
+  }
+  
+  .operationRequests-request button[type="button"]:last-of-type {
+    background-color: #4CAF50;
+  }
+  
+  .operationRequests-request button[type="button"]:last-of-type:hover {
+    background-color: #388E3C;
+  }
+  

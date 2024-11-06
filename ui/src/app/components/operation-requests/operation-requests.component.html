@@ -1,0 +1,69 @@
+<div class="operationRequests-request">
+  <h1>Operation Request Form</h1>
+
+    <section>
+      <form>
+        <input
+          type="text"
+          id="staffId"
+          name="staffId"
+          [(ngModel)]="staffId"
+          (focus)="staffIdTouched = true"
+          placeholder="Enter Staff ID"
+        />
+      </form>
+      
+      <form>
+        <input
+          type="text"
+          id="patientId"
+          name="patientId"
+          [(ngModel)]="patientId"
+          (focus)="patientIdTouched = true"
+          placeholder="Enter Patient ID"
+        />
+      </form>
+
+      <form>
+        <input
+          type="text"
+          id="operationTypeId"
+          name="operationTypeId"
+          [(ngModel)]="operationTypeId"
+          (focus)="operationTypeIdTouched = true"
+          placeholder="Enter Operation Type ID"
+        />
+      </form>
+
+      <form>
+        <input
+          type="date"
+          id="deadlineDate"
+          name="deadlineDate"
+          [(ngModel)]="deadlineDate"
+          (focus)="deadlineDateTouched = true"
+        />
+      </form>
+
+      <form>
+        <label for="priority">Select Priority:</label>
+        <select
+          id="priority"
+          name="priority"
+          [(ngModel)]="priority"
+          (focus)="priorityTouched = true"
+        >
+          <option value="Elective">Elective</option>
+          <option value="Urgent">Urgent</option>
+          <option value="Emergency">Emergency</option>
+        </select>
+      </form>
+
+      <form>
+        <button type="button" (click)="clearForm()">Clear Form</button>
+        
+        <button type="button" (click)="submitRequest()">Submit</button>
+      </form>
+
+    </section>
+</div>
