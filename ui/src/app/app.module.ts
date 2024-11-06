@@ -7,13 +7,16 @@ import { routes } from './app.routes';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { HomeComponent } from './components/home/home.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
+import { StaffsComponent } from './components/staffs/staffs.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthCallbackComponent,
     HomeComponent,
-    OperationRequestsComponent
+    OperationRequestsComponent,
+    StaffsComponent
   ],
   imports: [
     BrowserModule,
