@@ -6,12 +6,14 @@ import { CommonModule } from '@angular/common';
 import { routes } from './app.routes';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { HomeComponent } from './components/home/home.component';
+import { StaffsComponent } from './components/staffs/staffs.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthCallbackComponent,
-    HomeComponent
+    HomeComponent,
+    StaffsComponent
   ],
   imports: [
     BrowserModule,

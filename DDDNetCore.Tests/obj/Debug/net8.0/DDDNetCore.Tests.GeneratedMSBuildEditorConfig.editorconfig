@@ -16,6 +16,6 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = DDDNetCore.Tests
-build_property.ProjectDir = C:\Users\Utilizador\Desktop\Faculdade\3º Ano\3º Ano - 1º Semestre\PI - Projeto Integrador\sem5pi-24-25-g061\DDDNetCore.Tests\
+build_property.ProjectDir = C:\Users\beatr\OneDrive\Ambiente de Trabalho\ISEP\LICENCIATURA\3ANO\ARQSI\sem5pi-24-25-g061\DDDNetCore.Tests\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

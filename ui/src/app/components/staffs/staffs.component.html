@@ -1,0 +1,41 @@
+<div class="staffs-request">
+    <h1>Staff Form</h1>
+
+    <section>
+        <form>
+            <div class="form-group">
+                <input type="text" id="firstName" name="firstName" [(ngModel)]="firstName"
+                    (focus)="firstNameTouched = true" placeholder="Enter First Name" />
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName" (focus)="lastNameTouched = true"
+                    placeholder="Enter Last Name" />
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber"
+                    (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
+            </div>
+
+            <div class="form-group">
+                <label for="specialization">Select Specialization:</label>
+                <select id="specialization" name="specialization" [(ngModel)]="specialization"
+                    (focus)="specializationTouched = true">
+                    <option value="Anaesthesiology">Anaesthesiology</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Circulating">Circulating</option>
+                    <option value="Instrumental">Instrumental</option>
+                    <option value="Medical_Action">Medical Action</option>
+                    <option value="Orthopaedics">Orthopaedics</option>
+                    <option value="X_Ray">X Ray</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
+                <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+            </div>
+        </form>
+    </section>
+</div>
