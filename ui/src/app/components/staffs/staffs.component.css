@@ -77,3 +77,10 @@ label {
 .submit-button:hover {
     background-color: #005bb5;
 }
+
+.radio-staff {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}

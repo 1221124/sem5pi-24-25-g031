@@ -8,9 +8,16 @@
                     (focus)="firstNameTouched = true" placeholder="Enter First Name" />
             </div>
 
+
             <div class="form-group">
                 <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName" (focus)="lastNameTouched = true"
                     placeholder="Enter Last Name" />
+            </div>
+
+
+            <div class="form-group">
+                <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true"
+                    placeholder="Enter Email" />
             </div>
 
             <div class="form-group">
@@ -32,10 +39,23 @@
                 </select>
             </div>
 
+            <div class="radio-staff">
+                <label>
+                    <input type="radio" name="role" value="D"> Doctor
+                </label>
+                <label>
+                    <input type="radio" name="role" value="N"> Nurse
+                </label>
+                <label>
+                    <input type="radio" name="role" value="T"> Technician
+                </label>
+            </div>
+
             <div class="button-group">
-                <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
+                <button type="button" class="submit-button" (click)="submitRequest()">Submit</button>
                 <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
             </div>
+
         </form>
     </section>
 </div>
