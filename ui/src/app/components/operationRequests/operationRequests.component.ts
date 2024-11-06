@@ -1,16 +1,7 @@
 import { Component, NgModule } from '@angular/core'; 
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-
 import { AppComponent } from '../../app.component';
-
-enum Priority {
-  DEFAULT = '',
-  ELECTIVE = 'Elective',
-  URGENT = 'Urgent',
-  EMERGENCY = 'Emergency'
-}
 
 @NgModule({
   declarations: [
@@ -18,13 +9,13 @@ enum Priority {
   ],
   
   imports: [
-    FormsModule, HttpClientModule
+    FormsModule
   ],
   bootstrap: [AppComponent]
 })
 
 @Component({
-  selector: 'app-operationRequests',
+  selector: 'app-operation-requests',
   standalone: true,
   imports: [FormsModule],
   templateUrl: './operationRequests.component.html',
@@ -32,12 +23,12 @@ enum Priority {
 })
 export class OperationRequestsComponent {
 
-    staffId: string = 'Staff Id';
-    patientId: string = 'Patient Id';
-    operationTypeId: string = 'Operation Type Id';
-    deadlineDate: Date = new Date("0001-01-01");
-    priority: Priority = Priority.DEFAULT;
-    message: string | undefined;
+    staffId: string = '';
+    patientId: string = '';
+    operationTypeId: string = '';
+    deadlineDate: Date = new Date();
+    priority: string = '';
+    message: string = '';
 
     staffIdTouched = false;
     patientIdTouched = false;
@@ -66,6 +57,16 @@ export class OperationRequestsComponent {
             return;
         }
 
+        if(!this.isValidDate(this.deadlineDate)) {
+            this.message = 'Invalid Deadline Date. Please provide a valid date.';
+            return;
+        }
+
+        if(!this.isValidPriority(this.priority)) {
+            this.message = 'Invalid Priority. Please provide a valid priority.';
+            return;
+        }
+
         const creatingOperationRequestDto = {
             staffId: this.staffId,
             patientId: this.patientId,
@@ -84,14 +85,36 @@ export class OperationRequestsComponent {
               this.message = 'Error submitting operation request. Please try again.';
           }
         );
-  }
+      
+    }
 
     isValidGuid(guid: string): boolean {
         const guidRegex = new RegExp('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', 'i');
         return guidRegex.test(guid);
-  }
-    
-    priorityOptions() {
-        return ['Elective', 'Urgent', 'Emergency'];
-  }  
+    }
+
+    isValidDate(date: Date): boolean {
+      return date instanceof Date && !isNaN(date.getTime());
+    }
+
+    isValidPriority(priority: string): boolean {
+      const priorities = ['Elective', 'Urgent', 'Emergency'];
+      return priorities.includes(priority);
+    }
+   
+    clearForm() {
+      console.log('Clear button clicked');
+      this.staffId = '';
+      this.patientId = '';
+      this.operationTypeId = '';
+      this.deadlineDate = new Date();
+      this.priority = '';
+      this.message = '';
+
+      this.staffIdTouched = false;
+      this.patientIdTouched = false;
+      this.operationTypeIdTouched = false;
+      this.deadlineDateTouched = false;
+      this.priorityTouched = false;
+    }
 }

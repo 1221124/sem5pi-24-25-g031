@@ -1,29 +1,28 @@
-<div class="operationRequests-request">
-    <h1>Operation Requests - Template Menu</h1>
-    
-    <input type="text" [(ngModel)]="staffId" (focus)="staffIdTouched = true" placeholder="Enter Staff ID" />
-    <!--span *ngIf="staffIdTouched && !isValidGuid(staffId)" class="error">Invalid GUID format</span-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Operation Requests</title>
+  </head>
+  <body>
+    <div class="operationRequests-request">
+      <h1>Operation Request Form</h1>
 
-    <input type="text" [(ngModel)]="patientId" (focus)="patientIdTouched = true" placeholder="Enter Patient ID" />
-    <!--span *ngIf="patientIdTouched && !isValidGuid(patientId)" class="error">Invalid GUID format</span-->
+      <input type="text" [(ngModel)]="staffId" (focus)="staffIdTouched = true" placeholder="Enter Staff ID" />
+      <input type="text" [(ngModel)]="patientId" (focus)="patientIdTouched = true" placeholder="Enter Patient ID" />
+      <input type="text" [(ngModel)]="operationTypeId" (focus)="operationTypeIdTouched = true" placeholder="Enter Operation Type ID" />
+      <input type="date" [(ngModel)]="deadlineDate" (focus)="deadlineDateTouched = true" placeholder="Enter Deadline Date" />
 
-    <input type="text" [(ngModel)]="operationTypeId" (focus)="operationTypeIdTouched = true" placeholder="Enter Operation Type ID" />
-    <!--span *ngIf="operationTypeIdTouched && !isValidGuid(operationTypeId)" class="error">Invalid GUID format</span-->
-
-    <input type="date" [(ngModel)]="deadlineDate" (focus)="deadlineDateTouched = true" placeholder="Enter Deadline Date" />
-    <!-- <span *ngIf="deadlineDateTouched && !deadlineDate" class="error">Deadline Date is required</span> -->
-
-    <label for="priority">Select Priority:</label>
-    <select id="priority" [(ngModel)]="priority" (focus)="priorityTouched = true">
+      <label for="priority">Select Priority:</label>
+      <select id="priority" [(ngModel)]="priority" (focus)="priorityTouched = true" placeholder="Priority">
         <option value="Elective">Elective</option>
         <option value="Urgent">Urgent</option>
         <option value="Emergency">Emergency</option>
-    </select>
-    <!-- <span *ngIf="priorityTouched && !priority" class="error">Priority is required</span> -->
+      </select>
 
-    <button (click)="submitRequest()">Submit</button>
-    <button (click)="clearForm()">Clear</button>
+      <button (click)="submitRequest()">Submit</button>
+      <button class="clear-form" (click)="clearForm()">Clear</button>
 
-    <div>{{ message || 'No message to display yet.' }}</div>
-
-</div>
+      <p *ngIf="message">{{ message }}</p>
+    </div>
+  </body>
+</html>
