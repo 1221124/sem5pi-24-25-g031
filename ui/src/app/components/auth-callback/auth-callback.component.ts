@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
-import { take } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-callback',
@@ -16,85 +16,85 @@ import { take } from 'rxjs/operators';
 export class AuthCallbackComponent implements OnInit {
   message: string = '';
   isError: boolean = false;
-  // tokenExchanged: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService,
-  ) { }
+    private authService: AuthService
+  ) {}
 
-  ngOnInit(): void {
-    // if (this.tokenExchanged) {
-    //   return;
-    // }
-    // this.tokenExchanged = true;
-    this.route.queryParams.subscribe(params => {
+  async ngOnInit(): Promise<void> {
+    // if (!this.authService.isAuthenticated()) {
+      const params = await firstValueFrom(this.route.queryParams);
       const code = params['code'] as string;
-      
+
       if (code) {
-        this.authService.exchangeCodeForToken(code).pipe(take(1)).subscribe({
-          next: (response) => {
-            const idToken = response.body?.id_token;
-            const accessToken = response.body?.access_token;
-      
-            if (idToken != null && accessToken != null) {
-              // localStorage.setItem('idToken', idToken);
-              // localStorage.setItem('accessToken', accessToken);
-              
-              this.authService.handleUserCallback(idToken, accessToken).subscribe({
-                next: (response) => {
-                  if (response.status === 200) {
-                    this.authService.login(idToken).subscribe({
-                      next: () => {
-                        this.authService.redirectBasedOnRole(accessToken);
-                      },
-                      error: (error) => {
-                        this.message = 'Error during login: ' + error;
-                        this.isError = true;
-                      }
-                    });
-                  } else {
-                    const email = this.authService.extractEmailFromIdToken(idToken) as string;
-                    const role = this.authService.extractRoleFromAccessToken(accessToken) as string;
-                    if (email == null) {
-                      this.message = 'Email not found in id token';
-                      this.isError = true;
-                    } else if (role == null) {
-                      this.message = 'Role not found in access token';
-                      this.isError = true;
-                    }
-                    this.authService.createUser(email, role).subscribe({
-                      next: (response) => {
-                        if (response.status === 201) {
-                          this.message = 'User with email ' + email + ' created successfully!';
-                          //TODO: Handle redirect
-                        } else {
-                          this.message = 'Bad request during user creation: ' + response.body;
-                          this.isError = true;
-                        }
-                      },
-                      error: (error) => {
-                        this.message = 'Error during user creation: ' + error;
-                        this.isError = true;
-                      }
-                    });
-                  }
-                },
-                error: (error) => {
-                  this.message = 'Error during user callback: ' + error;
-                  this.isError = true;
-                }
-              });
+        try {
+          const tokenResponse = await this.authService.exchangeCodeForToken(code);
+          const idToken = tokenResponse?.id_token;
+          const accessToken = tokenResponse?.access_token;
+
+          if (idToken && accessToken) {
+            const userCallbackResponse = await this.authService.handleUserCallback(idToken, accessToken);
+
+            if (userCallbackResponse.status === 200) {
+              // sessionStorage.setItem('access_Token', accessToken);
+              // sessionStorage.setItem('id_Token', idToken);
+              // sessionStorage.setItem('isLoggedIn', 'true');
+
+              try {
+                await this.authService.login(accessToken);
+                console.log('Logged in successfully');
+                await this.authService.redirectBasedOnRole(accessToken);
+              } catch (error) {
+                this.handleError('Error during login', error);
+              }
+            } else {
+              await this.createUser(idToken, accessToken);
             }
-          },
-          error: (error) => {
-            this.message = 'Error during token exchange: ' + error;
-            this.isError = true;
           }
-        });
+        } catch (error) {
+          this.handleError('Error during token exchange', error);
+        }
       } else {
         this.message = 'Code not found in query parameters';
         this.isError = true;
       }
-    });
+    // }
+  }
+
+  private async createUser(idToken: string, accessToken: string): Promise<void> {
+    const email = this.authService.extractEmailFromIdToken(idToken);
+    const role = this.authService.extractRoleFromAccessToken(accessToken);
+
+    if (!email) {
+      this.message = 'Email not found in ID token';
+      this.isError = true;
+      return;
+    }
+
+    if (!role) {
+      this.message = 'Role not found in access token';
+      this.isError = true;
+      return;
+    }
+
+    try {
+      const response = await this.authService.createUser(email, role);
+      if (response.status === 201) {
+        this.message = `User with email ${email} created successfully!`;
+        // TODO: Handle redirect after successful user creation
+      } else {
+        this.message = 'Bad request during user creation: ' + response.body;
+        this.isError = true;
+      }
+    } catch (error) {
+      this.handleError('Error during user creation', error);
+    }
+  }
+
+  private handleError(message: string, error: any): void {
+    console.error(message, error);
+    this.message = message + ': ' + (error?.message || error);
+    this.isError = true;
   }
 }

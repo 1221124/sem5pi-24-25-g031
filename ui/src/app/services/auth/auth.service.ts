@@ -3,14 +3,11 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/comm
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
-import { catchError, map } from 'rxjs/operators';
-import { throwError, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 interface TokenResponse {
     access_token: string;
     id_token: string;
-    token_type: string;
-    expires_in: number;
 }
 
 @Injectable({
@@ -19,15 +16,10 @@ interface TokenResponse {
 export class AuthService {
     private usersApiUrl = environment.usersApiUrl;
     message: string = '';
-    private tokenUrl = `${environment.authConfig.authDomain}oauth/token`;
 
     constructor(private http: HttpClient, private router: Router) {}
 
-    exchangeCodeForToken(code: string) {
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json'
-      });
-      
+    async exchangeCodeForToken(code: string): Promise<TokenResponse | null> {
       const body = new HttpParams()
         .set('code', code)
         .set('client_id', environment.authConfig.clientId)
@@ -36,17 +28,30 @@ export class AuthService {
         .set('grant_type', 'authorization_code')
         .set('audience', environment.authConfig.audience)
         .set('scope', 'openid email profile');
+  
+      try {
+        const response = await firstValueFrom(this.http
+          .post<TokenResponse>(environment.tokenUrl, body, { observe: 'response' }));
 
-        return this.http.post<TokenResponse>(`${this.tokenUrl}`, body, {headers, observe: 'response'});
+        if (response && response.body) {
+          return response.body as TokenResponse;
+        } else {
+          this.message = 'Token response is empty';
+          return null;
+        }
+      } catch (error) {
+        this.message = 'Error exchaging token: ' + error;
+        return null;
+      }
     }
 
-    handleUserCallback(idToken: string, accessToken: string) {
+    async handleUserCallback(idToken: string, accessToken: string) {
       const body = {
         AccessToken: accessToken,
         IdToken: idToken
       };
     
-      return this.http.post<boolean>(`${this.usersApiUrl}/callback`, body, {observe: 'response'});
+      return firstValueFrom(this.http.post<boolean>(`${this.usersApiUrl}/callback`, body, {observe: 'response'}));
     }
 
     extractEmailFromIdToken(idToken: string): string | null {
@@ -68,22 +73,35 @@ export class AuthService {
       }
     }
 
-    createUser(email: string, role: string) {
+    async createUser(email: string, role: string): Promise<HttpResponse<any>> {
       const dto = {
           email: email,
           role: role
       };
-      return this.http.post<HttpResponse<any>>(`${this.usersApiUrl}`, dto, { observe: 'response' });
+      return firstValueFrom(this.http.post<HttpResponse<any>>(`${this.usersApiUrl}`, dto, { observe: 'response' }));
     }
 
-    login(idToken: string) {
-      const email = this.extractEmailFromIdToken(idToken) as string;
+    async login(idToken: string) {
+      const emailFromIdToken = this.extractEmailFromIdToken(idToken) as string;
+
+      if (emailFromIdToken == null || emailFromIdToken == '') {
+        this.message = 'Email not found in ID token';
+        return;
+      }
+
+      const email = {
+        Value: emailFromIdToken
+      };
+
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json'
+      });
   
-      return this.http.post<HttpResponse<any>>(`${this.usersApiUrl}/login`, email,
-      { observe: 'response' });
+      return firstValueFrom(this.http.post<HttpResponse<any>>(`${this.usersApiUrl}/login`, email,
+      { observe: 'response', headers, responseType: 'json' }));
     }
 
-    redirectBasedOnRole(accessToken: string): void {
+    async redirectBasedOnRole(accessToken: string) {
         const role = this.extractRoleFromAccessToken(accessToken) as keyof typeof routeMap;
 
         const routeMap = {
@@ -96,21 +114,32 @@ export class AuthService {
 
         if (role && routeMap[role]) {
             this.message = 'Redirecting to ' + routeMap[role] + '...';
-            this.router.navigate([routeMap[role]]);
-            return;
+            // this.router.navigate([routeMap[role]]);
+            this.router.navigate(['/operationRequests']);
         } else {
             this.message = 'Unable to redirect based on role.\nRedirecting to home page...';
-            setTimeout(
-                () => this.router.navigate(['/']),
-                5000
-            )
+            // setTimeout(
+            //     () => this.router.navigate(['/']),
+            //     5000
+            // )
+            this.router.navigate(['/operationRequests']);
         }
     }
 
+    // isAuthenticated(): boolean {
+    //     return sessionStorage.getItem('isLoggedIn') === 'true';
+    // }
+
     logout() {
-        // if (localStorage.getItem('accessToken')) {
-        //     localStorage.removeItem('accessToken');
-        // }
-        this.router.navigate(['/']);
+      // if (sessionStorage.getItem('isLoggedIn') === 'true') {
+      //   sessionStorage.removeItem('isLoggedIn');
+      //   sessionStorage.removeItem('access_Token');
+      //   sessionStorage.removeItem('id_Token');
+      // }
+      this.message = 'Goodbye!';
+      setTimeout(
+        () => this.router.navigate(['/']),
+        5000
+      );
     }
 }

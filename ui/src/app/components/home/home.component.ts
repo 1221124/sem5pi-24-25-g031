@@ -11,6 +11,6 @@ export class HomeComponent {
   constructor(private router: Router) {}
 
   redirectToLogin() {
-    window.location.href = environment.login_url;
+    window.location.href = environment.loginUrl;
   }
 }

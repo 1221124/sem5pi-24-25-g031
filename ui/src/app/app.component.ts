@@ -13,6 +13,6 @@ export class AppComponent {
   title = 'SARM G031 Web Application';
 
   redirectToLogin() {
-    window.location.href = environment.login_url;
+    window.location.href = environment.loginUrl;
   }
 }

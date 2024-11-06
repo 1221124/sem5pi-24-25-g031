@@ -153,9 +153,9 @@ namespace Controllers
 
         // POST: api/Users/login
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(string email)
+        public async Task<ActionResult<UserDto>> Login([FromBody] Email email)
         {
-            var user = await _service.GetByEmailAsync(new Email(email));
+            var user = await _service.GetByEmailAsync(email);
 
             if (user == null)
                 return BadRequest(new { Message = $"User with email {email} not found." });
@@ -163,7 +163,7 @@ namespace Controllers
             if (user.UserStatus != UserStatus.Active)
                 return BadRequest(new { Message = $"User with email {email} is not active." });
 
-            return Ok(user);
+            return Ok(new { user.Id, user.Email, user.Role });
         }
 
         // PUT: api/Users
