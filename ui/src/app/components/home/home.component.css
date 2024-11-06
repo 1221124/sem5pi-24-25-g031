@@ -1,0 +1,32 @@
+.home-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    color: #007bff;
+  }
+  
+  p {
+    font-size: 1.25rem;
+    margin: 1rem 0;
+  }
+  
+  button {
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  
+  .login-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    opacity: 0.9;
+  }  

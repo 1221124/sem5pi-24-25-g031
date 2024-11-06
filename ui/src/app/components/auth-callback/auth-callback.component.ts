@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
@@ -7,10 +7,11 @@ import { AuthService } from '../../services/auth/auth.service';
   template: `<p>Processing your login...</p>`
 })
 export class AuthCallbackComponent implements OnInit {
+  message: string = '';
+  isError: boolean = false;
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -35,46 +36,52 @@ export class AuthCallbackComponent implements OnInit {
                         this.authService.redirectBasedOnRole(accessToken);
                       },
                       error: (error) => {
-                        console.error('Error during login:', error);
+                        this.message = 'Error during login: ' + error;
+                        this.isError = true;
                       }
                     });
                   } else {
                     const email = this.authService.extractEmailFromIdToken(idToken) as string;
                     const role = this.authService.extractRoleFromAccessToken(accessToken) as string;
                     if (email == null) {
-                      console.error('Email not found in id token');
+                      this.message = 'Email not found in id token';
                       return;
                     } else if (role == null) {
-                      console.error('Role not found in access token');
+                      this.message = 'Role not found in access token';
                       return;
                     }
                     this.authService.createUser(email, role).subscribe({
                       next: (response) => {
                         if (response.status === 201) {
-                          console.log('User with email ' + email + ' and role ' + role + ' created successfully!');
-                          this.router.navigate(['/']);
+                          this.message = 'User with email ' + email + ' created successfully!';
+                          //TODO: Handle redirect
                         } else {
-                          console.error('Bad request during user creation:', response);
+                          this.message = 'Bad request during user creation: ' + response.body;
+                          this.isError = true;
                         }
                       },
                       error: (error) => {
-                        console.error('Error during user creation:', error);
+                        this.message = 'Error during user creation: ' + error;
+                        this.isError = true;
                       }
                     });
                   }
                 },
                 error: (error) => {
-                  console.error('Error during user verification:', error);
+                  this.message = 'Error during user callback: ' + error;
+                  this.isError = true;
                 }
               });
             }
           },
           error: (error) => {
-            console.error('Error during token exchange:', error);
+            this.message = 'Error during token exchange: ' + error;
+            this.isError = true;
           }
         });
       } else {
-        console.error('Authorization code not found');
+        this.message = 'Code not found in query parameters';
+        this.isError = true;
       }
     });
   }

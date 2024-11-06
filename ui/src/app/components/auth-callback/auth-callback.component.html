@@ -1,1 +1,4 @@
-<p>auth-callback works!</p>
+<div *ngIf="message" [ngClass]="{'message-container': true, 'error': isError}">
+    <p>{{ message }}</p>
+  </div>
+  <p *ngIf="!message">Processing your login...</p>

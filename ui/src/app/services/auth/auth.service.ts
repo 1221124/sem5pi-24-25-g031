@@ -8,12 +8,13 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
-    private usersApiUrl = environment.authConfig.usersApiUrl;
+    private usersApiUrl = environment.usersApiUrl;
     private clientId = environment.authConfig.clientId;
     private clientSecret = environment.authConfig.clientSecret;
     private redirectUri = environment.authConfig.redirectUri;
     private authDomain = environment.authConfig.authDomain;
     private audience = environment.authConfig.audience;
+    message: string = '';
 
     constructor(private http: HttpClient, private router: Router) {}
 
@@ -63,11 +64,11 @@ export class AuthService {
     }
 
     createUser(email: string, role: string) {
-        const creatingUserDto = {
+        const dto = {
             email: email,
             role: role
         };
-        return this.http.post<HttpResponse<any>>(`${this.usersApiUrl}`, creatingUserDto, { observe: 'response' });
+        return this.http.post<HttpResponse<any>>(`${this.usersApiUrl}`, dto, { observe: 'response' });
     }
 
     login(idToken: string) {
@@ -92,10 +93,13 @@ export class AuthService {
         if (role && routeMap[role]) {
             this.router.navigate([routeMap[role]]);
         } else {
-            console.error('Role not found in route map:', role);
-            this.router.navigate(['/']);
+            this.message = 'Unable to redirect based on role.\nRedirecting to home page...';
+            setTimeout(
+                () => this.router.navigate(['/']),
+                5000
+            )
         }
-    }    
+    }
 
     logout() {
         if (localStorage.getItem('accessToken')) {

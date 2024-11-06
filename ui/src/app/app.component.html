@@ -1,7 +1,11 @@
-<div class="welcome-container">
-  <h1>Welcome to our app SARM G031!</h1>
-  <button class="login-button" (click)="redirectToLogin()">Login / Registration</button>
+<div class="app-container">
+  <header class="app-header">
+    <h1>{{ title }}</h1>
+  </header>
 
   <router-outlet></router-outlet>
 
+  <footer class="app-footer">
+    <p>&copy; 2024 SARM G031 - Todos os direitos reservados</p>
+  </footer>
 </div>
