@@ -5,6 +5,7 @@ export const environment = {
   usersApiUrl: 'http://localhost:5500/api/Users',
   operationRequests: 'http://localhost:5500/api/OperationRequests',
   staffs: 'http://localhost:5500/api/Staff',
+  patients: 'http://localhost:5500/api/Patients',
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
     clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
