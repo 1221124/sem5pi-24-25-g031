@@ -315,7 +315,8 @@ namespace DDDNetCore.Controllers
             
             var patientDto = await _service.GetByEmailAsync(new Email(email));
 
-            _dbLogService.LogAction(EntityType.Patient, DbLogType.PreDelete, "Pre-Deleted {" + new PatientId(patientDto.Id).Value + "}");
+            await _service.DeleteAsync(new PatientId(patientDto.Id));
+            _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + new PatientId(patientDto.Id).Value + "}");
 
             return Ok(patientDto);
         }
