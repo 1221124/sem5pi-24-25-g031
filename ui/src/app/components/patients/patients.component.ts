@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, NgModule} from '@angular/core';
+import { Component} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AppComponent } from '../../app.component';
 import { PatientsService } from '../../services/patients/patients.service';
 
 
@@ -10,10 +8,12 @@ import { PatientsService } from '../../services/patients/patients.service';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './patients.component.html',
-  styleUrl: './patients.component.css'
+  styleUrls: ['./patients.component.css'],
+  providers: [PatientsService]
 })
 
-export class PatientsComponent implements OnInit{
+export class PatientsComponent{
+
   firstName: string = 'First Name';
   lastName: string = 'Last Name';
   dateOfBirth: Date = new Date("0001-01-01");
@@ -37,16 +37,17 @@ export class PatientsComponent implements OnInit{
   constructor(private service: PatientsService) {
   }
 
-  ngOnInit(): void {
-      
-  }
-
   createPatient() {
     console.log('Create button clicked');
     this.message = '';
 
     if (!this.isValidEmail(this.email)) {
       this.message = 'Invalid email format. Please provide a valid email.'
+      return;
+    }
+
+    if (!this.isValidDate(this.dateOfBirth)) {
+      this.message = 'Invalid date of birth. Please provide a valid date of birth.'
       return;
     }
 
@@ -65,6 +66,13 @@ export class PatientsComponent implements OnInit{
   isValidPhoneNumber(phoneNumber: number): boolean {
     const phoneNumberRegex = new RegExp(/^\d{9}$/);
     return phoneNumberRegex.test(phoneNumber.toString());
+  }
+  
+  isValidDate(date: any): boolean {
+    if (!(date instanceof Date)) {
+      date = new Date(date);
+    }
+    return date instanceof Date && !isNaN(date.getTime());
   }
 
   clearForm() {

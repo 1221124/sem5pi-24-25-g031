@@ -1,45 +1,32 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Patients</title>
-    </head>
-    <body>
-        <h1>Patients</h1>
-        <section>
-            <form class="form-group">
-                <div>
-                    <input type="text" id="firstName" name="fistName" [(ngModel)]="firstName" (focus)="firstNameTouched = true" placeholder="Enter First Name" />
-                </div>
 
-                <div>
-                    <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName" (focus)="lastNameTouched = true" placeholder="Enter Last Name" />
-                </div>
-
-                <div>
-                    <input type="date" id="date" name="date" [(ngModel)]="dateOfBirth" (focus)="dateOfBirthTouched = true" placeholder="Enter Date of Birth" />
-                </div>
-
-                <div>
-                    <label for="gender">Select Gender:</label>
-                    <select id="gender" name="gender" [(ngModel)]="gender" (focus)="genderTouched = true">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
-
-                <div>
-                    <input type="number" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber" (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
-                </div>
-
-                <div>
-                    <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true" placeholder="Enter Email" />
-                </div>
-
-                <div class="button-group">
-                    <button class="btn-create-patient" (click)="createPatient()">Create Patient</button>
-                    <button class="btn-clear-form" (click)="clearForm()">Clear</button>
-                </div>
-            </form>
-        </section>
-    
-    </body>
+<h1>Patients</h1>
+<section>
+        <form class="form-group">
+            <div>
+                <input type="text" id="firstName" name="fistName" [(ngModel)]="firstName" (focus)="firstNameTouched = true" placeholder="Enter First Name" />
+            </div>
+            <div>
+                <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName" (focus)="lastNameTouched = true" placeholder="Enter Last Name" />
+            </div>
+            <div>
+                <input type="date" id="date" name="date" [(ngModel)]="dateOfBirth" (focus)="dateOfBirthTouched = true" placeholder="Enter Date of Birth" />
+            </div>
+            <div>
+                <label for="gender">Select Gender:</label>
+                <select id="gender" name="gender" [(ngModel)]="gender" (focus)="genderTouched = true">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div>
+                <input type="number" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber" (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
+            </div>
+            <div>
+                <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true" placeholder="Enter Email" />
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn-create-patient" (click)="createPatient()">Create Patient</button>
+                <button type="button" class="btn-clear-form" (click)="clearForm()">Clear</button>
+            </div>
+        </form>
+</section>
