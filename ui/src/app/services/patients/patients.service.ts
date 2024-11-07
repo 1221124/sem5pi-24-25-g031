@@ -28,7 +28,7 @@ export class PatientsService {
 
     const creatingPatientDto = {
       fullName: fullName,
-      dateOfBirth: dateOfBirth.toISOString().split('T')[0],
+      dateOfBirth: dateOfBirth,
       contactInformation: contactInformation,
       gender: gender
     }
