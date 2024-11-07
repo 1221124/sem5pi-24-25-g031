@@ -41,7 +41,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     });
 
 builder.Services.AddDbContext<SARMDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+    sqlOptions => sqlOptions.CommandTimeout(60))
     .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 builder.Services.AddCors(options =>

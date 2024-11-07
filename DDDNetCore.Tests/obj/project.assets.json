@@ -18337,34 +18337,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\beatr\\.nuget\\packages\\": {}
+    "C:\\Users\\Utilizador\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\beatr\\OneDrive\\Ambiente de Trabalho\\ISEP\\LICENCIATURA\\3ANO\\ARQSI\\sem5pi-24-25-g061\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
       "projectName": "DDDNetCore.Tests",
-      "projectPath": "C:\\Users\\beatr\\OneDrive\\Ambiente de Trabalho\\ISEP\\LICENCIATURA\\3ANO\\ARQSI\\sem5pi-24-25-g061\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
-      "packagesPath": "C:\\Users\\beatr\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\beatr\\OneDrive\\Ambiente de Trabalho\\ISEP\\LICENCIATURA\\3ANO\\ARQSI\\sem5pi-24-25-g061\\DDDNetCore.Tests\\obj\\",
+      "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
+      "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\DDDNetCore.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\beatr\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\beatr\\OneDrive\\Ambiente de Trabalho\\ISEP\\LICENCIATURA\\3ANO\\ARQSI\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj": {
-              "projectPath": "C:\\Users\\beatr\\OneDrive\\Ambiente de Trabalho\\ISEP\\LICENCIATURA\\3ANO\\ARQSI\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj"
+            "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj": {
+              "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj"
             }
           }
         }
