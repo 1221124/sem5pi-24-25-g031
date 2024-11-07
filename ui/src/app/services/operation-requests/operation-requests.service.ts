@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from 'express';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -16,16 +16,16 @@ export class OperationRequestsService {
     
     const apiUrl = 'http://localhost:5500/operationRequests';
     
-    const creatingOperationRequestDto = {
+    const dto = { //creatingOperationRequestDto
       staffId: staffIdDto,
       patientId: patientIdDto,
       operationTypeId: operationTypeIdDto,
-      deadlineDate: deadlineDateDto.toISOString().split('T')[0],
+      deadlineDate: deadlineDateDto,
       priority: priorityDto
     };
 
 
-    this.http.post(apiUrl, creatingOperationRequestDto).subscribe(
+    this.http.post(apiUrl, dto).subscribe(
       _response => {
           this.message = 'Operation request submitted successfully!';
       },

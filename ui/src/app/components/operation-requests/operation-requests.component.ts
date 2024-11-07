@@ -34,32 +34,33 @@ export class OperationRequestsComponent {
     this.message = '';
 
     if (!this.isValidGuid(this.staffId)) {
-        this.message = 'Invalid Staff ID format. Please provide a valid GUID.';
+        console.log('Invalid Staff ID format. Please provide a valid GUID.');
         return;
     }
 
     if (!this.isValidGuid(this.patientId)) {
-        this.message = 'Invalid Patient ID format. Please provide a valid GUID.';
+        console.log('Invalid Patient ID format. Please provide a valid GUID.');
         return;
     }
 
     if (!this.isValidGuid(this.operationTypeId)) {
-        this.message = 'Invalid Operation Type ID format. Please provide a valid GUID.';
+        console.log('Invalid Operation Type ID format. Please provide a valid GUID.');
         return;
     }
 
     if(!this.isValidDate(this.deadlineDate)) {
-        this.message = 'Invalid Deadline Date. Please provide a valid date.';
+        console.log('Invalid Deadline Date. Please provide a valid date.');
         return;
     }
 
     if(!this.isValidPriority(this.priority)) {
-        this.message = 'Invalid Priority. Please provide a valid priority.';
+        console.log('Invalid Priority. Please provide a valid priority.');
         return;
     }
 
-  
+    console.log('Calling service post method');
     this.service.post(this.staffId, this.patientId, this.operationTypeId, this.deadlineDate, this.priority);
+    console.log('aaa');
   }
 
   isValidGuid(guid: string): boolean {
@@ -67,9 +68,14 @@ export class OperationRequestsComponent {
       return guidRegex.test(guid);
   }
 
-  isValidDate(date: Date): boolean {
+  isValidDate(date: any): boolean {
+    if (!(date instanceof Date)) {
+      date = new Date(date);
+    }
     return date instanceof Date && !isNaN(date.getTime());
   }
+  
+  
 
   isValidPriority(priority: string): boolean {
     const priorities = ['Elective', 'Urgent', 'Emergency'];
