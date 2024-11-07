@@ -11,6 +11,7 @@ using Domain.Staffs;
 using Infrastructure.OperationRequests;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using DDDNetCore.Domain.OperationRequests;
 
 namespace DDDNetCore.Tests.Domain.OperationRequests
 {

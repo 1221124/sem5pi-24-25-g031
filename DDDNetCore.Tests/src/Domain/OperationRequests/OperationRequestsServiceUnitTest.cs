@@ -4,6 +4,7 @@ using DDDNetCore.Tests.Infrastructure;
 using Domain.OperationRequests;
 using Domain.Shared;
 using DDDNetCore.Domain.Patients;
+using DDDNetCore.Domain.OperationRequests;
 
 
 namespace DDDNetCore.Tests.Domain.OperationRequests
