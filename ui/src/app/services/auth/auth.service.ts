@@ -3,7 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/comm
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { access } from 'fs';
 
 interface TokenResponse {
     access_token: string;
@@ -14,10 +15,21 @@ interface TokenResponse {
   providedIn: 'root'
 })
 export class AuthService {
-    private usersApiUrl = environment.usersApiUrl;
-    message: string = '';
+    private messageSource = new BehaviorSubject<string>('');
+    message$ = this.messageSource.asObservable();
+
+    private isErrorSource = new BehaviorSubject<boolean>(false);
+    isError$ = this.isErrorSource.asObservable();
 
     constructor(private http: HttpClient, private router: Router) {}
+
+    updateMessage(newMessage: string) {
+      this.messageSource.next(newMessage);
+    }
+
+    updateIsError(errorStatus: boolean) {
+      this.isErrorSource.next(errorStatus);
+    }
 
     async exchangeCodeForToken(code: string): Promise<TokenResponse | null> {
       const body = new HttpParams()
@@ -36,11 +48,13 @@ export class AuthService {
         if (response && response.body) {
           return response.body as TokenResponse;
         } else {
-          this.message = 'Token response is empty';
+          this.updateMessage('Token response is empty');
+          this.updateIsError(true);
           return null;
         }
       } catch (error) {
-        this.message = 'Error exchaging token: ' + error;
+        this.updateMessage('Error exchanging code for token: ' + error);
+        this.updateIsError(true);
         return null;
       }
     }
@@ -51,13 +65,13 @@ export class AuthService {
         IdToken: idToken
       };
     
-      return firstValueFrom(this.http.post<boolean>(`${this.usersApiUrl}/callback`, body, {observe: 'response'}));
+      return firstValueFrom(this.http.post<boolean>(`${environment.usersApiUrl}/callback`, body, {observe: 'response'}));
     }
 
-    extractEmailFromIdToken(idToken: string): string | null {
+    extractEmailFromAccessToken(accessToken: string): string | null {
       try {
-          const decodedToken: any = jwtDecode(idToken);
-          return decodedToken.email || null;
+          const decodedToken: any = jwtDecode(accessToken);
+          return decodedToken[environment.authConfig.audience + '/email'] || null;
       } catch (error) {
           return null;
       }
@@ -78,32 +92,31 @@ export class AuthService {
           email: email,
           role: role
       };
-      return firstValueFrom(this.http.post<HttpResponse<any>>(`${this.usersApiUrl}`, dto, { observe: 'response' }));
+      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response' }));
     }
 
-    async login(idToken: string) {
-      const emailFromIdToken = this.extractEmailFromIdToken(idToken) as string;
+    async login(accessToken: string) {
+      const emailFromAccessToken = this.extractEmailFromAccessToken(accessToken) as string;
 
-      if (emailFromIdToken == null || emailFromIdToken == '') {
-        this.message = 'Email not found in ID token';
+      if (emailFromAccessToken == null || emailFromAccessToken == '') {
+        this.updateMessage('Email not found in ID token');
+        this.updateIsError(true);
         return;
       }
 
       const email = {
-        Value: emailFromIdToken
+        Value: emailFromAccessToken
       };
 
       const headers = new HttpHeaders({
         'Content-Type': 'application/json'
       });
   
-      return firstValueFrom(this.http.post<HttpResponse<any>>(`${this.usersApiUrl}/login`, email,
+      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}/login`, email,
       { observe: 'response', headers, responseType: 'json' }));
     }
 
     async redirectBasedOnRole(accessToken: string) {
-        const role = this.extractRoleFromAccessToken(accessToken) as keyof typeof routeMap;
-
         const routeMap = {
             admin: '/admin',
             doctor: '/doctor',
@@ -112,17 +125,21 @@ export class AuthService {
             patient: '/patient'
         };
 
+        const roleFromAccessToken = this.extractRoleFromAccessToken(accessToken) as string;
+        const role = roleFromAccessToken.toLowerCase() as keyof typeof routeMap;
+
         if (role && routeMap[role]) {
-            this.message = 'Redirecting to ' + routeMap[role] + '...';
+            this.updateMessage('Redirecting to ' + routeMap[role]);
             // this.router.navigate([routeMap[role]]);
-            this.router.navigate(['/operationRequests']);
+            await this.router.navigate(['/staffs']);
         } else {
-            this.message = 'Unable to redirect based on role.\nRedirecting to home page...';
+            this.updateMessage('Unable to redirect based on role.\nRedirecting to home page...');
+            this.updateIsError(true);
             // setTimeout(
             //     () => this.router.navigate(['/']),
             //     5000
             // )
-            this.router.navigate(['/operationRequests']);
+            await this.router.navigate(['/staffs']);
         }
     }
 
@@ -136,7 +153,7 @@ export class AuthService {
       //   sessionStorage.removeItem('access_Token');
       //   sessionStorage.removeItem('id_Token');
       // }
-      this.message = 'Goodbye!';
+      this.updateMessage('Logging out...');
       setTimeout(
         () => this.router.navigate(['/']),
         5000

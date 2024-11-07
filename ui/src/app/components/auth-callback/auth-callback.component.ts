@@ -16,85 +16,99 @@ import { firstValueFrom } from 'rxjs';
 export class AuthCallbackComponent implements OnInit {
   message: string = '';
   isError: boolean = false;
-
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService
   ) {}
 
   async ngOnInit(): Promise<void> {
-    // if (!this.authService.isAuthenticated()) {
-      const params = await firstValueFrom(this.route.queryParams);
-      const code = params['code'] as string;
 
-      if (code) {
-        try {
-          const tokenResponse = await this.authService.exchangeCodeForToken(code);
-          const idToken = tokenResponse?.id_token;
-          const accessToken = tokenResponse?.access_token;
+    this.authService.message$.subscribe((newMessage) => {
+      this.message = newMessage;  
+    });
+    this.authService.isError$.subscribe((errorStatus) => {
+      this.isError = errorStatus;  
+    });
 
-          if (idToken && accessToken) {
-            const userCallbackResponse = await this.authService.handleUserCallback(idToken, accessToken);
+    const params = await firstValueFrom(this.route.queryParams);
+    const code = params['code'] as string;
 
-            if (userCallbackResponse.status === 200) {
-              // sessionStorage.setItem('access_Token', accessToken);
-              // sessionStorage.setItem('id_Token', idToken);
-              // sessionStorage.setItem('isLoggedIn', 'true');
+    if (code) {
+      try {
+        const tokenResponse = await this.authService.exchangeCodeForToken(code);
+        const idToken = tokenResponse?.id_token;
+        const accessToken = tokenResponse?.access_token;
 
+        if (idToken && accessToken) {
+          const userCallbackResponse = await this.authService.handleUserCallback(idToken, accessToken);
+
+          if (userCallbackResponse.status === 200) {
+            if (userCallbackResponse.body == true) {
               try {
-                await this.authService.login(accessToken);
-                console.log('Logged in successfully');
-                await this.authService.redirectBasedOnRole(accessToken);
+                const response = await this.authService.login(accessToken);
+                if (response && response.status === 200) {
+                  this.authService.login(accessToken);
+                  this.authService.updateMessage('Login successful!');
+                  this.authService.redirectBasedOnRole(accessToken);
+                } else {
+                  if (response && response.body) {
+                    this.authService.updateMessage('Error during login (not Ok): ' + response.body); 
+                    this.authService.updateIsError(true);
+                  }
+                }
               } catch (error) {
-                this.handleError('Error during login', error);
+                this.authService.updateMessage('Error during login');  
+                this.authService.updateIsError(true);
               }
             } else {
-              await this.createUser(idToken, accessToken);
+              this.authService.updateMessage('User not found in database, creating user...');  
+              this.createUser(accessToken);
             }
+          } else {
+            this.authService.updateMessage('Error during user callback: ' + userCallbackResponse.body);  
+            this.authService.updateIsError(true);
           }
-        } catch (error) {
-          this.handleError('Error during token exchange', error);
         }
-      } else {
-        this.message = 'Code not found in query parameters';
-        this.isError = true;
+      } catch (error) {
+        this.authService.updateMessage('Error during token exchange');  
+        this.authService.updateIsError(true);
       }
-    // }
+    } else {
+      this.authService.updateMessage('Code not found in query parameters');  
+      this.authService.updateIsError(true);
+    }
+
   }
 
-  private async createUser(idToken: string, accessToken: string): Promise<void> {
-    const email = this.authService.extractEmailFromIdToken(idToken);
+  private async createUser(accessToken: string): Promise<void> {
+
+    const email = this.authService.extractEmailFromAccessToken(accessToken);
     const role = this.authService.extractRoleFromAccessToken(accessToken);
 
     if (!email) {
-      this.message = 'Email not found in ID token';
-      this.isError = true;
+      this.authService.updateMessage('Email not found in ID token');  
+      this.authService.updateIsError(true);
       return;
     }
 
     if (!role) {
-      this.message = 'Role not found in access token';
-      this.isError = true;
+      this.authService.updateMessage('Role not found in access token');  
+      this.authService.updateIsError(true);
       return;
     }
 
     try {
       const response = await this.authService.createUser(email, role);
       if (response.status === 201) {
-        this.message = `User with email ${email} created successfully!`;
-        // TODO: Handle redirect after successful user creation
+        this.authService.updateMessage(`User with email ${email} created successfully!`);  
       } else {
-        this.message = 'Bad request during user creation: ' + response.body;
-        this.isError = true;
+        this.authService.updateMessage('Bad request during user creation: ' + response.body);  
+        this.authService.updateIsError(true);
       }
     } catch (error) {
-      this.handleError('Error during user creation', error);
+      this.authService.updateMessage('Error during user creation');  
+      this.authService.updateIsError(true);  
     }
   }
 
-  private handleError(message: string, error: any): void {
-    console.error(message, error);
-    this.message = message + ': ' + (error?.message || error);
-    this.isError = true;
-  }
 }
