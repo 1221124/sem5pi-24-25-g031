@@ -147,7 +147,8 @@ namespace DDDNetCore.Controllers
         }
 
         // GET api/operationrequest/status
-        [HttpGet("status/{status}")]
+        //[HttpGet("status/{status}")]
+        [HttpGet("status={status}")]        
         public virtual async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByStatus(string status, string? pageNumber)
         {
             try{
@@ -183,6 +184,7 @@ namespace DDDNetCore.Controllers
         
         // POST: api/OperationTypes
         [HttpPost]
+        [Route("operationRequests")]
         public virtual async Task<ActionResult<OperationRequestDto>> Create([FromBody] CreatingOperationRequestDto dto)
         {
             var entity = EntityType.OperationRequest;
