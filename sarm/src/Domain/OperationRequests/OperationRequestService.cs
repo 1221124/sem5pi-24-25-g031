@@ -3,10 +3,11 @@ using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using Domain.Shared;
 using Domain.OperationTypes;
+using Domain.OperationRequests;
 
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
-    public class OperationRequestService : IOperationRequestService
+    public class OperationRequestService /*: IOperationRequestService*/
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationRequestRepository _repo;
@@ -31,13 +32,13 @@ namespace Domain.OperationRequests
                 await this._repo.AddAsync(operationRequest);
                 await this._unitOfWork.CommitAsync();
                 
-                _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, "Created {" + operationRequest.Id.Value + "}");
+                await _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, "Created {" + operationRequest.Id.Value + "}");
                 
                 return OperationRequestMapper.ToDto(operationRequest);
             }
             catch (Exception e)
             {
-                _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, e.ToString());
+                await _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, e.ToString());
                 return null;
             }
         }
@@ -79,7 +80,7 @@ namespace Domain.OperationRequests
             }
         }
 
-        public async Task<List<OperationRequestDto>> GetByPatientNameAsync(FullName fullName)
+        public async Task<List<OperationRequestDto>?> GetByPatientNameAsync(FullName fullName)
         {
             try
             {
@@ -120,7 +121,7 @@ namespace Domain.OperationRequests
             }
         }
 
-        public async Task<List<OperationRequestDto>> GetByOperationTypeAsync(OperationTypeId operationType)
+        public async Task<List<OperationRequestDto>?> GetByOperationTypeAsync(OperationTypeId operationType)
         {
             try
             {
@@ -166,7 +167,7 @@ namespace Domain.OperationRequests
                 var newOperationRequest = OperationRequestMapper.ToEntityFromUpdating(dto, operationRequest);
 
                 if(operationRequest == null){
-                    _logService.LogAction(entity, log, "Unable to update {" + newOperationRequest.Id  + "}");
+                    await _logService.LogAction(entity, log, "Unable to update {" + newOperationRequest.Id  + "}");
                     return null;
                 }
 
@@ -176,14 +177,14 @@ namespace Domain.OperationRequests
                 await _unitOfWork.CommitAsync();
 
 
-                _logService.LogAction(entity, log, "Updated {" + operationRequest.Id + "}");
+                await _logService.LogAction(entity, log, "Updated {" + operationRequest.Id + "}");
                 
                 return OperationRequestMapper.ToDto(operationRequest);
 
             }
             catch (Exception e)
             {
-                _logService.LogAction(entity, log, e.ToString());
+                await _logService.LogAction(entity, log, e.ToString());
                 return null;
             }
         }
@@ -198,21 +199,21 @@ namespace Domain.OperationRequests
                 var category = await this._repo.GetByIdAsync(id);
 
                 if (category == null){
-                    _logService.LogAction(entity, log, "Unable to delete {" + id + "}");
+                    await _logService.LogAction(entity, log, "Unable to delete {" + id + "}");
                     return null;
                 }
                 
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
-                _logService.LogAction(entity, log, "Deleted {" + id + "}");
+                await _logService.LogAction(entity, log, "Deleted {" + id + "}");
 
                 return OperationRequestMapper.ToDto(id);
 
             }
             catch (Exception e)
             {
-                _logService.LogAction(entity, log, e.ToString());
+                await _logService.LogAction(entity, log, e.ToString());
                 return null;
             }
         }

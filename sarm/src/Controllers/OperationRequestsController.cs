@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
-using IOperationRequestService = DDDNetCore.Domain.OperationRequests.IOperationRequestService;
+using DDDNetCore.Domain.OperationRequests;
 
 namespace DDDNetCore.Controllers
 {
@@ -12,18 +12,20 @@ namespace DDDNetCore.Controllers
     public class OperationRequestController : ControllerBase
     {
         private readonly int _pageSize = 2;
-        private readonly IOperationRequestService _operationRequestService;
-        private readonly IDbLogService _logService;
+        private readonly OperationRequestService _operationRequestService;
+        private readonly DbLogService _logService;
+        private IOperationRequestService object1;
+        private IDbLogService object2;
 
-        public OperationRequestController(IOperationRequestService operationRequestService, IDbLogService logService)
+        public OperationRequestController(OperationRequestService operationRequestService, DbLogService logService)
         {
             _operationRequestService = operationRequestService;
             _logService = logService;
         }
-        
+
         // GET api/operationrequest
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OperationRequestDto>>> Get([FromQuery] string? pageNumber)
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> Get([FromQuery] string? pageNumber)
         {
             try
             {
@@ -52,7 +54,7 @@ namespace DDDNetCore.Controllers
 
         // GET api/operationrequest/5
         [HttpGet("id/{id}")]
-        public virtual async Task<ActionResult<OperationRequestDto>> GetById(Guid id)
+        public async Task<ActionResult<OperationRequestDto>> GetById(Guid id)
         {
             try
             {
@@ -72,7 +74,7 @@ namespace DDDNetCore.Controllers
         
         // GET api/operationrequest/patientname
         [HttpGet("patientname/{fullName}")]
-        public virtual async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByPatientName(string fullName, string? pageNumber)
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByPatientName(string fullName, string? pageNumber)
         {
             try{
                 if(fullName == null)
@@ -113,7 +115,7 @@ namespace DDDNetCore.Controllers
         
         // GET api/operationrequest/operationtype
         [HttpGet("operationtype/{operationType}")]
-        public virtual async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByOperationType(string operationType, string? pageNumber)
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByOperationType(Guid operationType, string? pageNumber)
         {
             try{
                 if(operationType == null)
@@ -147,17 +149,17 @@ namespace DDDNetCore.Controllers
         }
 
         // GET api/operationrequest/status
-        //[HttpGet("status/{status}")]
-        [HttpGet("status={status}")]        
-        public virtual async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByStatus(string status, string? pageNumber)
+        [HttpGet("status/{status}")]
+        //[HttpGet("status={status}")]        
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByStatus(RequestStatus status, string? pageNumber)
         {
             try{
                 if(status == null)
                     return BadRequest("Status is required.");
 
-                var requestStatus = Enum.Parse<RequestStatus>(status);
+                // var requestStatus = Enum.Parse<RequestStatus>(status);
                 
-                var operationRequests = await _operationRequestService.GetByRequestStatusAsync(requestStatus);
+                var operationRequests = await _operationRequestService.GetByRequestStatusAsync(status);
 
                 if(operationRequests == null)
                     return NotFound();
@@ -184,8 +186,8 @@ namespace DDDNetCore.Controllers
         
         // POST: api/OperationTypes
         [HttpPost]
-        [Route("operationRequests")]
-        public virtual async Task<ActionResult<OperationRequestDto>> Create([FromBody] CreatingOperationRequestDto dto)
+        // [Route("operationRequests")]
+        public async Task<ActionResult<OperationRequestDto>> Create([FromBody] CreatingOperationRequestDto dto)
         {
             var entity = EntityType.OperationRequest;
             var log = DbLogType.Create;
@@ -218,7 +220,7 @@ namespace DDDNetCore.Controllers
 
         //PUT api/operationrequest/update
         [HttpPut("update")]
-        public virtual async Task<ActionResult<OperationRequestDto>> Update([FromBody] UpdatingOperationRequestDto dto)
+        public async Task<ActionResult<OperationRequestDto>> Update([FromBody] UpdatingOperationRequestDto dto)
         {
             try{
                 if (dto == null) {
@@ -241,7 +243,7 @@ namespace DDDNetCore.Controllers
 
         // DELETE api/operationrequest/5
         [HttpDelete("{id}")]
-        public virtual async Task<ActionResult<OperationRequestDto>> Delete(Guid id)
+        public async Task<ActionResult<OperationRequestDto>> Delete(Guid id)
         {
             try{   
                 var operationRequestDto = await _operationRequestService.DeleteAsync(new OperationRequestId(id));

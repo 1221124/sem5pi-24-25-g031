@@ -10,10 +10,10 @@ namespace Domain.OperationRequests
         public DeadlineDate(Date date)
         {
             
-            if (date < DateOnly.FromDateTime(DateTime.Now))
-            {
-                throw new ArgumentException("Date of birth cannot be in the past.");
-            }
+            // if (date < DateOnly.FromDateTime(DateTime.Now))
+            // {
+            //     throw new ArgumentException("Date of birth cannot be in the past.");
+            // }
             
             Date = date;
         }
@@ -35,7 +35,6 @@ namespace Domain.OperationRequests
             return Date.ToString("yyyy-MM-dd");
         }
 
-        // Parse method to create DateOfBirth from a string
         public static Date Parse(string dateString)
         {
             if (!DateOnly.TryParseExact(dateString, "yyyy-MM-dd", out Date date))

@@ -28,6 +28,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
+using DDDNetCore.Domain.OperationRequests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +42,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     });
 
 builder.Services.AddDbContext<SARMDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-    sqlOptions => sqlOptions.CommandTimeout(60))
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 builder.Services.AddCors(options =>
@@ -102,7 +102,6 @@ builder.Services.AddTransient<OperationTypeService>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<UserService>();
 
-builder.Services.AddTransient<OperationRequestRepository>();
 builder.Services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
 builder.Services.AddTransient<OperationRequestService>();
 
