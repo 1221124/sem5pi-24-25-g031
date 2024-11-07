@@ -15,8 +15,3 @@ bootstrapApplication(AppComponent, {
 .catch((err) => {
   console.error(err);
 });
-
-bootstrapApplication(OperationRequestsComponent)
-.catch((err) => {
-  console.error(err);
-});
