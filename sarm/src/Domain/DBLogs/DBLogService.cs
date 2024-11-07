@@ -14,17 +14,17 @@ namespace Domain.DbLogs
             _unitOfWork = unitOfWork;
         }
 
-        private async void LogError(Message message)
+        public async Task<DbLog> LogError(Message message)
         {
             var entityTypeName = new EntityTypeName(EntityType.Log);
             var logTypeName = new DbLogTypeName(DbLogType.Error);
             
             var log = new DbLog(entityTypeName, logTypeName, message);
 
-            await CreateLogAsync(log);
+            return await CreateLogAsync(log);
         }
 
-        public async void LogAction(EntityType entityType, DbLogType logType, Message message)
+        public async Task<DbLog> LogAction(EntityType entityType, DbLogType logType, Message message)
         {
             try
             {
@@ -37,29 +37,21 @@ namespace Domain.DbLogs
                 
                 if (log == null)
                 {
-                    LogError("Error creating log: log value 'null'.");
+                    return await LogError("Error creating log: log value 'null'.");
                 }
-                else _ = await CreateLogAsync(log);
+                else return await CreateLogAsync(log);
             }
             catch (Exception e)
             {
-                LogError(e.Message);
+                return await LogError(e.Message);
             }
         }
 
-        private async Task<DbLog> CreateLogAsync(DbLog log)
+        public async Task<DbLog> CreateLogAsync(DbLog log)
         {
-            try
-            {
-                await _logRepository.AddAsync(log);
-                await _unitOfWork.CommitAsync();
-                return log;
-            }
-            catch(Exception e)
-            {
-                LogError(e.Message);
-                return null;
-            }
+            await _logRepository.AddAsync(log);
+            await _unitOfWork.CommitAsync();
+            return log;
         }
     }
 }
