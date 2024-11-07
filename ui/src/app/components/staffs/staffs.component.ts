@@ -10,7 +10,8 @@ import { first } from 'rxjs';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './staffs.component.html',
-  styleUrl: './staffs.component.css'
+  styleUrl: './staffs.component.css',
+  providers: [StaffsService]
 })
 export class StaffsComponent {
 
@@ -22,6 +23,7 @@ export class StaffsComponent {
   phoneNumber: string = '';
   specialization: string = '';
   message: string = '';
+  role: string = '';
 
   firstNameTouched = false;
   lastNameTouched = false;
@@ -35,6 +37,7 @@ export class StaffsComponent {
     this.email = '';
     this.phoneNumber = '';
     this.specialization = '';
+    this.role = '';
 
     this.firstNameTouched = false;
     this.lastNameTouched = false;
@@ -44,20 +47,34 @@ export class StaffsComponent {
   }
 
   submitRequest() {
+
     const creatingStaffDto = {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.email,
-      phoneNumber: this.phoneNumber,
-      specialization: this.specialization
+      fullName: {
+        firstName: this.firstName,
+        lastName: this.lastName
+      },
+      phoneNumber: {
+        value: this.phoneNumber
+      },
+      email: {
+        value: this.email
+      },
+      specialization: {
+        value: this.specialization
+      },
+      roleFirstChar: {
+        value: this.role  
+      }
     };
 
-    this.staffService.createStaff(creatingStaffDto).subscribe(
+    this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
+
       response => {
-        this.message = 'Operation request submitted successfully!';
+        this.message = 'Staff profile submitted successfully!';
+        this.clearForm();
       },
       error => {
-        this.message = 'Error submitting operation request. Please try again.';
+        this.message = 'Error submitting staff profile. Please try again.';
       }
     );
   }

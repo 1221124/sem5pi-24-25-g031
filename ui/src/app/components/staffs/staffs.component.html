@@ -41,18 +41,18 @@
 
             <div class="radio-staff">
                 <label>
-                    <input type="radio" name="role" value="D"> Doctor
+                    <input type="radio" name="role" [(ngModel)]="role" value="D"> Doctor
                 </label>
                 <label>
-                    <input type="radio" name="role" value="N"> Nurse
+                    <input type="radio" name="role" [(ngModel)]="role" value="N"> Nurse
                 </label>
                 <label>
-                    <input type="radio" name="role" value="T"> Technician
+                    <input type="radio" name="role" [(ngModel)]="role" value="T"> Technician
                 </label>
             </div>
 
             <div class="button-group">
-                <button type="button" class="submit-button" (click)="submitRequest()">Submit</button>
+                <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
                 <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
             </div>
 
