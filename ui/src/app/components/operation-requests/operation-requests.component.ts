@@ -74,8 +74,6 @@ export class OperationRequestsComponent {
     }
     return date instanceof Date && !isNaN(date.getTime());
   }
-  
-  
 
   isValidPriority(priority: string): boolean {
     const priorities = ['Elective', 'Urgent', 'Emergency'];
