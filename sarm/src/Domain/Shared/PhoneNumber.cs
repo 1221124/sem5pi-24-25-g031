@@ -1,11 +1,12 @@
 using System;
+using Newtonsoft.Json;
 
 namespace Domain.Shared
 {
     public class PhoneNumber : IValueObject
     {
         public long Value { get; set; }
-
+        [JsonConstructor]
         public PhoneNumber(long value)
         {
             // if (value <= 0)
