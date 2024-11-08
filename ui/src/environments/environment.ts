@@ -1,4 +1,4 @@
-import { HttpHeaders } from "@angular/common/http";
+import {HttpHeaders} from '@angular/common/http';
 
 export const environment = {
   production: false,
@@ -8,7 +8,7 @@ export const environment = {
   usersApiUrl: 'http://localhost:5500/api/Users',
   operationRequests: 'http://localhost:5500/api/OperationRequest',
   staffs: 'http://localhost:5500/api/Staff',
-  patients: 'http://localhost:5500/api/Patients',
+  patients: 'http://localhost:5500/api/Patient',
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
     clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
