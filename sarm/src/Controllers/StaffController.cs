@@ -7,7 +7,7 @@ using Domain.Patients;
 
 namespace Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Staff")]
     [ApiController]
     public class StaffController : ControllerBase
     {
@@ -124,7 +124,8 @@ namespace Controllers
 
         // POST: api/Staff
         [HttpPost]
-        public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
+         public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
+        //public IActionResult Create([FromBody] CreatingStaffDto staffDto)
         {
             try
             {
@@ -140,9 +141,12 @@ namespace Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest("Creating Staff Error: " + ex.Message);
             }
 
+            // Console.WriteLine("Creating Staff");
+            // Console.WriteLine(staffDto);
+            // return Ok();
         }
 
         // PUT: api/Staff/5
