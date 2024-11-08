@@ -185,38 +185,40 @@ namespace DDDNetCore.Controllers
         // POST: api/operationRequests
         [HttpPost]
         // [Route("operationRequests")]
-        /*async Task<ActionResult<OperationRequestDto>>*/
-        public ActionResult Create([FromBody] CreatingOperationRequestDto dto)
+        public async Task<ActionResult<OperationRequestDto>>Create([FromBody] CreatingOperationRequestDto dto)
+        // [HttpPost]
+        // public ActionResult Create([FromBody] CreatingOperationRequestDto dto)
         {
-            // var entity = EntityType.OperationRequest;
-            // var log = DbLogType.Create;
+            var entity = EntityType.OperationRequest;
+            var log = DbLogType.Create;
             
-            // try
-            // {
-            //     if (dto == null)
-            //     {
-            //         await _logService.LogAction(entity, log,"Creating Operation Type DTO cannot be null");
-            //         return BadRequest("Creating Operation Type DTO cannot be null");
-            //     }
+            try
+            {
+                if (dto == null)
+                {
+                    await _logService.LogAction(entity, log,"Creating Operation Type DTO cannot be null");
+                    return BadRequest("Creating Operation Type DTO cannot be null");
+                }
 
-            //     var operationRequest = await _operationRequestService.AddAsync(dto);
+                var operationRequest = await _operationRequestService.AddAsync(dto);
 
-            //     if (operationRequest == null)
-            //     {
-            //         await _logService.LogAction(EntityType.OperationRequest, DbLogType.Create,
-            //             "Operation Request was not created.");
-            //         return BadRequest("Operation Request was not created.");
-            //     }
+                if (operationRequest == null)
+                {
+                    await _logService.LogAction(EntityType.OperationRequest, DbLogType.Create,
+                        "Operation Request was not created.");
+                    return BadRequest("Operation Request was not created.");
+                }
 
-            //     return CreatedAtAction(nameof(GetById), new { id = operationRequest.Id }, operationRequest);
-            // }
-            // catch (Exception ex)
-            // {
-            //     await _logService.LogAction(entity, log, "Error in Create: " + ex.Message);
-            //     return BadRequest("Error in Create: " + ex.Message);
-            // }
-            Console.WriteLine("Received a request");
-            return Ok("Request successful");
+                return CreatedAtAction(nameof(GetById), new { id = operationRequest.Id }, operationRequest);
+            }
+            catch (Exception ex)
+            {
+                await _logService.LogAction(entity, log, "Error in Create: " + ex.Message);
+                return BadRequest("Error in Create: " + ex.Message);
+            }
+
+            // Console.WriteLine("Received a request");
+            // return Ok(new { message = "Request successful" });
         }
 
         //PUT api/operationrequest/update
