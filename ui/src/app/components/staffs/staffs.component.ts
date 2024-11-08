@@ -48,35 +48,45 @@ export class StaffsComponent {
   }
 
   submitRequest() {
+    console.log('submitting request');
 
-    const creatingStaffDto = {
-      fullName: {
-        firstName: this.firstName,
-        lastName: this.lastName
-      },
-      phoneNumber: {
-        value: this.phoneNumber
-      },
-      email: {
-        value: this.email
-      },
-      specialization: {
-        value: this.specialization
-      },
-      roleFirstChar: {
-        value: this.role  
-      }
-    };
+    // const creatingStaffDto = {
+    //   fullName: {
+    //     firstName: this.firstName,
+    //     lastName: this.lastName
+    //   },
+    //   phoneNumber: {
+    //     value: this.phoneNumber
+    //   },
+    //   email: {
+    //     value: this.email
+    //   },
+    //   specialization: {
+    //     value: this.specialization
+    //   },
+    //   roleFirstChar: {
+    //     value: this.role  
+    //   }
+    // };
 
-    this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
+    console.log('name: ' + this.firstName);
+    console.log('last name: ' + this.lastName);
+    console.log('email: ' + this.email);
+    console.log('phone number: ' + this.phoneNumber);
+    console.log('specialization: ' + this.specialization);
+    console.log('role: ' + this.role);
+    // this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
+    this.staffService.createStaff(this.firstName, this.lastName, this.phoneNumber, this.email, this.specialization, this.role);
 
-      response => {
-        this.message = 'Staff profile submitted successfully!';
-        this.clearForm();
-      },
-      error => {
-        this.message = 'Error submitting staff profile. Please try again.';
-      }
-    );
+    console.log("Staff profile submitted");
+
+      // response => {
+      //   this.message = 'Staff profile submitted successfully!';
+      //   this.clearForm();
+      // },
+      // error => {
+      //   this.message = 'Error submitting staff profile. Please try again.';
+      // }
+      //);
   }
 }
