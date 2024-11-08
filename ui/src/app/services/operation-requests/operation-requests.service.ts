@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { environment, httpOptions } from '../../../environments/environment';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
@@ -22,22 +22,38 @@ export class OperationRequestsService {
     priorityDto: string
   ){    
     
-    const dto = { //creatingOperationRequestDto
-      staffId: staffIdDto,
-      patientId: patientIdDto,
-      operationTypeId: operationTypeIdDto,
-      deadlineDate: deadlineDateDto,
-      priority: priorityDto
+    const dto ={ //creatingOperationRequestDto
+      "staffId": {
+        "value": staffIdDto
+      },
+      "patientId": {
+        "value": patientIdDto
+      },
+      "operationTypeId": {
+        "value": operationTypeIdDto
+      },
+      "deadlineDate": {
+        "date": deadlineDateDto
+      },
+      "priority": priorityDto
     };
 
-    console.log("Submitting to:", environment.operationRequests);
 
-    this.http.post(environment.operationRequests, dto).subscribe(
-      response => 
-        console.log('Operation request submitted successfully:', response),
-      error => 
-        console.error('Error submitting operation request:', error)
-    );
+    const httpOptions2 = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
 
-  };
+  return this.http.post(environment.operationRequests, dto, httpOptions2)
+      .subscribe(
+          response =>{ 
+            console.log('Operation Request submitted successfully:', response);
+          },
+          error => {
+            console.log('Operation Request:', dto);
+            console.error('Error submitting Operation Request:', error)
+          }
+      );;
+  }
 }
