@@ -254,9 +254,25 @@ namespace DDDNetCore.Domain.Patients
         
         public async Task<PatientDto?> AddAsync(Patient p)
         {
-            var numberPatients = _repo.GetAllAsync().Result.Count;
-            string formattedDate = DateTime.Now.ToString("yyyyMM");
-            string combinedString = $"{formattedDate}{numberPatients:D6}";  // Combine the date and zero-padded number
+            var listPatients = _repo.GetAllAsync();
+            var greatestNumber = 0;
+
+            for (int i = 0; i < listPatients.Result.Count; i++)
+            {
+                var strMedicalRecordNumber = listPatients.Result[i].MedicalRecordNumber?.Value;
+                var medicalRecordNumberString = strMedicalRecordNumber?.Substring(strMedicalRecordNumber.Length - 6);
+                if (medicalRecordNumberString != null)
+                {
+                    var medicalRecordNumberNumber = int.Parse(medicalRecordNumberString);
+                    if(medicalRecordNumberNumber > greatestNumber)
+                    {
+                        greatestNumber = medicalRecordNumberNumber;
+                    }
+                }
+            }
+
+            var formattedDate = DateTime.Now.ToString("yyyyMM");
+            var combinedString = $"{formattedDate}{greatestNumber:D6}";  // Combine the date and zero-padded number
                 
             MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
             p.ChangeMedicalRecordNumber(medicalRecordNumber);
