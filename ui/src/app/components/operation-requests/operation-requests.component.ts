@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
 
+
 @Component({
   selector: 'app-operation-requests',
   standalone: true,
@@ -17,7 +18,7 @@ export class OperationRequestsComponent {
   operationTypeId: string = '';
   deadlineDate: Date = new Date();
   priority: string = '';
-  message: string = '';
+  errorMessage: string = '';
 
   staffIdTouched = false;
   patientIdTouched = false;
@@ -31,7 +32,7 @@ export class OperationRequestsComponent {
 
   submitRequest() {
     console.log('Submit button clicked');
-    this.message = '';
+    this.errorMessage = '';
 
     if (!this.isValidGuid(this.staffId)) {
         console.log('Invalid Staff ID format. Please provide a valid GUID.');
@@ -60,7 +61,12 @@ export class OperationRequestsComponent {
 
     console.log('Calling service post method');
     this.service.post(this.staffId, this.patientId, this.operationTypeId, this.deadlineDate, this.priority);
-    console.log('aaa');
+    this.clearForm();
+    console.log('Operation Request submitted successfully!');
+  }
+
+  closeErrorModal() {
+    this.errorMessage = '';
   }
 
   isValidGuid(guid: string): boolean {
@@ -83,11 +89,11 @@ export class OperationRequestsComponent {
   clearForm() {
     console.log('Clear button clicked');
     this.staffId = '';
-    this.patientId = '';
+    this.patientId = '';  
     this.operationTypeId = '';
     this.deadlineDate = new Date();
     this.priority = '';
-    this.message = '';
+    // this.errorMessage = '';
 
     this.staffIdTouched = false;
     this.patientIdTouched = false;
