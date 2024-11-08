@@ -1,12 +1,13 @@
 import { Component} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PatientsService } from '../../services/patients/patients.service';
+import {RouterModule, RouterOutlet} from '@angular/router';
 
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './patients.component.html',
   styleUrls: ['./patients.component.css'],
   providers: [PatientsService]
@@ -14,17 +15,20 @@ import { PatientsService } from '../../services/patients/patients.service';
 
 export class PatientsComponent{
 
-  firstName: string = 'First Name';
-  lastName: string = 'Last Name';
-  dateOfBirth: Date = new Date("0001-01-01");
-  gender: string = 'gender';
-  medicalRecordNumber: string = 'Medical Record Number';
-  phoneNumber: number = 0;
-  email: string = 'Email';
-  medicalCondition: string = 'Medical Condition';
-  emergencyContact: number = 0;
-  appointmentHistory: string = 'Appointment History';
-  userId: string = 'User Id';
+  constructor(private patientService: PatientsService) {
+  }
+
+  firstName: string = '';
+  lastName: string = '';
+  dateOfBirth: Date = new Date();
+  gender: string = '';
+  medicalRecordNumber: string = '';
+  phoneNumber: string = '';
+  email: string = '';
+  medicalCondition: string = '';
+  emergencyContact: string = '';
+  appointmentHistory: string = '';
+  userId: string = '';
   message: string | undefined;
 
   firstNameTouched = false;
@@ -33,9 +37,6 @@ export class PatientsComponent{
   genderTouched = false;
   phoneNumberTouched = false;
   emailTouched = false;
-
-  constructor(private service: PatientsService) {
-  }
 
   createPatient() {
     console.log('Create button clicked');
@@ -55,7 +56,7 @@ export class PatientsComponent{
       this.message = 'Invalid phone number format. Please provide a valid phine number.'
     }
 
-    this.service.post(this.firstName, this.lastName, this.dateOfBirth, this.email, this.phoneNumber, this.gender);
+    this.patientService.post(this.firstName, this.lastName, this.dateOfBirth, this.email, this.phoneNumber, this.gender);
   }
 
   isValidEmail(email: string): boolean {
@@ -63,11 +64,12 @@ export class PatientsComponent{
     return emailRegex.test(email);
   }
 
-  isValidPhoneNumber(phoneNumber: number): boolean {
-    const phoneNumberRegex = new RegExp(/^\d{9}$/);
-    return phoneNumberRegex.test(phoneNumber.toString());
+  isValidPhoneNumber(phoneNumber: string): boolean {
+    //const phoneNumberRegex = new RegExp(/^\s{9}$/);
+    //return phoneNumberRegex.test(phoneNumber.toString());
+    return true;
   }
-  
+
   isValidDate(date: any): boolean {
     if (!(date instanceof Date)) {
       date = new Date(date);
@@ -80,7 +82,7 @@ export class PatientsComponent{
     this.firstName = '';
     this.lastName = '';
     this.dateOfBirth = new Date();
-    this.phoneNumber = 0;
+    this.phoneNumber = "";
     this.email = '';
     this.message = '';
 
