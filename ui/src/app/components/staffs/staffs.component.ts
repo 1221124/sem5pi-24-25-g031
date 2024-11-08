@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from '../../app.component';
 import { StaffsService } from '../../services/staffs/staffs.service';
 import { first } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-staffs',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './staffs.component.html',
   styleUrl: './staffs.component.css',
   providers: [StaffsService]

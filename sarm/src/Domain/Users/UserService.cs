@@ -36,7 +36,7 @@ namespace Domain.Users
 
         public async Task<List<UserDto>> GetAllAsync()
         {
-            var list = await this._repo.GetAllAsync();
+            var list = await this._repo.GetAllActiveAsync();
             
             List<UserDto> listDto = UserMapper.ToDtoList(list);
 
@@ -47,7 +47,7 @@ namespace Domain.Users
         {
             var User = await this._repo.GetByIdAsync(id);
             
-            if(User == null)
+            if(User == null || User.UserStatus == UserStatus.Inactive)
                 return null;
 
             return UserMapper.ToDto(User);
@@ -101,7 +101,10 @@ namespace Domain.Users
             var User = await this._repo.GetByIdAsync(id); 
 
             if (User == null)
-                return null;   
+                return null;
+
+            if (User.UserStatus == UserStatus.Inactive)
+                throw new BusinessRuleValidationException("Cannot inactivate an already inactive user.");
 
             User.UserStatus = UserStatus.Inactive;
             
@@ -117,13 +120,20 @@ namespace Domain.Users
             if (User == null)
                 return null;
 
-            // if (User.UserStatus == UserStatus.Active)
-            //     throw new BusinessRuleValidationException("It is not possible to delete an active user.");
+            if (User.UserStatus == UserStatus.Active)
+                throw new BusinessRuleValidationException("It is not possible to delete an active user.");
             
             this._repo.Remove(User);
             await this._unitOfWork.CommitAsync();
 
             return UserMapper.ToDto(User);
+        }
+
+        public UserDto Login(UserDto user)
+        {
+            if (user == null || user.UserStatus == UserStatus.Inactive)
+                throw new BusinessRuleValidationException("User not found.");
+            return user;
         }
     }
 }

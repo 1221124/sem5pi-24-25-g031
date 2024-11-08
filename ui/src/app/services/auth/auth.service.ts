@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { access } from 'fs';
 
 interface TokenResponse {
     access_token: string;
@@ -92,37 +91,24 @@ export class AuthService {
           email: email,
           role: role
       };
-      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response' }));
+      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response', responseType: 'json' }));
     }
 
-    async login(accessToken: string) {
-      const emailFromAccessToken = this.extractEmailFromAccessToken(accessToken) as string;
+    async login(idToken: string) {
+      const queryParams = new HttpParams()
+        .set('idToken', idToken);
 
-      if (emailFromAccessToken == null || emailFromAccessToken == '') {
-        this.updateMessage('Email not found in ID token');
-        this.updateIsError(true);
-        return;
-      }
+      return firstValueFrom(this.http.post(`${environment.usersApiUrl}/login`, null, { params: queryParams, observe: 'response', responseType: 'text' }));
 
-      const email = {
-        Value: emailFromAccessToken
-      };
-
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json'
-      });
-  
-      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}/login`, email,
-      { observe: 'response', headers, responseType: 'json' }));
     }
 
     async redirectBasedOnRole(accessToken: string) {
         const routeMap = {
-            admin: '/admin',
-            doctor: '/doctor',
-            nurse: '/nurse',
-            technician: '/technician',
-            patient: '/patient'
+            'admin': '/admin',
+            'doctor': '/doctor',
+            'nurse': '/nurse',
+            'technician': '/technician',
+            'patient': '/patient'
         };
 
         const roleFromAccessToken = this.extractRoleFromAccessToken(accessToken) as string;
@@ -131,32 +117,26 @@ export class AuthService {
         if (role && routeMap[role]) {
             this.updateMessage('Redirecting to ' + routeMap[role]);
             // this.router.navigate([routeMap[role]]);
-            await this.router.navigate(['/staffs']);
+            await this.router.navigateByUrl("/staffs", { replaceUrl: true });
+            return;
         } else {
             this.updateMessage('Unable to redirect based on role.\nRedirecting to home page...');
             this.updateIsError(true);
-            // setTimeout(
-            //     () => this.router.navigate(['/']),
-            //     5000
-            // )
-            await this.router.navigate(['/staffs']);
+            setTimeout(
+                () => this.router.navigate(['/staffs']),
+                5000
+            )
+            return;
         }
     }
 
-    // isAuthenticated(): boolean {
-    //     return sessionStorage.getItem('isLoggedIn') === 'true';
-    // }
-
     logout() {
-      // if (sessionStorage.getItem('isLoggedIn') === 'true') {
-      //   sessionStorage.removeItem('isLoggedIn');
-      //   sessionStorage.removeItem('access_Token');
-      //   sessionStorage.removeItem('id_Token');
-      // }
       this.updateMessage('Logging out...');
       setTimeout(
-        () => this.router.navigate(['/']),
+        () => {
+          this.router.navigate(['/']);
+        },
         5000
-      );
+      )
     }
 }

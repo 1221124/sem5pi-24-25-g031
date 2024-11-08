@@ -56,7 +56,7 @@ namespace Domain.OperationTypes
         {
             var operationType = await this._repo.GetByIdAsync(id);
             
-            if(operationType == null)
+            if(operationType == null || operationType.Status != Status.Active)
                 return null;
 
             return OperationTypeMapper.ToDto(operationType);
@@ -87,17 +87,6 @@ namespace Domain.OperationTypes
             operationType.Specialization = dto.Specialization;
             operationType.RequiredStaff = dto.RequiredStaff;
             operationType.PhasesDuration = dto.PhasesDuration;
-
-            // OperationType opType = (OperationType) operationType;
-
-            // opType.Name = dto.Name;
-            // opType.Specialization = dto.Specialization;
-            // opType._requiredStaff = dto._requiredStaff;
-            // opType.PhasesDuration = dto.PhasesDuration;
-
-            // await this._unitOfWork.CommitAsync();
-
-            // return OperationTypeMapper.ToDto(opType);
 
             await this._unitOfWork.CommitAsync();
 
@@ -132,6 +121,47 @@ namespace Domain.OperationTypes
             await this._unitOfWork.CommitAsync();
 
             return OperationTypeMapper.ToDto(operationType);
+        }
+
+        public async Task<List<OperationTypeDto>> GetAsync(string? name, string? specialization, string? status)
+        {
+            List<OperationType> operationTypes = await this._repo.GetAllAsync();
+
+            OperationType operationTypeWithName;
+            List<OperationType> operationTypesWithSpecialization;
+            List<OperationType> operationTypesWithStatus;
+
+            if (name != null)
+            {
+                operationTypeWithName = await _repo.GetByNameAsync(new Name(name));
+                operationTypes = [operationTypeWithName];
+            }
+
+            if (specialization != null)
+            {
+                operationTypesWithSpecialization = await _repo.GetBySpecializationAsync(SpecializationUtils.FromString(specialization));
+                operationTypes = operationTypes.Intersect(operationTypesWithSpecialization).ToList();
+            }
+
+            if (status != null)
+            {
+                operationTypesWithStatus = await _repo.GetByStatusAsync(StatusUtils.FromString(status));
+                operationTypes = operationTypes.Intersect(operationTypesWithStatus).ToList();
+            }
+
+            if (operationTypes == null || !operationTypes.Any())
+            {
+                return null;
+            }
+
+            List<OperationTypeDto> listDto = OperationTypeMapper.ToDtoList(operationTypes);
+
+            return listDto;
+        }
+
+        public bool CheckIfOperationTypeIsActive(OperationTypeDto operationTypeDto)
+        {
+            return operationTypeDto.Status == Status.Active;
         }
     }
 }

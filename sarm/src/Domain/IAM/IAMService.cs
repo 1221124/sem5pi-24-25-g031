@@ -140,6 +140,34 @@ namespace Domain.IAM
 
             return (emailClaim, rolesClaim);
         }
+
+        public Email GetEmailFromIdToken(string idToken)
+        {
+            if (string.IsNullOrWhiteSpace(idToken))
+            {
+                throw new Exception("IdToken cannot be null or empty.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            if (!handler.CanReadToken(idToken))
+            {
+                throw new Exception("Invalid token.");
+            }
+
+            var jwtToken = handler.ReadJwtToken(idToken);
+            if (jwtToken.Payload == null || !jwtToken.Payload.Any())
+            {
+                throw new SecurityTokenException("Invalid token payload.");
+            }
+
+            var emailClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
+            if (string.IsNullOrEmpty(emailClaim))
+            {
+                throw new Exception("Email claim not found in token.");
+            }
+
+            return new Email(emailClaim);
+        }
     }
 
     public class TokenResponse

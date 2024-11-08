@@ -1,3 +1,4 @@
-<div class="message-container" [class.error]="isError">
+<div class="message-container" [ngClass]="{'error': isError}">
   <p>{{ message }}</p>
+  <router-outlet></router-outlet>
 </div>

@@ -20,5 +20,11 @@ namespace Infrastructure.Users
             return await this._objs
                 .AsQueryable().Where(x => email.Value.Equals(x.Email.Value)).FirstOrDefaultAsync();
         }
+
+        public async Task<List<User>> GetAllActiveAsync()
+        {
+            return await this._objs
+                .AsQueryable().Where(x => x.UserStatus == UserStatus.Active).ToListAsync();
+        }
     }
 }

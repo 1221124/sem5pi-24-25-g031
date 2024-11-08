@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  homeUrl: 'http://localhost:4200',
   tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
   loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=code&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:4200/callback&scope=openid%20profile%20email&prompt=login',
   usersApiUrl: 'http://localhost:5500/api/Users',

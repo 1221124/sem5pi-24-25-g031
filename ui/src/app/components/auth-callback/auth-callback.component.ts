@@ -1,17 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
-import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-callback',
   standalone: true,
   templateUrl: './auth-callback.component.html',
   styleUrl: './auth-callback.component.css',
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule, RouterModule]
 })
 export class AuthCallbackComponent implements OnInit {
   message: string = '';
@@ -43,30 +41,26 @@ export class AuthCallbackComponent implements OnInit {
           const userCallbackResponse = await this.authService.handleUserCallback(idToken, accessToken);
 
           if (userCallbackResponse.status === 200) {
-            if (userCallbackResponse.body == true) {
-              try {
-                const response = await this.authService.login(accessToken);
-                if (response && response.status === 200) {
-                  this.authService.login(accessToken);
-                  this.authService.updateMessage('Login successful!');
-                  this.authService.redirectBasedOnRole(accessToken);
-                } else {
-                  if (response && response.body) {
-                    this.authService.updateMessage('Error during login (not Ok): ' + response.body); 
-                    this.authService.updateIsError(true);
-                  }
+            try {
+              const response = await this.authService.login(idToken);
+              if (response.status === 200) {
+                this.authService.updateMessage('Login successful!');
+                this.authService.redirectBasedOnRole(accessToken);
+                return;
+              } else {
+                if (response && response.body) {
+                  this.authService.updateMessage('Error during login (not Ok): ' + response.body); 
+                  this.authService.updateIsError(true);
                 }
-              } catch (error) {
-                this.authService.updateMessage('Error during login');  
-                this.authService.updateIsError(true);
               }
-            } else {
-              this.authService.updateMessage('User not found in database, creating user...');  
-              this.createUser(accessToken);
+            } catch (error) {
+              this.authService.updateMessage('Error during login');  
+              this.authService.updateIsError(true);
             }
           } else {
-            this.authService.updateMessage('Error during user callback: ' + userCallbackResponse.body);  
-            this.authService.updateIsError(true);
+            this.authService.updateMessage('Creating user...');
+            await this.createUser(accessToken);
+            return;
           }
         }
       } catch (error) {

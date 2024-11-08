@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.UsersSession;
-using Domain.Authz;
-using Microsoft.AspNetCore.Authorization;
 using Domain.DbLogs;
 using DDDNetCore.Domain.DbLogs;
 
@@ -25,33 +23,12 @@ namespace Controllers
             _dbLogService = dbLogService;
         }
 
-        // GET: api/OperationTypes?pageNumber={pageNumber}
+        // GET: api/OperationTypes?pageNumber={pageNumber}&?name={name}&?specialization={specialization}&?status={status}
         [HttpGet]
-        // [Authorize(Roles = "Admin")]
-        // [RequiredRole("Admin")]
-        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll([FromQuery] string? pageNumber)
+        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> Get([FromQuery] string? pageNumber, [FromQuery] string? name, [FromQuery] string? specialization, [FromQuery] string? status)
         {
-            // var idToken = HttpContext.Session.GetString("idToken");
-            // if (string.IsNullOrEmpty(idToken))
-            // {
-            //     return Unauthorized("No idToken found in session");
-            // }
+            var operationTypes = await _service.GetAsync(name, specialization, status);
 
-            // var authorizeAttributes = (AuthorizeAttribute[])this.GetType()
-            //     .GetMethod(nameof(GetAll))
-            //     .GetCustomAttributes(typeof(AuthorizeAttribute), true);
-
-            // var requiredRole = (RequiredRoleAttribute)Attribute.GetCustomAttribute(
-            //     GetType().GetMethod(nameof(GetAll)), typeof(RequiredRoleAttribute));
-
-            // bool isAuthorized = _authorizationService.IsAuthorized(idToken, requiredRole.Role);
-            // if (!isAuthorized)
-            // {
-            //     return Unauthorized("User is not authorized");
-            // }
-
-            var operationTypes = await _service.GetAllAsync();
-            
             if (operationTypes == null)
             {
                 return NotFound();
@@ -63,10 +40,10 @@ namespace Controllers
                     .Skip((int.Parse(pageNumber)) * pageSize)
                     .Take(pageSize)
                     .ToList();
-                return paginatedOperationTypes;
+                return Ok(new { operationTypes = paginatedOperationTypes });
             }
 
-            return Ok(operationTypes);
+            return Ok(new { operationTypes });
         }
 
         // GET: api/OperationTypes/{id}
@@ -81,66 +58,6 @@ namespace Controllers
             }
 
             return operationType;
-        }
-
-        // GET: api/OperationTypes/name/{name}
-        [HttpGet("name/{name}")]
-        public async Task<ActionResult<OperationTypeDto>> GetByName(string name)
-        {
-            var operationType = await _service.GetByNameAsync(name);
-
-            if (operationType == null)
-            {
-                return NotFound();
-            }
-
-            return operationType;
-        }
-
-        // GET: api/OperationTypes/specialization/{specialization}?pageNumber={pageNumber}
-        [HttpGet("specialization/{specialization}")]
-        public async Task<ActionResult<List<OperationTypeDto>>> GetBySpecialization(Specialization specialization, [FromQuery] string? pageNumber)
-        {
-            var operationTypes = await _service.GetBySpecializationAsync(specialization);
-
-            if (operationTypes == null)
-            {
-                return NotFound();
-            }
-
-            if (pageNumber != null)
-            {
-                var paginatedOperationTypes = operationTypes
-                    .Skip((int.Parse(pageNumber)) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-                return paginatedOperationTypes;
-            }
-
-            return operationTypes;
-        }
-
-        // GET: api/OperationTypes/status/{status}?pageNumber={pageNumber}
-        [HttpGet("status/{status}")]
-        public async Task<ActionResult<List<OperationTypeDto>>> GetByStatus(Status status, [FromQuery] string? pageNumber)
-        {
-            var operationTypes = await _service.GetByStatusAsync(status);
-
-            if (operationTypes == null)
-            {
-                return NotFound();
-            }
-
-            if (pageNumber != null)
-            {
-                var paginatedOperationTypes = operationTypes
-                    .Skip((int.Parse(pageNumber)) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-                return paginatedOperationTypes;
-            }
-
-            return operationTypes;
         }
 
         // POST: api/OperationTypes
@@ -167,12 +84,17 @@ namespace Controllers
         }
 
         
-        // PUT: api/OperationTypes
-        [HttpPut()]
-        public async Task<ActionResult<OperationTypeDto>> Update(OperationTypeDto dto)
+        // PUT: api/OperationTypes/id
+        [HttpPut("{id}")]
+        public async Task<ActionResult<OperationTypeDto>> Update(Guid id, OperationTypeDto dto)
         {
             try
             {
+                if (id != dto.Id)
+                {
+                    return BadRequest( new { Message = "Id in URL does not match Id in body" });
+                }
+
                 var operationType = await _service.UpdateAsync(dto);
                 
                 if (operationType == null)
@@ -201,6 +123,12 @@ namespace Controllers
                 return NotFound();
             }
 
+            if (!_service.CheckIfOperationTypeIsActive(operationType))
+            {
+                _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error inactivating operation type: operation type is inactive"));
+                return BadRequest(new { Message = "It is not possible to inactivate an already inactive operation type." });
+            }
+
             _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Deactivate, new Message($"Deactivate {operationType.Id}"));
             return Ok(operationType);
         }
@@ -217,6 +145,12 @@ namespace Controllers
                 {
                     _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error deleting operation type: operation type not found"));
                     return NotFound();
+                }
+
+                if (_service.CheckIfOperationTypeIsActive(operationType))
+                {
+                    _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error deleting operation type: operation type is active"));
+                    return BadRequest(new { Message = "It is not possible to delete an active operation type." });
                 }
 
                 _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Delete, new Message($"Delete {operationType.Id}"));

@@ -22,22 +22,18 @@ namespace Controllers
         private readonly PatientService _patientService;
         private readonly IAMService _iamService;
         private readonly EmailService _emailService;
-        private readonly SessionService _sessionService;
         private readonly DbLogService _dbLogService;
-        private readonly IMemoryCache _memoryCache;
         private readonly int pageSize = 2;
 
         public UsersController(UserService service, StaffService staffService, PatientService patientService, 
-        IAMService iAMService, EmailService emailService, SessionService sessionService, DbLogService dbLogService, IMemoryCache memoryCache)
+        IAMService iAMService, EmailService emailService, DbLogService dbLogService)
         {
             _service = service;
             _staffService = staffService;
             _patientService = patientService;
             _iamService = iAMService;
             _emailService = emailService;
-            _sessionService = sessionService;
             _dbLogService = dbLogService;
-            _memoryCache = memoryCache;
         }
 
         // GET: api/Users?pageNumber={pageNumber}
@@ -86,7 +82,7 @@ namespace Controllers
 
             if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(accessToken))
             {
-                return BadRequest("Tokens are required.");
+                return BadRequest( new { Message = "IdToken and/or AccessToken are missing." });
             }
 
             try
@@ -96,12 +92,17 @@ namespace Controllers
                 Email email = new Email(emailAndRole.Email);
                 if (email == null)
                 {
-                    return BadRequest("Email not found in access token.");
+                    return BadRequest(new { Message = "Email not found in token." });
                 }
 
                 var user = await _service.GetByEmailAsync(email);
 
-                return Ok(user != null);
+                if (user == null)
+                {
+                    return BadRequest(new { Message = $"User with email {email.Value} not found." });
+                }
+
+                return Ok(user);
             }
             catch (Exception ex)
             {
@@ -147,31 +148,41 @@ namespace Controllers
                 }
             }
 
-            _dbLogService.LogAction(EntityType.User, DbLogType.Create, new Message($"User {user.Id} created."));
+            _ = await _dbLogService.LogAction(EntityType.User, DbLogType.Create, new Message($"User {user.Id} created."));
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        // POST: api/Users/login
+        // POST: api/Users/login?idToken={idToken}
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login([FromBody] Email email)
+        public async Task<ActionResult<UserDto>> Login([FromQuery] string idToken)
         {
-            var user = await _service.GetByEmailAsync(email);
+            try {
+                var email = _iamService.GetEmailFromIdToken(idToken);
 
-            if (user == null)
-                return BadRequest(new { Message = $"User with email {email} not found." });
+                var user = await _service.GetByEmailAsync(email);
 
-            if (user.UserStatus != UserStatus.Active)
-                return BadRequest(new { Message = $"User with email {email} is not active." });
+                if (user == null)
+                    return BadRequest(new { Message = $"User with email {email} not found." });
 
-            return Ok(new { user.Id, user.Email, user.Role });
+                user = _service.Login(user);
+
+                return Ok(user.Email.Value.Split('@')[0]);
+            } catch (BusinessRuleValidationException ex) {
+                return BadRequest(new { ex.Message });
+            }
         }
 
-        // PUT: api/Users
-        [HttpPut()]
-        public async Task<ActionResult<UserDto>> Update(UserDto dto)
+        // PUT: api/Users/id
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserDto>> Update(Guid id, UserDto dto)
         {
             try
             {
+                if (id != dto.Id)
+                {
+                    return BadRequest();
+                }
+
                 var User = await _service.UpdateAsync(dto);
 
                 if (User == null)
@@ -198,24 +209,28 @@ namespace Controllers
             {
                 user.UserStatus = UserStatus.Active;
                 await _service.UpdateAsync(user);
-                return Ok(user);
+                return Ok(new { Message = "Email verified." });
             }
 
-            return NotFound("User not found.");
+            return NotFound();
         }
 
         // Inactivate: api/Users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserDto>> SoftDelete(Guid id)
         {
-            var User = await _service.InactivateAsync(new UserId(id));
+            try {
+                var User = await _service.InactivateAsync(new UserId(id));
 
-            if (User == null)
-            {
-                return NotFound();
+                if (User == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(new { Message = "User inactivated." });
+            } catch (BusinessRuleValidationException ex) {
+                return BadRequest(new { ex.Message });
             }
-
-            return Ok(User);
         }
 
         // DELETE: api/Users/5
@@ -231,11 +246,11 @@ namespace Controllers
                     return NotFound();
                 }
 
-                return Ok(User);
+                return Ok(new {User.Id, User.Email, User.Role});
             }
             catch (BusinessRuleValidationException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new { ex.Message });
             }
         }
     }
