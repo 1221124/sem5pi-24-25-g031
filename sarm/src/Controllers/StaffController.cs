@@ -7,14 +7,14 @@ using Domain.Patients;
 
 namespace Controllers
 {
-    [Route("api/Staff")]
+    [Route("api/[controller]")]
     [ApiController]
     public class StaffController : ControllerBase
     {
         private readonly int pageSize = 2;
         private readonly StaffService _service;
-        
-        private readonly IEmailService _emailService; 
+
+        private readonly IEmailService _emailService;
 
         private readonly IStaffRepository _repo;
 
@@ -23,7 +23,7 @@ namespace Controllers
         private static readonly EntityType StaffEntityType = EntityType.Staff;
 
         private readonly IUnitOfWork _unitOfWork;
-        
+
         public StaffController(StaffService service, IEmailService iemailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService)
         {
             _service = service;
@@ -38,12 +38,12 @@ namespace Controllers
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll(int pageNumber)
         {
             var staff = await _service.GetAllAsync();
-            
+
             var paginatedStaff = staff
-                .Skip((pageNumber - 1) * pageSize) 
-                .Take(pageSize)                    
-                .ToList();                         
-            
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             return paginatedStaff;
         }
 
@@ -66,35 +66,35 @@ namespace Controllers
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySearchCriteriaName([FromQuery] String fullName, int pageNumber)
         {
             var names = fullName.Split('-');
-            
+
             if (names.Length != 2)
             {
                 return BadRequest("Full name format is invalid. Expected format: FirstName%2LastName");
             }
-            
+
             var firstName = names[0];
             var lastName = names[1];
-            
-            var staffList = await _service.SearchByNameAsync(new FullName(new Name(firstName), new Name(lastName))); 
+
+            var staffList = await _service.SearchByNameAsync(new FullName(new Name(firstName), new Name(lastName)));
 
             if (staffList == null)
             {
                 return NotFound();
             }
-            
+
             var paginatedStaff = staffList
-                .Skip((pageNumber - 1) * pageSize) 
-                .Take(pageSize)                    
-                .ToList();                         
-            
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             return paginatedStaff;
         }
-        
-        
+
+
         [HttpGet("search/{email}")]
         public async Task<ActionResult<StaffDto>> GetBySearchCriteriaEmail(String email)
         {
-            var staffList = await _service.SearchByEmailAsync(new Email(email)); 
+            var staffList = await _service.SearchByEmailAsync(new Email(email));
 
             if (staffList == null)
             {
@@ -102,29 +102,29 @@ namespace Controllers
             }
             return Ok(staffList);
         }
-        
+
         //GET: api/Staff/search/specialization?specialization=CARDIOLOGY/?pageNumber=1
-        [HttpGet("search/specialization")] 
+        [HttpGet("search/specialization")]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySpecializationAsync([FromQuery] String specialization, int pageNumber)
         {
-            var staffList = await _service.SearchBySpecializationAsync(SpecializationUtils.FromString(specialization)); 
+            var staffList = await _service.SearchBySpecializationAsync(SpecializationUtils.FromString(specialization));
 
             if (staffList == null)
             {
                 return NotFound();
             }
-            
+
             var paginatedStaff = staffList
-                .Skip((pageNumber - 1) * pageSize) 
-                .Take(pageSize)                    
-                .ToList();                         
-            
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             return paginatedStaff;
         }
 
         // POST: api/Staff
         [HttpPost]
-         public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
+        public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
         //public IActionResult Create([FromBody] CreatingStaffDto staffDto)
         {
             try
@@ -157,19 +157,19 @@ namespace Controllers
             {
                 if (dto == null)
                 {
-                    _dbLogService.LogAction(EntityType.Staff, DbLogType.Update,"Staff data is required.");
+                    _dbLogService.LogAction(EntityType.Staff, DbLogType.Update, "Staff data is required.");
                     return BadRequest("Invalid UpdatingStaffDto");
                 }
-                
+
                 var staff = await _service.GetByEmailAsync(oldEmail);
-                
+
                 if (staff == null)
                 {
                     return NotFound("Staff not found");
                 }
 
                 var updateStaff = await _service.UpdateAsync(oldEmail, dto);
-                
+
                 if (dto.PhoneNumber == null && dto.Email == null) return Ok(staff);
 
                 var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfoStaff(oldEmail, dto);
@@ -181,27 +181,27 @@ namespace Controllers
             {
                 return BadRequest(ex.Message);
             }
-           
+
         }
-        
-       
-        
+
+
+
         //GET: api/Staff/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
         [HttpGet("sensitiveInfo")]
         public async Task<ActionResult<StaffDto?>> VerifySensitiveInfo([FromQuery] string token, [FromQuery] string? pendingPhoneNumber, [FromQuery] string? pendingEmail)
         {
             Console.WriteLine(pendingPhoneNumber);
             Console.WriteLine(pendingEmail);
-            
+
             var emailDecode = _emailService.DecodeToken(token); //1220786
-            
+
             var staffDto = await _service.GetByEmailAsync(new Email(emailDecode)); //1220784
 
             if (staffDto == null)
                 return null;
-            
-            var staff =  StaffMapper.ToEntity(staffDto);
-            
+
+            var staff = StaffMapper.ToEntity(staffDto);
+
             if (!string.IsNullOrEmpty(pendingPhoneNumber))
             {
                 staff.ContactInformation.PhoneNumber = new PhoneNumber(pendingPhoneNumber);
@@ -210,9 +210,9 @@ namespace Controllers
             {
                 staff.ContactInformation.Email = pendingEmail;
             }
-            
+
             await _unitOfWork.CommitAsync();
-            
+
             return StaffMapper.ToDto(staff);
         }
 
@@ -224,7 +224,7 @@ namespace Controllers
             {
                 if (email == null)
                     return BadRequest("Invalid request data.");
-                
+
                 var staff = await _service.GetByEmailAsync(email);
 
                 if (staff == null)
@@ -238,7 +238,7 @@ namespace Controllers
                 {
                     return NotFound("Staff could not be inactivated.");
                 }
-                
+
                 return Ok("Deactivate staff profile successfully.");
             }
             catch (BusinessRuleValidationException ex)
