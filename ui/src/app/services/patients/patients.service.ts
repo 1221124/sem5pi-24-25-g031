@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import {response} from 'express';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +10,18 @@ import { environment } from '../../../environments/environment';
 
 export class PatientsService {
   message: string = '';
+  private apiUrl = environment.patients;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
-  post(firstName: string, lastName: string, dateOfBirth: Date, email: string, phoneNumber: number, gender: string) {
-
-    const apiUrl = environment.patients;
+  post(
+    firstName: string,
+    lastName: string,
+    dateOfBirth: Date,
+    email: string,
+    phoneNumber: string,
+    gender: string
+  ) {
 
     const contactInformation = {
       email: email,
@@ -27,22 +34,43 @@ export class PatientsService {
     }
 
     const creatingPatientDto = {
-      fullName: fullName,
-      dateOfBirth: dateOfBirth,
-      contactInformation: contactInformation,
-      gender: gender
+      "fullName": {
+        "firstName": {
+          "value": firstName
+        },
+        "lastName": {
+          "value": lastName
+        }
+      },
+      "dateOfBirth": {
+        "birthDate": dateOfBirth
+      },
+      "contactInformation": {
+        "email": {
+          "value": email
+        },
+        "phoneNumber": {
+          "value": phoneNumber
+        }
+      },
+      "gender": gender
     }
 
-    this.http.post(apiUrl, creatingPatientDto).subscribe(
-      _response => {
-        console.log('Response from API: ', _response);
-        this.message = 'Patient created successfully.';
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.post(this.apiUrl, creatingPatientDto, httpOptions).subscribe(
+      response =>{
+        console.log('Patient created successfully', response);
       },
-      _error => {
-        console.error('Error from API: ', _error);
-        this.message = 'An error occurred while creating the patient.';
+      error => {
+        console.log('Patient:', creatingPatientDto);
+        console.error('Error creating patient:', error)
       }
-    );
+    )
   }
 }
 
