@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import {response} from 'express';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +72,16 @@ export class PatientsService {
         console.error('Error creating patient:', error)
       }
     )
+  }
+
+  getPatients(): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.get(this.apiUrl, httpOptions);
   }
 }
 
