@@ -75,7 +75,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let staff of staffs">
+                <tr *ngFor="let staff of pagedStaffs()">
                     <td>{{ staff.fullName.firstName.value }}</td>
                     <td>{{ staff.fullName.lastName.value }}</td>
                     <td>{{ staff.contactInformation.email.value }}</td>

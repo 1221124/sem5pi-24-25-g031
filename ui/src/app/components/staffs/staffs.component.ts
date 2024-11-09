@@ -25,6 +25,8 @@ export class StaffsComponent {
   message: string = '';
   role: string = '';
   selectedStaff: any = null;
+  currentPage = 1;
+  itemsPerPage = 7;
 
   firstNameTouched = false;
   lastNameTouched = false;
@@ -116,8 +118,6 @@ export class StaffsComponent {
     this.isModalOpen = false;
   }
 
-  currentPage = 1;
-  itemsPerPage = 5;
 
   get totalPages(): number {
     return Math.ceil(this.staffs.length / this.itemsPerPage);
