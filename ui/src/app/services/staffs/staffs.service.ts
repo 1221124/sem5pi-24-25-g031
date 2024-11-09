@@ -10,6 +10,10 @@ export class StaffsService {
 
   private apiUrl = environment.staffs;
 
+  currentPage = 1;
+  itemsPerPage = 5;
+  totalItems = this.getStaff.length;
+
   constructor(private http: HttpClient) { }
 
   //createStaff(creatingStaffDto: any): Observable<any> {
@@ -116,4 +120,26 @@ export class StaffsService {
         }
       );;
   }
+
+  getStaff(): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.get(this.apiUrl, httpOptions);
+  }
+
+  editStaff(staffId: string, staffDto: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${staffId}`, staffDto, httpOptions);
+  }
+
+  deleteStaff(staffId: string): Observable<any> {
+
+    return this.http.delete(`${this.apiUrl}/${staffId}`, httpOptions);
+  }
+
+
 }
+
