@@ -270,6 +270,7 @@ namespace DDDNetCore.Domain.Patients
                     }
                 }
             }
+            greatestNumber++;
 
             var formattedDate = DateTime.Now.ToString("yyyyMM");
             var combinedString = $"{formattedDate}{greatestNumber:D6}";  // Combine the date and zero-padded number
