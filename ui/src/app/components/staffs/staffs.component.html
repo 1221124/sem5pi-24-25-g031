@@ -1,62 +1,107 @@
 <div class="staffs-request">
-    <h1>Staff Form</h1>
+    <h1>Staffs</h1>
+    <button type="button" class="create-staff-btn" (click)="openModal()">Create Staff</button>
 
-    <section>
-        <form>
-            <div class="form-group">
-                <input type="text" id="firstName" name="firstName" [(ngModel)]="firstName"
-                    (focus)="firstNameTouched = true" placeholder="Enter First Name" />
-            </div>
+    <div *ngIf="isModalOpen" class="modal">
+        <div class="modal-content">
+            <span type="button" class="close" (click)="closeModal()">&times;</span>
+            <h2>Create New Staff</h2>
 
+            <section>
+                <form>
+                    <div class="form-group">
+                        <input type="text" id="firstName" name="firstName" [(ngModel)]="firstName"
+                            (focus)="firstNameTouched = true" placeholder="Enter First Name" />
+                    </div>
 
-            <div class="form-group">
-                <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName" (focus)="lastNameTouched = true"
-                    placeholder="Enter Last Name" />
-            </div>
+                    <div class="form-group">
+                        <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName"
+                            (focus)="lastNameTouched = true" placeholder="Enter Last Name" />
+                    </div>
 
+                    <div class="form-group">
+                        <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true"
+                            placeholder="Enter Email" />
+                    </div>
 
-            <div class="form-group">
-                <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true"
-                    placeholder="Enter Email" />
-            </div>
+                    <div class="form-group">
+                        <input type="text" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber"
+                            (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
+                    </div>
 
-            <div class="form-group">
-                <input type="text" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber"
-                    (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
-            </div>
+                    <div class="form-group">
+                        <label for="specialization">Select Specialization:</label>
+                        <select id="specialization" name="specialization" [(ngModel)]="specialization"
+                            (focus)="specializationTouched = true">
+                            <option value="Anaesthesiology">Anaesthesiology</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Circulating">Circulating</option>
+                            <option value="Instrumental">Instrumental</option>
+                            <option value="Medical_Action">Medical Action</option>
+                            <option value="Orthopaedics">Orthopaedics</option>
+                            <option value="X_Ray">X Ray</option>
+                        </select>
+                    </div>
 
-            <div class="form-group">
-                <label for="specialization">Select Specialization:</label>
-                <select id="specialization" name="specialization" [(ngModel)]="specialization"
-                    (focus)="specializationTouched = true">
-                    <option value="Anaesthesiology">Anaesthesiology</option>
-                    <option value="Cardiology">Cardiology</option>
-                    <option value="Circulating">Circulating</option>
-                    <option value="Instrumental">Instrumental</option>
-                    <option value="Medical_Action">Medical Action</option>
-                    <option value="Orthopaedics">Orthopaedics</option>
-                    <option value="X_Ray">X Ray</option>
-                </select>
-            </div>
+                    <div class="radio-staff">
+                        <label><input type="radio" name="role" [(ngModel)]="role" value="D"> Doctor</label>
+                        <label><input type="radio" name="role" [(ngModel)]="role" value="N"> Nurse</label>
+                        <label><input type="radio" name="role" [(ngModel)]="role" value="T"> Technician</label>
+                    </div>
 
-            <div class="radio-staff">
-                <label>
-                    <input type="radio" name="role" [(ngModel)]="role" value="D"> Doctor
-                </label>
-                <label>
-                    <input type="radio" name="role" [(ngModel)]="role" value="N"> Nurse
-                </label>
-                <label>
-                    <input type="radio" name="role" [(ngModel)]="role" value="T"> Technician
-                </label>
-            </div>
+                    <div class="button-group">
+                        <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
+                        <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
 
-            <div class="button-group">
-                <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
-                <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
-            </div>
+    <div class="get-staffs">
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>License Number</th>
+                    <th>Specialization</th>
+                    <th>Status</th>
+                    <th>Slots Appointment</th>
+                    <th>Slots Availability</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let staff of staffs">
+                    <td>{{ staff.fullName.firstName.value }}</td>
+                    <td>{{ staff.fullName.lastName.value }}</td>
+                    <td>{{ staff.contactInformation.email.value }}</td>
+                    <td>{{ staff.contactInformation.phoneNumber.value }}</td>
+                    <td>{{ staff.licenseNumber.value }}</td>
+                    <td>{{ staff.specialization.value || 'N/A' }}</td>
+                    <td>{{ staff.status || 'N/A' }}</td>
+                    <td>{{ staff.slotAppointment || 'N/A' }}</td>
+                    <td>{{ staff.slotAvailability || 'N/A' }}</td>
+                    <td>
+                        <button (click)="editStaff(staff)" class="action-btn edit-btn">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button (click)="deleteStaff(staff)" class="action-btn delete-btn">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-        </form>
-    </section>
-    <!-- <router-outlet></router-outlet> -->
+        <div class="pagination">
+            <button (click)="changePage(currentPage - 1)" [disabled]="currentPage <= 1">Previous</button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages">Next</button>
+        </div>
+
+    </div>
 </div>

@@ -1,15 +1,13 @@
 import { Component, NgModule } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { AppComponent } from '../../app.component';
 import { StaffsService } from '../../services/staffs/staffs.service';
-import { first } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { DatePipe, NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-staffs',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf],
   templateUrl: './staffs.component.html',
   styleUrl: './staffs.component.css',
   providers: [StaffsService]
@@ -18,6 +16,7 @@ export class StaffsComponent {
 
   constructor(private staffService: StaffsService) { }
 
+  staffs: any[] = [];
   firstName: string = '';
   lastName: string = '';
   email: string = '';
@@ -25,27 +24,29 @@ export class StaffsComponent {
   specialization: string = '';
   message: string = '';
   role: string = '';
+  selectedStaff: any = null;
 
   firstNameTouched = false;
   lastNameTouched = false;
   emailTouched = false;
   phoneNumberTouched = false;
   specializationTouched = false;
+  isModalOpen = false;
 
-  clearForm() {
-    this.firstName = '';
-    this.lastName = '';
-    this.email = '';
-    this.phoneNumber = '';
-    this.specialization = '';
-    this.role = '';
 
-    this.firstNameTouched = false;
-    this.lastNameTouched = false;
-    this.emailTouched = false;
-    this.phoneNumberTouched = false;
-    this.specializationTouched = false;
+  ngOnInit() {
+    this.staffService.getStaff().subscribe(
+      (data) => {
+        //console.log('Fetched staffs:', data);
+        this.staffs = data;
+        //console.log('Staff loaded:, this.staffs');
+      },
+      (error) => {
+        console.error('Error loading staffs:', error);
+      }
+    );
   }
+
 
   submitRequest() {
     console.log('submitting request');
@@ -80,13 +81,66 @@ export class StaffsComponent {
 
     console.log("Staff profile submitted");
 
-      // response => {
-      //   this.message = 'Staff profile submitted successfully!';
-      //   this.clearForm();
-      // },
-      // error => {
-      //   this.message = 'Error submitting staff profile. Please try again.';
-      // }
-      //);
+    // response => {
+    //   this.message = 'Staff profile submitted successfully!';
+    //   this.clearForm();
+    // },
+    // error => {
+    //   this.message = 'Error submitting staff profile. Please try again.';
+    // }
+    //);
+
   }
+
+  clearForm() {
+    this.firstName = '';
+    this.lastName = '';
+    this.email = '';
+    this.phoneNumber = '';
+    this.specialization = '';
+    this.role = '';
+
+    this.firstNameTouched = false;
+    this.lastNameTouched = false;
+    this.emailTouched = false;
+    this.phoneNumberTouched = false;
+    this.specializationTouched = false;
+
+  }
+
+  openModal() {
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+  }
+
+  currentPage = 1;
+  itemsPerPage = 5;
+
+  get totalPages(): number {
+    return Math.ceil(this.staffs.length / this.itemsPerPage);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  pagedStaffs(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.staffs.slice(startIndex, endIndex);
+  }
+
+  editStaff(staff: any): void {
+    // Lógica de edição
+  }
+
+  deleteStaff(staff: any): void {
+    // Lógica de exclusão
+  }
+
 }
