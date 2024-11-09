@@ -58,6 +58,10 @@
         </div>
     </div>
 
+    <div class="filter-container">
+        <input type="text" [(ngModel)]="searchName" placeholder="Search by Name" (input)="applyFilter()" />
+    </div>
+
     <div class="get-staffs">
         <table>
             <thead>

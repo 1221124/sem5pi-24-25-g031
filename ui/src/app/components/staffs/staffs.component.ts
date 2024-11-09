@@ -25,8 +25,12 @@ export class StaffsComponent {
   message: string = '';
   role: string = '';
   selectedStaff: any = null;
-  currentPage = 1;
-  itemsPerPage = 7;
+  filterText: string = '';
+
+  searchName: string = '';
+  currentPage: number = 1;
+  totalPages: number = 1; // Total de páginas após o filtro
+  itemsPerPage: number = 5;  // Número de itens por página
 
   firstNameTouched = false;
   lastNameTouched = false;
@@ -51,33 +55,6 @@ export class StaffsComponent {
 
 
   submitRequest() {
-    console.log('submitting request');
-
-    // const creatingStaffDto = {
-    //   fullName: {
-    //     firstName: this.firstName,
-    //     lastName: this.lastName
-    //   },
-    //   phoneNumber: {
-    //     value: this.phoneNumber
-    //   },
-    //   email: {
-    //     value: this.email
-    //   },
-    //   specialization: {
-    //     value: this.specialization
-    //   },
-    //   roleFirstChar: {
-    //     value: this.role  
-    //   }
-    // };
-
-    console.log('name: ' + this.firstName);
-    console.log('last name: ' + this.lastName);
-    console.log('email: ' + this.email);
-    console.log('phone number: ' + this.phoneNumber);
-    console.log('specialization: ' + this.specialization);
-    console.log('role: ' + this.role);
     // this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
     this.staffService.createStaff(this.firstName, this.lastName, this.phoneNumber, this.email, this.specialization, this.role);
 
@@ -118,9 +95,40 @@ export class StaffsComponent {
     this.isModalOpen = false;
   }
 
+  calculateTotalPages() {
+    const filteredStaffs = this.getFilteredStaffs();
+    this.totalPages = Math.ceil(filteredStaffs.length / this.itemsPerPage);
+    // Garantir que a página atual não ultrapassa o total de páginas
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+  }
 
-  get totalPages(): number {
-    return Math.ceil(this.staffs.length / this.itemsPerPage);
+  // Função para escolher os funcionários filtrados
+  getFilteredStaffs() {
+    return this.staffs.filter(staff =>
+      `${staff.fullName.firstName.value} ${staff.fullName.lastName.value}`
+        .toLowerCase()
+        .includes(this.searchName.toLowerCase())
+    );
+  }
+
+  pagedStaffs() {
+    // Filtra os staffs com base no nome (First Name + Last Name)
+    const filteredStaffs = this.staffs.filter(staff =>
+      `${staff.fullName.firstName.value} ${staff.fullName.lastName.value}`
+        .toLowerCase()
+        .includes(this.searchName.toLowerCase())
+    );
+
+    // Calcula o total de páginas após o filtro
+    this.totalPages = Math.ceil(filteredStaffs.length / this.itemsPerPage);
+
+    // Pagina os resultados filtrados
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const pagedStaffs = filteredStaffs.slice(startIndex, startIndex + this.itemsPerPage);
+
+    return pagedStaffs;
   }
 
   changePage(page: number): void {
@@ -129,10 +137,10 @@ export class StaffsComponent {
     }
   }
 
-  pagedStaffs(): any[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.staffs.slice(startIndex, endIndex);
+  // Aplicar filtro
+  applyFilter() {
+    this.currentPage = 1;
+    this.calculateTotalPages();
   }
 
   editStaff(staff: any): void {
@@ -142,5 +150,7 @@ export class StaffsComponent {
   deleteStaff(staff: any): void {
     // Lógica de exclusão
   }
+
+
 
 }
