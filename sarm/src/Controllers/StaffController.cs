@@ -11,7 +11,7 @@ namespace Controllers
     [ApiController]
     public class StaffController : ControllerBase
     {
-        private readonly int pageSize = 2;
+        private const int pageSize = 2;
         private readonly StaffService _service;
 
         private readonly IEmailService _emailService;
@@ -35,16 +35,25 @@ namespace Controllers
 
         // GET: api/Staff/?pageNumber=1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll(int pageNumber)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll([FromQuery] string? pageNumber)
         {
             var staff = await _service.GetAllAsync();
 
-            var paginatedStaff = staff
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+            if (staff == null)
+            {
+                return NotFound();
+            }
 
-            return paginatedStaff;
+            if (pageNumber != null)
+            {
+                var paginatedStaff = staff
+                    .Skip(int.Parse(pageNumber) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                return staff;
+            }
+
+            return staff;
         }
 
         //GET: api/Staff/5
