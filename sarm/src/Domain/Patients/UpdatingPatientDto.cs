@@ -17,12 +17,10 @@ namespace DDDNetCore.Domain.Patients
         public AppointmentHistory? AppointmentHistory { get; set; }
         public List<MedicalConditions>? MedicalConditions { get; set; }
         public UserId? UserId { get; set; }
-        public string? VerificationToken { get;  set; }
-        public DateTime? TokenExpiryDate { get;  set; }
         public PhoneNumber? PendingPhoneNumber { get; set; }
         public Email? PendingEmail { get; set; }
         
-        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, List<MedicalConditions>? medicalConditions, UserId? userId, string? verificationToken, DateTime? tokenExpiryDate)
+        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, AppointmentHistory? appointmentHistory, List<MedicalConditions>? medicalConditions, UserId? userId)
         {
             EmailId = emailId;
             FirstName = firstName;
@@ -32,8 +30,6 @@ namespace DDDNetCore.Domain.Patients
             AppointmentHistory = appointmentHistory;
             MedicalConditions = medicalConditions;
             UserId = userId;
-            VerificationToken = verificationToken;
-            TokenExpiryDate = tokenExpiryDate;
         }
         
         public UpdatingPatientDto(Email email)

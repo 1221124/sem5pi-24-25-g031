@@ -28,9 +28,7 @@ namespace Domain.Patients
                 dto.ContactInformation.PhoneNumber,
                 dto.AppointmentHistory,
                 dto.MedicalConditions,
-                dto.UserId,
-                dto.VerificationToken,
-                dto.TokenExpiryDate
+                dto.UserId
             );
         }
         public static List<PatientDto> toDtoList(List<Patient> patients)

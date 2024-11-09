@@ -17,9 +17,6 @@ namespace Domain.Patients
         public EmergencyContact? EmergencyContact { get; set; }
         public AppointmentHistory? AppointmentHistory { get; set; }
         public UserId? UserId { get; set; }
-        public string? VerificationToken { get; set; }
-        public DateTime? TokenExpiryDate { get; set; }
-
         public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions>? medicalConditions, EmergencyContact? emergencyContact,UserId? userId)
         {
             Id = id; 
