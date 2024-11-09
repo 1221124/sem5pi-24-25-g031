@@ -1,34 +1,75 @@
-<div class="patient-requests">
+<div class="patient-request">
   <h1>Patients</h1>
-  <section>
-    <form class="form-group">
-      <div>
-        <input type="text" id="firstName" name="fistName" [(ngModel)]="firstName" (focus)="firstNameTouched = true" placeholder="Enter First Name" />
-      </div>
-      <div>
-        <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName" (focus)="lastNameTouched = true" placeholder="Enter Last Name" />
-      </div>
-      <div>
-        <input type="date" id="date" name="date" [(ngModel)]="dateOfBirth" (focus)="dateOfBirthTouched = true" placeholder="Enter Date of Birth" />
-      </div>
-      <div>
-        <label for="gender">Select Gender:</label>
-        <select id="gender" name="gender" [(ngModel)]="gender" (focus)="genderTouched = true">
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
-      <div>
-        <input type="number" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber" (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
-      </div>
-      <div>
-        <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true" placeholder="Enter Email" />
-      </div>
-      <div class="button-group">
-        <button type="button" class="btn-create-patient" (click)="createPatient()">Create Patient</button>
-        <button type="button" class="btn-clear-form" (click)="clearForm()">Clear</button>
-      </div>
-    </form>
-  </section>
+  <button type="button" (click)="openModal()">Create Patient</button>
 
+  <div *ngIf="isModalOpen" class="modal">
+    <div class="modal-content">
+      <span type="button" class="close" (click)="closeModal()">&times;</span>
+      <h2>Create New Patient</h2>
+
+      <section>
+        <form class="form-group">
+          <div>
+            <input type="text" id="firstName" name="fistName" [(ngModel)]="firstName" (focus)="firstNameTouched = true" placeholder="Enter First Name" />
+          </div>
+          <div>
+            <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName" (focus)="lastNameTouched = true" placeholder="Enter Last Name" />
+          </div>
+          <div>
+            <input type="date" id="date" name="date" [(ngModel)]="dateOfBirth" (focus)="dateOfBirthTouched = true" placeholder="Enter Date of Birth" />
+          </div>
+          <div>
+
+            <select id="gender" name="gender" [(ngModel)]="gender" (focus)="genderTouched = true">
+              <option value="" disabled selected>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div>
+            <input type="text" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber" (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
+          </div>
+          <div>
+            <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true" placeholder="Enter Email" />
+          </div>
+          <div class="button-group">
+            <button type="button" class="btn-create-patient" (click)="createPatient()">Create Patient</button>
+            <button type="button" class="btn-clear-form" (click)="clearForm()">Clear</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <div class="get-patients">
+    <table>
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Date of Birth</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Gender</th>
+          <th>Medical Record Number</th>
+          <th>Emergency Contact</th>
+          <th>Appointment History</th>
+          <th>User ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let patient of patients">
+          <td>{{ patient.fullName.firstName.value }}</td>
+          <td>{{ patient.fullName.lastName.value }}</td>
+          <td>{{ patient.dateOfBirth.birthDate | date }}</td>
+          <td>{{ patient.contactInformation.email.value }}</td>
+          <td>{{ patient.contactInformation.phoneNumber.value }}</td>
+          <td>{{ patient.gender === 0 ? 'Male' : 'Female' }}</td>
+          <td>{{ patient.medicalRecordNumber.value }}</td>
+          <td>{{ patient.emergencyContact || 'N/A' }}</td>
+          <td>{{ patient.appointmentHistory || 'N/A' }}</td>
+          <td>{{ patient.userId || 'N/A' }}</td>
+        </tr>
+    </table>
+  </div>
 </div>

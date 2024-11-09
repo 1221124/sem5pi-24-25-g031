@@ -2,12 +2,13 @@ import { Component} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PatientsService } from '../../services/patients/patients.service';
 import {RouterModule, RouterOutlet} from '@angular/router';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf],
   templateUrl: './patients.component.html',
   styleUrls: ['./patients.component.css'],
   providers: [PatientsService]
@@ -17,7 +18,7 @@ export class PatientsComponent{
 
   constructor(private patientService: PatientsService) {
   }
-
+  patients: any[] = [];
   firstName: string = '';
   lastName: string = '';
   dateOfBirth: Date = new Date();
@@ -37,6 +38,20 @@ export class PatientsComponent{
   genderTouched = false;
   phoneNumberTouched = false;
   emailTouched = false;
+  isModalOpen = false;
+
+  ngOnInit() {
+    this.patientService.getPatients().subscribe(
+      (data) => {
+        console.log('Fetched patients:', data);
+        this.patients = data;
+        console.log('Patients loaded:, this.patients');
+      },
+      (error) => {
+        console.error('Error loading patients:', error);
+      }
+    );
+  }
 
   createPatient() {
     console.log('Create button clicked');
@@ -92,5 +107,13 @@ export class PatientsComponent{
     this.genderTouched = false;
     this.phoneNumberTouched = false;
     this.emailTouched = false;
+  }
+
+  openModal() {
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
   }
 }
