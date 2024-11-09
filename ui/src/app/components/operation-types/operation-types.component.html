@@ -1,0 +1,78 @@
+<div class="operationTypes-form">
+    <h1>Create Operation Type</h1>
+  
+    <form>
+      <label for="operationName">Operation Name:</label>
+      <input
+        type="text"
+        id="operationName"
+        name="operationName"
+        [(ngModel)]="operationType.Name"
+        placeholder="Enter Operation Name"
+      />
+    </form>
+  
+    <form>
+      <label for="specialization">Specialization:</label>
+      <select id="specialization" name="specialization" [(ngModel)]="operationType.Specialization">
+        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+      </select>
+    </form>
+  
+    <div *ngFor="let staff of operationType.RequiredStaff; let i = index" class="required-staff">
+      <h3>Required Staff {{ i + 1 }}</h3>
+  
+      <form>
+        <label for="staffRole-{{ i }}">Role:</label>
+        <select [(ngModel)]="staff.Role" name="staffRole-{{ i }}">
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+      </form>
+  
+      <form>
+        <label for="staffSpecialization-{{ i }}">Specialization:</label>
+        <select [(ngModel)]="staff.Specialization" name="staffSpecialization-{{ i }}">
+          <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+        </select>
+      </form>
+  
+      <form>
+        <label for="staffQuantity-{{ i }}">Quantity:</label>
+        <input type="number" [(ngModel)]="staff.Quantity" name="staffQuantity-{{ i }}" min="1" />
+      </form>
+    </div>
+  
+    <button type="button" (click)="addStaff(Role.DOCTOR, Specialization.ANAESTHESIOLOGY, 1)">
+      Add Required Staff
+    </button>
+  
+    <form>
+      <label for="preparationDuration">Preparation Duration (minutes):</label>
+      <input
+        type="number"
+        id="preparationDuration"
+        [(ngModel)]="operationType.PhasesDuration.Preparation"
+        min="1"
+      />
+  
+      <label for="surgeryDuration">Surgery Duration (minutes):</label>
+      <input
+        type="number"
+        id="surgeryDuration"
+        [(ngModel)]="operationType.PhasesDuration.Surgery"
+        min="1"
+      />
+  
+      <label for="cleaningDuration">Cleaning Duration (minutes):</label>
+      <input
+        type="number"
+        id="cleaningDuration"
+        [(ngModel)]="operationType.PhasesDuration.Cleaning"
+        min="1"
+      />
+    </form>
+  
+    <form>
+      <button type="button" (click)="submitOperationType(operationType)">Submit Operation Type</button>
+    </form>
+  </div> 
