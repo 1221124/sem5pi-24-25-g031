@@ -3,7 +3,18 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
 import { OperationRequest } from '../../models/operation-request.model';
+import { StaffsService } from '../../services/staffs/staffs.service';
+import { PatientsService } from '../../services/patients/patients.service';
+import { OperationTypesService } from '../../services/operation-types/operation-types.service';
+import { Staff } from '../../models/staff.model';
+import { Patient } from '../../models/patient.model';
+import { OperationType } from '../../models/operation-type.model';
 
+export enum Priority{
+  ELECTIVE = 'Elective',
+  URGENT = 'Urgent',
+  EMERGENCY = 'Emergency'
+} 
 
 @Component({
   selector: 'app-operation-requests',
@@ -11,25 +22,32 @@ import { OperationRequest } from '../../models/operation-request.model';
   imports: [FormsModule, CommonModule],
   templateUrl: './operation-requests.component.html',
   styleUrls: ['./operation-requests.component.css'],
-  providers: [OperationRequestsService]
+  providers: [OperationRequestsService, StaffsService, PatientsService, OperationTypesService]
 })
 export class OperationRequestsComponent {
    constructor(
-    private service: OperationRequestsService  
+    private service: OperationRequestsService, 
+    private serviceStaff: StaffsService, 
+    private servicePatient: PatientsService, 
+    private serviceOperationType: OperationTypesService
   ) {}
 
   requests: OperationRequest[] = [];
+  staffs: Staff[] = [];
+  patients: Patient[] = [];
+  operationTypes: OperationType[] = [];
+  priorities: any[] = [];
 
-  staffId: string = '';
-  patientId: string = '';
-  operationTypeId: string = '';
+  staff: string = '';
+  patient: string = '';
+  operationType: string = '';
   deadlineDate: Date = new Date();
   priority: string = '';
   errorMessage: string = '';
 
-  staffIdTouched: boolean = false;
-  patientIdTouched: boolean = false;
-  operationTypeIdTouched: boolean = false;
+  staffTouched: boolean = false;
+  patientTouched: boolean = false;
+  operationTypeTouched: boolean = false;
   deadlineDateTouched: boolean = false;
   priorityTouched: boolean = false;
 
@@ -48,33 +66,54 @@ export class OperationRequestsComponent {
     this.isModalOpen = false;
   }
 
-  // ngOnInit() {
-  //   this.service.getAll().subscribe(
-  //     (data) => {
-  //       console.log('Fetched Operation Requests:', data);
-  //       this.requests = data;
-  //       console.log('Operation Requests loaded:', this.requests);
-  //     },
-  //     (error) => {
-  //       console.error('Error loading Operation Requests:', error);
-  //     }
-  //   );
-  // }
-
   ngOnInit() {
+    this.priorities = Object.values(Priority);
+
     this.service.getAll().subscribe(
       (data) => {
         this.requests = data.map(request => ({
-          ...request,
-          doctorId: request.doctorId,
-          patientId: request.patientId.id || request.patientId,
-          operationTypeId: request.operationTypeId.id || request.operationTypeId,
-          deadlineDate: request.deadlineDate.date || request.deadlineDate,
+          id: request.id,
+          staff: request.staff.value,
+          patient: request.patient.value,
+          operationType: request.operationType.value,
+          deadlineDate: request.deadlineDate.date,
+          priority: request.priority,
+          status: request.status
         }));
         console.log('Processed Operation Requests:', this.requests);
       },
       (error) => {
         console.error('Error loading Operation Requests:', error);
+      }
+    );
+
+    this.serviceStaff.getStaff().subscribe(
+      (data) => {
+        this.staffs = data.map((staff: {
+          id: any; licenseNumber: any; 
+        }) => ({
+          id: staff.id,
+          licenseNumber: staff.licenseNumber.value
+        }));
+        console.log('Processed Staff:', this.staffs);
+      },
+      (error) => {
+        console.error('Error loading Staff:', error);
+      }
+    );
+
+    this.servicePatient.getPatients().subscribe(
+      (data) => {
+        this.patients = data.map((patient: {
+          id: any; medicalRecordNumber: any; 
+        }) => ({
+          id: patient.id,
+          medicalRecordNumber: patient.medicalRecordNumber.value
+        }));
+        console.log('Processed Patients:', this.patients);
+      },
+      (error) => {
+        console.error('Error loading Patients:', error);
       }
     );
   }
@@ -104,38 +143,38 @@ export class OperationRequestsComponent {
     console.log('Submit button clicked');
     this.errorMessage = '';
 
-    if (!this.isValidGuid(this.staffId)) {
-        console.log('Invalid Staff ID format. Please provide a valid GUID.');
-        this.errorMessage = 'Invalid Staff ID format. Please provide a valid GUID.';
-        return this.errorMessage;
-    }
+    // if (!this.isValidGuid(this.staffId)) {
+    //     console.log('Invalid Staff ID format. Please provide a valid GUID.');
+    //     this.errorMessage = 'Invalid Staff ID format. Please provide a valid GUID.';
+    //     return this.errorMessage;
+    // }
 
-    if (!this.isValidGuid(this.patientId)) {
-        console.log('Invalid Patient ID format. Please provide a valid GUID.');
-        this.errorMessage = 'Invalid Patient ID format. Please provide a valid GUID.';
-        return this.errorMessage;
-    }
+    // if (!this.isValidGuid(this.patientId)) {
+    //     console.log('Invalid Patient ID format. Please provide a valid GUID.');
+    //     this.errorMessage = 'Invalid Patient ID format. Please provide a valid GUID.';
+    //     return this.errorMessage;
+    // }
 
-    if (!this.isValidGuid(this.operationTypeId)) {
-        console.log('Invalid Operation Type ID format. Please provide a valid GUID.');
-        this.errorMessage = 'Invalid Operation Type ID format. Please provide a valid GUID.';
-        return this.errorMessage;
-    }
+    // if (!this.isValidGuid(this.operationTypeId)) {
+    //     console.log('Invalid Operation Type ID format. Please provide a valid GUID.');
+    //     this.errorMessage = 'Invalid Operation Type ID format. Please provide a valid GUID.';
+    //     return this.errorMessage;
+    // }
 
-    if(!this.isValidDate(this.deadlineDate)) {
-        console.log('Invalid Deadline Date. Please provide a valid date.');
-        this.errorMessage = 'Invalid Deadline Date. Please provide a valid date.';
-        return this.errorMessage;
-    }
+    // if(!this.isValidDate(this.deadlineDate)) {
+    //     console.log('Invalid Deadline Date. Please provide a valid date.');
+    //     this.errorMessage = 'Invalid Deadline Date. Please provide a valid date.';
+    //     return this.errorMessage;
+    // }
 
-    if(!this.isValidPriority(this.priority)) {
-        console.log('Invalid Priority. Please provide a valid priority.');
-        this.errorMessage = 'Invalid Priority. Please provide a valid priority.';
-        return this.errorMessage;
-    }
+    // if(!this.isValidPriority(this.priority)) {
+    //     console.log('Invalid Priority. Please provide a valid priority.');
+    //     this.errorMessage = 'Invalid Priority. Please provide a valid priority.';
+    //     return this.errorMessage;
+    // }
 
     console.log('Calling service post method');
-    this.service.post(this.staffId, this.patientId, this.operationTypeId, this.deadlineDate, this.priority);
+    this.service.post(this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
     this.clearForm();
     console.log('Operation Request submitted successfully!');
     return "Operation Request submitted successfully!";
@@ -163,15 +202,15 @@ export class OperationRequestsComponent {
   }
  
   clearForm() {
-    this.staffId = '';
-    this.patientId = '';
-    this.operationTypeId = '';
+    this.staff = '';
+    this.patient = '';
+    this.operationType = '';
     this.deadlineDate = new Date();
     this.priority = '';
 
-    this.staffIdTouched = false;
-    this.patientIdTouched = false;
-    this.operationTypeIdTouched = false;
+    this.staffTouched = false;
+    this.patientTouched = false;
+    this.operationTypeTouched = false;
     this.deadlineDateTouched = false;
     this.priorityTouched = false;
 

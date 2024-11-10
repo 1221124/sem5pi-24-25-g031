@@ -1,110 +1,121 @@
-<div class="operationRequests-request">
-  <h1>Operation Request Form</h1>
+  <div class="operationRequests-request">
+    <h1>Operation Request Form</h1>
 
-  <div class="modal">
-    <form>
-      <button type="button" *ngIf="showCreateButton" (click)="create()">
-        New Operation Request
-      </button>
-    </form>
-
-    <form>
-      <button type="button" *ngIf="showReturnButton" (click)="return()">
-        Return
-      </button>
-    </form>
-
-    <form>        
-      <button type="button" *ngIf="showHttpPostButton" (click)="submitRequest()">
-        Submit
-      </button>
-    </form>
-
-    <section *ngIf="createMode">
+    <div class="modal">
       <form>
-        <input
-          type="text"
-          id="staffId"
-          name="staffId"
-          [(ngModel)]="staffId"
-          (focus)="staffIdTouched = true"
-          placeholder="Enter Staff ID"
-        />
-      </form>
-      
-      <form>
-        <input
-          type="text"
-          id="patientId"
-          name="patientId"
-          [(ngModel)]="patientId"
-          (focus)="patientIdTouched = true"
-          placeholder="Enter Patient ID"
-        />
+        <button type="button" *ngIf="showCreateButton" (click)="create()">
+          New Operation Request
+        </button>
       </form>
 
       <form>
-        <input
-          type="text"
-          id="operationTypeId"
-          name="operationTypeId"
-          [(ngModel)]="operationTypeId"
-          (focus)="operationTypeIdTouched = true"
-          placeholder="Enter Operation Type ID"
-        />
+        <button type="button" *ngIf="showReturnButton" (click)="return()">
+          Return
+        </button>
       </form>
 
-      <form>
-        <input
-          type="date"
-          id="deadlineDate"
-          name="deadlineDate"
-          [(ngModel)]="deadlineDate"
-          (focus)="deadlineDateTouched = true"
-        />
+      <form>        
+        <button type="button" *ngIf="showHttpPostButton" (click)="submitRequest()">
+          Submit
+        </button>
       </form>
 
-      <form>
-        <label for="priority">Select Priority:</label>
-        <select
-          id="priority"
-          name="priority"
-          [(ngModel)]="priority"
-          (focus)="priorityTouched = true"
-        >
-          <option value="Elective">Elective</option>
-          <option value="Urgent">Urgent</option>
-          <option value="Emergency">Emergency</option>
-        </select>
-      </form>
-    </section>
+      <section *ngIf="createMode">
+        <form>
+          <label for="staff">Select Staff:</label>
+          <select
+            id="staff"
+            name="staff"
+            [(ngModel)]="staff"
+            (focus)="staffTouched = true"
+          >
+            <option *ngFor="let staff of staffs" [value]="staff.licenseNumber">{{ staff.licenseNumber }}</option>
+          </select>
+        </form>
+
+        <form>
+          <label for="patient">Select Patient:</label>
+          <select
+            id="patient"
+            name="patient"
+            [(ngModel)]="patient"
+            (focus)="patientTouched = true"
+          >
+            <option *ngFor="let patient of patients" [value]="patient.medicalRecordNumber">
+              {{ patient.medicalRecordNumber }}
+            </option>
+          </select>
+        </form>
+
+        <form>
+          <label for ="operationType">Select Operation Type:</label>
+          <select
+            id="operationType"
+            name="operationType"
+            [(ngModel)]="operationType"
+            (focus)="operationTypeTouched = true"
+          >
+          <option *ngFor="let operationType of operationTypes" [value]="operationType.name">
+            {{ operationType.name }}
+          </option>
+          </select>
+        </form>
+
+        <form>
+          <input
+            type="date"
+            id="deadlineDate"
+            name="deadlineDate"
+            [(ngModel)]="deadlineDate"
+            (focus)="deadlineDateTouched = true"
+          />
+        </form>
+
+        <form>
+          <label for="priority">Select Priority:</label>
+          <select
+            id="priority"
+            name="priority"
+            [(ngModel)]="priority"
+            (focus)="priorityTouched = true"
+          >
+            <option *ngFor="let priority of priorities" [value]="priority">
+              {{ priority }}
+            </option>
+          </select>
+        </form>
+      </section>
+    </div>
+
+    <div class="get-requests">
+      <table>
+        <thead>
+          <tr>
+            <th>Request</th>
+            <th>Staff</th>
+            <th>Patient</th>
+            <th>Operation Type</th>
+            <th>Deadline Date</th>  
+            <th>Priority</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let request of requests">
+            <td>{{ request.id }}</td>
+            <td>{{ request.staff }}</td>
+            <td>{{ request.patient }}</td>
+            <td>{{ request.operationType }}</td>
+            <td>{{ request.deadlineDate }}</td>
+            <td>{{ request.priority == 0 ? 'Elective' 
+              : request.priority == 1 ? 'Urgent' 
+              : 'Emergency' }}</td>
+            <td>{{ request.status == 0 ? 'Pending' 
+              : request.status == 1 ? 'Acccepted' 
+              : 'Rejected' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
-
-  <div class="get-requests">
-    <table>
-      <thead>
-        <tr>
-          <th>Request</th>
-          <th>Staff</th>
-          <th>Patient</th>
-          <th>Operation Type</th>
-          <th>Deadline Date</th>
-          <th>Priority</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let request of requests">
-          <td>{{ request.id }}</td>
-          <td>{{ request.doctorId?.id || request.doctorId }}</td>
-          <td>{{ request.patientId?.id || request.patientId }}</td>
-          <td>{{ request.operationTypeId?.id || request.operationTypeId }}</td>
-          <td>{{ request.deadlineDate?.date || request.deadlineDate }}</td>
-          <td>{{ request.priority == 0 ? 'Elective' : request.priority == 1 ? 'Urgent' : 'Emergency' }}</td>
-          <td>{{ request.status == 0 ? 'Pending' : request.status == 1 ? 'Acccepted' : 'Rejected' }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
