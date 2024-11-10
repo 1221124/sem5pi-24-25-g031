@@ -4,11 +4,11 @@ namespace Domain.Patients
 {
     public class AppointmentHistory: IValueObject
     {
-        public List<string> Condition { get; set; }
+        public List<Slot> Condition { get; set; }
         
         public AppointmentHistory() { }
 
-        public AppointmentHistory(List<string> condition){
+        public AppointmentHistory(List<Slot> condition){
             Condition = condition;
         }
     }
