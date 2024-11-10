@@ -1,7 +1,26 @@
 <div class="operationRequests-request">
   <h1>Operation Request Form</h1>
 
-    <section>
+  <div class="modal">
+    <form>
+      <button type="button" *ngIf="showCreateButton" (click)="create()">
+        New Operation Request
+      </button>
+    </form>
+
+    <form>
+      <button type="button" *ngIf="showReturnButton" (click)="return()">
+        Return
+      </button>
+    </form>
+
+    <form>        
+      <button type="button" *ngIf="showHttpPostButton" (click)="submitRequest()">
+        Submit
+      </button>
+    </form>
+
+    <section *ngIf="createMode">
       <form>
         <input
           type="text"
@@ -58,10 +77,34 @@
           <option value="Emergency">Emergency</option>
         </select>
       </form>
-
-      <form>        
-        <button type="button" (click)="submitRequest()">Submit</button>
-      </form>
-
     </section>
+  </div>
+
+  <div class="get-requests">
+    <table>
+      <thead>
+        <tr>
+          <th>Request</th>
+          <th>Staff</th>
+          <th>Patient</th>
+          <th>Operation Type</th>
+          <th>Deadline Date</th>
+          <th>Priority</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of requests">
+          <td>{{ request.id }}</td>
+          <td>{{ request.doctorId?.id || request.doctorId }}</td>
+          <td>{{ request.patientId?.id || request.patientId }}</td>
+          <td>{{ request.operationTypeId?.id || request.operationTypeId }}</td>
+          <td>{{ request.deadlineDate?.date || request.deadlineDate }}</td>
+          <td>{{ request.priority == 0 ? 'Elective' : request.priority == 1 ? 'Urgent' : 'Emergency' }}</td>
+          <td>{{ request.status == 0 ? 'Pending' : request.status == 1 ? 'Acccepted' : 'Rejected' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>

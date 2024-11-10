@@ -1,82 +1,159 @@
-/* operation-requests.component.css */
-
 .operationRequests-request {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .operationRequests-request h1 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
-  }
-  
-  .operationRequests-request section {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .operationRequests-request form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .operationRequests-request input[type="text"],
-  .operationRequests-request input[type="date"],
-  .operationRequests-request select {
+  max-width: 600px; /* Increased width to accommodate form and table */
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the main header */
+.operationRequests-request h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Styling for modal buttons */
+.operationRequests-request button {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  width: 100%; /* Makes buttons full width */
+}
+
+/* Button for "New Operation Request" */
+.operationRequests-request button[type="button"]:first-of-type {
+  background-color: #007acc;
+  color: #fff;
+}
+
+/* Button for "Return" */
+.operationRequests-request button[type="button"]:nth-of-type(2) {
+  background-color: #f44336;
+  color: #fff;
+}
+
+/* Button for "Submit" */
+.operationRequests-request button[type="button"]:last-of-type {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+/* Hover effects for buttons */
+.operationRequests-request button[type="button"]:hover {
+  opacity: 0.9;
+}
+
+/* Styling for modal section */
+.operationRequests-request section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Style for input and select elements */
+.operationRequests-request input[type="text"],
+.operationRequests-request input[type="date"],
+.operationRequests-request select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+/* Focus styling for inputs and select */
+.operationRequests-request input[type="text"]:focus,
+.operationRequests-request input[type="date"]:focus,
+.operationRequests-request select:focus {
+  border-color: #007acc;
+  outline: none;
+}
+
+/* Label styling for form fields */
+.operationRequests-request label {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* Styling for table */
+.operationRequests-request table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.operationRequests-request th, .operationRequests-request td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+.operationRequests-request th {
+  background-color: #007acc;
+  color: #fff;
+}
+
+.operationRequests-request tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Style for the table row data */
+.operationRequests-request td {
+  font-size: 14px;
+}
+
+/* Style for the Submit button */
+.operationRequests-request .submit-button {
+  background-color: #4CAF50;
+  color: #fff;
+  width: auto; /* Default width for Submit button */
+}
+
+/* Hover effect for the Submit button */
+.operationRequests-request .submit-button:hover {
+  background-color: #388E3C;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+  .operationRequests-request {
     width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
+    padding: 15px;
   }
-  
-  .operationRequests-request input[type="text"]:focus,
-  .operationRequests-request input[type="date"]:focus,
-  .operationRequests-request select:focus {
-    border-color: #007acc;
-    outline: none;
-  }
-  
-  .operationRequests-request label {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
-  }
-  
+
+  /* Adjust button width on smaller screens */
   .operationRequests-request button {
+    width: 100%;
+  }
+
+  /* Adjust form field gap */
+  .operationRequests-request section {
+    gap: 10px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  table, th, td {
+    font-size: 14px;
+  }
+
+  th, td {
     padding: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
   }
-  
-  .operationRequests-request button[type="button"] {
-    background-color: #007acc;
-    color: #fff;
+
+  .modal-content {
+    width: 90%;
   }
-  
-  .operationRequests-request button[type="button"]:hover {
-    background-color: #005f99;
-  }
-  
-  .operationRequests-request button[type="button"]:last-of-type {
-    background-color: #4CAF50;
-  }
-  
-  .operationRequests-request button[type="button"]:last-of-type:hover {
-    background-color: #388E3C;
-  }
-  
+}
