@@ -1,8 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment, httpOptions } from '../../../environments/environment';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { PatientsService } from '../patients/patients.service';
+
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +14,8 @@ export class OperationRequestsService {
   message: string = '';
 
   constructor(
-    private http: HttpClient, private router: Router
+    private http: HttpClient, private router: Router,
+    private patientsService: PatientsService
   ) {}
 
   post(
@@ -38,22 +42,27 @@ export class OperationRequestsService {
       "priority": priorityDto
     };
 
-
-    const httpOptions2 = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+    return this.http.post(environment.operationRequests, dto, httpOptions)
+    .pipe(
+      catchError(error => {
+        console.error('Error submitting Operation Request:', error);
+        return throwError(() => new Error('Failed to submit the operation request. Please try again.'));
       })
-    };
+    );
+    
+  }
 
-  return this.http.post(environment.operationRequests, dto, httpOptions2)
-      .subscribe(
-          response =>{ 
-            console.log('Operation Request submitted successfully:', response);
-          },
-          error => {
-            console.log('Operation Request:', dto);
-            console.error('Error submitting Operation Request:', error)
-          }
-      );;
+  getAll(){
+    return this.http.get<any[]>(environment.operationRequests, httpOptions)
+    .pipe(
+      catchError(error => {
+        console.error('Error fetching Operation Requests:', error);
+        return throwError(() => new Error('Failed to fetch operation requests. Please try again.'));
+      })
+    );
+  }
+
+  getPatients(){
+    return this.patientsService.getPatients();
   }
 }
