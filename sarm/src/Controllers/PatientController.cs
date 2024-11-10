@@ -233,7 +233,7 @@ namespace DDDNetCore.Controllers
             {
                 if (dto == null)
                 {
-                    _dbLogService.LogAction( EntityType.Patient, DbLogType.Update, "Patient data is required.");
+                    await _dbLogService.LogAction( EntityType.Patient, DbLogType.Update, "Patient data is required.");
                     return BadRequest("Invalid UpdatingPatientDto");
                 }
                 var patient = await _service.UpdateAsync(dto);
@@ -243,7 +243,7 @@ namespace DDDNetCore.Controllers
                     return NotFound("Patient not found");
                 }
 
-                if (dto.PhoneNumber == null && dto.Email == null) return Ok(patient);
+                if (dto.PendingPhoneNumber == null && dto.PendingEmail == null) return Ok(patient);
                 
                 var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(dto);
                 await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
@@ -252,8 +252,8 @@ namespace DDDNetCore.Controllers
             }
             catch (BusinessRuleValidationException ex)
             {
-                _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, ex.Message);
-                return BadRequest(new {Message = ex.Message});
+                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, ex.Message);
+                return BadRequest(new {ex.Message});
             }
         }
         
@@ -293,7 +293,7 @@ namespace DDDNetCore.Controllers
 
                 if (patient == null)
                 {
-                    _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Patient not found");
+                    await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Patient not found");
                     await _unitOfWork.CommitAsync();
                     return NotFound();
                 }
@@ -301,9 +301,9 @@ namespace DDDNetCore.Controllers
             }
             catch (BusinessRuleValidationException ex)
             {
-                _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, ex.Message);
+                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, ex.Message);
                 await _unitOfWork.CommitAsync();
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new { ex.Message });
             }
         }
         
@@ -316,7 +316,7 @@ namespace DDDNetCore.Controllers
             var patientDto = await _service.GetByEmailAsync(new Email(email));
 
             await _service.DeleteAsync(new PatientId(patientDto.Id));
-            _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + new PatientId(patientDto.Id).Value + "}");
+            await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + new PatientId(patientDto.Id).Value + "}");
 
             return Ok(patientDto);
         }

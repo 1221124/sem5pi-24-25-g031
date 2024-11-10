@@ -26,6 +26,7 @@ namespace Domain.Patients
                 dto.FullName.LastName,
                 dto.ContactInformation.Email,
                 dto.ContactInformation.PhoneNumber,
+                dto.EmergencyContact,
                 dto.AppointmentHistory,
                 dto.MedicalConditions,
                 dto.UserId

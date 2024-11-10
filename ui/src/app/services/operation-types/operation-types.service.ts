@@ -14,6 +14,16 @@ export class OperationTypesService {
     private http: HttpClient
   ) {}
 
+  getStaffRoles() {
+    const url = `${environment.enums}/staffRoles`;
+    return firstValueFrom(this.http.get<string[]>(url, httpOptions));
+  }
+
+  getSpecializations() {
+    const url = `${environment.enums}/specializations`;
+    return firstValueFrom(this.http.get<string[]>(url, httpOptions));
+  }
+
   post(operationType: OperationType) {    
     
     const dto = {

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import {response} from 'express';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -74,6 +73,19 @@ export class PatientsService {
     )
   }
 
+  getFilterPatients(filter: any): Observable<any> {
+    const params: any = {};
+
+    if (filter.fullName) params.fullName = filter.fullName;
+    if (filter.email) params.email = filter.email;
+    if (filter.phoneNumber) params.phoneNumber = filter.phoneNumber;
+    if (filter.medicalRecordNumber) params.medicalRecordNumber = filter.medicalRecordNumber;
+    if (filter.dateOfBirth) params.dateOfBirth = filter.dateOfBirth;
+    if (filter.gender) params.gender = filter.gender;
+
+    return this.http.get<any[]>(`${this.apiUrl}/filter`, { params });
+  }
+
   getPatients(): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
@@ -83,6 +95,11 @@ export class PatientsService {
 
     return this.http.get(this.apiUrl, httpOptions);
   }
+
+  updatePatient(patient: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}`, patient);
+  }
+
 }
 
 

@@ -107,11 +107,11 @@ namespace Infrastructure.Patients
             {
                 history.Property(h => h.Condition)
                     .HasColumnName("Condition")
-                    .IsRequired()
                     .IsRequired(false)
                     .HasConversion(
-                        v => string.Join(";", v),
-                        v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
+                        v => string.Join(";", v.Select(slot => (string)slot)),
+                        v => v.Split(";", StringSplitOptions.RemoveEmptyEntries)
+                            .Select(s => (Slot)s).ToList()
                     );
             });
 
