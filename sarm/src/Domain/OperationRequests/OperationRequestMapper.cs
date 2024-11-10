@@ -6,9 +6,9 @@ namespace Domain.OperationRequests
             return new OperationRequestDto
             {
                 Id = operationRequest.Id.AsGuid(),
-                DoctorId = operationRequest.DoctorId,
-                PatientId = operationRequest.PatientId,
-                OperationTypeId = operationRequest.OperationTypeId,
+                Staff = operationRequest.Staff,
+                Patient = operationRequest.Patient,
+                OperationType = operationRequest.OperationType,
                 DeadlineDate = operationRequest.DeadlineDate,
                 Priority = operationRequest.Priority,
                 Status = operationRequest.Status
@@ -27,9 +27,9 @@ namespace Domain.OperationRequests
         {
             return new OperationRequest(
                 dto.Id,
-                dto.DoctorId,
-                dto.PatientId,
-                dto.OperationTypeId,
+                dto.Staff,
+                dto.Patient,
+                dto.OperationType,
                 dto.DeadlineDate,
                 dto.Priority,
                 dto.Status
@@ -38,9 +38,9 @@ namespace Domain.OperationRequests
 
         public static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto) {
             return new OperationRequest(
-                dto.StaffId,
-                dto.PatientId,
-                dto.OperationTypeId,
+                dto.Staff,
+                dto.Patient,
+                dto.OperationType,
                 dto.DeadlineDate,
                 dto.Priority
             );
@@ -54,9 +54,9 @@ namespace Domain.OperationRequests
 
             return new OperationRequest(
                 dto.Id,
-                operation.DoctorId,
-                operation.PatientId,
-                operation.OperationTypeId,
+                operation.Staff,
+                operation.Patient,
+                operation.OperationType,
                 dto.DeadlineDate,
                 dto.Priority,
                 dto.RequestStatus
@@ -67,11 +67,6 @@ namespace Domain.OperationRequests
         public static List<OperationRequestDto> ToDtoList(List<OperationRequest> operationRequests)
         {
             return operationRequests.ConvertAll(ToDto);
-        }
-
-        public static List<OperationRequestDto> ToDtoList()
-        {
-            return [];
         }
 
         public static List<OperationRequest> ToEntityList(List<OperationRequestDto> dtoList)

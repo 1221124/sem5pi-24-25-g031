@@ -8,54 +8,55 @@ namespace Domain.OperationRequests
 {
     public class OperationRequest : Entity<OperationRequestId>, IAggregateRoot
     {
-        public StaffId DoctorId { get; set; }
-        public PatientId PatientId { get; set; }
-        public OperationTypeId OperationTypeId { get; set; }
+        // public StaffId DoctorId { get; set; }
+        // public PatientId PatientId { get; set; }
+        // public OperationTypeId OperationTypeId { get; set; }
+        public LicenseNumber Staff { get; set; }
+        public MedicalRecordNumber Patient { get; set; }
+        public Name OperationType { get; set; }
         public DeadlineDate DeadlineDate { get; set; }
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
 
-        public OperationRequest(){}
-
-        public OperationRequest(StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DeadlineDate deadlineDate, Priority priority)
+        public OperationRequest(LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate deadlineDate, Priority priority)
         {
             Id = new OperationRequestId(Guid.NewGuid());
-            DoctorId = doctorId;
-            PatientId = patientId;
-            OperationTypeId = operationTypeId;
+            Staff = doctorId;
+            Patient = patientId;
+            OperationType = operationTypeId;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = RequestStatus.PENDING;
         }
 
-        public OperationRequest(Guid id, StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
+        public OperationRequest(Guid id, LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
         {
             Id = new OperationRequestId(id);
-            DoctorId = doctorId;
-            PatientId = patientId;
-            OperationTypeId = operationTypeId;
+            Staff = doctorId;
+            Patient = patientId;
+            OperationType = operationTypeId;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
         }
         
-        public OperationRequest(OperationRequestId id, StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
+        public OperationRequest(OperationRequestId id, LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
         {
             Id = id;
-            DoctorId = doctorId;
-            PatientId = patientId;
-            OperationTypeId = operationTypeId;
+            Staff = doctorId;
+            Patient = patientId;
+            OperationType = operationTypeId;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
         }
 
-        public OperationRequest(Guid id, StaffId doctorId, PatientId patientId, OperationTypeId operationTypeId, DeadlineDate? deadlineDate, Priority? priority, RequestStatus? status)
+        public OperationRequest(Guid id, LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate? deadlineDate, Priority? priority, RequestStatus? status)
         {
             Id = new OperationRequestId(id);
-            DoctorId = doctorId;
-            PatientId = patientId;
-            OperationTypeId = operationTypeId;
+            Staff = doctorId;
+            Patient = patientId;
+            OperationType = operationTypeId;
             DeadlineDate = deadlineDate ?? throw new ArgumentNullException(nameof(deadlineDate));
             Priority = priority ?? throw new ArgumentNullException(nameof(priority));
             Status = status ?? throw new ArgumentNullException(nameof(status));
@@ -74,6 +75,8 @@ namespace Domain.OperationRequests
 
             return this;
         }
+
+        public OperationRequest(){}
 
     }
 }

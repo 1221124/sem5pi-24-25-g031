@@ -24,12 +24,6 @@ namespace Infrastructure.OperationRequests
         {
             return Task.Run(() => _objs.Update(operationRequest));
         }
-
-        public async Task<List<OperationRequest>> GetByOperationType(OperationTypeId operationTypeId)
-        {
-            return await _objs
-                .AsQueryable().Where(x => x.OperationTypeId.Equals(operationTypeId)).ToListAsync();
-        }
         
 
         public async Task<List<OperationRequest>> GetByStatusId(RequestStatus status)
@@ -44,10 +38,10 @@ namespace Infrastructure.OperationRequests
                 .AsQueryable().Where(x => x.Priority.Equals(priority)).ToListAsync();
         }
 
-        public async Task<List<OperationRequest>> GetByOperationTyped(OperationTypeId operationTypeId)
+        public async Task<List<OperationRequest>> GetByOperationType(Name operationType)
         {
             return await _objs
-                .AsQueryable().Where(x => x.OperationTypeId.Equals(operationTypeId)).ToListAsync();
+                .AsQueryable().Where(x => x.OperationType.Equals(operationType)).ToListAsync();
         }
     }
 }

@@ -186,8 +186,6 @@ namespace DDDNetCore.Controllers
         [HttpPost]
         // [Route("operationRequests")]
         public async Task<ActionResult<OperationRequestDto>>Create([FromBody] CreatingOperationRequestDto dto)
-        // [HttpPost]
-        // public ActionResult Create([FromBody] CreatingOperationRequestDto dto)
         {
             var entity = EntityType.OperationRequest;
             var log = DbLogType.Create;

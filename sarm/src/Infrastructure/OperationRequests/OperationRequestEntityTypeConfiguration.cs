@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.OperationRequests;
 using Domain.Shared;
+using Domain.Patients;
+using Domain.Staffs;
 
 namespace DDDNetCore.Infrastructure.OperationRequests
 {
@@ -11,17 +13,29 @@ namespace DDDNetCore.Infrastructure.OperationRequests
         {
             builder.HasKey(o => o.Id);
             
-            builder.Property(o => o.DoctorId)
+            builder.Property(o => o.Staff)
                 .IsRequired()
-                .HasColumnName("StaffId");
+                .HasColumnName("Staff")
+                .HasConversion(
+                    v => v.Value,
+                    v => new LicenseNumber(v)
+                );
             
-            builder.Property(o => o.PatientId)
+            builder.Property(o => o.Patient)
                 .IsRequired()
-                .HasColumnName("PatientId");
+                .HasColumnName("Patient")
+                .HasConversion(
+                    v => v.Value,
+                    v => new MedicalRecordNumber(v)
+                );
             
-            builder.Property(o => o.OperationTypeId)
+            builder.Property(o => o.OperationType)
                 .IsRequired()
-                .HasColumnName("OperationTypeId");
+                .HasColumnName("OperationType")
+                .HasConversion(
+                    v => v.Value,
+                    v => new Name(v)
+                );
             
             builder.Property(o => o.DeadlineDate)
                 .IsRequired()

@@ -12,14 +12,16 @@ namespace DDDNetCore.Domain.OperationRequests
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationRequestRepository _repo;
         private readonly PatientService _patientService;
+        private readonly OperationTypeService _operationTypeService;
         private readonly DbLogService _logService;
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo,
-        PatientService patientService, DbLogService logService)
+        PatientService patientService, OperationTypeService operationTypeService, DbLogService logService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             _patientService = patientService;
+            _operationTypeService = operationTypeService;
             _logService = logService;
         }        
 
@@ -84,35 +86,22 @@ namespace DDDNetCore.Domain.OperationRequests
         {
             try
             {
-                var patients = await this._patientService.GetAllAsync();
-                var operations = await this._repo.GetAllAsync();
+                var list = new List<OperationRequest>();
+                var operations = await _repo.GetAllAsync();
 
-                if (patients == null ||patients.Count == 0 || operations == null || operations.Count == 0)
-                {
+                if (operations == null)
                     return [];
-                }
-                
-                List<OperationRequest> list = new();
 
-                foreach (var pat in patients)
+                for (int i = 0; i < operations.Count; i++)
                 {
-                    if (pat.FullName.Equals(fullName))
-                    {
-                        foreach (var op in operations)
-                        {
-                            if (op.PatientId.AsGuid().Equals(pat.Id))
-                            {
-                                list.Add(op);
-                            }
-                        }
-                    }
+                    var patient = await _patientService.GetByMedicalRecordNumberAsync(operations[i].Patient);
+                    if (patient.FullName == fullName)
+                        list.Add(operations[i]);                        
                 }
 
                 if (list == null)
-                {
                     return [];
-                }
-                
+
                 return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
@@ -125,7 +114,8 @@ namespace DDDNetCore.Domain.OperationRequests
         {
             try
             {
-                var list = await _repo.GetByOperationType(operationType);
+                var type = await _operationTypeService.GetByIdAsync(operationType);
+                var list = await _repo.GetByOperationType(type.Name);
 
                 if (list == null)
                     return [];
