@@ -51,7 +51,7 @@ namespace Domain.Shared
             return HashCode.Combine(Value);
         }
 
-        public static bool operator ==(PhoneNumber left, PhoneNumber right)
+        public static bool operator ==(PhoneNumber? left, PhoneNumber right)
         {
             return Equals(left, right);
         }

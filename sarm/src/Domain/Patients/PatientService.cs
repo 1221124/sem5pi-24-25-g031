@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Domain.DbLogs;
 using Domain.Emails;
 using Domain.Patients;
@@ -315,22 +316,25 @@ namespace DDDNetCore.Domain.Patients
 
                 if (patient == null)
                 {
-                    _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, "Unable to update because Patient not found");
+                    await _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, "Unable to update because Patient not found");
                     return null;
                 }
+                
+                if(dto.EmergencyContact != null)
+                    patient.ChangeEmergencyContact(dto.EmergencyContact);
                 
                 if(dto.MedicalConditions != null)
                     patient.ChangeMedicalConditions(dto.MedicalConditions);
             
                 if(dto is { FirstName: not null, LastName: not null })
-                    patient.ChangeFullName(new FullName(dto.FirstName, dto.LastName));
-            
+                        patient.ChangeFullName(new FullName(dto.FirstName, dto.LastName));
+
                 if(dto.AppointmentHistory != null)
                     patient.ChangeAppointmentHistory(dto.AppointmentHistory);
             
                 await _unitOfWork.CommitAsync();
             
-                if (dto.PhoneNumber != null)
+                if (dto.PhoneNumber != null && dto.PhoneNumber != patient.ContactInformation.PhoneNumber)
                 {
                     var phoneNumberToCheck = dto.PhoneNumber;
                     var byPhoneNumberAsync = await _repo.GetByPhoneNumberAsync(phoneNumberToCheck);
@@ -339,7 +343,7 @@ namespace DDDNetCore.Domain.Patients
                         throw new Exception("Phone number already exists");
                     }
                 }
-                if (dto.Email != null)
+                if (dto.Email != null && !dto.Email.Equals(patient.ContactInformation.Email))
                 {
                     var emailToCheck = dto.Email;
                     var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
@@ -348,19 +352,22 @@ namespace DDDNetCore.Domain.Patients
                         throw new Exception("Email already exists");
                     } 
                 }
-                
-                if (dto.PhoneNumber != null || dto.Email != null)
+
+                if (dto.PhoneNumber != null && patient.ContactInformation.PhoneNumber != dto.PhoneNumber)
                 {
-                    if (dto.PhoneNumber != null) dto.PendingPhoneNumber = dto.PhoneNumber;
-                    if (dto.Email != null) dto.PendingEmail = dto.Email;
+                    dto.PendingPhoneNumber = dto.PhoneNumber;
+                }
+                if(dto.Email != null && !patient.ContactInformation.Email.Equals(dto.Email)) 
+                {
+                    dto.PendingEmail = dto.Email;
                 }
                 
-                _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, "Updated {" + patient.Id.Value + "}");
+                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, "Updated {" + patient.Id.Value + "}");
                 return PatientMapper.ToDto(patient);
                 
             }catch(Exception e)
             {
-                _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, e.Message);
+                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, e.Message);
                 return null;
             }
         }

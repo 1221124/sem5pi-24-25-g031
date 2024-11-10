@@ -53,12 +53,17 @@ namespace Domain.Emails
         
         public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfo(UpdatingPatientDto dto)
         {
-            var subject = "Please verify that you want to change sensitive information";
-            var baseUrl = "Patient";
-            var link = GenerateLinkSensitiveInfo(baseUrl, dto.EmailId.Value, dto.PendingPhoneNumber, dto.PendingEmail);
+            const string subject = "Please verify that you want to change sensitive information";
+            const string baseUrl = "Patient";
+            
+            var email = dto.PendingEmail ?? dto.Email; // if pending email is null, use the current email
+            var phoneNumber = dto.PendingPhoneNumber ?? dto.PhoneNumber; // if pending phone number is null, use the current phone number
+            var link = GenerateLinkSensitiveInfo(baseUrl, dto.EmailId.Value, phoneNumber, email);
+            
             var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);
+            
         }
         
         public async Task<(string subject, string body)> GenerateVerificationRemoveEmailContentSensitiveInfo(UpdatingPatientDto dto)
