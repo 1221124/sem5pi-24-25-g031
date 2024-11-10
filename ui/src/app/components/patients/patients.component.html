@@ -1,10 +1,10 @@
 <div class="patient-request">
   <h1>Patients</h1>
-  <button type="button" (click)="openModal()">Create Patient</button>
+  <button type="button" (click)="openCreatePatientModal()">Create Patient</button>
 
-  <div *ngIf="isModalOpen" class="modal">
+  <div *ngIf="isCreateModalOpen" class="modal">
     <div class="modal-content">
-      <span type="button" class="close" (click)="closeModal()">&times;</span>
+      <span type="button" class="close" (click)="closeCreatePatientModal()">&times;</span>
       <h2>Create New Patient</h2>
 
       <section>
@@ -44,7 +44,24 @@
   <div class="get-patients">
     <table>
       <thead>
+        <tr class="table-filter-container">
+          <th></th>
+          <th colspan="2"><input type="text" [(ngModel)]="filter.fullName" placeholder="Search by Name" /></th>
+          <th><input type="date" [(ngModel)]="filter.dateOfBirth" placeholder="Search by DOB" /></th>
+          <th><input type="text" [(ngModel)]="filter.email" placeholder="Search by Email" /></th>
+          <th><input type="text" [(ngModel)]="filter.phoneNumber" placeholder="Search by Phone" /></th>
+          <th><select [(ngModel)]="filter.gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select></th>
+          <th><input type="text" [(ngModel)]="filter.medicalRecordNumber" placeholder="Search by MRN" /></th>
+          <th><button class="button-filter" (click)="applyFilter()">Search</button></th>
+          <th><button class="button-filter" (click)="clearFilters()">Clear</button></th>
+          <th></th>
+        </tr>
         <tr>
+          <th>Edit</th>
           <th>First Name</th>
           <th>Last Name</th>
           <th>Date of Birth</th>
@@ -59,6 +76,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let patient of patients">
+          <td><button class="edit-button" (click)="editPatient(patient)">Edit</button></td>
           <td>{{ patient.fullName.firstName.value }}</td>
           <td>{{ patient.fullName.lastName.value }}</td>
           <td>{{ patient.dateOfBirth.birthDate | date }}</td>
@@ -66,10 +84,62 @@
           <td>{{ patient.contactInformation.phoneNumber.value }}</td>
           <td>{{ patient.gender === 0 ? 'Male' : 'Female' }}</td>
           <td>{{ patient.medicalRecordNumber.value }}</td>
-          <td>{{ patient.emergencyContact || 'N/A' }}</td>
-          <td>{{ patient.appointmentHistory || 'N/A' }}</td>
-          <td>{{ patient.userId || 'N/A' }}</td>
+          <td>{{ patient.emergencyContact?.number?.value ? patient.emergencyContact.number.value : 'N/A' }}</td>
+          <td>{{ patient.appointmentHistory?.condition ? patient.appointmentHistory.condition : 'N/A' }}</td>
+          <td>{{ patient.userId ? patient.userId : 'N/A' }}</td>
         </tr>
     </table>
   </div>
+
+  <!-- Modal for editing patient -->
+  <div *ngIf="isEditModalOpen" class="modal">
+    <div class="modal-content">
+      <span type="button" class="close" (click)="isEditModalOpen = false">&times;</span>
+      <h2>Edit Patient</h2>
+      <form (ngSubmit)="savePatient()">
+        <div>
+          <label for="oldEmail">OldEmail</label>
+          <input type="text" id="oldEmail" [(ngModel)]="selectedPatient.email.value" name="oldEmail" readonly />
+        </div>
+        <div>
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstNameEdit" [(ngModel)]="selectedPatient.firstName.value" name="firstName"  />
+        </div>
+        <div>
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastNameEdit" [(ngModel)]="selectedPatient.lastName.value" name="lastName"  />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input type="text" id="emailEdit" [(ngModel)]="selectedPatient.email.value" name="email" />
+        </div>
+        <div>
+          <label for="phoneNumber">Phone Number</label>
+          <input type="text" id="phoneNumberEdit" [(ngModel)]="selectedPatient.phoneNumber.value" name="phoneNumber" />
+        </div>
+        <div>
+          <label for="EmergencyContact">Emergency Contact</label>
+          <input type="text" id="EmergencyContact" [(ngModel)]="selectedPatient.emergencyContact.number.value" name="EmergencyContact" />
+        </div>
+        <div>
+          <label for="AppointmentHistory">Appointment History</label>
+          <input type="text" id="AppointmentHistory" [(ngModel)]="newCondition" name="AppointmentHistory" placeholder="Enter Condition" />
+          <button type="button" (click)="addCondition()">Add Condition</button>
+        </div>
+        <div>
+          <ul>
+            <li *ngFor="let condition of selectedPatient.appointmentHistory.condition; let i = index">
+              {{ condition }}
+              <button type="button" (click)="removeCondition(i)">Remove</button>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <button type="button" (click)="savePatient()">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
 </div>

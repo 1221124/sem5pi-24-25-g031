@@ -2,13 +2,13 @@ import { Component} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PatientsService } from '../../services/patients/patients.service';
 import {RouterModule, RouterOutlet} from '@angular/router';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf],
+  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf, NgOptimizedImage],
   templateUrl: './patients.component.html',
   styleUrls: ['./patients.component.css'],
   providers: [PatientsService]
@@ -19,6 +19,20 @@ export class PatientsComponent{
   constructor(private patientService: PatientsService) {
   }
   patients: any[] = [];
+  filter = {
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    medicalRecordNumber: '',
+    dateOfBirth: '',
+    gender: ''
+  }
+  selectedPatient: any = {
+    appointmentHistory: {
+      conditions: []
+    }
+  };
+
   firstName: string = '';
   lastName: string = '';
   dateOfBirth: Date = new Date();
@@ -31,6 +45,9 @@ export class PatientsComponent{
   appointmentHistory: string = '';
   userId: string = '';
   message: string | undefined;
+  emailId: string = '';
+  newCondition: string = '';
+
 
   firstNameTouched = false;
   lastNameTouched = false;
@@ -38,20 +55,96 @@ export class PatientsComponent{
   genderTouched = false;
   phoneNumberTouched = false;
   emailTouched = false;
-  isModalOpen = false;
+  isEditModalOpen = false;
+  isCreateModalOpen = false;
 
-  ngOnInit() {
-    this.patientService.getPatients().subscribe(
-      (data) => {
-        console.log('Fetched patients:', data);
-        this.patients = data;
-        console.log('Patients loaded:, this.patients');
+  ngOnInit(): void {
+    this.refreshPatients();
+  }
+
+  // This method is triggered when the user clicks the "edit" button
+  editPatient(patient: any) {
+    this.selectedPatient = {
+      emailId: patient.contactInformation.email,
+      firstName: patient.fullName.firstName,
+      lastName: patient.fullName.lastName,
+      email: patient.contactInformation.email,
+      phoneNumber: patient.contactInformation.phoneNumber,
+      emergencyContact: patient.emergencyContact || {number: {value: 'No number available'} } ,
+      appointmentHistory: patient.appointmentHistory || {condition: 'No date available'}
+    };
+    this.isEditModalOpen = true;
+    this.isCreateModalOpen = false;
+  }
+
+  // Method to add a condition to the appointment history
+  addCondition() {
+    if (this.newCondition.trim()) {
+      this.selectedPatient.appointmentHistory.conditions.push(this.newCondition.trim());
+      this.newCondition = ''; // Clear the input after adding
+    }
+  }
+
+  // Method to remove a condition from the appointment history
+  removeCondition(index: number) {
+    this.selectedPatient.appointmentHistory.conditions.splice(index, 1);
+  }
+
+  // Method to save the updated patient data
+  savePatient() {
+    this.patientService.updatePatient(this.selectedPatient).subscribe(
+      (response) => {
+        // Handle the success response
+        this.isEditModalOpen = false; // Close the modal
+        this.refreshPatients(); // Refresh the patient list
       },
       (error) => {
-        console.error('Error loading patients:', error);
+        // Handle error (e.g., show an error message)
+        console.error('Error updating patient:', error);
       }
     );
   }
+
+  // Method to refresh the list of patients
+  refreshPatients() {
+    this.patientService.getFilterPatients(this.filter).subscribe(
+      (data) => {
+        this.patients = data; // Update the patients list
+      },
+      (error) => {
+        console.error('Error fetching patients:', error);
+      }
+    );
+  }
+
+  // Fetch all patients initially or apply the filter
+  fetchPatients(): void {
+    this.patientService.getPatients().subscribe(
+      (data) => {
+        this.patients = data;
+      },
+      (error) => {
+        console.error('Error fetching patients:', error);
+      }
+    );
+  }
+
+  applyFilter(): void {
+    this.refreshPatients();
+  }
+
+  clearFilters(): void {
+    this.filter = {
+      fullName: '',
+      email: '',
+      phoneNumber: '',
+      medicalRecordNumber: '',
+      dateOfBirth: '',
+      gender: ''
+    };
+    this.fetchPatients();  // Fetch all patients again after clearing filters
+  }
+
 
   createPatient() {
     console.log('Create button clicked');
@@ -109,11 +202,15 @@ export class PatientsComponent{
     this.emailTouched = false;
   }
 
-  openModal() {
-    this.isModalOpen = true;
+  openCreatePatientModal() {
+    this.selectedPatient = null;
+    this.isCreateModalOpen = true;
+    this.isEditModalOpen = false;
   }
 
-  closeModal() {
-    this.isModalOpen = false;
+
+
+  closeCreatePatientModal() {
+    this.isCreateModalOpen = false;
   }
 }
