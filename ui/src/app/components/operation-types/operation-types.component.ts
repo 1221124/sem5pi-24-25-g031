@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 enum Role {
   DOCTOR = 'Doctor',
@@ -26,7 +28,7 @@ interface RequiredStaff {
 interface PhaseDurations {
   Preparation: number;
   Surgery: number;
-  Cleaning: number
+  Cleaning: number;
 }
 
 export interface OperationType {
@@ -39,9 +41,9 @@ export interface OperationType {
 @Component({
   selector: 'app-operation-types',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './operation-types.component.html',
-  styleUrl: './operation-types.component.css'
+  styleUrls: ['./operation-types.component.css']
 })
 export class OperationTypesComponent {
   operationType: OperationType = {
@@ -55,17 +57,26 @@ export class OperationTypesComponent {
     }
   };
 
+  newStaff: RequiredStaff = {
+    Role: Role.DOCTOR,
+    Specialization: Specialization.ANAESTHESIOLOGY,
+    Quantity: 1
+  };
+
   constructor(private operationTypesService: OperationTypesService) {}
 
   roles = Object.values(Role);
   specializations = Object.values(Specialization);
 
-  addStaff(role: Role, specialization: Specialization, quantity: number) {
-    this.operationType.RequiredStaff.push({
-      Role: role,
-      Specialization: specialization,
-      Quantity: quantity
-    });
+  addStaff() {
+    if (this.newStaff.Quantity > 0) {
+      this.operationType.RequiredStaff.push({ ...this.newStaff });
+      this.newStaff = {
+        Role: Role.DOCTOR,
+        Specialization: Specialization.ANAESTHESIOLOGY,
+        Quantity: 1
+      };
+    }
   }
 
   submitOperationType() {

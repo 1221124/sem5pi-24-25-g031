@@ -14,37 +14,42 @@ export class OperationTypesService {
     private http: HttpClient
   ) {}
 
-  post(
-    operationType: OperationType
-  ){    
+  post(operationType: OperationType) {    
     
     const dto = {
-      "name": {
-        "value": operationType.Name
+      "Name": {
+        "Value": operationType.Name
       },
-      "specialization": operationType.Specialization,
-      "requiredStaff": operationType.RequiredStaff.map(staff => ({
-        "role": staff.Role,
-        "specialization": staff.Specialization,
-        "quantity": {
-          "value": staff.Quantity
+      "Specialization": operationType.Specialization,
+      "RequiredStaff": operationType.RequiredStaff.map(staff => ({
+        "Role": staff.Role,
+        "Specialization": staff.Specialization,
+        "Quantity": {
+          "Value": staff.Quantity
         }
       })),
-      "phasesDuration": {
-        "phases": {
+      "PhasesDuration": {
+        "Phases": {
           "Preparation": {
-            "value": operationType.PhasesDuration.Preparation
+            "Quantity": {
+              "Value": operationType.PhasesDuration.Preparation
+            }
           },
           "Surgery": {
-            "value": operationType.PhasesDuration.Surgery
+            "Quantity": {
+              "Value": operationType.PhasesDuration.Surgery
+            }
           },
           "Cleaning": {
-            "value": operationType.PhasesDuration.Cleaning
+            "Quantity": {
+              "Value": operationType.PhasesDuration.Cleaning
+            }
           }
         }
       }
     };
 
-  return firstValueFrom(this.http.post(environment.operationTypes, dto, httpOptions));
+    const options = { ...httpOptions, observe: 'response' as const };
+    return firstValueFrom(this.http.post(environment.operationTypes, dto, options));
   }
 }

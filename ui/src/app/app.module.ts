@@ -8,6 +8,7 @@ import { AuthCallbackComponent } from './components/auth-callback/auth-callback.
 import { HomeComponent } from './components/home/home.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
 import { StaffsComponent } from './components/staffs/staffs.component';
+import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { StaffsComponent } from './components/staffs/staffs.component';
     AuthCallbackComponent,
     HomeComponent,
     OperationRequestsComponent,
+    OperationTypesComponent,
     StaffsComponent
   ],
   imports: [

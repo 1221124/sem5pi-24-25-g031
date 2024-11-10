@@ -5,6 +5,7 @@ import { HomeComponent } from './components/home/home.component';
 import { StaffsComponent } from './components/staffs/staffs.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
 import { PatientsComponent } from './components/patients/patients.component';
+import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 
 
 export const routes: Route[] = [
@@ -12,6 +13,7 @@ export const routes: Route[] = [
   { path: 'callback', component: AuthCallbackComponent },
   { path: 'staffs', component: StaffsComponent },
   { path: 'operationRequests', component: OperationRequestsComponent },
+  { path: 'operationTypes', component: OperationTypesComponent },
   { path: 'patients', component: PatientsComponent }
 ];
 
