@@ -5,7 +5,7 @@ import { environment, httpOptions } from '../../../environments/environment';
 import { PatientsService } from '../patients/patients.service';
 
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { firstValueFrom, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,22 +19,22 @@ export class OperationRequestsService {
   ) {}
 
   post(
-    staffIdDto: string, 
-    patientIdDto: string, 
-    operationTypeIdDto: string, 
+    staffDto: string, 
+    patientDto: string, 
+    operationTypeDto: string, 
     deadlineDateDto: Date, 
     priorityDto: string
   ){    
     
     const dto ={ //creatingOperationRequestDto
       "staffId": {
-        "value": staffIdDto
+        "value": staffDto
       },
       "patientId": {
-        "value": patientIdDto
+        "value": patientDto
       },
       "operationTypeId": {
-        "value": operationTypeIdDto
+        "value": operationTypeDto
       },
       "deadlineDate": {
         "date": deadlineDateDto
