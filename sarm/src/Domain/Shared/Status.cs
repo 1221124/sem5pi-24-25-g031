@@ -2,9 +2,9 @@ namespace Domain.Shared
 {
     public enum Status
     {
-        Active,
-        Inactive,
-        Pending
+        Active = 0,
+        Inactive = 1,
+        Pending = 2
     }
 
     public static class StatusUtils

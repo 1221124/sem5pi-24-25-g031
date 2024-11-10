@@ -7,11 +7,11 @@ namespace Domain.Shared
 {
     public enum Role
     {
-        Admin,
-        Doctor,
-        Nurse,
-        Technician,
-        Patient
+        Admin = 0,
+        Doctor = 1,
+        Nurse = 2,
+        Technician = 3,
+        Patient = 4
     }
 
     public class RoleUtils

@@ -2,14 +2,15 @@ namespace Domain.Shared
 {
     public enum Specialization
     {
-        ANAESTHESIOLOGY,
-        CARDIOLOGY,
-        CIRCULATING,
-        INSTRUMENTAL,
-        MEDICAL_ACTION,
-        ORTHOPAEDICS,
-        X_RAY
+        ANAESTHESIOLOGY = 0,
+        CARDIOLOGY = 1,
+        CIRCULATING = 2,
+        INSTRUMENTAL = 3,
+        MEDICAL_ACTION = 4,
+        ORTHOPAEDICS = 5,
+        X_RAY = 6
     }
+    
     public class SpecializationUtils
     {
         public static Specialization FromString(string specialization)

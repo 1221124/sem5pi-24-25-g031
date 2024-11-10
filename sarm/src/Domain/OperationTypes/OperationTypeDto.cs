@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
@@ -7,7 +8,7 @@ namespace Domain.OperationTypes
     {
         public Guid Id { get; set; }
         public Name Name { get; set; }
-
+        
         public Specialization Specialization { get; set; }
 
         public List<RequiredStaff> RequiredStaff { get; set; }

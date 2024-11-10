@@ -117,9 +117,9 @@ namespace Domain.OperationTypes
 
     public enum Phase
     {
-        Preparation,
-        Surgery,
-        Cleaning
+        Preparation = 0,
+        Surgery = 1,
+        Cleaning = 2
     }
 
     public class PhaseUtils

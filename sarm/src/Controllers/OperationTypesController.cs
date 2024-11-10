@@ -88,7 +88,7 @@ namespace Controllers
         
         // PUT: api/OperationTypes/id
         [HttpPut("{id}")]
-        public async Task<ActionResult<OperationTypeDto>> Update(Guid id, OperationTypeDto dto)
+        public async Task<ActionResult<OperationTypeDto>> Update(Guid id, [FromBody] OperationTypeDto dto)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace Controllers
             }
 
             _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Deactivate, new Message($"Deactivate {operationType.Id}"));
-            return Ok(operationType);
+            return Ok();
         }
         
         // DELETE: api/OperationTypes/5

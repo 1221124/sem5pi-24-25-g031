@@ -25,10 +25,9 @@ using Domain.Authz;
 using Domain.DbLogs;
 using Infrastructure.DbLogs;
 using Microsoft.OpenApi.Models;
-using System.Text;
-using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using DDDNetCore.Domain.OperationRequests;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +38,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+    }).AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
 builder.Services.AddDbContext<SARMDbContext>(options =>

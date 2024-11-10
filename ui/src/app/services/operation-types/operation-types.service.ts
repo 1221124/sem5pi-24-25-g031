@@ -24,6 +24,11 @@ export class OperationTypesService {
     return firstValueFrom(this.http.get<string[]>(url, httpOptions));
   }
 
+  getStatuses() {
+    const url = `${environment.enums}/statuses`;
+    return firstValueFrom(this.http.get<string[]>(url, httpOptions));
+  }
+
   post(operationType: OperationType) {    
     
     const dto = {
@@ -63,6 +68,45 @@ export class OperationTypesService {
     return firstValueFrom(this.http.post(environment.operationTypes, dto, options));
   }
 
+  updateOperationType(id: string, operationType: OperationType) {
+    const dto = {
+      "Id": id,
+      "Name": {
+        "Value": operationType.Name
+      },
+      "Specialization": operationType.Specialization,
+      "RequiredStaff": operationType.RequiredStaff.map(staff => ({
+        "Role": staff.Role,
+        "Specialization": staff.Specialization,
+        "Quantity": {
+          "Value": staff.Quantity
+        }
+      })),
+      "PhasesDuration": {
+        "Phases": {
+          "Preparation": {
+            "Quantity": {
+              "Value": operationType.PhasesDuration.Preparation
+            }
+          },
+          "Surgery": {
+            "Quantity": {
+              "Value": operationType.PhasesDuration.Surgery
+            }
+          },
+          "Cleaning": {
+            "Quantity": {
+              "Value": operationType.PhasesDuration.Cleaning
+            }
+          }
+        }
+      }
+    };
+
+    const options = { ...httpOptions, observe: 'response' as const };
+    return firstValueFrom(this.http.put(`${environment.operationTypes}/${id}`, dto, options));
+  }
+
   getOperationTypes(filter: any) {
     let params = new HttpParams();
 
@@ -71,7 +115,9 @@ export class OperationTypesService {
     if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
     if (filter.status !== '') params = params.set('status', filter.status);
 
-    return firstValueFrom(this.http.get<{ operationTypes: any[], totalItems: number }>(`${environment.operationTypes}`, { params, observe: 'response' as const }))
+    const options = { contentType : 'application/json', observe: 'response' as const, accept : 'application/json', params };
+
+    return firstValueFrom(this.http.get<{ operationTypes: any[], totalItems: number }>(`${environment.operationTypes}`, options))
       .then(response => {
         if (response.status === 200 && response.body) {
           const operationTypes = response.body.operationTypes.map(item => ({
@@ -104,7 +150,13 @@ export class OperationTypesService {
       });
   }
 
-  deleteOperationType(id: string): Observable<any> {
-    return this.http.delete(`${environment.operationTypes}/${id}`);
+  deleteOperationType(id: string) {
+    const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    if (!guidRegex.test(id)) {
+      throw new Error('Invalid ID format. Please provide a valid GUID.');
+    }
+
+    const options = { observe: 'response' as const };
+    return firstValueFrom(this.http.delete(`${environment.operationTypes}/${id}`, options));
   }
 }
