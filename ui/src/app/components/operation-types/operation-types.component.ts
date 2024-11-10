@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -45,7 +45,7 @@ export interface OperationType {
   templateUrl: './operation-types.component.html',
   styleUrls: ['./operation-types.component.css']
 })
-export class OperationTypesComponent {
+export class OperationTypesComponent implements OnInit {
   operationType: OperationType = {
     Name: '',
     Specialization: Specialization.ANAESTHESIOLOGY,
@@ -63,10 +63,21 @@ export class OperationTypesComponent {
     Quantity: 1
   };
 
+  roles: string[] = [];
+  specializations: string[] = [];
+  message: string = '';
+  success: boolean = true;
+
   constructor(private operationTypesService: OperationTypesService) {}
 
-  roles = Object.values(Role);
-  specializations = Object.values(Specialization);
+  ngOnInit() {
+    this.operationTypesService.getStaffRoles().then((data) => {
+      this.roles = data;
+    });
+    this.operationTypesService.getSpecializations().then((data) => {
+      this.specializations = data;
+    });
+  }
 
   addStaff() {
     if (this.newStaff.Quantity > 0) {
@@ -80,6 +91,19 @@ export class OperationTypesComponent {
   }
 
   submitOperationType() {
-    return this.operationTypesService.post(this.operationType);
+    this.operationTypesService.post(this.operationType)
+      .then(response => {
+        if (response.status === 201) {
+          this.message = 'Operation Type successfully created!';
+          this.success = true;
+        } else {
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+        }
+      })
+      .catch(error => {
+        this.message = 'There was an error creating the Operation Type: ' + error;
+        this.success = false;
+      });
   }
 }

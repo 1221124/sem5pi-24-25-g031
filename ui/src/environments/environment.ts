@@ -8,6 +8,7 @@ export const environment = {
   usersApiUrl: 'http://localhost:5500/api/Users',
   operationRequests: 'http://localhost:5500/api/OperationRequest',
   operationTypes: 'http://localhost:5500/api/OperationTypes',
+  enums: 'http://localhost:5500/api/Enums',
   staffs: 'http://localhost:5500/api/Staff',
   patients: 'http://localhost:5500/api/Patient',
   authConfig: {

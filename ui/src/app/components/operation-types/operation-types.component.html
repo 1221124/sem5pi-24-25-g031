@@ -1,7 +1,7 @@
 <div class="operationTypes-form">
   <h1>Create Operation Type</h1>
 
-  <form (ngSubmit)="submitOperationType()">
+  <form (ngSubmit)="submitOperationType()" *ngIf="roles.length > 0 && specializations.length > 0; else loading">
     <label for="operationName">Operation Name:</label>
     <input type="text" id="operationName" name="operationName" [(ngModel)]="operationType.Name" placeholder="Enter Operation Name" />
 
@@ -44,4 +44,12 @@
 
     <button type="submit">Submit Operation Type</button>
   </form>
+
+  <div *ngIf="message" [ngClass]="{'success': success, 'error': !success}">
+    {{ message }}
+  </div>
+
+  <ng-template #loading>
+    <p>Loading...</p>
+  </ng-template>
 </div>
