@@ -34,16 +34,18 @@ namespace Controllers
                 return NotFound();
             }
 
-            if (pageNumber != null)
+            var totalItems = operationTypes.Count;
+
+            if (pageNumber != null && int.TryParse(pageNumber, out int page))
             {
                 var paginatedOperationTypes = operationTypes
-                    .Skip((int.Parse(pageNumber)) * pageSize)
+                    .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
-                return Ok(new { operationTypes = paginatedOperationTypes });
+                operationTypes = paginatedOperationTypes;
             }
 
-            return Ok(new { operationTypes });
+            return Ok(new { operationTypes = operationTypes, totalItems = totalItems });
         }
 
         // GET: api/OperationTypes/{id}

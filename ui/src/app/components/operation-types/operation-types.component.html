@@ -1,55 +1,116 @@
-<div class="operationTypes-form">
-  <h1>Create Operation Type</h1>
-
-  <form (ngSubmit)="submitOperationType()" *ngIf="roles.length > 0 && specializations.length > 0; else loading">
-    <label for="operationName">Operation Name:</label>
-    <input type="text" id="operationName" name="operationName" [(ngModel)]="operationType.Name" placeholder="Enter Operation Name" />
-
-    <label for="specialization">Specialization:</label>
-    <select id="specialization" name="specialization" [(ngModel)]="operationType.Specialization">
-      <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
-    </select>
-
-    <h3>Add Required Staff</h3>
-    <label for="newStaffRole">Role:</label>
-    <select [(ngModel)]="newStaff.Role" name="newStaffRole" id="newStaffRole">
-      <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-    </select>
-
-    <label for="newStaffSpecialization">Specialization:</label>
-    <select [(ngModel)]="newStaff.Specialization" name="newStaffSpecialization" id="newStaffSpecialization">
-      <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
-    </select>
-
-    <label for="newStaffQuantity">Quantity:</label>
-    <input type="number" [(ngModel)]="newStaff.Quantity" name="newStaffQuantity" id="newStaffQuantity" min="1" />
-
-    <button type="button" (click)="addStaff()">Add Staff</button>
-
-    <div *ngFor="let staff of operationType.RequiredStaff; let i = index" class="required-staff">
-      <h3>Required Staff {{ i + 1 }}</h3>
-      <p>Role: {{ staff.Role }}</p>
-      <p>Specialization: {{ staff.Specialization }}</p>
-      <p>Quantity: {{ staff.Quantity }}</p>
+<div class="operationTypes">
+  <div *ngIf="operationTypes.length > 0; else noOperationTypes">
+    <h1>Operation Types</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>
+            Name
+            <input type="text" [(ngModel)]="filter.name" placeholder="Filter by Name" />
+          </th>
+          <th>
+            Specialization
+            <input type="text" [(ngModel)]="filter.specialization" placeholder="Filter by Specialization" />
+          </th>
+          <th>
+            Status
+            <input type="text" [(ngModel)]="filter.status" placeholder="Filter by Status" />
+          </th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let operation of operationTypes">
+          <td>{{ operation.Id }}</td>
+          <td>{{ operation.Name }}</td>
+          <td>{{ operation.Specialization }}</td>
+          <td>{{ operation.Status }}</td>
+          <td>
+            <!-- <button>Edit</button> -->
+            <button>Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="filter-buttons">
+      <button (click)="applyFilter()">Apply Filters</button>
     </div>
-
-    <label for="preparationDuration">Preparation Duration (minutes):</label>
-    <input type="number" id="preparationDuration" name="preparationDuration" [(ngModel)]="operationType.PhasesDuration.Preparation" min="1" />
-
-    <label for="surgeryDuration">Surgery Duration (minutes):</label>
-    <input type="number" id="surgeryDuration" name="surgeryDuration" [(ngModel)]="operationType.PhasesDuration.Surgery" min="1" />
-
-    <label for="cleaningDuration">Cleaning Duration (minutes):</label>
-    <input type="number" id="cleaningDuration" name="cleaningDuration" [(ngModel)]="operationType.PhasesDuration.Cleaning" min="1" />
-
-    <button type="submit">Submit Operation Type</button>
-  </form>
-
-  <div *ngIf="message" [ngClass]="{'success': success, 'error': !success}">
-    {{ message }}
   </div>
+
+  <ng-template #noOperationTypes>
+    <div *ngIf="message; else loading">
+      <p>{{ message }}</p>
+    </div>
+  </ng-template>
 
   <ng-template #loading>
     <p>Loading...</p>
   </ng-template>
+
+  <div class="pagination">
+    <button (click)="changePage(filter.pageNumber - 1)" [disabled]="filter.pageNumber <= 1">Previous</button>
+    <span>Page {{ filter.pageNumber }} of {{ totalPages }}</span>
+    <button (click)="changePage(filter.pageNumber + 1)" [disabled]="filter.pageNumber >= totalPages">Next</button>
+  </div>
+
+  <button (click)="showCreateForm = !showCreateForm">
+    {{ showCreateForm ? 'Cancel' : 'Create Operation Type' }}
+  </button>
+
+  <div class="operationTypes-form" *ngIf="showCreateForm">
+    <h1>Create Operation Type</h1>
+
+    <form (ngSubmit)="submitOperationType()" *ngIf="roles.length > 0 && specializations.length > 0; else loading">
+      <label for="operationName">Operation Name:</label>
+      <input type="text" id="operationName" name="operationName" [(ngModel)]="operationType.Name" placeholder="Enter Operation Name" />
+
+      <label for="specialization">Specialization:</label>
+      <select id="specialization" name="specialization" [(ngModel)]="operationType.Specialization">
+        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+      </select>
+
+      <h3>Add Required Staff</h3>
+      <label for="newStaffRole">Role:</label>
+      <select [(ngModel)]="newStaff.Role" name="newStaffRole" id="newStaffRole">
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+
+      <label for="newStaffSpecialization">Specialization:</label>
+      <select [(ngModel)]="newStaff.Specialization" name="newStaffSpecialization" id="newStaffSpecialization">
+        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+      </select>
+
+      <label for="newStaffQuantity">Quantity:</label>
+      <input type="number" [(ngModel)]="newStaff.Quantity" name="newStaffQuantity" id="newStaffQuantity" min="1" />
+
+      <button type="button" (click)="addStaff()">Add Staff</button>
+
+      <div *ngFor="let staff of operationType.RequiredStaff; let i = index" class="required-staff">
+        <h3>Required Staff {{ i + 1 }}</h3>
+        <p>Role: {{ staff.Role }}</p>
+        <p>Specialization: {{ staff.Specialization }}</p>
+        <p>Quantity: {{ staff.Quantity }}</p>
+      </div>
+
+      <label for="preparationDuration">Preparation Duration (minutes):</label>
+      <input type="number" id="preparationDuration" name="preparationDuration" [(ngModel)]="operationType.PhasesDuration.Preparation" min="1" />
+
+      <label for="surgeryDuration">Surgery Duration (minutes):</label>
+      <input type="number" id="surgeryDuration" name="surgeryDuration" [(ngModel)]="operationType.PhasesDuration.Surgery" min="1" />
+
+      <label for="cleaningDuration">Cleaning Duration (minutes):</label>
+      <input type="number" id="cleaningDuration" name="cleaningDuration" [(ngModel)]="operationType.PhasesDuration.Cleaning" min="1" />
+
+      <button type="submit">Submit Operation Type</button>
+    </form>
+
+    <div *ngIf="message" [ngClass]="{'success': success, 'error': !success}">
+      {{ message }}
+    </div>
+
+    <ng-template #loading>
+      <p>Loading...</p>
+    </ng-template>
+  </div>
 </div>

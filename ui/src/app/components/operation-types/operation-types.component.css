@@ -37,6 +37,7 @@
   border: 1px solid #bbb;
   border-radius: 4px;
   transition: border-color 0.3s ease;
+  margin-bottom: 15px;
 }
 
 .operationTypes-form input[type="text"]:focus,
@@ -92,8 +93,110 @@
 
 .success {
   color: green;
+  font-weight: bold;
+  margin-top: 20px;
 }
 
 .error {
   color: red;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.operationTypes-form .loading {
+  font-size: 18px;
+  color: #009688;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  font-size: 16px;
+  margin: 0 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background-color: #ddd;
+}
+
+.pagination button[disabled] {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 16px;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 15px; 
+  text-align: left; 
+  border: 1px solid #ddd; 
+}
+
+th {
+  background-color: #009688;
+  color: white;
+  font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #e0e0e0; 
+}
+
+input[type="text"], input[type="number"], select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+  border-color: #009688;
+  outline: none;
+}
+
+.filter-buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.filter-buttons button {
+  padding: 10px 20px;
+  background-color: #009688;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-buttons button:hover {
+  background-color: #00796b;
 }

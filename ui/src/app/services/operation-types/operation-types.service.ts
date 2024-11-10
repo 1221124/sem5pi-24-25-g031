@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { OperationType } from '../../components/operation-types/operation-types.component';
 import { Injectable } from '@angular/core';
 import { environment, httpOptions } from '../../../environments/environment';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -61,5 +61,50 @@ export class OperationTypesService {
 
     const options = { ...httpOptions, observe: 'response' as const };
     return firstValueFrom(this.http.post(environment.operationTypes, dto, options));
+  }
+
+  getOperationTypes(filter: any) {
+    let params = new HttpParams();
+
+    if (filter.pageNumber > 0) params = params.set('pageNumber', filter.pageNumber.toString());
+    if (filter.name !== '') params = params.set('name', filter.name);
+    if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
+    if (filter.status !== '') params = params.set('status', filter.status);
+
+    return firstValueFrom(this.http.get<{ operationTypes: any[], totalItems: number }>(`${environment.operationTypes}`, { params, observe: 'response' as const }))
+      .then(response => {
+        if (response.status === 200 && response.body) {
+          const operationTypes = response.body.operationTypes.map(item => ({
+            Id: item.id,
+            Name: item.name.value,
+            Specialization: item.specialization.toString(),
+            RequiredStaff: item.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; }) => ({
+              Role: staff.role,
+              Specialization: staff.specialization,
+              Quantity: staff.quantity.value
+            })),
+            PhasesDuration: {
+              Preparation: item.phasesDuration.phases.preparation.value,
+              Surgery: item.phasesDuration.phases.surgery.value,
+              Cleaning: item.phasesDuration.phases.cleaning.value
+            },
+            Status: item.status.toString()
+          }));
+
+          return {
+            status: response.status,
+            body: {
+              operationTypes,
+              totalItems: response.body.totalItems
+            }
+          };
+        } else {
+          throw new Error('Unexpected response structure or status');
+        }
+      });
+  }
+
+  deleteOperationType(id: string): Observable<any> {
+    return this.http.delete(`${environment.operationTypes}/${id}`);
   }
 }

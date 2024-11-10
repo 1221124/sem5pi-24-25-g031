@@ -41,12 +41,28 @@ namespace Domain.OperationTypes
 
         public static List<OperationTypeDto> ToDtoList(List<OperationType> operationTypes)
         {
-            return operationTypes.ConvertAll(operationType => ToDto(operationType));
+            if (operationTypes == null)
+            {
+                return null;
+            } else if (operationTypes.Count == 0)
+            {
+                return new List<OperationTypeDto>();
+            } else {
+                return operationTypes.ConvertAll(operationType => ToDto(operationType));
+            }
         }
 
         public static List<OperationType> ToEntityList(List<OperationTypeDto> dtoList)
         {
-            return dtoList.ConvertAll(dto => ToEntity(dto));
+            if (dtoList == null)
+            {
+                return null;
+            } else if (dtoList.Count == 0)
+            {
+                return new List<OperationType>();
+            } else {
+                return dtoList.ConvertAll(dto => ToEntity(dto));
+            }
         }
     }
 }

@@ -134,7 +134,14 @@ namespace Domain.OperationTypes
             if (name != null)
             {
                 operationTypeWithName = await _repo.GetByNameAsync(new Name(name));
-                operationTypes = [operationTypeWithName];
+                if (operationTypeWithName != null)
+                {
+                    operationTypes = new List<OperationType> { operationTypeWithName };
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             if (specialization != null)
