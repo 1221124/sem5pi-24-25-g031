@@ -91,10 +91,15 @@
                     <td>{{ staff.licenseNumber.value }}</td>
                     <td>{{ staff.specialization || 'N/A' }}</td>
                     <td>{{ staff.status || 'N/A' }}</td>
-                    <td>{{ staff.slotAppointment || 'N/A' }}</td>
-                    <td>{{ staff.slotAvailability || 'N/A' }}</td>
                     <td>
-                        <button (click)="editStaff(staff)" class="action-btn edit-btn">
+                        <button type="button" (click)="openSlotAppointmentModal(staff)">View</button>
+                    </td>
+                    <td>
+                        <button type="button" (click)="openSlotAvailabilityModal(staff)">View</button>
+                    </td>
+                    <td>
+                        <button *ngIf="staff.status === 'Active'" (click)="editStaff(staff)"
+                            class="action-btn edit-btn">
                             Edit
                         </button>
                         <button *ngIf="staff.status === 'Active'" type="button" class="action-btn delete-btn"
@@ -172,6 +177,84 @@
                 </section>
             </div>
         </div>
+
+        <div *ngIf="isSlotAppointmentModal" class="modal">
+            <div class="modal-content">
+                <span type="button" class="close" (click)="closeSlotAppointmentModal()">&times;</span>
+                <h2>Slots Appointments</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Slot History</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div *ngIf="selectedStaff.slotAppointment?.length > 0; else noSlotsMessage">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Start</th>
+                                                <th>End</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let slot of selectedStaff.slotAppointment">
+                                                <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                                <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <ng-template #noSlotsMessage>
+                                    <p>No slots available</p>
+                                </ng-template>
+                            </td>
+                        </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <div *ngIf="isSlotAvailabilityModal" class="modal">
+            <div class="modal-content">
+                <span type="button" class="close" (click)="closeSlotAvailabilityModal()">&times;</span>
+                <h2>Slots Availability</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Slot History</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div *ngIf="selectedStaff.slotAvailability?.length > 0; else noSlotsMessage">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Start</th>
+                                                <th>End</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let slot of selectedStaff.slotAvailability">
+                                                <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                                <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <ng-template #noSlotsMessage>
+                                    <p>No slots available</p>
+                                </ng-template>
+                            </td>
+                        </tr>
+                </table>
+            </div>
+        </div>
+
 
     </div>
 </div>

@@ -40,6 +40,8 @@ export class StaffsComponent {
   isEditModalOpen = false;
   isCreateModalOpen = false;
   isDeleteModalOpen = false;
+  isSlotAppointmentModal = false;
+  isSlotAvailabilityModal = false;
 
   ngOnInit() {
     this.refreshStaffs();
@@ -86,7 +88,7 @@ export class StaffsComponent {
     this.selectedStaff = null;
     this.isCreateModalOpen = true;
     this.isEditModalOpen = false;
-    this.isDeleteModalOpen = true;
+    this.isDeleteModalOpen = false;
   }
 
   closeModal() {
@@ -197,4 +199,32 @@ export class StaffsComponent {
     this.isDeleteModalOpen = false;
     this.selectedStaff = null;
   }
+
+  openSlotAppointmentModal(staff: any) {
+    this.selectedStaff = {
+      slotAppointment: staff.slotAppointment
+    };
+    this.isSlotAppointmentModal = true;
+    this.isEditModalOpen = false;
+    this.isCreateModalOpen = false;
+  }
+
+  closeSlotAppointmentModal() {
+    this.isSlotAppointmentModal = false;
+  }
+
+  openSlotAvailabilityModal(staff: any) {
+    this.selectedStaff = {
+      slotAvailability: staff.slotAvailability
+    };
+    this.isSlotAvailabilityModal = true;
+    this.isEditModalOpen = false;
+    this.isCreateModalOpen = false;
+  }
+
+  closeSlotAvailabilityModal() {
+    this.isSlotAvailabilityModal = false;
+  }
+
+
 }
