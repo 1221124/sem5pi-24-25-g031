@@ -115,7 +115,7 @@ export class PatientsComponent{
         this.patients = data; // Update the patients list
       },
       (error) => {
-        console.error('Error fetching patients:', error);
+        console.error('Error refreshing patients:', error);
       }
     );
   }
@@ -124,7 +124,13 @@ export class PatientsComponent{
   fetchPatients(): void {
     this.patientService.getPatients().subscribe(
       (data) => {
-        this.patients = data;
+        this.patients = data.map((patient: { appointmentHistory: any[]; }) => ({
+          ...patient,
+          appointmentHistory: patient.appointmentHistory.map(slot => ({
+            start: new Date(slot.start),
+            end: new Date(slot.end)
+          }))
+        }));
       },
       (error) => {
         console.error('Error fetching patients:', error);
