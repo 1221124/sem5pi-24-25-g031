@@ -29,7 +29,7 @@ export class PatientsComponent{
   }
   selectedPatient: any = {
     appointmentHistory: {
-      conditions: []
+      condition: [{start: null, end: null}]
     }
   };
 
@@ -59,7 +59,7 @@ export class PatientsComponent{
   isCreateModalOpen = false;
 
   ngOnInit(): void {
-    this.refreshPatients();
+    this.fetchPatients();
   }
 
   // This method is triggered when the user clicks the "edit" button
@@ -70,8 +70,8 @@ export class PatientsComponent{
       lastName: patient.fullName.lastName,
       email: patient.contactInformation.email,
       phoneNumber: patient.contactInformation.phoneNumber,
-      emergencyContact: patient.emergencyContact || {number: {value: 'No number available'} } ,
-      appointmentHistory: patient.appointmentHistory || {condition: 'No date available'}
+      emergencyContact: patient.emergencyContact || {number: {value: ''} } ,
+      appointmentHistory: patient.appointmentHistory || {condition: ''}
     };
     this.isEditModalOpen = true;
     this.isCreateModalOpen = false;
@@ -79,27 +79,30 @@ export class PatientsComponent{
 
   // Method to add a condition to the appointment history
   addCondition() {
-    if (this.newCondition.trim()) {
-      this.selectedPatient.appointmentHistory.conditions.push(this.newCondition.trim());
-      this.newCondition = ''; // Clear the input after adding
-    }
+    this.selectedPatient.appointmentHistory.conditions.push({
+      start: '',
+      end: ''
+    });
   }
 
   // Method to remove a condition from the appointment history
   removeCondition(index: number) {
-    this.selectedPatient.appointmentHistory.conditions.splice(index, 1);
+    this.selectedPatient.appointmentHistory.condition.splice(index, 1);
   }
 
   // Method to save the updated patient data
   savePatient() {
+    this.selectedPatient.appointmentHistory.condition = this.selectedPatient.appointmentHistory.condition.map((slot : any) => ({
+      start: slot.start ? new Date(slot.start) : new Date(),
+      end: slot.end ? new Date(slot.end) : new Date()
+    }));
+
     this.patientService.updatePatient(this.selectedPatient).subscribe(
       (response) => {
-        // Handle the success response
-        this.isEditModalOpen = false; // Close the modal
-        this.refreshPatients(); // Refresh the patient list
+        this.isEditModalOpen = false;
+        this.refreshPatients();
       },
       (error) => {
-        // Handle error (e.g., show an error message)
         console.error('Error updating patient:', error);
       }
     );

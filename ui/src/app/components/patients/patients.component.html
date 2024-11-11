@@ -85,6 +85,9 @@
           <td>{{ patient.gender === 0 ? 'Male' : 'Female' }}</td>
           <td>{{ patient.medicalRecordNumber.value }}</td>
           <td>{{ patient.emergencyContact?.number?.value ? patient.emergencyContact.number.value : 'N/A' }}</td>
+          <td *ngIf="patient.appointmentHistory && patient.appointmentHistory.condition">
+            {{ patient.appointmentHistory?.condition?.start | date: 'yyyy-MM-dd HH:m' }} - {{ patient.appointmentHistory.condition.end | date: 'yyyy-MM-dd HH:mm' }}
+          </td>
           <td>{{ patient.appointmentHistory?.condition ? patient.appointmentHistory.condition : 'N/A' }}</td>
           <td>{{ patient.userId ? patient.userId : 'N/A' }}</td>
         </tr>
@@ -119,21 +122,15 @@
         </div>
         <div>
           <label for="EmergencyContact">Emergency Contact</label>
-          <input type="text" id="EmergencyContact" [(ngModel)]="selectedPatient.emergencyContact.number.value" name="EmergencyContact" />
+          <input type="text" id="EmergencyContact" [(ngModel)]="selectedPatient.emergencyContact.number.value" name="EmergencyContact" placeholder="Enter Emergency Contact"/>
         </div>
-        <div>
-          <label for="AppointmentHistory">Appointment History</label>
-          <input type="text" id="AppointmentHistory" [(ngModel)]="newCondition" name="AppointmentHistory" placeholder="Enter Condition" />
-          <button type="button" (click)="addCondition()">Add Condition</button>
+        <div *ngFor="let slot of selectedPatient.appointmentHistory.condition; let i = index">
+          <label>Slot {{ i + 1 }}</label>
+          <input type="datetime-local" [(ngModel)]="selectedPatient.appointmentHistory.condition.start" name="start{{i}}" placeholder="Start Time" />
+          <input type="datetime-local" [(ngModel)]="selectedPatient.appointmentHistory.condition.end" name="end{{i}}" placeholder="End Time" />
+          <button type="button" (click)="removeCondition(i)">Remove Slot</button>
         </div>
-        <div>
-          <ul>
-            <li *ngFor="let condition of selectedPatient.appointmentHistory.condition; let i = index">
-              {{ condition }}
-              <button type="button" (click)="removeCondition(i)">Remove</button>
-            </li>
-          </ul>
-        </div>
+        <button type="button" (click)="addCondition()">Add Slot</button>
         <div>
           <button type="button" (click)="savePatient()">Save</button>
         </div>
