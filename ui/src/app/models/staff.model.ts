@@ -1,7 +1,6 @@
 // src/app/models/staff.model.ts
 
 export interface Staff {
-    id: string;
-    licenseNumber: string;
-  }
-  
+  email: string;
+  licenseNumber: string;
+}
