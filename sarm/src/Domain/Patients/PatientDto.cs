@@ -15,8 +15,9 @@ namespace Domain.Patients
         public ContactInformation ContactInformation { get; set; }
         public List<MedicalConditions>? MedicalConditions { get; set; }
         public EmergencyContact? EmergencyContact { get; set; }
-        public AppointmentHistory? AppointmentHistory { get; set; }
+        public List<Slot> AppointmentHistory { get; set; }
         public UserId? UserId { get; set; }
+        
         public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions>? medicalConditions, EmergencyContact? emergencyContact,UserId? userId)
         {
             Id = id; 
@@ -30,7 +31,7 @@ namespace Domain.Patients
             UserId = userId;
         }
         
-        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,AppointmentHistory appointmentHistory,UserId userId)
+        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,List<Slot> appointmentHistory,UserId userId)
         {
             Id = id; 
             FullName = fullName;

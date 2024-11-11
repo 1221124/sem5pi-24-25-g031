@@ -36,7 +36,7 @@ namespace DDDNetCore.Domain.Patients
             
             //List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId ));
 
-            return PatientMapper.toDtoList(list);
+            return PatientMapper.ToDtoList(list);
             //return listDto;
         }
         
@@ -62,7 +62,7 @@ namespace DDDNetCore.Domain.Patients
                 if (listPatient == null)
                     return null;
                 
-                List<PatientDto> listDto = PatientMapper.toDtoList(listPatient);
+                List<PatientDto> listDto = PatientMapper.ToDtoList(listPatient);
 
                 return listDto;
 
@@ -136,7 +136,7 @@ namespace DDDNetCore.Domain.Patients
                 if (listPatient == null)
                     return null;
                 
-                List<PatientDto> listDto = PatientMapper.toDtoList(listPatient);
+                List<PatientDto> listDto = PatientMapper.ToDtoList(listPatient);
 
                 return listDto;
 
@@ -156,7 +156,7 @@ namespace DDDNetCore.Domain.Patients
                 if (listPatient == null)
                     return null;
 
-                List<PatientDto> listDto = PatientMapper.toDtoList(listPatient);
+                List<PatientDto> listDto = PatientMapper.ToDtoList(listPatient);
 
                 return listDto;
 

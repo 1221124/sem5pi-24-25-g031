@@ -1,10 +1,8 @@
+using Domain.Patients;
 using Domain.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Domain.Users;
 
-namespace Domain.Patients
+namespace DDDNetCore.Domain.Patients
 {
   public class Patient : Entity<PatientId>, IAggregateRoot
   {
@@ -15,12 +13,12 @@ namespace Domain.Patients
     public ContactInformation ContactInformation { get; set; }
     public List<MedicalConditions>? MedicalConditions { get; set; }
     public EmergencyContact? EmergencyContact { get; set; }
-    public AppointmentHistory? AppointmentHistory { get; set; }
+    public List<Slot> AppointmentHistory { get; set; }
     public UserId? UserId { get; set; }
 
     public Patient() { }
     
-    public Patient(FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
+    public Patient(FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,  UserId userId)
     {
       Id = new PatientId(Guid.NewGuid());
       FullName = fullName;
@@ -30,11 +28,11 @@ namespace Domain.Patients
       ContactInformation = contactInformation;
       MedicalConditions = medicalConditions;
       EmergencyContact = emergencyContact;
-      AppointmentHistory = appointmentHistory;
+      AppointmentHistory = new List<Slot>();
       UserId = userId;
     }
     
-    public Patient(Guid guid ,FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, AppointmentHistory appointmentHistory,  UserId userId)
+    public Patient(Guid guid ,FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,  UserId userId)
     {
       Id = new PatientId(guid);
       FullName = fullName;
@@ -44,7 +42,7 @@ namespace Domain.Patients
       ContactInformation = contactInformation;
       MedicalConditions = medicalConditions;
       EmergencyContact = emergencyContact;
-      AppointmentHistory = appointmentHistory;
+      AppointmentHistory = new List<Slot>();
       UserId = userId;
     }
         
@@ -77,12 +75,12 @@ namespace Domain.Patients
       ContactInformation = new ContactInformation(email, phoneNumber);
     }
     
-    public Patient(Guid guid, Name FirstName, Name LastName, Email email, PhoneNumber phoneNumber, AppointmentHistory appointmentHistory, List<MedicalConditions> medicalConditions)
+    public Patient(Guid guid, Name FirstName, Name LastName, Email email, PhoneNumber phoneNumber, List<MedicalConditions> medicalConditions)
     {
       Id = new PatientId(guid);
       FullName = new FullName(FirstName, LastName);
       ContactInformation = new ContactInformation(email, phoneNumber);
-      AppointmentHistory = appointmentHistory;
+      AppointmentHistory = new List<Slot>();
       MedicalConditions = medicalConditions;
     }
     
@@ -166,7 +164,7 @@ namespace Domain.Patients
       this.EmergencyContact = emergencyContact;
     }  
     
-    public void ChangeAppointmentHistory(AppointmentHistory appointmentHistory)
+    public void ChangeAppointmentHistory(List<Slot> appointmentHistory)
     {
       if (appointmentHistory == null)
       {

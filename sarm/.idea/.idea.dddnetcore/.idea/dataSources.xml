@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="sem5pi-24-25-g031@sem5pi-24-25-g031.database.windows.net" uuid="4223f183-5211-48d5-a868-b5b80f8618f3">
+    <data-source source="LOCAL" name="sem5pi-24-25-g031@sem5pi-24-25-g031.database.windows.net" uuid="2ad8e714-4a92-4c6b-99e3-cabe287b16e0">
       <driver-ref>azure.ms</driver-ref>
       <synchronize>true</synchronize>
       <configured-by-url>true</configured-by-url>

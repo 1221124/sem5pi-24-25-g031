@@ -32,7 +32,7 @@ namespace Domain.Patients
                 dto.UserId
             );
         }
-        public static List<PatientDto> toDtoList(List<Patient> patients)
+        public static List<PatientDto> ToDtoList(List<Patient> patients)
         {
             return patients.ConvertAll(patient=> ToDto(patient));
         }
@@ -49,6 +49,7 @@ namespace Domain.Patients
                 patient.ContactInformation,
                 patient.MedicalConditions,
                 patient.EmergencyContact,
+                patient.AppointmentHistory,
                 patient.UserId
             );
         }
@@ -61,7 +62,6 @@ namespace Domain.Patients
                 dto.LastName,
                 dto.Email,
                 dto.PhoneNumber,
-                dto.AppointmentHistory,
                 dto.MedicalConditions
             );
         }
@@ -77,7 +77,6 @@ namespace Domain.Patients
                 dto.ContactInformation,
                 dto.MedicalConditions,
                 dto.EmergencyContact,
-                dto.AppointmentHistory,
                 dto.UserId
             );
         }
