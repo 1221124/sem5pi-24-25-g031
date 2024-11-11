@@ -58,7 +58,11 @@ export class OperationRequestsService {
   }
 
   delete(id: string){
-    return this.http.delete(environment.operationRequests + '/' + id, httpOptions)
+    const deleteUrl = environment.operationRequests + '/' + id;
+    console.log('ID:', id);
+    console.log('Delete URL:', deleteUrl);
+
+    return this.http.delete(deleteUrl, httpOptions)
     .subscribe(
       response => {
         console.log('Operation Request deleted successfully', response);

@@ -33,6 +33,7 @@ export class OperationRequestsComponent {
   // status: string[] = [];
   statuses: string[] = ['Pending', 'Accepted', 'Rejected']; 
 
+  id: string = '';
   staff: string = '';
   patient: string = '';
   operationType: string = '';
@@ -57,8 +58,10 @@ export class OperationRequestsComponent {
   deadlineDateTouched: boolean = false;
   priorityTouched: boolean = false;
   statusTouched: boolean = false;
-  deleteConfirmation: boolean = false;
 
+  deleteConfirmation: boolean = false;
+  updateConfirmation: boolean = false;
+  
   isCreateModalOpen: boolean = false;
   isUpdateModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
@@ -174,6 +177,11 @@ export class OperationRequestsComponent {
   openUpdateModal(request: OperationRequest) {
     console.log('Open Update Modal clicked');
     this.isUpdateModalOpen = true;
+
+    this.deadlineDate = request.deadlineDate;
+    this.priority = request.priority;
+    this.status = request.status;
+
     this.update(request);
   }
 
@@ -185,12 +193,15 @@ export class OperationRequestsComponent {
   openDeleteModal(request: OperationRequest) {
     console.log('Open Delete Modal clicked');
     this.isDeleteModalOpen = true;
-    this.delete(request.id);
+
+    this.id = request.id;
   }
 
   closeDeleteModal() {
     console.log('Close Delete Modal clicked');
     this.isDeleteModalOpen = false;
+
+    this.id = '';
   }
 
   create() {
@@ -205,25 +216,32 @@ export class OperationRequestsComponent {
 
   delete(request: string) {
     console.log('Delete button clicked');
-    if(this.deleteConfirmation === false) return;
     this.service.delete(request);
     console.log('Operation Request deleted successfully!');
     this.clearForm();
     this.refresh();
   }
   
-  confirmDelete(){
-    this.deleteConfirmation = true;
+  confirmDelete() {
+    if (this.id) {
+      console.log('Delete confirmed');
+      this.delete(this.id);
+      this.isDeleteModalOpen = false;
+      this.closeDeleteModal();
+    }
   }
 
   update(request: OperationRequest){
     console.log('Update button clicked');
-    // if (!this.isFormValid()) return;
     this.service.put(request.id, this.deadlineDate, this.priority, this.status);
     this.closeUpdateModal();
     this.refresh();
     console.log('Operation Request updated successfully!');
     this.clearForm();
+  }
+
+  confirmUpdate(){
+    this.updateConfirmation = true;
   }
 
   isFormValid(): boolean {
