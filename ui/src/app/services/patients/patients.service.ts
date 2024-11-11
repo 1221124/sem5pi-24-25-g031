@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import {environment, httpOptions} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -98,6 +98,11 @@ export class PatientsService {
 
   updatePatient(patient: any): Observable<any> {
     return this.http.put(`${this.apiUrl}`, patient);
+  }
+
+  deletePatient(patientId: any): Observable<any>{
+    console.log("Deletion Patient ID:", patientId);
+    return this.http.delete(`${this.apiUrl}/admin/${patientId}`, httpOptions);
   }
 
 }
