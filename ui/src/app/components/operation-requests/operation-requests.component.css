@@ -1,14 +1,72 @@
-.operationRequests-request {
-  max-width: 600px; /* Increased width to accommodate form and table */
-  margin: 0 auto;
+/* General table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #85a585;
+  color: white;
+  font-weight: bold;
+}
+
+td {
+  background-color: #f9f9f9;
+}
+
+/* Hover effect for rows */
+tr:hover {
+  background-color: #934a4a;
+}
+
+.modal {
+  display: flex;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  visibility: visible;
+  opacity: 1; /* Shows the modal */
+}
+
+.modal-content {
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover, .close:focus {
+  color: black;
 }
 
 /* Style for the main header */
-.operationRequests-request h1 {
+.patient-request h1 {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
@@ -16,8 +74,44 @@
   text-align: center;
 }
 
-/* Styling for modal buttons */
-.operationRequests-request button {
+.patient-request section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.patient-request form {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-request input[type="text"],
+.patient-request input[type="date"],
+.patient-request select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.patient-request input[type="text"]:focus,
+.patient-request input[type="date"]:focus,
+.patient-request select:focus {
+  border-color: #007acc;
+  outline: none;
+}
+
+.get-requests label {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.get-requests button {
   padding: 10px;
   font-size: 16px;
   border: none;
@@ -25,123 +119,23 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 10px;
-  width: 100%; /* Makes buttons full width */
 }
 
-/* Button for "New Operation Request" */
-.operationRequests-request button[type="button"]:first-of-type {
-  background-color: #007acc;
+.get-requests button[type="button"] {
+  background-color: #85a585;
   color: #fff;
 }
 
-/* Button for "Return" */
-.operationRequests-request button[type="button"]:nth-of-type(2) {
-  background-color: #f44336;
-  color: #fff;
+.get-requests button[type="button"]:hover {
+  background-color: #577357;
 }
 
-/* Button for "Submit" */
-.operationRequests-request button[type="button"]:last-of-type {
-  background-color: #4CAF50;
-  color: #fff;
+.get-requests button[type="button"]:last-of-type {
+  background-color: #af5454;
 }
 
-/* Hover effects for buttons */
-.operationRequests-request button[type="button"]:hover {
-  opacity: 0.9;
-}
-
-/* Styling for modal section */
-.operationRequests-request section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-/* Style for input and select elements */
-.operationRequests-request input[type="text"],
-.operationRequests-request input[type="date"],
-.operationRequests-request select {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-/* Focus styling for inputs and select */
-.operationRequests-request input[type="text"]:focus,
-.operationRequests-request input[type="date"]:focus,
-.operationRequests-request select:focus {
-  border-color: #007acc;
-  outline: none;
-}
-
-/* Label styling for form fields */
-.operationRequests-request label {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 5px;
-}
-
-/* Styling for table */
-.operationRequests-request table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.operationRequests-request th, .operationRequests-request td {
-  padding: 10px;
-  text-align: left;
-  border: 1px solid #ccc;
-}
-
-.operationRequests-request th {
-  background-color: #007acc;
-  color: #fff;
-}
-
-.operationRequests-request tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-/* Style for the table row data */
-.operationRequests-request td {
-  font-size: 14px;
-}
-
-/* Style for the Submit button */
-.operationRequests-request .submit-button {
-  background-color: #4CAF50;
-  color: #fff;
-  width: auto; /* Default width for Submit button */
-}
-
-/* Hover effect for the Submit button */
-.operationRequests-request .submit-button:hover {
-  background-color: #388E3C;
-}
-
-/* Responsive Styles */
-@media (max-width: 600px) {
-  .operationRequests-request {
-    width: 100%;
-    padding: 15px;
-  }
-
-  /* Adjust button width on smaller screens */
-  .operationRequests-request button {
-    width: 100%;
-  }
-
-  /* Adjust form field gap */
-  .operationRequests-request section {
-    gap: 10px;
-  }
+.get-requests button[type="button"]:last-of-type:hover {
+  background-color: #974747;
 }
 
 @media screen and (max-width: 768px) {
@@ -156,4 +150,43 @@
   .modal-content {
     width: 90%;
   }
+}
+
+th input, th select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+th, td {
+  text-align: left; /* Align content to the left for better readability */
+}
+
+.button-filter {
+  padding: 8px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px; /* Add margin to the top to align with the input fields */
+}
+
+.button-filter {
+  margin-left: 10px; /* Space between the two buttons */
+}
+
+.button-filter:hover {
+  background-color: #45a049;
+}
+
+.edit-button {
+  height: 60px;
+  width: 60px;
+  border-radius: 20px;
+  border: none;
+  background-color: rgb(245,200,245);
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'; 
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
@@ -10,11 +10,11 @@ import { Staff } from '../../models/staff.model';
 import { Patient } from '../../models/patient.model';
 import { OperationType } from '../../models/operation-type.model';
 
-export enum Priority{
+export enum Priority {
   ELECTIVE = 'Elective',
   URGENT = 'Urgent',
   EMERGENCY = 'Emergency'
-} 
+}
 
 @Component({
   selector: 'app-operation-requests',
@@ -25,50 +25,80 @@ export enum Priority{
   providers: [OperationRequestsService, StaffsService, PatientsService, OperationTypesService]
 })
 export class OperationRequestsComponent {
-   constructor(
-    private service: OperationRequestsService, 
-    private serviceStaff: StaffsService, 
-    private servicePatient: PatientsService, 
-    private serviceOperationType: OperationTypesService
-  ) {}
-
   requests: OperationRequest[] = [];
   staffs: Staff[] = [];
   patients: Patient[] = [];
   operationTypes: OperationType[] = [];
-  priorities: any[] = [];
+  priorities: string[] = [];
+  // status: string[] = [];
+  statuses: string[] = ['Pending', 'Accepted', 'Rejected']; 
 
   staff: string = '';
   patient: string = '';
   operationType: string = '';
   deadlineDate: Date = new Date();
   priority: string = '';
+  status: string = '';
   errorMessage: string = '';
 
+  request: OperationRequest = {
+    id: '',
+    staff: '',
+    patient: '',
+    operationType: '',
+    deadlineDate: new Date(),
+    priority: '',
+    status: ''
+  };
+  
   staffTouched: boolean = false;
   patientTouched: boolean = false;
   operationTypeTouched: boolean = false;
   deadlineDateTouched: boolean = false;
   priorityTouched: boolean = false;
+  statusTouched: boolean = false;
+  deleteConfirmation: boolean = false;
 
-  showCreateButton: boolean = true;
-  showReturnButton: boolean = false
-  showHttpPostButton: boolean = false;
-  returnButton: boolean = true;
-  httpPostButton: boolean = false;
+  isCreateModalOpen: boolean = false;
+  isUpdateModalOpen: boolean = false;
+  isDeleteModalOpen: boolean = false;
 
-  createMode: boolean = false;
-  returnMode: boolean = false;
-
-  isModalOpen: boolean = false;
-
-  closeModal() {
-    this.isModalOpen = false;
+  filter = {
+    pageNumber: 0,
+    name: '',
+    specialization: '',
+    status: ''
   }
 
-  ngOnInit() {
-    this.priorities = Object.values(Priority);
+  constructor(
+    private service: OperationRequestsService,
+    private serviceStaff: StaffsService,
+    private servicePatient: PatientsService,
+    private serviceOperationType: OperationTypesService
+  ) {}
 
+  ngOnInit() {
+    this.loadOperationRequests();
+    this.loadStaffs();
+    this.loadPatients();
+    this.loadOperationTypes();
+    this.loadPriority();
+    // this.loadRequestStatus();
+  }
+
+  refresh() {
+    this.loadOperationRequests();
+  }
+
+  // loadRequestStatus(){
+  //   this.statuses = Object.values
+  // }
+
+  loadPriority() {
+    this.priorities = Object.values(Priority);
+  }
+
+  loadOperationRequests() {
     this.service.getAll().subscribe(
       (data) => {
         this.requests = data.map(request => ({
@@ -86,14 +116,14 @@ export class OperationRequestsComponent {
         console.error('Error loading Operation Requests:', error);
       }
     );
+  }
 
+  loadStaffs() {
     this.serviceStaff.getStaff().subscribe(
       (data) => {
-        this.staffs = data.map((staff: {
-          id: any; licenseNumber: any; 
-        }) => ({
-          id: staff.id,
-          licenseNumber: staff.licenseNumber.value
+        this.staffs = data.map((staff: { licenseNumber: any; contactInformation: any; }) => ({
+          licenseNumber: staff.licenseNumber.value,
+          email: staff.contactInformation.email.value
         }));
         console.log('Processed Staff:', this.staffs);
       },
@@ -101,13 +131,13 @@ export class OperationRequestsComponent {
         console.error('Error loading Staff:', error);
       }
     );
+  }
 
+  loadPatients() {
     this.servicePatient.getPatients().subscribe(
       (data) => {
-        this.patients = data.map((patient: {
-          id: any; medicalRecordNumber: any; 
-        }) => ({
-          id: patient.id,
+        this.patients = data.map((patient: { contactInformation: any; medicalRecordNumber: any; }) => ({
+          email: patient.contactInformation.email.value,
           medicalRecordNumber: patient.medicalRecordNumber.value
         }));
         console.log('Processed Patients:', this.patients);
@@ -118,105 +148,115 @@ export class OperationRequestsComponent {
     );
   }
 
-  return(){
-    console.log('Return button clicked');
-    this.clearForm();
-    this.showCreateButton = true;
-    this.showReturnButton = false;
-    this.showHttpPostButton = false;
-    this.createMode = false;
+  loadOperationTypes() {
+    this.serviceOperationType.getOperationTypes(this.filter).then(
+      (response) => {
+        if (response.status === 200 && response.body) {
+          this.operationTypes = response.body.operationTypes;
+        } else {
+          console.error('Unexpected response status or null response body:', response);
+        }
+      }
+    );
   }
-  
+
+  openCreateModal() {
+    console.log('Open Create Modal clicked');
+    this.isCreateModalOpen = true;
+    this.create();
+  }
+
+  closeCreateModal() {
+    console.log('Close Create Modal clicked');
+    this.isCreateModalOpen = false;
+  }
+
+  openUpdateModal(request: OperationRequest) {
+    console.log('Open Update Modal clicked');
+    this.isUpdateModalOpen = true;
+    this.update(request);
+  }
+
+  closeUpdateModal() {
+    console.log('Close Update Modal clicked');
+    this.isUpdateModalOpen = false;
+  }
+
+  openDeleteModal(request: OperationRequest) {
+    console.log('Open Delete Modal clicked');
+    this.isDeleteModalOpen = true;
+    this.delete(request.id);
+  }
+
+  closeDeleteModal() {
+    console.log('Close Delete Modal clicked');
+    this.isDeleteModalOpen = false;
+  }
+
   create() {
     console.log('Create button clicked');
-    this.isModalOpen = true;
-    this.createMode = true;
-    this.showCreateButton = false;
-    this.showReturnButton = true;
-    this.showHttpPostButton = true;
+    if (!this.isFormValid()) return;
+    this.service.post(this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
+    this.closeCreateModal();
+    this.refresh();
+    console.log('Operation Request submitted successfully!');
+    this.clearForm();
+  }
+
+  delete(request: string) {
+    console.log('Delete button clicked');
+    if(this.deleteConfirmation === false) return;
+    this.service.delete(request);
+    console.log('Operation Request deleted successfully!');
+    this.clearForm();
+    this.refresh();
   }
   
+  confirmDelete(){
+    this.deleteConfirmation = true;
+  }
 
-  submitRequest() {
-    if (!this.createMode) return "";
-
-    console.log('Submit button clicked');
-    this.errorMessage = '';
-
-    // if (!this.isValidGuid(this.staffId)) {
-    //     console.log('Invalid Staff ID format. Please provide a valid GUID.');
-    //     this.errorMessage = 'Invalid Staff ID format. Please provide a valid GUID.';
-    //     return this.errorMessage;
-    // }
-
-    // if (!this.isValidGuid(this.patientId)) {
-    //     console.log('Invalid Patient ID format. Please provide a valid GUID.');
-    //     this.errorMessage = 'Invalid Patient ID format. Please provide a valid GUID.';
-    //     return this.errorMessage;
-    // }
-
-    // if (!this.isValidGuid(this.operationTypeId)) {
-    //     console.log('Invalid Operation Type ID format. Please provide a valid GUID.');
-    //     this.errorMessage = 'Invalid Operation Type ID format. Please provide a valid GUID.';
-    //     return this.errorMessage;
-    // }
-
-    // if(!this.isValidDate(this.deadlineDate)) {
-    //     console.log('Invalid Deadline Date. Please provide a valid date.');
-    //     this.errorMessage = 'Invalid Deadline Date. Please provide a valid date.';
-    //     return this.errorMessage;
-    // }
-
-    // if(!this.isValidPriority(this.priority)) {
-    //     console.log('Invalid Priority. Please provide a valid priority.');
-    //     this.errorMessage = 'Invalid Priority. Please provide a valid priority.';
-    //     return this.errorMessage;
-    // }
-
-    console.log('Calling service post method');
-    this.service.post(this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
+  update(request: OperationRequest){
+    console.log('Update button clicked');
+    // if (!this.isFormValid()) return;
+    this.service.put(request.id, this.deadlineDate, this.priority, this.status);
+    this.closeUpdateModal();
+    this.refresh();
+    console.log('Operation Request updated successfully!');
     this.clearForm();
-    console.log('Operation Request submitted successfully!');
-    return "Operation Request submitted successfully!";
   }
 
-  closeErrorModal() {
-    this.errorMessage = '';
-  }
-
-  isValidGuid(guid: string): boolean {
-      const guidRegex = new RegExp('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', 'i');
-      return guidRegex.test(guid);
+  isFormValid(): boolean {
+    if (!this.staff || !this.patient || !this.operationType || !this.priority || !this.deadlineDate) {
+      console.log('Please fill in all required fields.');
+      return false;
+    }
+    if (!this.isValidDate(this.deadlineDate)) {
+      console.log('Please provide a valid date.');
+      return false;
+    }
+    return true;
   }
 
   isValidDate(date: any): boolean {
     if (!(date instanceof Date)) {
       date = new Date(date);
     }
+
     return date instanceof Date && !isNaN(date.getTime());
   }
 
-  isValidPriority(priority: string): boolean {
-    const priorities = ['Elective', 'Urgent', 'Emergency'];
-    return priorities.includes(priority);
-  }
- 
   clearForm() {
     this.staff = '';
     this.patient = '';
     this.operationType = '';
     this.deadlineDate = new Date();
     this.priority = '';
-
     this.staffTouched = false;
     this.patientTouched = false;
     this.operationTypeTouched = false;
     this.deadlineDateTouched = false;
     this.priorityTouched = false;
-
-    this.createMode = false;
-    this.showCreateButton = true;
-    this.showReturnButton = false;
-    this.showHttpPostButton = false;
+    this.errorMessage = '';
   }
 }
