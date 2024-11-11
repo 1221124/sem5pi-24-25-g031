@@ -20,7 +20,17 @@ export class AuthService {
     private isErrorSource = new BehaviorSubject<boolean>(false);
     isError$ = this.isErrorSource.asObservable();
 
+    private static callbackProcessed = false;
+
     constructor(private http: HttpClient, private router: Router) {}
+
+    public isCallbackProcessed(): boolean {
+      return AuthService.callbackProcessed;
+    }
+
+    public markCallbackProcessed(): void {
+      AuthService.callbackProcessed = true;
+    }
 
     updateMessage(newMessage: string) {
       this.messageSource.next(newMessage);
@@ -118,15 +128,10 @@ export class AuthService {
             this.updateMessage('Redirecting to ' + routeMap[role]);
             // this.router.navigate([routeMap[role]]);
             await this.router.navigateByUrl("/staffs", { replaceUrl: true });
-            return;
         } else {
             this.updateMessage('Unable to redirect based on role.\nRedirecting to home page...');
             this.updateIsError(true);
-            setTimeout(
-                () => this.router.navigate(['/staffs']),
-                5000
-            )
-            return;
+            await this.router.navigateByUrl("/staffs", { replaceUrl: true });
         }
     }
 

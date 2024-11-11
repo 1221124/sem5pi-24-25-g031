@@ -20,6 +20,10 @@ export class AuthCallbackComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    if (this.authService.isCallbackProcessed()) {
+      return;
+    }
+    this.authService.markCallbackProcessed();
 
     this.authService.message$.subscribe((newMessage) => {
       this.message = newMessage;  

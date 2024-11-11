@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -8,7 +7,7 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  constructor(private router: Router) {}
+  constructor() {}
 
   redirectToLogin() {
     window.location.href = environment.loginUrl;
