@@ -135,9 +135,9 @@ export class StaffsService {
     return this.http.put(`${this.apiUrl}/${staffId}`, staffDto, httpOptions);
   }
 
-  deleteStaff(staffId: string): Observable<any> {
-
-    return this.http.delete(`${this.apiUrl}/${staffId}`, httpOptions);
+  deleteStaff(staffEmail: any): Observable<any> {
+    console.log('Deleting staff 2:', staffEmail);
+    return this.http.delete(`${this.apiUrl}/${staffEmail}`, httpOptions);
   }
 
 
