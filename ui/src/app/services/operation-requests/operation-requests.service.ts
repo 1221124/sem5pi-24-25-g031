@@ -6,6 +6,7 @@ import { PatientsService } from '../patients/patients.service';
 
 import { catchError } from 'rxjs/operators';
 import { firstValueFrom, throwError } from 'rxjs';
+import { OperationRequest } from '../../models/operation-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,13 +28,13 @@ export class OperationRequestsService {
   ){    
     
     const dto ={ //creatingOperationRequestDto
-      "staffId": {
+      "staff": {
         "value": staffDto
       },
-      "patientId": {
+      "patient": {
         "value": patientDto
       },
-      "operationTypeId": {
+      "operationType": {
         "value": operationTypeDto
       },
       "deadlineDate": {
@@ -42,14 +43,55 @@ export class OperationRequestsService {
       "priority": priorityDto
     };
 
+    console.log('Operation Request DTO:', dto);
+
     return this.http.post(environment.operationRequests, dto, httpOptions)
-    .pipe(
-      catchError(error => {
-        console.error('Error submitting Operation Request:', error);
-        return throwError(() => new Error('Failed to submit the operation request. Please try again.'));
-      })
+    .subscribe(
+      response =>{
+        console.log('Operation Request created successfully', response);
+      },
+      error => {
+        console.log('Operation Request:', dto);
+        console.error('Error creating request:', error)
+      }
+    )
+  }
+
+  delete(id: string){
+    return this.http.delete(environment.operationRequests + '/' + id, httpOptions)
+    .subscribe(
+      response => {
+        console.log('Operation Request deleted successfully', response);
+      },
+      error => {
+        console.error('Error deleting request:', error);
+      }
     );
-    
+  }
+
+  put(
+    idDto: string,
+    deadlineDateDto: Date,
+    priorityDto: string,
+    statusDto: string
+  ){
+
+    const dto = { //updatingOperationRequestDto
+      "deadlineDate": {
+        "date": deadlineDateDto
+      },
+      "priority": priorityDto,
+      "status": statusDto
+    };
+
+    return this.http.put(environment.operationRequests + '/update/' + idDto, dto, httpOptions)
+    .subscribe(
+      response => {
+        console.log('Operation Request updated successfully', response);
+      },
+      error => {
+        console.error('Error updating request:', error);
+    });
   }
 
   getAll(){
