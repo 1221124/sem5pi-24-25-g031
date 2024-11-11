@@ -199,3 +199,11 @@ th, td {
   border: none;
   background-color: rgb(245,200,245);
 }
+
+.span-slot-start {
+  margin-left: 10px;
+  margin-right: 14px;
+}
+.span-slot-end {
+  margin-left: 14px;
+}

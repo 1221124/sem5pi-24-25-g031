@@ -44,6 +44,9 @@ export class PatientsComponent{
   message: string | undefined;
   emailId: string = '';
   newCondition: string = '';
+  formattedStart: string = '';
+  editingSlotIndex: number | null = null;
+
 
 
   firstNameTouched = false;
@@ -56,9 +59,19 @@ export class PatientsComponent{
   isCreateModalOpen = false;
   isAppoitmentHistoryModalOpen = false;
 
-
   ngOnInit(): void {
     this.fetchPatients();
+    if (this.selectedPatient.appointmentHistory) {
+      this.selectedPatient.appointmentHistory.forEach((slot: { formattedStart: string; start: string | number | Date; }, i: any) => {
+        slot.formattedStart = new Date(slot.start).toLocaleString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+      });
+    }
   }
 
   // This method is triggered when the user clicks the "edit" button
@@ -91,7 +104,20 @@ export class PatientsComponent{
     if (!this.selectedPatient.appointmentHistory) {
       this.selectedPatient.appointmentHistory = [];
     }
-    this.selectedPatient.appointmentHistory.push({ start: '', end: '' });
+
+    // Only add a new slot if there is no ongoing slot creation
+    const hasEmptySlot = this.selectedPatient.appointmentHistory.some(
+        (slot: { start: string; end: string; }) => slot.start === '' && slot.end === ''
+    );
+
+    if (!hasEmptySlot) {
+      this.selectedPatient.appointmentHistory.push({ start: '', end: '' });
+      this.editingSlotIndex = this.selectedPatient.appointmentHistory.length - 1;
+    }
+  }
+
+  isSlotBeingEdited(index: number): boolean {
+    return this.editingSlotIndex === index;
   }
   // Method to save the updated patient data
   savePatient() {

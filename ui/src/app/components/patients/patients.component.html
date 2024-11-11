@@ -127,8 +127,19 @@
         <div *ngIf="selectedPatient.appointmentHistory?.length > 0">
           <div *ngFor="let slot of selectedPatient.appointmentHistory; let i = index">
             <label>Slot {{ i + 1 }}</label>
-            <input type="text" id="slotStart" [(ngModel)]="slot.start" name="start{{i}}" readonly/>
-            <input type="datetime-local" [(ngModel)]="slot.end" name="end{{i}}" placeholder="End Time" />
+
+            <!-- Display inputs for editing an empty slot -->
+            <div *ngIf="slot.start === '' && slot.end === ''">
+              <input type="datetime-local" id="slotStartEdit" [(ngModel)]="slot.start" name="slotStartEdit{{i}}" placeholder="Enter slot start" />
+              <input type="datetime-local" id="slotEndEdit" [(ngModel)]="slot.end" name="slotEndEdit{{i}}" />
+            </div>
+
+            <!-- Display span for already filled slots -->
+            <div *ngIf="slot.start !== '' && slot.end !== ''">
+              <span class="span-slot-start">{{ slot.start | date: 'dd MMM yyyy HH:mm' }}</span>
+              -
+              <span class="span-slot-end">{{ slot.end | date: 'dd MMM yyyy HH:mm' }}</span>
+            </div>
           </div>
         </div>
         <button type="button" (click)="addSlot()">Add Slot</button>
