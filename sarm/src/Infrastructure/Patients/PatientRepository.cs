@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Patients;
 using Domain.Patients;
 using Domain.Shared;
 using Infrastructure;

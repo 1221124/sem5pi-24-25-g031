@@ -1,4 +1,5 @@
 using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Domain.Patients;
 using DDDNetCore.Infrastructure.OperationRequests;
 using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;

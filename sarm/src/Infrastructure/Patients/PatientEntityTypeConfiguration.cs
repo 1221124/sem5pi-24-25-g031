@@ -4,6 +4,7 @@ using Domain.Patients;
 using Domain.Shared;
 using Google.Type;
 using System;
+using DDDNetCore.Domain.Patients;
 using Domain.OperationRequests;
 using Domain.Users;
 using DateTime = System.DateTime;
@@ -103,15 +104,19 @@ namespace Infrastructure.Patients
             builder.Property(p => p.MedicalRecordNumber)
                 .HasColumnName("MedicalRecordNumber");
 
-            builder.OwnsOne(p => p.AppointmentHistory, history =>
+            builder.OwnsMany(p => p.AppointmentHistory, history =>
             {
-                history.Property(h => h.Condition)
-                    .HasColumnName("Condition")
-                    .IsRequired(false)
+                history.Property(h => h.Start)
+                    .HasColumnName("Start")
                     .HasConversion(
-                        v => string.Join(";", v.Select(slot => (string)slot)),
-                        v => v.Split(";", StringSplitOptions.RemoveEmptyEntries)
-                            .Select(s => (Slot)s).ToList()
+                        v => v.ToString("yyyy-MM-dd HH:mm"),
+                        v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
+                    );
+                history.Property(h => h.End)
+                    .HasColumnName("End")
+                    .HasConversion(
+                        v => v.ToString("yyyy-MM-dd HH:mm"),
+                        v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                     );
             });
 
