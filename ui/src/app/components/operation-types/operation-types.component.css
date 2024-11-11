@@ -1,58 +1,3 @@
-.operationTypes-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 25px;
-  border-radius: 8px;
-  background-color: #f5f5f5;
-  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
-}
-
-.operationTypes-form h1 {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
-  text-align: center;
-}
-
-.operationTypes-form h3 {
-  font-size: 18px;
-  font-weight: bold;
-  color: #444;
-  margin-top: 20px;
-}
-
-.operationTypes-form form {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-}
-
-.operationTypes-form input[type="text"],
-.operationTypes-form input[type="number"],
-.operationTypes-form select {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  transition: border-color 0.3s ease;
-  margin-bottom: 15px;
-}
-
-.operationTypes-form input[type="text"]:focus,
-.operationTypes-form input[type="number"]:focus,
-.operationTypes-form select:focus {
-  border-color: #009688;
-  outline: none;
-}
-
-.operationTypes-form label {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 5px;
-}
-
 .operationTypes-form button {
   padding: 12px;
   font-size: 16px;
@@ -195,8 +140,13 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-right: 10px;
 }
 
 .filter-buttons button:hover {
   background-color: #00796b;
+}
+
+button {
+  margin-right: 15px;
 }

@@ -11,11 +11,19 @@
           </th>
           <th>
             Specialization
-            <input type="text" [(ngModel)]="filter.specialization" placeholder="Filter by Specialization" />
-          </th>
+            <select [(ngModel)]="filter.specialization" name="specialization" id="specialization">
+              <option *ngFor="let spec of specializations" [value]="spec">
+                {{ spec }}
+              </option>
+            </select>
+          </th> 
           <th>
             Status
-            <input type="text" [(ngModel)]="filter.status" placeholder="Filter by Status" />
+            <select [(ngModel)]="filter.status" name="status" id="status">
+              <option *ngFor="let status of statuses" [value]="status">
+                {{ status }}
+              </option>
+            </select>
           </th>
           <th>Actions</th>
         </tr>
@@ -27,14 +35,20 @@
           <td>{{ operation.Specialization }}</td>
           <td>{{ operation.Status }}</td>
           <td>
-            <!-- <button>Edit</button> -->
-            <button>Delete</button>
+            <button *ngIf="operation.Status === 'Active'" (click)="inactivate(operation.Id)">
+              Inactivate
+            </button>
+            <button *ngIf="operation.Status === 'Inactive'" (click)="activate(operation)">
+              Activate
+            </button>
+            <button (click)="startEditOperationType(operation, false)">Update</button>
           </td>
         </tr>
       </tbody>
     </table>
     <div class="filter-buttons">
       <button (click)="applyFilter()">Apply Filters</button>
+      <button (click)="clearFilters()">Clear Filters</button>
     </div>
   </div>
 
@@ -54,12 +68,12 @@
     <button (click)="changePage(filter.pageNumber + 1)" [disabled]="filter.pageNumber >= totalPages">Next</button>
   </div>
 
-  <button (click)="showCreateForm = !showCreateForm">
+  <button (click)="toggleForm()">
     {{ showCreateForm ? 'Cancel' : 'Create Operation Type' }}
   </button>
 
   <div class="operationTypes-form" *ngIf="showCreateForm">
-    <h1>Create Operation Type</h1>
+    <h1>{{ isEditMode ? 'Edit' : 'Create' }} Operation Type</h1>
 
     <form (ngSubmit)="submitOperationType()" *ngIf="roles.length > 0 && specializations.length > 0; else loading">
       <label for="operationName">Operation Name:</label>
@@ -102,11 +116,12 @@
       <label for="cleaningDuration">Cleaning Duration (minutes):</label>
       <input type="number" id="cleaningDuration" name="cleaningDuration" [(ngModel)]="operationType.PhasesDuration.Cleaning" min="1" />
 
-      <button type="submit">Submit Operation Type</button>
+      <button type="submit">{{ isEditMode ? 'Update' : 'Submit' }} Operation Type</button>
     </form>
 
     <div *ngIf="message" [ngClass]="{'success': success, 'error': !success}">
       {{ message }}
+      <button *ngIf="!success" (click)="reloadPage()">Reload Page</button>
     </div>
 
     <ng-template #loading>

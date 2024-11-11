@@ -2,23 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
-
-export interface OperationType {
-  Id: string;
-  Name: string;
-  Specialization: string;
-  RequiredStaff: {
-    Role: string;
-    Specialization: string;
-    Quantity: number;
-  }[];
-  PhasesDuration: {
-    Preparation: number;
-    Surgery: number;
-    Cleaning: number;
-  };
-  Status: string;
-}
+import { OperationType } from '../../models/operation-type.model';
 
 @Component({
   selector: 'app-operation-types',
@@ -68,26 +52,29 @@ export class OperationTypesComponent implements OnInit {
   message: string = '';
   success: boolean = true;
   showCreateForm: boolean = false;
-  editingOperationType: OperationType | null = null;
   isEditMode: boolean = false;
 
   constructor(private operationTypesService: OperationTypesService) {}
 
-  ngOnInit() {
-    this.operationTypesService.getStaffRoles().then((data) => {
+  async ngOnInit() {
+    await this.operationTypesService.getStaffRoles().then((data) => {
       this.roles = data;
     });
-    this.operationTypesService.getSpecializations().then((data) => {
+    await this.operationTypesService.getSpecializations().then((data) => {
       this.specializations = data;
     });
-    this.operationTypesService.getStatuses().then((data) => {
+    await this.operationTypesService.getStatuses().then((data) => {
       this.statuses = data;
     });
-    this.fetchOperationTypes();
+    await this.fetchOperationTypes();
   }
 
-  fetchOperationTypes(): void {
-    this.operationTypesService.getOperationTypes(this.filter)
+  reloadPage() {
+    window.location.reload();
+  }
+
+  async fetchOperationTypes() {
+    await this.operationTypesService.getOperationTypes(this.filter)
     .then(response => {
       if (response.status === 200) {
         if (response.body) {
@@ -101,12 +88,6 @@ export class OperationTypesComponent implements OnInit {
           this.totalItems = 0;
           this.totalPages = 1;
         }
-      } else if (response.status === 404) {
-        this.operationTypes = [];
-        this.message = 'No Operation Types found!';
-        this.success = true;
-        this.totalItems = 0;
-        this.totalPages = 1;
       } else {
         this.operationTypes = [];
         this.message = 'Unexpected response status: ' + response.status;
@@ -118,7 +99,7 @@ export class OperationTypesComponent implements OnInit {
       if (error.status === 404) {
         this.operationTypes = [];
         this.message = 'No Operation Types found!';
-        this.success = true;
+        this.success = false;
         this.totalItems = 0;
         this.totalPages = 1;
       } else {
@@ -131,24 +112,24 @@ export class OperationTypesComponent implements OnInit {
     });
   }
 
-  applyFilter(): void {
+  async applyFilter() {
     this.filter = {
       pageNumber: 1,
       name: this.filter.name,
       specialization: this.filter.specialization,
       status: this.filter.status
     };
-    this.fetchOperationTypes();
+    await this.fetchOperationTypes();
   }
 
-  clearFilters(): void {
+  async clearFilters() {
     this.filter = {
       pageNumber: 1,
       name: '',
       specialization: '',
       status: ''
     };
-    this.fetchOperationTypes();
+    await this.fetchOperationTypes();
   }
 
   addStaff(): void {
@@ -161,17 +142,22 @@ export class OperationTypesComponent implements OnInit {
     }
   }
 
-  startEditOperationType(operationType: OperationType): void {
-    this.editingOperationType = { ...operationType };
+  startEditOperationType(operationType: OperationType, isActivate: boolean): void {
+    this.operationType = { ...operationType };
+    if (isActivate) {
+      this.showCreateForm = false;
+      this.operationType.Status = 'Active';
+    } else {
+      this.showCreateForm = true;
+    }
     this.isEditMode = true;
-    this.showCreateForm = true;
   }
 
-  submitOperationType() {
+  async submitOperationType() {
     if (this.isEditMode) {
-      this.update(this.operationType.Id);
+      await this.update(this.operationType.Id);
     } else {
-      this.operationTypesService.post(this.operationType)
+      await this.operationTypesService.post(this.operationType)
         .then(response => {
           if (response.status === 201) {
             this.message = 'Operation Type successfully created!';
@@ -191,37 +177,42 @@ export class OperationTypesComponent implements OnInit {
     }
   }
 
-  changePage(pageNumber: number): void {
+  async changePage(pageNumber: number) {
     if (pageNumber > 0 && pageNumber <= this.totalPages) {
       this.filter.pageNumber = pageNumber;
-      this.fetchOperationTypes();
+      await this.fetchOperationTypes();
     }
   }
 
-  update(id: string): void {
-    if (this.editingOperationType) {
-      this.operationTypesService.updateOperationType(id, this.editingOperationType)
-        .then(response => {
-          if (response.status === 200) {
-            this.message = 'Operation Type successfully updated!';
-            this.success = true;
+  async update(id: string) {
+    await this.operationTypesService.updateOperationType(id, this.operationType)
+      .then(response => {
+        if (response.status === 200) {
+          this.message = 'Operation Type successfully updated!';
+          this.success = true;
+          setTimeout(() => {
             this.clearForm();
             this.showCreateForm = false;
             this.fetchOperationTypes();
-          } else {
-            this.message = 'Unexpected response status: ' + response.status;
-            this.success = false;
-          }
-        })
-        .catch(error => {
-          this.message = 'There was an error updating the Operation Type: ' + error;
+          }, 3000);
+        } else {
+          this.message = 'Unexpected response status: ' + response.status;
           this.success = false;
-      });
-    }
+        }
+      })
+      .catch(error => {
+        this.message = 'There was an error updating the Operation Type: ' + error;
+        this.success = false;
+    });
   }
 
-  delete(id: string): void {
-    this.operationTypesService.deleteOperationType(id)
+  async activate(operationType: OperationType) {
+    this.startEditOperationType(operationType, true);
+    await this.update(operationType.Id);
+  }
+
+  async inactivate(id: string) {
+    await this.operationTypesService.deleteOperationType(id)
       .then(response => {
         if (response.status === 200) {
           this.message = 'Operation Type successfully deleted!';
@@ -252,8 +243,8 @@ export class OperationTypesComponent implements OnInit {
       Status: ''
     };
     this.newStaff = { Role: '', Specialization: '', Quantity: 1 };
-    this.editingOperationType = null;
     this.isEditMode = false;
+    this.message = '';
   }
 
   toggleForm(): void {

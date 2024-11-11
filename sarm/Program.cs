@@ -38,9 +38,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-    }).AddJsonOptions(options =>
+    }).AddNewtonsoftJson(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
     });
 
 builder.Services.AddDbContext<SARMDbContext>(options =>

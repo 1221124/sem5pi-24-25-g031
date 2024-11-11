@@ -59,7 +59,7 @@ namespace Controllers
                 return NotFound();
             }
 
-            return operationType;
+            return Ok (new { operationType });
         }
 
         // POST: api/OperationTypes

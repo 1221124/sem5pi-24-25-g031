@@ -87,11 +87,12 @@ namespace Domain.OperationTypes
             operationType.Specialization = dto.Specialization;
             operationType.RequiredStaff = dto.RequiredStaff;
             operationType.PhasesDuration = dto.PhasesDuration;
+            operationType.Status = dto.Status;
 
             await this._unitOfWork.CommitAsync();
 
             return OperationTypeMapper.ToDto(operationType);
-        }   
+        }
 
         public async Task<OperationTypeDto> InactivateAsync(OperationTypeId id)
         {

@@ -55,8 +55,8 @@
             [(ngModel)]="operationType"
             (focus)="operationTypeTouched = true"
           >
-          <option *ngFor="let operationType of operationTypes" [value]="operationType.name">
-            {{ operationType.name }}
+          <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">
+            {{ operationType.Name }}
           </option>
           </select>
         </form>
