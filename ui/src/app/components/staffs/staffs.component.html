@@ -2,7 +2,7 @@
     <h1>Staffs</h1>
     <button type="button" class="create-staff-btn" (click)="openModal()">Create Staff</button>
 
-    <div *ngIf="isModalOpen" class="modal">
+    <div *ngIf="isCreateModalOpen" class="modal">
         <div class="modal-content">
             <span type="button" class="close" (click)="closeModal()">&times;</span>
             <h2>Create New Staff</h2>
@@ -58,13 +58,17 @@
         </div>
     </div>
 
-    <div class="filter-container">
-        <input type="text" [(ngModel)]="searchName" placeholder="Search by Name" (input)="applyFilter()" />
-    </div>
-
     <div class="get-staffs">
         <table>
             <thead>
+                <tr>
+                    <th colspan="2">
+                        <div class="filter-container">
+                            <input type="text" [(ngModel)]="searchName" placeholder="Search by Name"
+                                (input)="applyFilter()" />
+                        </div>
+                    </th>
+                </tr>
                 <tr>
                     <th>First Name</th>
                     <th>Last Name</th>
@@ -85,16 +89,16 @@
                     <td>{{ staff.contactInformation.email.value }}</td>
                     <td>{{ staff.contactInformation.phoneNumber.value }}</td>
                     <td>{{ staff.licenseNumber.value }}</td>
-                    <td>{{ staff.specialization.value || 'N/A' }}</td>
+                    <td>{{ staff.specialization || 'N/A' }}</td>
                     <td>{{ staff.status || 'N/A' }}</td>
                     <td>{{ staff.slotAppointment || 'N/A' }}</td>
                     <td>{{ staff.slotAvailability || 'N/A' }}</td>
                     <td>
                         <button (click)="editStaff(staff)" class="action-btn edit-btn">
-                            <i class="fas fa-edit"></i> Edit
+                            Edit
                         </button>
-                        <button (click)="deleteStaff(staff)" class="action-btn delete-btn">
-                            <i class="fas fa-trash-alt"></i> Delete
+                        <button *ngIf="staff.status === 'Active'" type="button" class="action-btn delete-btn"
+                            (click)="confirmDelete(staff)">Inactive
                         </button>
                     </td>
                 </tr>
@@ -105,6 +109,68 @@
             <button (click)="changePage(currentPage - 1)" [disabled]="currentPage <= 1">Previous</button>
             <span>Page {{ currentPage }} of {{ totalPages }}</span>
             <button (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages">Next</button>
+        </div>
+
+        <div *ngIf="isDeleteModalOpen" class="modal">
+            <div class="modal-content">
+                <span class="close" (click)="closeDeleteModal()">&times;</span>
+                <h2>Confirm Delete</h2>
+                <p>Are you sure you want to delete this staff member?</p>
+                <div class="button-group">
+                    <button type="button" class="confirm-button" (click)="deleteConfirmed()">Confirm</button>
+                    <button type="button" class="cancel-button" (click)="closeDeleteModal()">Cancel</button>
+
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isEditModalOpen" class="modal">
+            <div class="modal-content">
+                <span type="button" class="close" (click)="closeModal()">&times;</span>
+                <h2>Edit Staff</h2>
+
+                <section>
+                    <form>
+                        <div class="form-group">
+                            <input type="text" id="email" name="email" [(ngModel)]="selectedStaff.email.value"
+                                (focus)="emailTouched = true" placeholder="Enter Email" />
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" id="phoneNumber" name="phoneNumber"
+                                [(ngModel)]="selectedStaff.phoneNumber.value" (focus)="phoneNumberTouched = true"
+                                placeholder="Enter Phone Number" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="specialization">Select Specialization:</label>
+                            <select id="specialization" name="specialization"
+                                [(ngModel)]="selectedStaff.specialization.value" (focus)="specializationTouched = true">
+                                <option value="Anaesthesiology">Anaesthesiology</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Circulating">Circulating</option>
+                                <option value="Instrumental">Instrumental</option>
+                                <option value="Medical_Action">Medical Action</option>
+                                <option value="Orthopaedics">Orthopaedics</option>
+                                <option value="X_Ray">X Ray</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <input type="text" id="slotAvailability" name="slotAvailability"
+                                [(ngModel)]="selectedStaff.slotAvailability.value" (focus)="phoneNumberTouched = true"
+                                placeholder="Enter Phone Number" />
+                        </div>
+
+
+                        <div class="button-group">
+                            <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
+                            <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
 
     </div>
