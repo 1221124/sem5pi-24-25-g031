@@ -1,0 +1,225 @@
+@startuml domain-model-backoffice-module
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+left to right direction
+top to bottom direction
+
+hide methods
+hide circle
+
+title Domain Model - Backoffice Module
+
+package UserAggregate #MediumAquaMarine {
+  class User <<root entity>>
+  class UserId <<value object>>
+  note right of UserId: unique identifier
+  class Username <<value object>>
+  note right of Username: same as the user's email
+  class Role <<value object>> {
+    ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
+  }
+  class UserStatus <<value object>> {
+    ACTIVE, INACTIVE, PENDING, BLOCKED
+  }
+}
+
+package PatientAggregate #LightSalmon {
+  class Patient <<root entity>>
+  class PatientId <<value object>>
+  class DateOfBirth <<value object>>
+  note right of DateOfBirth: format: system date
+  class Gender <<value object>> {
+    MALE, FEMALE
+  }
+  class MedicalRecordNumber <<value object>>
+  note right of MedicalRecordNumber: unique identifier (format: YYYYMMnnnnnn - YYYY = year, MM = month, nnnnnn = sequential number)
+  class MedicalCondition <<value object>>
+  note right of MedicalCondition: optional (free text)
+  class EmergencyContact <<value object>>
+  class AppointmentHistory <<value object>>
+}
+
+package StaffAggregate #Pink {
+  class Staff <<root entity>>
+  class StaffID <<value object>>
+  note right of StaffID: unique identifier
+  class LicenseNumber <<value object>>
+  note left of LicenseNumber: unique
+}
+
+package OperationRequestAggregate #LightGoldenRodYellow {
+  class OperationRequest <<root entity>>
+  class OperationRequestID <<value object>>
+  note right of OperationRequestID: unique identifier
+  class DeadlineDate <<value object>>
+  class OperationPriority <<value object>> {
+    ELECTIVE, URGENT, EMERGENCY
+  }
+}
+
+package OperationTypeAggregate #PaleGreen {
+  class OperationType <<root entity>>
+  class OperationTypeID <<value object>>
+  note bottom of OperationTypeID: unique identifier
+  class OperationTypeName <<value object>>
+  class RequiredStaff <<value object>>
+  class Quantity <<value object>>
+  note right of Quantity: number of staff required (integer > 0)
+  class OperationPhaseDetails <<value object>>
+  class OperationPhase <<value object>> {
+    ANAESTHESIA_PREPARATION, SURGERY_PROCESS, CLEANING
+  }
+}
+
+package AppointmentAggregate #IndianRed {
+  class Appointment <<root entity>>
+  class AppointmentID <<value object>>
+  note bottom of AppointmentID: unique identifier
+  class AppointmentStatus <<value object>> {
+    SCHEDULED, COMPLETED, CANCELED
+  }  
+}
+
+package SurgeryRoomAggregate #LightBlue {
+  class SurgeryRoom <<root entity>>
+  class SurgeryRoomID <<value object>>
+  note bottom of SurgeryRoomID: unique identifier
+  class RoomType <<value object>> {
+    OPERATING, CONSULTATION, ICU
+  }
+  class RoomCapacity <<value object>>
+  class AssignedEquipment <<value object>>
+  class RoomStatus <<value object>> {
+    AVAILABLE, OCCUPIED, UNDER_MAINTENANCE
+  }
+}
+
+package LogAggregate #LightGray {
+  class Log <<root entity>>
+  class LogID <<value object>>
+  note right of LogID: unique identifier
+  class LogType <<value object>> {
+    DELETION, UPDATE, CREATION
+  }
+  class EntityType <<value object>> {
+    PATIENT, STAFF, OPERATION_TYPE
+  }
+  class EntityID <<value object>>
+  note right of EntityID: Guid
+}
+
+class FullName <<value object>>
+class Name <<value object>>
+class ContactInformation <<value object>>
+class PhoneNumber <<value object>>
+class Email <<value object>>
+class DateTime <<value object>>
+class Date <<value object>>
+class Time <<value object>>
+class Slot <<value object>>
+class Specialization <<value object>> {
+  ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
+}
+class Status <<value object>> {
+  ACTIVE, INACTIVE
+}
+note right of Status: represented as a bool value
+
+class Admin
+note right of Admin: conceptual class
+class Doctor
+note right of Doctor: conceptual class
+class Nurse
+note top of Nurse: conceptual class
+class Technician
+note right of Technician: conceptual class
+
+FullName "1" -- "2" Name : > has
+ContactInformation "1" -- "1" PhoneNumber : > has
+ContactInformation "1" -- "1" Email : > has
+EmergencyContact "1" -- "1" PhoneNumber : > has
+DateTime "1" -- "1" Date : > has
+DateTime "1" -- "1" Time : > has
+Slot "1" -- "2" DateTime : > consists of
+
+User "1" -- "1" UserId : > identified by
+User "1" -- "1" Username : > has
+User "1" -- "1" Email : > has
+User "*" -- "1" Role : > has assigned
+User "*" -- "1" UserStatus : > has
+
+User "0..1" <-- "0..1" Staff : < references
+User "0..1" <-- "1" Patient : < references
+
+Patient "1" -- "1" PatientId : > identified by
+Patient "1..*" --- "1" FullName : > has
+Patient "*" --- "1" DateOfBirth : > born on
+Patient "*" --- "1" Gender : > has
+Patient "1" --- "1" MedicalRecordNumber : > has
+Patient "1" --- "1" ContactInformation : > has
+Patient "0..*" --- "0..*" MedicalCondition : > can have
+Patient "*" ---"1" EmergencyContact : > has
+Patient "*" --- "1" AppointmentHistory : > has
+
+Staff "1" -- "1" StaffID : > identified by
+Staff "*" -- "1" FullName : > has
+Staff "1" -- "1" LicenseNumber : > has
+Staff "*" -- "1" Specialization : > has
+Staff "1" -- "1" ContactInformation : > has
+Staff "*" -- "*" Slot : > has
+Staff "*" -- "1" Status : > has
+
+OperationRequest "1" -- "1" RequestID : > identified by
+OperationRequest "*" -- "1" Patient : > has
+OperationRequest "*" -- "1" Staff : > requested by
+OperationRequest "*" -- "1" OperationType : > has
+OperationRequest "*" -- "1" DeadlineDate : > has
+OperationRequest "*" -- "1" OperationPriority : > has
+
+OperationType "1" -- "1" OperationTypeID : > identified by
+OperationType "1" -- "1" OperationTypeName : > has
+OperationType "1" -- "*" RequiredStaff : > needs
+OperationType "*" -- "1" Specialization : > has
+OperationType "1" -- "1..*" OperationPhaseDetails : > has
+OperationType "*" -- "1" Status : > has
+RequiredStaff "1" -- "1" Role : > has
+RequiredStaff "1" -- "1" Specialization : > has
+RequiredStaff "1" -- "1" Quantity : > has
+OperationPhaseDetails "1" -- "1" OperationPhase : > has
+OperationPhaseDetails "1" -- "1" Time : > has
+
+Appointment "1" -- "1" AppointmentID : > identified by
+Appointment "1" -- "1" OperationRequest : > has
+Appointment "*" -- "1" DateTime : > scheduled to
+Appointment "*" -- "1" AppointmentStatus : > has
+Appointment "*" -- "1" SurgeryRoom : > happens in
+
+SurgeryRoom "1" -- "1" SurgeryRoomID : > identified by
+SurgeryRoom "*" -- "1" RoomType : > is
+SurgeryRoom "*" -- "1" RoomCapacity : > has
+SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
+SurgeryRoom "*" -- "1" RoomStatus : > has
+SurgeryRoom "*" -- "*" Slot : > has 
+
+Log "1" - "1" LogID : > identified by
+Log "*" -- "1" LogType : > has
+Log "*" -- "1" EntityType : > has
+Log "*" -- "1" EntityID : > has
+Log "*" -- "1" DateTime : > has
+
+Doctor "1" -- "1" Staff : > is
+Nurse "1" -- "1" Staff : > is
+Technician "1" -- "1" Staff : > is
+
+Admin "1" -- "*" User : > manages
+Admin "1" -- "*" Staff : > manages
+Admin "1" -- "*" Patient : > manages
+
+Admin "1" -- "0..*" OperationType : > manages
+Doctor "1" -- "0..*" OperationRequest : > manages
+
+@enduml

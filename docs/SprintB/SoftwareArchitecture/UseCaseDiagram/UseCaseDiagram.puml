@@ -1,0 +1,37 @@
+@startuml UseCaseDiagram
+
+left to right direction
+
+actor Admin
+actor "Backoffice User" as BackofficeUser
+actor Patient
+actor Doctor
+
+rectangle "Healthcare Management System" {
+    Admin --> (Register Backoffice Users) : "5.1.1"
+    Admin --> (Create Patient Profile) : "5.1.8"
+    Admin --> (Edit Patient Profile) : "5.1.9"
+    Admin --> (Delete Patient Profile) : "5.1.10"
+    Admin --> (List/Search Patient Profiles) : "5.1.11"
+    Admin --> (Create Staff Profile) : "5.1.12"
+    Admin --> (Edit Staff Profile) : "5.1.13"
+    Admin --> (Deactivate Staff Profile) : "5.1.14"
+    Admin --> (List/Search Staff Profiles) : "5.1.15"
+    Admin --> (Manage Operation Types) : "5.1.20"
+    Admin --> (List/Search Operation Types) : "5.1.23"
+
+    BackofficeUser --> (Login to the System) : "5.1.6"
+    BackofficeUser --> (Reset Password) : "5.1.2"
+
+    Doctor --> (Request an Operation) : "5.1.16"
+    Doctor --> (Update Operation Requisition) : "5.1.17"
+    Doctor --> (Remove Operation Requisition) : "5.1.18"
+    Doctor --> (List/Search Operation Requisitions) : "5.1.19"
+
+    Patient --> (Register for the Healthcare Application) : "5.1.3"
+    Patient --> (Update User Profile) : "5.1.4"
+    Patient --> (Delete Account) : "5.1.5"
+    Patient --> (Login using IAM Credentials) : "5.1.7"
+}
+
+@enduml
