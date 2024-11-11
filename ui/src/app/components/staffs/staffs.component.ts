@@ -37,20 +37,15 @@ export class StaffsComponent {
   emailTouched = false;
   phoneNumberTouched = false;
   specializationTouched = false;
-  isModalOpen = false;
-
+  isEditModalOpen = false;
+  isCreateModalOpen = false;
+  isDeleteModalOpen = false;
 
   ngOnInit() {
-    this.staffService.getStaff().subscribe(
-      (data) => {
-        //console.log('Fetched staffs:', data);
-        this.staffs = data;
-        //console.log('Staff loaded:, this.staffs');
-      },
-      (error) => {
-        console.error('Error loading staffs:', error);
-      }
-    );
+    this.refreshStaffs();
+    this.staffs.forEach(staff => {
+      staff.status = staff.status;
+    });
   }
 
 
@@ -88,20 +83,16 @@ export class StaffsComponent {
   }
 
   openModal() {
-    this.isModalOpen = true;
+    this.selectedStaff = null;
+    this.isCreateModalOpen = true;
+    this.isEditModalOpen = false;
+    this.isDeleteModalOpen = true;
   }
 
   closeModal() {
-    this.isModalOpen = false;
-  }
-
-  calculateTotalPages() {
-    const filteredStaffs = this.getFilteredStaffs();
-    this.totalPages = Math.ceil(filteredStaffs.length / this.itemsPerPage);
-    // Garantir que a página atual não ultrapassa o total de páginas
-    if (this.currentPage > this.totalPages) {
-      this.currentPage = this.totalPages;
-    }
+    this.isCreateModalOpen = false;
+    this.isEditModalOpen = false;
+    this.isDeleteModalOpen = false;
   }
 
   // Função para escolher os funcionários filtrados
@@ -137,20 +128,73 @@ export class StaffsComponent {
     }
   }
 
+
   // Aplicar filtro
   applyFilter() {
     this.currentPage = 1;
-    this.calculateTotalPages();
   }
 
-  editStaff(staff: any): void {
-    // Lógica de edição
+  // This method is triggered when the user clicks the "edit" button
+  editStaff(patient: any) {
+    this.selectedStaff = {
+      firstName: patient.fullName.firstName,
+      lastName: patient.fullName.lastName,
+      email: patient.contactInformation.email,
+      phoneNumber: patient.contactInformation.phoneNumber,
+    };
+    this.isEditModalOpen = true;
+    this.isCreateModalOpen = false;
+
+    //this.isCreateModalOpen = false;
   }
 
-  deleteStaff(staff: any): void {
-    // Lógica de exclusão
+  // Method to refresh the list of patients
+  refreshStaffs() {
+    this.staffService.getStaff().subscribe(
+      (data) => {
+        this.staffs = data; // Update the patients list
+      },
+      (error) => {
+        console.error('Error fetching patients:', error);
+      }
+    );
+  }
+
+  deactivate(staff: any) {
+    staff.Status = 'Inactive';
+    console.log("Status ativado:", staff.Status); // Verificação de debug
   }
 
 
+  confirmDelete(staff: any) {
+    this.isDeleteModalOpen = true;
+    this.selectedStaff = staff;
+  }
 
+
+  deleteConfirmed() {
+    if (this.selectedStaff) {
+      this.deleteStaff(this.selectedStaff);
+      this.closeDeleteModal();
+      this.refreshStaffs();
+    }
+  }
+
+  deleteStaff(staff: any) {
+    this.staffService.deleteStaff(staff.contactInformation.email.value).subscribe(
+      () => {
+        this.staffs = this.staffs.filter(s => s !== staff);
+        this.refreshStaffs();
+      },
+      error => {
+        console.error('Erro ao inativar o staff:', error);
+      }
+    );
+  }
+
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.selectedStaff = null;
+  }
 }
