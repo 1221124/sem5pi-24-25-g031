@@ -61,7 +61,7 @@
           <th></th>
         </tr>
         <tr>
-          <th>Edit</th>
+          <th>Actions</th>
           <th>First Name</th>
           <th>Last Name</th>
           <th>Date of Birth</th>
@@ -76,7 +76,10 @@
       </thead>
       <tbody>
         <tr *ngFor="let patient of patients">
-          <td><button class="edit-button" (click)="editPatient(patient)">Edit</button></td>
+          <td>
+            <button class="edit-button" (click)="editPatient(patient)">Edit</button>
+            <button class="delete-button" (click)="confirmDeletePatient(patient)">Delete </button>
+          </td>
           <td>{{ patient.fullName.firstName.value }}</td>
           <td>{{ patient.fullName.lastName.value }}</td>
           <td>{{ patient.dateOfBirth.birthDate | date }}</td>
@@ -124,28 +127,23 @@
           <input type="text" id="EmergencyContact" [(ngModel)]="selectedPatient.emergencyContact.number.value" name="EmergencyContact" placeholder="Enter Emergency Contact"/>
         </div>
         <h3>Appointment History</h3>
-        <div *ngIf="selectedPatient.appointmentHistory?.length > 0">
-          <div *ngFor="let slot of selectedPatient.appointmentHistory; let i = index">
-            <label>Slot {{ i + 1 }}</label>
+        <button type="button" (click)="openAddSlotForm()">Add Slot</button>
 
-            <!-- Display inputs for editing an empty slot -->
-            <div *ngIf="slot.start === '' && slot.end === ''">
-              <input type="datetime-local" id="slotStartEdit" [(ngModel)]="slot.start" name="slotStartEdit{{i}}" placeholder="Enter slot start" />
-              <input type="datetime-local" id="slotEndEdit" [(ngModel)]="slot.end" name="slotEndEdit{{i}}" />
-            </div>
-
-            <!-- Display span for already filled slots -->
-            <div *ngIf="slot.start !== '' && slot.end !== ''">
-              <span class="span-slot-start">{{ slot.start | date: 'dd MMM yyyy HH:mm' }}</span>
-              -
-              <span class="span-slot-end">{{ slot.end | date: 'dd MMM yyyy HH:mm' }}</span>
-            </div>
+        <!-- Add Slot Form - Initially hidden, shows when Add Slot button is clicked -->
+        <div *ngIf="isAddSlotFormVisible">
+          <div>
+            <label for="start">Start Date</label>
+            <input type="datetime-local" id="start" [(ngModel)]="newSlotStart" name="start" required />
           </div>
+          <div>
+            <label for="end">End Date</label>
+            <input type="datetime-local" id="end" [(ngModel)]="newSlotEnd" name="end" required />
+          </div>
+          <button type="button" (click)="addNewSlot()">Add Slot</button>
         </div>
-        <button type="button" (click)="addSlot()">Add Slot</button>
-        <button type="button" (click)="addCondition()">Save Slot</button>
-        <div>
-          <button type="button" (click)="savePatient()">Save</button>
+
+        <div class="button-group">
+          <button type="button" (click)="savePatient()">Save Patient</button>
         </div>
       </form>
     </div>
@@ -181,6 +179,19 @@
           </td>
         </tr>
       </table>
+    </div>
+  </div>
+
+  <div *ngIf="isDeleteModalOpen" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="closeDeleteModal()">&times;</span>
+      <h2>Confirm Delete</h2>
+      <p>Are you sure you want to delete this staff member?</p>
+      <div class="button-group">
+        <button type="button" class="confirm-button" (click)="deleteConfirmed()">Confirm</button>
+        <button type="button" class="cancel-button" (click)="closeDeleteModal()">Cancel</button>
+
+      </div>
     </div>
   </div>
 

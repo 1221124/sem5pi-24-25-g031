@@ -46,6 +46,9 @@ export class PatientsComponent{
   newCondition: string = '';
   formattedStart: string = '';
   editingSlotIndex: number | null = null;
+  isAddSlotFormVisible = false;  // Controls visibility of the Add Slot form
+  newSlotStart: string = '';  // To bind the start datetime of the new slot
+  newSlotEnd: string = '';    // To bind the end datetime of the new slot
 
 
 
@@ -58,6 +61,7 @@ export class PatientsComponent{
   isEditModalOpen = false;
   isCreateModalOpen = false;
   isAppoitmentHistoryModalOpen = false;
+  isDeleteModalOpen = false;
 
   ngOnInit(): void {
     this.fetchPatients();
@@ -116,9 +120,34 @@ export class PatientsComponent{
     }
   }
 
-  isSlotBeingEdited(index: number): boolean {
-    return this.editingSlotIndex === index;
+  // Add the new slot to the selected patient's appointment history
+  addNewSlot() {
+    if (this.newSlotStart && this.newSlotEnd) {
+      // Create a new slot object
+      const newSlot = {
+        start: this.newSlotStart,
+        end: this.newSlotEnd
+      };
+
+      // Add the new slot to the patient's appointment history
+      if (!this.selectedPatient.appointmentHistory) {
+        this.selectedPatient.appointmentHistory = [];
+      }
+      this.selectedPatient.appointmentHistory.push(newSlot);
+
+      // Reset the form fields and hide the Add Slot form
+      this.newSlotStart = '';
+      this.newSlotEnd = '';
+      this.isAddSlotFormVisible = false;
+    } else {
+      alert("Please select both start and end dates for the slot.");
+    }
   }
+
+  openAddSlotForm() {
+    this.isAddSlotFormVisible = true;
+  }
+
   // Method to save the updated patient data
   savePatient() {
     // Ensure valid Date objects for each slot
@@ -262,5 +291,34 @@ export class PatientsComponent{
 
   closeCreatePatientModal() {
     this.isCreateModalOpen = false;
+  }
+
+  confirmDeletePatient(patient: any){
+    this.isDeleteModalOpen = true;
+    this.selectedPatient = patient;
+  }
+
+  deleteConfirmed() {
+    if(this.selectedPatient){
+      this.deletePatient(this.selectedPatient);
+      this.closeDeleteModal();
+      this.refreshPatients();
+    }
+  }
+
+  deletePatient(patient: any) {
+    if(this.selectedPatient){
+      this.patientService.deletePatient(patient.id).subscribe(
+        () => {
+          this.isDeleteModalOpen = false;
+          this.refreshPatients();  // Refresh to show updated data
+        },
+          (error: any) => console.error('Error updating patient:', error)
+      );
+    }
+  }
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.selectedPatient = null;
   }
 }
