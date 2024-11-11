@@ -28,9 +28,6 @@ export class PatientsComponent{
     gender: ''
   }
   selectedPatient: any = {
-    appointmentHistory: {
-      condition: [{start: null, end: null}]
-    }
   };
 
   firstName: string = '';
@@ -57,6 +54,8 @@ export class PatientsComponent{
   emailTouched = false;
   isEditModalOpen = false;
   isCreateModalOpen = false;
+  isAppoitmentHistoryModalOpen = false;
+
 
   ngOnInit(): void {
     this.fetchPatients();
@@ -71,10 +70,14 @@ export class PatientsComponent{
       email: patient.contactInformation.email,
       phoneNumber: patient.contactInformation.phoneNumber,
       emergencyContact: patient.emergencyContact || {number: {value: ''} } ,
-      appointmentHistory: patient.appointmentHistory || {condition: ''}
+      appointmentHistory: patient.appointmentHistory.map((slot: any) => ({
+        start: slot.start ? new Date(slot.start) : null,
+        end: slot.end ? new Date(slot.end) : null
+      }))
     };
     this.isEditModalOpen = true;
     this.isCreateModalOpen = false;
+    this.isAppoitmentHistoryModalOpen = false;
   }
 
   // Method to add a condition to the appointment history
@@ -84,27 +87,27 @@ export class PatientsComponent{
       end: ''
     });
   }
-
-  // Method to remove a condition from the appointment history
-  removeCondition(index: number) {
-    this.selectedPatient.appointmentHistory.condition.splice(index, 1);
+  addSlot() {
+    if (!this.selectedPatient.appointmentHistory) {
+      this.selectedPatient.appointmentHistory = [];
+    }
+    this.selectedPatient.appointmentHistory.push({ start: '', end: '' });
   }
-
   // Method to save the updated patient data
   savePatient() {
-    this.selectedPatient.appointmentHistory.condition = this.selectedPatient.appointmentHistory.condition.map((slot : any) => ({
-      start: slot.start ? new Date(slot.start) : new Date(),
-      end: slot.end ? new Date(slot.end) : new Date()
+    // Ensure valid Date objects for each slot
+    this.selectedPatient.appointmentHistory = this.selectedPatient.appointmentHistory.map((slot: { start: Date; end: Date; }) => ({
+      start: new Date(slot.start),
+      end: new Date(slot.end)
     }));
 
+    // Call the service to save the patient data
     this.patientService.updatePatient(this.selectedPatient).subscribe(
-      (response) => {
+      () => {
         this.isEditModalOpen = false;
-        this.refreshPatients();
+        this.refreshPatients();  // Refresh to show updated data
       },
-      (error) => {
-        console.error('Error updating patient:', error);
-      }
+      error => console.error('Error updating patient:', error)
     );
   }
 
@@ -215,9 +218,21 @@ export class PatientsComponent{
     this.selectedPatient = null;
     this.isCreateModalOpen = true;
     this.isEditModalOpen = false;
+    this.isAppoitmentHistoryModalOpen = false;
   }
 
+  openAppointmentHistoryModal(patient: any) {
+    this.selectedPatient = {
+      appointmentHistory: patient.appointmentHistory
+    };
+    this.isAppoitmentHistoryModalOpen = true;
+    this.isEditModalOpen = false;
+    this.isCreateModalOpen = false;
+  }
 
+  closeAppointmentHistoryModal() {
+    this.isAppoitmentHistoryModalOpen = false;
+  }
 
   closeCreatePatientModal() {
     this.isCreateModalOpen = false;

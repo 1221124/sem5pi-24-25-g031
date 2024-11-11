@@ -86,20 +86,7 @@
           <td>{{ patient.medicalRecordNumber.value }}</td>
           <td>{{ patient.emergencyContact?.number?.value ? patient.emergencyContact.number.value : 'N/A' }}</td>
           <td>
-            <table>
-              <thead>
-              <tr>
-                <th>Start</th>
-                <th>End</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let slot of patient.appointmentHistory">
-                <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
-                <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
-              </tr>
-              </tbody>
-            </table>
+            <button type="button" (click)="openAppointmentHistoryModal(patient)">View</button>
           </td>
           <td>{{ patient.userId ? patient.userId : 'N/A' }}</td>
         </tr>
@@ -136,13 +123,16 @@
           <label for="EmergencyContact">Emergency Contact</label>
           <input type="text" id="EmergencyContact" [(ngModel)]="selectedPatient.emergencyContact.number.value" name="EmergencyContact" placeholder="Enter Emergency Contact"/>
         </div>
-        <div *ngFor="let slot of selectedPatient.appointmentHistory.condition; let i = index">
-          <label>Slot {{ i + 1 }}</label>
-          <input type="datetime-local" [(ngModel)]="selectedPatient.appointmentHistory.condition.start" name="start{{i}}" placeholder="Start Time" />
-          <input type="datetime-local" [(ngModel)]="selectedPatient.appointmentHistory.condition.end" name="end{{i}}" placeholder="End Time" />
-          <button type="button" (click)="removeCondition(i)">Remove Slot</button>
+        <h3>Appointment History</h3>
+        <div *ngIf="selectedPatient.appointmentHistory?.length > 0">
+          <div *ngFor="let slot of selectedPatient.appointmentHistory; let i = index">
+            <label>Slot {{ i + 1 }}</label>
+            <input type="text" id="slotStart" [(ngModel)]="slot.start" name="start{{i}}" readonly/>
+            <input type="datetime-local" [(ngModel)]="slot.end" name="end{{i}}" placeholder="End Time" />
+          </div>
         </div>
-        <button type="button" (click)="addCondition()">Add Slot</button>
+        <button type="button" (click)="addSlot()">Add Slot</button>
+        <button type="button" (click)="addCondition()">Save Slot</button>
         <div>
           <button type="button" (click)="savePatient()">Save</button>
         </div>
@@ -150,34 +140,37 @@
     </div>
   </div>
 
-  <div>
-    <table>
+  <div *ngIf="isAppoitmentHistoryModalOpen" class="modal">
+    <div class="modal-content">
+      <span type="button" class="close" (click)="closeAppointmentHistoryModal()">&times;</span>
+      <h2>Appointment History</h2>
+      <table>
         <thead>
-          <tr>
-            <th>Appointment History</th>
-          </tr>
+        <tr>
+          <th>Appointment History</th>
+        </tr>
         </thead>
-      <tbody>
-      <tr *ngFor="let patient of patients">
-        <td>
-          <table>
-            <thead>
-            <tr>
-              <th>Start</th>
-              <th>End</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let slot of patient.appointmentHistory">
-              <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
-              <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </table>
-
+        <tbody>
+        <tr>
+          <td>
+            <table>
+              <thead>
+              <tr>
+                <th>Start</th>
+                <th>End</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let slot of selectedPatient.appointmentHistory">
+                <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
+                <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 
 </div>
