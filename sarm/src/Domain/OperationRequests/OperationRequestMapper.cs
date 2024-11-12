@@ -47,10 +47,6 @@ namespace Domain.OperationRequests
         }
 
         public static OperationRequest ToEntityFromUpdating(UpdatingOperationRequestDto dto, OperationRequest operation){
-            
-            dto.DeadlineDate ??= operation.DeadlineDate;
-            dto.Priority ??= operation.Priority;
-            dto.RequestStatus ??= operation.Status;
 
             return new OperationRequest(
                 dto.Id,

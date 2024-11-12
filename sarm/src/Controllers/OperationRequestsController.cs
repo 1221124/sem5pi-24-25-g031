@@ -219,26 +219,26 @@ namespace DDDNetCore.Controllers
             // return Ok(new { message = "Request successful" });
         }
 
-        //PUT api/operationrequest/update
-        [HttpPut("update")]
+        //PUT api/operationrequest
+        [HttpPut]
         public async Task<ActionResult<OperationRequestDto>> Update([FromBody] UpdatingOperationRequestDto dto)
         {
             try{
                 if (dto == null) {
                     await _logService.LogAction(EntityType.OperationRequest, DbLogType.Update,"Operation request data is required.");
-                    return BadRequest("Operation request data is required.");
+                    return BadRequest(dto);
                 }
 
                 var operationRequest = await _operationRequestService.UpdateAsync(dto);
 
                 if(operationRequest == null)
-                    return NotFound();
+                    return NotFound(dto);
 
-                return Ok(operationRequest);
+                return Ok(dto);
 
             }catch(Exception ex){
                 await _logService.LogAction(EntityType.OperationRequest, DbLogType.Update, ex.Message);
-                return BadRequest("Error in Update: " + ex.Message);
+                return BadRequest(dto);
             }
         }
 
@@ -252,7 +252,7 @@ namespace DDDNetCore.Controllers
                 if (operationRequestDto == null)
                     return NotFound();
                 
-                return Ok("Operation request deleted successfully.");
+                return Ok(new { message = "Operation Request deleted successfully." });
             }
             catch(Exception ex)
             {
