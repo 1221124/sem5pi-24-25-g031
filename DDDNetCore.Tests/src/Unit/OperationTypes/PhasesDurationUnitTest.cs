@@ -6,7 +6,7 @@ using Domain.Shared;
 
 namespace Tests.Domain.OperationTypes
 {
-    public class PhasesDurationTests
+    public class PhasesDurationUnitTest
     {
         [Fact]
         public void Constructor_ShouldInitializeWithDefaultValues_WhenNoArguments()

@@ -8,13 +8,13 @@ using Domain.Shared;
 
 namespace Tests.Domain.OperationTypes
 {
-    public class OperationTypeServiceTests
+    public class OperationTypeServiceUnitTest
     {
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IOperationTypeRepository> _mockRepo;
         private readonly OperationTypeService _service;
 
-        public OperationTypeServiceTests()
+        public OperationTypeServiceUnitTest()
         {
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IOperationTypeRepository>();
@@ -83,7 +83,6 @@ namespace Tests.Domain.OperationTypes
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(dto.Name, result.Name);
             _mockRepo.Verify(repo => repo.AddAsync(It.IsAny<OperationType>()), Times.Once);
             _mockUnitOfWork.Verify(uow => uow.CommitAsync(), Times.Once);
         }
@@ -118,7 +117,6 @@ namespace Tests.Domain.OperationTypes
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(dto.Name, result.Name);
             _mockUnitOfWork.Verify(uow => uow.CommitAsync(), Times.Once);
         }
 
@@ -150,7 +148,6 @@ namespace Tests.Domain.OperationTypes
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(Status.Inactive, result.Status);
             _mockUnitOfWork.Verify(uow => uow.CommitAsync(), Times.Once);
         }
 

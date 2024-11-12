@@ -6,7 +6,7 @@ using Domain.Shared;
 
 namespace Tests.Domain.OperationTypes
 {
-    public class OperationTypeTests
+    public class OperationTypeUnitTest
     {
         private readonly Name _name;
         private readonly Specialization _specialization;
@@ -14,7 +14,7 @@ namespace Tests.Domain.OperationTypes
         private readonly PhasesDuration _phasesDuration;
         private readonly Status _status;
 
-        public OperationTypeTests()
+        public OperationTypeUnitTest()
         {
             _name = new Name("Example Operation");
             _specialization = Specialization.CARDIOLOGY;

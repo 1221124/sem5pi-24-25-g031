@@ -6,13 +6,13 @@ using Domain.Shared;
 
 namespace Tests.Domain.OperationTypes
 {
-    public class OperationTypeMapperTests
+    public class OperationTypeMapperUnitTest
     {
         private readonly OperationType _operationType;
         private readonly OperationTypeDto _operationTypeDto;
         private readonly CreatingOperationTypeDto _creatingOperationTypeDto;
 
-        public OperationTypeMapperTests()
+        public OperationTypeMapperUnitTest()
         {
             _operationType = new OperationType(
                 Guid.NewGuid(),

@@ -1,7 +1,7 @@
-/obj
-/bin
-/DDDNetCore.Tests/bin
-/DDDNetCore.Tests/obj
-/sarm/bin
-/sarm/obj
-/ui/node_modules
+obj
+bin
+DDDNetCore.Tests/bin
+DDDNetCore.Tests/obj
+sarm/bin
+sarm/obj
+ui/node_modules

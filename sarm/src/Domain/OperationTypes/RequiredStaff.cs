@@ -7,9 +7,9 @@ namespace Domain.OperationTypes
 {
     public class RequiredStaff : IValueObject
     {
-        public Role Role { get; private set; }
-        public Specialization Specialization { get; private set; }
-        public Quantity Quantity { get; private set; }
+        public Role Role { get; set; }
+        public Specialization Specialization { get; set; }
+        public Quantity Quantity { get; set; }
 
         public RequiredStaff(Role role, Specialization specialization, Quantity quantity)
         {
