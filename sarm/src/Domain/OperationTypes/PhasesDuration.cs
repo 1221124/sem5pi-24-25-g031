@@ -46,16 +46,6 @@ namespace Domain.OperationTypes
                     throw new ArgumentException("Input string must be in the format 'Phase:Quantity'.");
                 }
 
-                // if (!Enum.TryParse(keyValue[0], out Phase phase))
-                // {
-                //     throw new ArgumentException($"Invalid Phase value: {keyValue[0]}.");
-                // }
-
-                // if (!int.TryParse(keyValue[1], out int quantityValue))
-                // {
-                //     throw new ArgumentException($"Invalid Quantity value for phase {keyValue[0]}.");
-                // }
-
                 var phase = PhaseUtils.FromString(keyValue[0]);
                 var quantityValue = new Quantity(int.Parse(keyValue[1]));
 
