@@ -226,5 +226,19 @@ export class StaffsComponent {
     this.isSlotAvailabilityModal = false;
   }
 
+  addConditionAvailability() {
+    this.selectedStaff.slotAvailability.conditions.push({
+      start: '',
+      end: ''
+    });
+  }
+
+  addSlotAvailability() {
+    if (!this.selectedStaff.slotAvailability) {
+      this.selectedStaff.slotAvailability = [];
+    }
+    this.selectedStaff.slotAvailability.push({ start: '', end: '' });
+  }
+
 
 }
