@@ -147,15 +147,15 @@ namespace DDDNetCore.Tests.Domain.OperationRequests
         {
             var requestDto = new CreatingOperationRequestDto
             (
-                new StaffId(_doctorId),
-                new PatientId(_patientId),
-                new OperationTypeId(_operationTypeId),
-                new DeadlineDate(),
-                Priority.URGENT
+                new LicenseNumber("tests"),
+                new MedicalRecordNumber("tests"),
+                new Name("tests"),
+                new DeadlineDate("2025-10-20"),
+                Priority.ELECTIVE
             );
 
             var result = await _service.AddAsync(requestDto);
             return result?.Id ?? Guid.Empty;
         }
     }
-} 
+}
