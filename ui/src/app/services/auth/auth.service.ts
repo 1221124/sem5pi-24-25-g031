@@ -20,16 +20,16 @@ export class AuthService {
     private isErrorSource = new BehaviorSubject<boolean>(false);
     isError$ = this.isErrorSource.asObservable();
 
-    private static callbackProcessed = false;
+    private static authenticated = false;
 
     constructor(private http: HttpClient, private router: Router) {}
 
-    public isCallbackProcessed(): boolean {
-      return AuthService.callbackProcessed;
+    public isAuthenticated(): boolean {
+      return AuthService.authenticated;
     }
 
-    public markCallbackProcessed(): void {
-      AuthService.callbackProcessed = true;
+    public authenticate(): void {
+      AuthService.authenticated = true;
     }
 
     updateMessage(newMessage: string) {
@@ -126,17 +126,19 @@ export class AuthService {
 
         if (role && routeMap[role]) {
             this.updateMessage('Redirecting to ' + routeMap[role]);
-            // this.router.navigate([routeMap[role]]);
-            await this.router.navigateByUrl("/staffs", { replaceUrl: true });
+            await this.router.navigateByUrl(routeMap[role], { replaceUrl: true });
+            // await this.router.navigateByUrl("/staffs", { replaceUrl: true });
         } else {
             this.updateMessage('Unable to redirect based on role.\nRedirecting to home page...');
             this.updateIsError(true);
-            await this.router.navigateByUrl("/staffs", { replaceUrl: true });
+            await this.router.navigateByUrl("/", { replaceUrl: true });
+            // await this.router.navigateByUrl("/staffs", { replaceUrl: true });
         }
     }
 
     logout() {
       this.updateMessage('Logging out...');
+      AuthService.authenticated = false;
       setTimeout(
         () => {
           this.router.navigate(['/']);

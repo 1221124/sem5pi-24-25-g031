@@ -150,3 +150,33 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 button {
   margin-right: 15px;
 }
+
+.operation-types-header {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 5px;
+  color: #007bff;
+  border-color: #007bff;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.create-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 5px;
+}

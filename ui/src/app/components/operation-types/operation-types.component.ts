@@ -3,6 +3,7 @@ import { OperationTypesService } from '../../services/operation-types/operation-
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { OperationType } from '../../models/operation-type.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-operation-types',
@@ -54,7 +55,7 @@ export class OperationTypesComponent implements OnInit {
   showCreateForm: boolean = false;
   isEditMode: boolean = false;
 
-  constructor(private operationTypesService: OperationTypesService) {}
+  constructor(private operationTypesService: OperationTypesService, private router: Router) {}
 
   async ngOnInit() {
     await this.operationTypesService.getStaffRoles().then((data) => {
@@ -256,5 +257,9 @@ export class OperationTypesComponent implements OnInit {
     if (!this.showCreateForm) {
       this.clearForm();
     }
+  }
+
+  goToAdmin() {
+    this.router.navigate(['/admin']);
   }
 }

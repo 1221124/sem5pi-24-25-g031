@@ -1,4 +1,10 @@
 <div class="operationTypes">
+  <div class="operation-types-header">
+    <button (click)="goToAdmin()" class="btn btn-outline-primary back-btn">Back to Admin Home</button>
+    <button (click)="toggleForm()" class="btn btn-primary create-btn">
+      {{ showCreateForm ? 'Cancel' : 'Create Operation Type' }}
+    </button>
+  </div>
   <div *ngIf="operationTypes.length > 0; else noOperationTypes">
     <h1>Operation Types</h1>
     <table>
@@ -67,10 +73,6 @@
     <span>Page {{ filter.pageNumber }} of {{ totalPages }}</span>
     <button (click)="changePage(filter.pageNumber + 1)" [disabled]="filter.pageNumber >= totalPages">Next</button>
   </div>
-
-  <button (click)="toggleForm()">
-    {{ showCreateForm ? 'Cancel' : 'Create Operation Type' }}
-  </button>
 
   <div class="operationTypes-form" *ngIf="showCreateForm">
     <h1>{{ isEditMode ? 'Edit' : 'Create' }} Operation Type</h1>
