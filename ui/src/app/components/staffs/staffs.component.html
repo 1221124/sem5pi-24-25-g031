@@ -136,6 +136,7 @@
 
                 <section>
                     <form>
+
                         <div class="form-group">
                             <input type="text" id="email" name="email" [(ngModel)]="selectedStaff.email.value"
                                 (focus)="emailTouched = true" placeholder="Enter Email" />
@@ -161,12 +162,18 @@
                             </select>
                         </div>
 
-
-                        <div class="form-group">
-                            <input type="text" id="slotAvailability" name="slotAvailability"
-                                [(ngModel)]="selectedStaff.slotAvailability.value" (focus)="phoneNumberTouched = true"
-                                placeholder="Enter Phone Number" />
+                        <h3>Slot Availability</h3>
+                        <div *ngIf="selectedStaff.slotAvailability?.length > 0">
+                            <div *ngFor="let slot of selectedStaff.slotAvailability; let i = index">
+                                <label>Slot {{ i + 1 }}</label>
+                                <input type="text" id="slotStart" [(ngModel)]="slot.start" name="start{{i}}" readonly />
+                                <input type="datetime-local" [(ngModel)]="slot.end" name="end{{i}}"
+                                    placeholder="End Time" />
+                            </div>
                         </div>
+                        <button type="button" class="submit-button" (click)="addSlotAvailability()">Add Slot</button>
+                        <button type="button" class="submit-button" (click)="addConditionAvailability()">Save
+                            Slot</button>
 
 
                         <div class="button-group">
