@@ -1,4 +1,4 @@
-// src/app/models/operation-request.model.ts
+// src/app/models/operation-requests/operation-request.model.ts
 
 export interface OperationRequest {
     id: string;

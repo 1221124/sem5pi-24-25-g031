@@ -125,13 +125,13 @@
           <!-- Date Selection -->
           <div>
             <label for="updateDeadlineDate">Select Date:</label>
-            <input type="date" id="updateDeadlineDate" name="deadlineDate" [(ngModel)]="deadlineDate" (focus)="deadlineDateTouched = true" />
+            <input type="date" id="updateDeadlineDate" name="deadlineDate" [(ngModel)]="request.deadlineDate" (focus)="deadlineDateTouched = true" />
           </div>
   
           <!-- Priority Selection -->
           <div>
             <label for="updatePriority">Select Priority:</label>
-            <select id="updatePriority" name="priority" [(ngModel)]="priority" (focus)="priorityTouched = true">
+            <select id="updatePriority" name="priority" [(ngModel)]="request.priority" (focus)="priorityTouched = true">
               <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
             </select>
           </div>
@@ -139,13 +139,13 @@
           <!-- Status Selection -->
           <div>
             <label for="status">Select Status:</label>
-            <select id="status" name="status" [(ngModel)]="status" (focus)="statusTouched = true">
+            <select id="status" name="status" [(ngModel)]="request.status" (focus)="statusTouched = true">
               <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
             </select>
           </div>
 
           <div class="button-group">
-            <button type="button" class="btn-update-request" (click)="update(request)">Update Request</button>
+            <button type="button" class="btn-update-request" (click)="confirmUpdate(request)">Update Request</button>
           </div>
         </form>
       </section>

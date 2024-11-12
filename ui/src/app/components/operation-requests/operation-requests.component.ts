@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
@@ -9,12 +9,6 @@ import { OperationTypesService } from '../../services/operation-types/operation-
 import { Staff } from '../../models/staff.model';
 import { Patient } from '../../models/patient.model';
 import { OperationType } from '../../models/operation-type.model';
-
-export enum Priority {
-  ELECTIVE = 'Elective',
-  URGENT = 'Urgent',
-  EMERGENCY = 'Emergency'
-}
 
 @Component({
   selector: 'app-operation-requests',
@@ -48,7 +42,7 @@ export class OperationRequestsComponent {
     patient: '',
     operationType: '',
     deadlineDate: new Date(),
-    priority: '',
+    priority: 'null',
     status: ''
   };
   
@@ -77,7 +71,8 @@ export class OperationRequestsComponent {
     private service: OperationRequestsService,
     private serviceStaff: StaffsService,
     private servicePatient: PatientsService,
-    private serviceOperationType: OperationTypesService
+    private serviceOperationType: OperationTypesService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -91,6 +86,7 @@ export class OperationRequestsComponent {
 
   refresh() {
     this.loadOperationRequests();
+    this.cdr.detectChanges();
   }
 
   // loadRequestStatus(){
@@ -98,8 +94,8 @@ export class OperationRequestsComponent {
   // }
 
   loadPriority() {
-    this.priorities = Object.values(Priority);
-  }
+    this.priorities = ['Elective', 'Urgent', 'Emergency'];
+     }
 
   loadOperationRequests() {
     this.service.getAll().subscribe(
@@ -176,13 +172,13 @@ export class OperationRequestsComponent {
 
   openUpdateModal(request: OperationRequest) {
     console.log('Open Update Modal clicked');
+
+    this.request = request; // This will ensure the modal gets the correct request object
+    this.status = request.status;  // Initialize the status model in the form
+    this.deadlineDate = request.deadlineDate;  // Initialize deadlineDate model
+    this.priority = request.priority;  // Initialize priority model
     this.isUpdateModalOpen = true;
-
-    this.deadlineDate = request.deadlineDate;
-    this.priority = request.priority;
-    this.status = request.status;
-
-    this.update(request);
+    console.log('Request:', this.request);
   }
 
   closeUpdateModal() {
@@ -231,18 +227,47 @@ export class OperationRequestsComponent {
     }
   }
 
-  update(request: OperationRequest){
+  update(){
     console.log('Update button clicked');
-    this.service.put(request.id, this.deadlineDate, this.priority, this.status);
+
+    console.log('Request:', this.request);
+
+    this.service.put(this.request.id, this.request.deadlineDate, this.request.priority, this.request.status);
     this.closeUpdateModal();
     this.refresh();
     console.log('Operation Request updated successfully!');
     this.clearForm();
   }
 
-  confirmUpdate(){
-    this.updateConfirmation = true;
+  confirmUpdate(update: OperationRequest) {
+    if (this.request) {
+      console.log("Request before update:", this.request);
+  
+      if (update.status !== undefined) {
+        console.log("Updating status:", update.status);
+        this.request.status = update.status;
+      }
+      if (update.deadlineDate !== undefined) {
+        console.log("Updating deadlineDate:", update.deadlineDate);
+        this.request.deadlineDate = update.deadlineDate;
+      }
+      if (update.priority !== undefined) {
+        console.log("Updating priority:", update.priority);
+        this.request.priority = update.priority;
+      }
+  
+      this.update();
+  
+      console.log('Update confirmed');
+      console.log("Updated request:", this.request);
+  
+      this.isUpdateModalOpen = false; // Close the modal after update
+      this.closeUpdateModal(); // Close modal properly
+    } else {
+      console.error("Request object is not defined.");
+    }
   }
+  
 
   isFormValid(): boolean {
     if (!this.staff || !this.patient || !this.operationType || !this.priority || !this.deadlineDate) {
@@ -265,16 +290,28 @@ export class OperationRequestsComponent {
   }
 
   clearForm() {
+    this.id = '';
     this.staff = '';
     this.patient = '';
     this.operationType = '';
     this.deadlineDate = new Date();
-    this.priority = '';
+    this.priority = 'null';
+    this.status = '';
+
     this.staffTouched = false;
     this.patientTouched = false;
     this.operationTypeTouched = false;
     this.deadlineDateTouched = false;
     this.priorityTouched = false;
+    this.statusTouched = false;
+
     this.errorMessage = '';
+
+    this.deleteConfirmation = false;
+    this.updateConfirmation = false;
+
+    this.isCreateModalOpen = false;
+    this.isUpdateModalOpen = false;
+    this.isDeleteModalOpen = false;
   }
 }

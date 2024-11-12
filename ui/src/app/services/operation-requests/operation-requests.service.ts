@@ -5,8 +5,7 @@ import { environment, httpOptions } from '../../../environments/environment';
 import { PatientsService } from '../patients/patients.service';
 
 import { catchError } from 'rxjs/operators';
-import { firstValueFrom, throwError } from 'rxjs';
-import { OperationRequest } from '../../models/operation-request.model';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -80,15 +79,20 @@ export class OperationRequestsService {
     statusDto: string
   ){
 
+    console.log('ID:', idDto);
+
     const dto = { //updatingOperationRequestDto
+      "id": idDto,
       "deadlineDate": {
         "date": deadlineDateDto
       },
       "priority": priorityDto,
-      "status": statusDto
+      "requestStatus": statusDto
     };
 
-    return this.http.put(environment.operationRequests + '/update/' + idDto, dto, httpOptions)
+    console.log('Operation Request DTO:', dto);
+
+    return this.http.put(environment.operationRequests, dto, httpOptions)
     .subscribe(
       response => {
         console.log('Operation Request updated successfully', response);
@@ -110,5 +114,15 @@ export class OperationRequestsService {
 
   getPatients(){
     return this.patientsService.getPatients();
+  }
+
+  getPriority(){
+    return this.http.get<string[]>(environment.enums, httpOptions)
+    .pipe(
+      catchError(error => {
+        console.error('Error fetching Priority:', error);
+        return throwError(() => new Error('Failed to fetch priority. Please try again.'));
+      })
+    );
   }
 }
