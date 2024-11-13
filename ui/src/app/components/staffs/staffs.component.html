@@ -68,6 +68,18 @@
                                 (input)="applyFilter()" />
                         </div>
                     </th>
+                    <th>
+                        <div class="filter-container">
+                            <input type="text" [(ngModel)]="searchEmail" placeholder="Search by Email"
+                                (input)="applyFilter()" />
+                        </div>
+                    </th>
+                    <th colspan="2">
+                        <div class="filter-container">
+                            <input type="text" [(ngModel)]="searchSpecialization" placeholder="Search by Specialization"
+                                (input)="applyFilter()" />
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <th>First Name</th>
@@ -134,54 +146,46 @@
                 <span type="button" class="close" (click)="closeModal()">&times;</span>
                 <h2>Edit Staff</h2>
 
-                <section>
-                    <form>
+                <form (ngSubmit)="saveStaff()">
+                    <div>
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstNameEdit" [(ngModel)]="selectedStaff.firstName.value"
+                            name="firstName" />
+                    </div>
+                    <div>
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastNameEdit" [(ngModel)]="selectedStaff.lastName.value"
+                            name="lastName" />
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="text" id="emailEdit" [(ngModel)]="selectedStaff.email.value" name="email" />
+                    </div>
+                    <div>
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="text" id="phoneNumberEdit" [(ngModel)]="selectedStaff.phoneNumber.value"
+                            name="phoneNumber" />
+                    </div>
+                    <h3>Slots History</h3>
+                    <button type="button" (click)="openAddSlotAvailabilityForm()">Add Slot</button>
 
-                        <div class="form-group">
-                            <input type="text" id="email" name="email" [(ngModel)]="selectedStaff.email.value"
-                                (focus)="emailTouched = true" placeholder="Enter Email" />
+                    <!-- Add Slot Form - Initially hidden, shows when Add Slot button is clicked -->
+                    <div *ngIf="isAddSlotAvailabilityFormVisible">
+                        <div>
+                            <label for="start">Start Date</label>
+                            <input type="datetime-local" id="start" [(ngModel)]="newSlotStart" name="start" required />
                         </div>
-
-                        <div class="form-group">
-                            <input type="text" id="phoneNumber" name="phoneNumber"
-                                [(ngModel)]="selectedStaff.phoneNumber.value" (focus)="phoneNumberTouched = true"
-                                placeholder="Enter Phone Number" />
+                        <div>
+                            <label for="end">End Date</label>
+                            <input type="datetime-local" id="end" [(ngModel)]="newSlotEnd" name="end" required />
                         </div>
+                        <button type="button" (click)="addNewSlotAvailability()">Add Slot</button>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="specialization">Select Specialization:</label>
-                            <select id="specialization" name="specialization"
-                                [(ngModel)]="selectedStaff.specialization.value" (focus)="specializationTouched = true">
-                                <option value="Anaesthesiology">Anaesthesiology</option>
-                                <option value="Cardiology">Cardiology</option>
-                                <option value="Circulating">Circulating</option>
-                                <option value="Instrumental">Instrumental</option>
-                                <option value="Medical_Action">Medical Action</option>
-                                <option value="Orthopaedics">Orthopaedics</option>
-                                <option value="X_Ray">X Ray</option>
-                            </select>
-                        </div>
-
-                        <h3>Slot Availability</h3>
-                        <div *ngIf="selectedStaff.slotAvailability?.length > 0">
-                            <div *ngFor="let slot of selectedStaff.slotAvailability; let i = index">
-                                <label>Slot {{ i + 1 }}</label>
-                                <input type="text" id="slotStart" [(ngModel)]="slot.start" name="start{{i}}" readonly />
-                                <input type="datetime-local" [(ngModel)]="slot.end" name="end{{i}}"
-                                    placeholder="End Time" />
-                            </div>
-                        </div>
-                        <button type="button" class="submit-button" (click)="addSlotAvailability()">Add Slot</button>
-                        <button type="button" class="submit-button" (click)="addConditionAvailability()">Save
-                            Slot</button>
-
-
-                        <div class="button-group">
-                            <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
-                            <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
-                        </div>
-                    </form>
-                </section>
+                    <div class="button-group">
+                        <button type="button" (click)="saveStaff()">Save Staff</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -243,12 +247,16 @@
                                             <tr>
                                                 <th>Start</th>
                                                 <th>End</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let slot of selectedStaff.slotAvailability">
                                                 <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
                                                 <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                                <td><button type="button" class="action-btn delete-btn"
+                                                        (click)="deleteSlotAvailability()">Delete</button>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
