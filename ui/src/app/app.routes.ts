@@ -7,18 +7,17 @@ import { OperationRequestsComponent } from './components/operation-requests/oper
 import { PatientComponent } from './components/patient/patient.component';
 import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
-import { AdminComponent } from './components/admin/admin.component';
-
+import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
   { path: 'callback', component: AuthCallbackComponent },
-  { path: 'admin', component: AdminComponent },
+  { path: 'admin', component: AdminMenuComponent },
   { path: 'admin/staffs', component: StaffsComponent },
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/operationTypes', component: OperationTypesComponent },
-  { path: 'patients', component: PatientComponent },
-  { path: 'admin/patients', component: AdminPatientsComponent }
+  { path: 'admin/patients', component: AdminPatientsComponent },
+  { path: 'patient/patients', component: PatientComponent }
 ];
 
 @NgModule({

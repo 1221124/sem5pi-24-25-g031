@@ -6,7 +6,7 @@ import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 
 
 @Component({
-  selector: 'app-patients',
+  selector: 'app-admin-patients',
   standalone: true,
   imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf, NgOptimizedImage],
   templateUrl: './admin-patients.component.html',
