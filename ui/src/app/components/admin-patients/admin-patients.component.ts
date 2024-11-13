@@ -14,7 +14,7 @@ import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
   providers: [PatientsService]
 })
 
-export class PatientsComponent{
+export class AdminPatientsComponent{
 
   constructor(private patientService: PatientsService) {
   }
