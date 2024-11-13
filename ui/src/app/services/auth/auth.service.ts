@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { environment, httpOptions } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-
-interface TokenResponse {
-    access_token: string;
-    id_token: string;
-}
+import { TokenResponse } from '../../models/token-response';
 
 @Injectable({
   providedIn: 'root'
@@ -20,16 +16,47 @@ export class AuthService {
     private isErrorSource = new BehaviorSubject<boolean>(false);
     isError$ = this.isErrorSource.asObservable();
 
-    private static authenticated = false;
+    private static authenticated: boolean = false;
+
+    access_token: string = '';
 
     constructor(private http: HttpClient, private router: Router) {}
 
-    public isAuthenticated(): boolean {
+    isAuthenticated(): boolean {
       return AuthService.authenticated;
     }
 
-    public authenticate(): void {
+    authenticate(): void {
       AuthService.authenticated = true;
+    }
+
+    getToken(): { accessToken: string } {
+      return { accessToken: this.access_token };
+    }
+
+    setToken(accessToken: string): void {
+      this.access_token = accessToken;
+    }
+
+    verifyToken() : boolean {
+      try {
+        const decodedAccessToken: any = jwtDecode(this.access_token);
+        if (decodedAccessToken) {
+          //TODO: Verify expiration
+          return true;
+        }
+        this.updateMessage('Error decoding token: ' + 'Token is empty');
+        this.updateIsError(true);
+        return false;
+      } catch (error) {
+        this.updateMessage('Error verifying token: ' + error);
+        this.updateIsError(true);
+        return false;
+      }
+    }
+
+    clearToken(): void {
+      this.access_token = '';
     }
 
     updateMessage(newMessage: string) {
@@ -40,40 +67,39 @@ export class AuthService {
       this.isErrorSource.next(errorStatus);
     }
 
-    async exchangeCodeForToken(code: string): Promise<TokenResponse | null> {
-      const body = new HttpParams()
-        .set('code', code)
-        .set('client_id', environment.authConfig.clientId)
-        .set('client_secret', environment.authConfig.clientSecret)
-        .set('redirect_uri', environment.authConfig.redirectUri)
-        .set('grant_type', 'authorization_code')
-        .set('audience', environment.authConfig.audience)
-        .set('scope', 'openid email profile');
-  
-      try {
-        const response = await firstValueFrom(this.http
-          .post<TokenResponse>(environment.tokenUrl, body, { observe: 'response' }));
+    // async exchangeCodeForToken(code: string) {
+    //   const body = new HttpParams()
+    //     .set('code', code)
+    //     .set('client_id', environment.authConfig.clientId)
+    //     .set('client_secret', environment.authConfig.clientSecret)
+    //     .set('redirect_uri', environment.authConfig.redirectUri)
+    //     .set('grant_type', 'authorization_code')
+    //     .set('audience', environment.authConfig.audience)
+    //     .set('scope', 'openid email profile');
 
-        if (response && response.body) {
-          return response.body as TokenResponse;
-        } else {
-          this.updateMessage('Token response is empty');
-          this.updateIsError(true);
-          return null;
-        }
-      } catch (error) {
-        this.updateMessage('Error exchanging code for token: ' + error);
-        this.updateIsError(true);
-        return null;
-      }
-    }
+    //   const headers = new HttpHeaders()
+    //     .set('Content-Type', 'application/x-www-form-urlencoded');
+      
+    //   console.log('Sending request to exchange code for token');
+    //   const response = await firstValueFrom(this.http.post<any>(environment.tokenUrl, body, { headers: headers, observe: 'response', responseType: 'json' }));
+      
+    //   if (response && response.body) {
+    //     // console.log('Token response: ' + JSON.stringify(response.body));
+    //     console.log('Setting tokens');
+    //     this.setTokens(response.body.id_token, response.body.access_token);
+    //     console.log('Tokens set');
+    //     return;
+    //   } else {
+    //     this.updateMessage('Token response is empty');
+    //     this.updateIsError(true);
+    //   }
+    //   return;
+    // }
 
-    async handleUserCallback(idToken: string, accessToken: string) {
+    async handleUserCallback(accessToken: string) {
       const body = {
-        AccessToken: accessToken,
-        IdToken: idToken
+          accessToken : accessToken
       };
-    
       return firstValueFrom(this.http.post<boolean>(`${environment.usersApiUrl}/callback`, body, {observe: 'response'}));
     }
 
@@ -104,46 +130,31 @@ export class AuthService {
       return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response', responseType: 'json' }));
     }
 
-    async login(idToken: string) {
+    async login(accessToken: string) {
       const queryParams = new HttpParams()
-        .set('idToken', idToken);
+        .set('accessToken', accessToken);
 
       return firstValueFrom(this.http.post(`${environment.usersApiUrl}/login`, null, { params: queryParams, observe: 'response', responseType: 'text' }));
 
     }
 
     async redirectBasedOnRole(accessToken: string) {
-        const routeMap = {
-            'admin': '/admin',
-            'doctor': '/doctor',
-            'nurse': '/nurse',
-            'technician': '/technician',
-            'patient': '/patient'
-        };
+      const roleFromAccessToken = this.extractRoleFromAccessToken(accessToken) as string;
+      const role = roleFromAccessToken.toLowerCase() as string;
 
-        const roleFromAccessToken = this.extractRoleFromAccessToken(accessToken) as string;
-        const role = roleFromAccessToken.toLowerCase() as keyof typeof routeMap;
-
-        if (role && routeMap[role]) {
-            this.updateMessage('Redirecting to ' + routeMap[role]);
-            await this.router.navigateByUrl(routeMap[role], { replaceUrl: true });
-            // await this.router.navigateByUrl("/staffs", { replaceUrl: true });
-        } else {
-            this.updateMessage('Unable to redirect based on role.\nRedirecting to home page...');
-            this.updateIsError(true);
-            await this.router.navigateByUrl("/", { replaceUrl: true });
-            // await this.router.navigateByUrl("/staffs", { replaceUrl: true });
-        }
-    }
-
-    logout() {
-      this.updateMessage('Logging out...');
-      AuthService.authenticated = false;
-      setTimeout(
-        () => {
-          this.router.navigate(['/']);
-        },
-        5000
-      )
+      if (role) {
+          console.log('Redirecting to ' + role + ' page');
+          this.updateMessage('Redirecting to ' + role + ' page...');
+          setTimeout(() => {
+            this.router.navigateByUrl("/" + role, { replaceUrl: true });
+          }, 2000);
+      } else {
+        console.log('Unable to redirect based on role');
+          this.updateMessage('Unable to redirect based on role.\nRedirecting to home page...');
+          this.updateIsError(true);
+          setTimeout(() => {
+            this.router.navigateByUrl("", { replaceUrl: true });
+          }, 2000);
+      }
     }
 }

@@ -11,8 +11,4 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent {
   title = 'SARM G031 Web Application';
-
-  redirectToLogin() {
-    window.location.href = environment.loginUrl;
-  }
 }

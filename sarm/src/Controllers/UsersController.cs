@@ -5,11 +5,9 @@ using Domain.Staffs;
 using Domain.Patients;
 using Domain.Emails;
 using Domain.IAM;
-using Domain.UsersSession;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using DDDNetCore.Domain.DbLogs;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Controllers
 {
@@ -77,12 +75,11 @@ namespace Controllers
         [HttpPost("callback")]
         public async Task<ActionResult<bool>> HandleCallback([FromBody] TokenResponse body)
         {
-            var idToken = body.IdToken;
             var accessToken = body.AccessToken;
-
-            if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(accessToken))
+            
+            if (string.IsNullOrEmpty(accessToken))
             {
-                return BadRequest( new { Message = "IdToken and/or AccessToken are missing." });
+                return BadRequest( new { Message = "AccessToken is missing." });
             }
 
             try
@@ -92,7 +89,7 @@ namespace Controllers
                 Email email = new Email(emailAndRole.Email);
                 if (email == null)
                 {
-                    return BadRequest(new { Message = "Email not found in token." });
+                    return BadRequest(new { Message = "Email not found access token." });
                 }
 
                 var user = await _service.GetByEmailAsync(email);
@@ -102,7 +99,7 @@ namespace Controllers
                     return BadRequest(new { Message = $"User with email {email.Value} not found." });
                 }
 
-                return Ok(user);
+                return Ok(new { user.Id, user.Email, user.Role });
             }
             catch (Exception ex)
             {
@@ -154,10 +151,10 @@ namespace Controllers
 
         // POST: api/Users/login?idToken={idToken}
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login([FromQuery] string idToken)
+        public async Task<ActionResult<UserDto>> Login([FromQuery] string accessToken)
         {
             try {
-                var email = _iamService.GetEmailFromIdToken(idToken);
+                var email = _iamService.GetClaimsFromToken(accessToken).Email;
 
                 var user = await _service.GetByEmailAsync(email);
 

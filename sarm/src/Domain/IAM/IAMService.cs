@@ -100,7 +100,7 @@ namespace Domain.IAM
             var responseContent = await response.Content.ReadAsStringAsync();
             var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseContent);
 
-            if (tokenResponse == null || tokenResponse.IdToken == null)
+            if (tokenResponse == null)
             {
                 throw new Exception("Token not found in response.");
             }
@@ -175,13 +175,9 @@ namespace Domain.IAM
         // [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
 
-        // [JsonPropertyName("id_token")]
-        public string IdToken { get; set; }
-
         public TokenResponse() {}
 
-        public TokenResponse(string IdToken, string AccessToken) {
-            this.IdToken = IdToken;
+        public TokenResponse(string AccessToken) {
             this.AccessToken = AccessToken;
         }
     }

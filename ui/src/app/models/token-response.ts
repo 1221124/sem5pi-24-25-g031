@@ -1,4 +1,4 @@
 export interface TokenResponse {
-    access_token: string;
     id_token: string;
+    access_token: string;
 }

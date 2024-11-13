@@ -9,10 +9,12 @@ import { HomeComponent } from './components/home/home.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
 import { StaffsComponent } from './components/staffs/staffs.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
+import { AdminComponent } from './components/admin/admin.component';
 
 
 @NgModule({
   declarations: [
+    AdminComponent,
     AppComponent,
     AuthCallbackComponent,
     HomeComponent,

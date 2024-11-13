@@ -3,8 +3,6 @@ import { provideRouter } from '@angular/router';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { appConfig } from './app/app.config';
-import { provideHttpClient } from '@angular/common/http';
-import { OperationRequestsComponent } from './app/components/operation-requests/operation-requests.component';
 
 bootstrapApplication(AppComponent, {
   providers: [

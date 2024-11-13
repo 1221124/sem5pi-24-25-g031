@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
-import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -20,11 +19,6 @@ export class AuthCallbackComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    if (this.authService.isAuthenticated()) {
-      return;
-    }
-    this.authService.authenticate();
-
     this.authService.message$.subscribe((newMessage) => {
       this.message = newMessage;  
     });
@@ -32,22 +26,33 @@ export class AuthCallbackComponent implements OnInit {
       this.isError = errorStatus;  
     });
 
-    const params = await firstValueFrom(this.route.queryParams);
-    const code = params['code'] as string;
+    try {
+      // this.route.fragment.subscribe(fragment => {
+      //   const params = new URLSearchParams(fragment);
+    
+      //   Captura dos parâmetros do token
+      //   const accessToken = params.get('access_token');
+      //   const tokenType = params.get('token_type');
+      //   const expiresIn = params.get('expires_in');
 
-    if (code) {
-      try {
-        const tokenResponse = await this.authService.exchangeCodeForToken(code);
-        const idToken = tokenResponse?.id_token;
-        const accessToken = tokenResponse?.access_token;
+      const fragment = window.location.hash;
+      const params = new URLSearchParams(fragment.replace('#', ''));
+      const accessToken = params.get('access_token');
+      
+      if (accessToken) {
+        console.log('Setting token');
+        this.authService.setToken(accessToken);
+        console.log('Token set');
 
-        if (idToken && accessToken) {
-          const userCallbackResponse = await this.authService.handleUserCallback(idToken, accessToken);
-
+        if (this.authService.verifyToken()) {
+          console.log('Handling user callback');
+          const userCallbackResponse = await this.authService.handleUserCallback(accessToken);
+          
           if (userCallbackResponse.status === 200) {
             try {
-              const response = await this.authService.login(idToken);
+              const response = await this.authService.login(accessToken);
               if (response.status === 200) {
+                console.log('Login successful');
                 this.authService.updateMessage('Login successful!');
                 this.authService.redirectBasedOnRole(accessToken);
                 return;
@@ -58,7 +63,8 @@ export class AuthCallbackComponent implements OnInit {
                 }
               }
             } catch (error) {
-              this.authService.updateMessage('Error during login');  
+              const err = error as Error;
+              this.authService.updateMessage('Error during login:' + err.message);
               this.authService.updateIsError(true);
             }
           } else {
@@ -67,15 +73,17 @@ export class AuthCallbackComponent implements OnInit {
             return;
           }
         }
-      } catch (error) {
-        this.authService.updateMessage('Error during token exchange');  
+
+      } else {
+        this.authService.updateMessage('Error: Fragment is null');
         this.authService.updateIsError(true);
+        return;
       }
-    } else {
-      this.authService.updateMessage('Code not found in query parameters');  
+    } catch (error) {
+      const err = error as Error;
+      this.authService.updateMessage('Error during callback: ' + err.message);
       this.authService.updateIsError(true);
     }
-
   }
 
   private async createUser(accessToken: string): Promise<void> {

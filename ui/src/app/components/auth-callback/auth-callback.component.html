@@ -1,3 +1,8 @@
-<div class="message-container" [ngClass]="{'error': isError}">
-  <p>{{ message }}</p>
-</div>
+<div class="auth-callback">
+  <h2>Authentication</h2>
+  <div *ngIf="message" [ngClass]="{ 'success-message': !isError, 'error-message': isError }">
+    <p>{{ message }}</p>
+  </div>
+  <div *ngIf="!message && !isError" class="loading">
+    <p>We're processing your authentication...</p>
+  </div>
