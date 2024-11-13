@@ -18,9 +18,6 @@ namespace Domain.OperationRequests
             Date = date;
         }
 
-        public DeadlineDate() {
-        }
-
         public DeadlineDate(string date)
         {
             if (!DateOnly.TryParse(date, out Date deadline))
@@ -29,7 +26,11 @@ namespace Domain.OperationRequests
             }
             Date = deadline;
         }
-        
+
+        public DeadlineDate()
+        {
+        }
+
         public override string ToString()
         {
             return Date.ToString("yyyy-MM-dd");
@@ -42,6 +43,11 @@ namespace Domain.OperationRequests
                 throw new FormatException("Invalid date format. Use yyyy-MM-dd.");
             }
             return date;
+        }
+
+        public static bool Equals(DeadlineDate date1, DeadlineDate date2)
+        {
+            return date1.Date.Equals(date2.Date);
         }
     }
 }

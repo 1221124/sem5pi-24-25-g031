@@ -43,5 +43,34 @@ namespace Infrastructure.OperationRequests
             return await _objs
                 .AsQueryable().Where(x => x.OperationType.Equals(operationType)).ToListAsync();
         }
+
+        public async Task<List<OperationRequest>> GetFilteredAsync(OperationRequestFilters filters)
+        {
+            // Start with all OperationRequests
+            var query = _objs.AsQueryable();
+
+            // Apply filtering based on SearchId if provided
+            if (!string.IsNullOrWhiteSpace(filters.SearchId.ToString()))
+            {
+                query = query.Where(or => or.Id.AsString().Contains(filters.SearchId.ToString()));
+            }
+
+            if (filters.SearchDeadlineDate != new DeadlineDate())
+            {
+                query = query.Where(or => or.DeadlineDate.Equals(filters.SearchDeadlineDate));
+            }
+
+            if (filters.SearchPriority.ToString() != null)
+            {
+                query = query.Where(or => or.Priority.Equals(filters.SearchPriority.ToString()));
+            }
+
+            if (filters.SearchRequestStatus.ToString() != null)
+            {
+                query = query.Where(or => or.Status.Equals(filters.SearchRequestStatus.ToString()));
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }

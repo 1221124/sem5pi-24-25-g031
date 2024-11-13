@@ -8,9 +8,6 @@ namespace Domain.OperationRequests
 {
     public class OperationRequest : Entity<OperationRequestId>, IAggregateRoot
     {
-        // public StaffId DoctorId { get; set; }
-        // public PatientId PatientId { get; set; }
-        // public OperationTypeId OperationTypeId { get; set; }
         public LicenseNumber Staff { get; set; }
         public MedicalRecordNumber Patient { get; set; }
         public Name OperationType { get; set; }

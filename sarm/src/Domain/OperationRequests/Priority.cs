@@ -30,5 +30,10 @@ namespace Domain.OperationRequests
                 _ => throw new ArgumentException("Invalid priority value")
             };
         }
+
+        public static bool Equals(Priority priority1, Priority priority2)
+        {
+            return priority1.ToString() == priority2.ToString();
+        }
     }
 }

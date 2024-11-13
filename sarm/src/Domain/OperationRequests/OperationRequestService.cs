@@ -4,6 +4,7 @@ using Domain.DbLogs;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.OperationRequests;
+using Domain.Staffs;
 
 namespace DDDNetCore.Domain.OperationRequests
 {
@@ -13,16 +14,19 @@ namespace DDDNetCore.Domain.OperationRequests
         private readonly IOperationRequestRepository _repo;
         private readonly PatientService _patientService;
         private readonly OperationTypeService _operationTypeService;
+        private readonly StaffService _staffService;
         private readonly DbLogService _logService;
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo,
-        PatientService patientService, OperationTypeService operationTypeService, DbLogService logService)
+        PatientService patientService, OperationTypeService operationTypeService, DbLogService logService,
+        StaffService staffService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             _patientService = patientService;
             _operationTypeService = operationTypeService;
             _logService = logService;
+            _staffService = staffService;
         }        
 
         public async Task<OperationRequestDto?> AddAsync(CreatingOperationRequestDto requestDto)
@@ -45,23 +49,6 @@ namespace DDDNetCore.Domain.OperationRequests
             }
         }
 
-        public async Task<OperationRequestDto?> GetByIdAsync(OperationRequestId operationRequestId)
-        {
-            try
-            {
-                var category = await this._repo.GetByIdAsync(operationRequestId);
-                
-                if (category == null)
-                    return null;
-
-                return OperationRequestMapper.ToDto(category);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public async Task<List<OperationRequestDto>> GetAllAsync()
         {
             try
@@ -75,69 +62,6 @@ namespace DDDNetCore.Domain.OperationRequests
 
                 return OperationRequestMapper.ToDtoList(list);
 
-            }
-            catch (Exception)
-            {
-                return [];
-            }
-        }
-
-        public async Task<List<OperationRequestDto>?> GetByPatientNameAsync(FullName fullName)
-        {
-            try
-            {
-                var list = new List<OperationRequest>();
-                var operations = await _repo.GetAllAsync();
-
-                if (operations == null)
-                    return [];
-
-                for (int i = 0; i < operations.Count; i++)
-                {
-                    var patient = await _patientService.GetByMedicalRecordNumberAsync(operations[i].Patient);
-                    if (patient.FullName == fullName)
-                        list.Add(operations[i]);                        
-                }
-
-                if (list == null)
-                    return [];
-
-                return OperationRequestMapper.ToDtoList(list);
-            }
-            catch (Exception)
-            {
-                return [];
-            }
-        }
-
-        public async Task<List<OperationRequestDto>?> GetByOperationTypeAsync(OperationTypeId operationType)
-        {
-            try
-            {
-                var type = await _operationTypeService.GetByIdAsync(operationType);
-                var list = await _repo.GetByOperationType(type.Name);
-
-                if (list == null)
-                    return [];
-
-                return OperationRequestMapper.ToDtoList(list);
-            }
-            catch (Exception)
-            {
-                return [];
-            }
-        }
-
-        public async Task<List<OperationRequestDto>?> GetByRequestStatusAsync(RequestStatus requestStatus)
-        {
-            try
-            {
-                var list = await _repo.GetByStatusId(requestStatus);
-
-                if (list == null)
-                    return [];
-
-                return OperationRequestMapper.ToDtoList(list);
             }
             catch (Exception)
             {
@@ -207,5 +131,98 @@ namespace DDDNetCore.Domain.OperationRequests
                 return null;
             }
         }
+
+        public async Task<List<OperationRequestDto>> GetFilteredAsync(OperationRequestFilters filters)
+        {
+            try{
+                var list = await _repo.GetFilteredAsync(filters);
+
+                if(filters.SearchLicenseNumber != new LicenseNumber()){
+                    var staff = await _staffService.GetByLicenseNumber(filters.SearchLicenseNumber);
+
+                    list = list.Where(l => l.Staff.Equals(filters.SearchLicenseNumber)).ToList();
+                }
+
+                if(filters.SearchPatientName != new Name("")){
+                    var patients = await _patientService.GetByNameAsync(filters.SearchPatientName);
+
+                    list = list.Where(l => patients.Any(p => l.Patient.Equals(p.MedicalRecordNumber))).ToList();
+                }
+
+                if(list == null)
+                    return [];
+
+                return OperationRequestMapper.ToDtoList(list);
+            }catch(Exception){
+                return [];
+            }
+        }
+    //         try
+    //         {
+    //             // Fetch all requests
+    //             var list = await _repo.GetAllAsync();
+
+    //             // Apply filters conditionally
+    //             var filteredList = new List<OperationRequest>();
+
+    //             if (filters.SearchId != Guid.Empty)
+    //             {
+    //                 filteredList = list.Where(x => x.Id == filters.SearchId).ToList();
+    //                 list = filteredList;
+    //             }
+
+    //             if (filters.SearchPatientName != new Name(""))
+    //             {
+    //                 var patients = await _patientService.GetAllAsync();
+
+    //                 var patient = patients.FirstOrDefault(x => x.FullName == filters.SearchPatientName);
+
+    //                 if (patient != null)
+    //                 {
+    //                     filteredList = list.Where(x => x.Patient == patient.MedicalRecordNumber).ToList();
+    //                     list = filteredList;
+    //                 }
+    //             }
+
+    //             if (filters.SearchOperationType != new Name(""))
+    //             {
+    //                 var operationTypes = await _operationTypeService.GetAllAsync();
+
+    //                 var operationType = operationTypes.FirstOrDefault(x => x.Name == filters.SearchOperationType);
+
+    //                 if (operationType != null)
+    //                 {
+    //                     filteredList = list.Where(x => x.OperationType == operationType.Name).ToList();
+    //                     list = filteredList;
+    //                 }
+    //             }
+
+    //             if (filters.SearchDeadlineDate != new DeadlineDate())
+    //             {
+    //                 filteredList = list.Where(x => x.DeadlineDate == filters.SearchDeadlineDate).ToList();
+    //                 list = filteredList;
+    //             }
+
+    //             if (filters.SearchPriority.ToString() != "")
+    //             {
+    //                 filteredList = list.Where(x => x.Priority == filters.SearchPriority).ToList();
+    //                 list = filteredList;
+    //             }
+
+    //             if (filters.SearchRequestStatus.ToString() != "")
+    //             {
+    //                 filteredList = list.Where(x => x.Status == filters.SearchRequestStatus).ToList();
+    //                 list = filteredList;
+    //             }
+
+    //             // Map to DTOs and return
+    //             return OperationRequestMapper.ToDtoList(filteredList);
+    //         }
+    //         catch (Exception)
+    //         {
+    //             return [];
+    //         }
+    //     }
+    // }
     }
 }

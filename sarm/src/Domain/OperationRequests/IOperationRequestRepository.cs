@@ -11,5 +11,6 @@ namespace Domain.OperationRequests
         Task<List<OperationRequest>> GetByOperationType(Name operationType);
         Task<List<OperationRequest>> GetByStatusId(RequestStatus status);
         Task UpdateAsync(OperationRequest operationRequest);
+        Task<List<OperationRequest>> GetFilteredAsync(OperationRequestFilters filters);
     }
 }

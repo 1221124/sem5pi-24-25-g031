@@ -4,6 +4,7 @@ using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
 using DDDNetCore.Domain.OperationRequests;
+using Date = System.DateOnly;
 
 namespace DDDNetCore.Controllers
 {
@@ -50,95 +51,37 @@ namespace DDDNetCore.Controllers
             }
         }
 
-        // GET api/operationrequest/5
-        [HttpGet("id/{id}")]
-        public async Task<ActionResult<OperationRequestDto>> GetById(Guid id)
-        {
-            try
-            {
-                var operationRequest = await _operationRequestService.GetByIdAsync(new OperationRequestId(id));
-
-                if (operationRequest == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(operationRequest);
-            }catch(Exception ex)
-            {
-                return BadRequest("Error: " + ex.Message);
-            }
-        }
-        
-        // GET api/operationrequest/patientname
-        [HttpGet("patientname/{fullName}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByPatientName(string fullName, string? pageNumber)
-        {
+        // GET api/operationrequest/filtered
+        [HttpGet("filtered")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetFiltered(
+            [FromQuery] Guid searchId,
+            [FromQuery] string searchPatientName,
+            [FromQuery] string searchLicenseNumber,
+            [FromQuery] string searchOperationType,
+            [FromQuery] DateTime searchDeadlineDate,
+            [FromQuery] string searchPriority,
+            [FromQuery] string searchRequestStatus
+        ){
             try{
-                if(fullName == null)
-                    return BadRequest("Patient name is required.");
-                
-                var names = fullName.Split("-");
 
-                if (names.Length != 2)
-                {
-                    return BadRequest("Full name format is invalid. Expected format: FirstName%2LastName");
-                }
-                
-                var name = new FullName(new Name(names[0]), new Name(names[1]));
+                var filters = new OperationRequestFilters(
+                    searchId, 
+                    searchLicenseNumber,
+                    new FullName(searchPatientName), 
+                    searchOperationType, 
+                    new DeadlineDate(searchDeadlineDate.ToString("yyyy-MM-dd")), 
+                    PriorityUtils.FromString(searchPriority),
+                    RequestStatusUtils.FromString(searchRequestStatus)
+                );
 
-                var operationRequests = await _operationRequestService.GetByPatientNameAsync(name);
+                Console.WriteLine("Filters: " + filters);
+
+                var operationRequests = await _operationRequestService.GetFilteredAsync(filters);
 
                 if(operationRequests == null || operationRequests.Count == 0)
                     return NotFound();
 
-
-                if (pageNumber != null)
-                {
-                    var paginated = operationRequests
-                        .Skip((int.Parse(pageNumber) - 1) *
-                              _pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                        .Take(_pageSize) // Seleciona a quantidade especificada de itens para a página atual
-                        .ToList();
-
-                    return Ok(paginated);
-                }
-
                 return Ok(operationRequests);
-                
-            }catch(Exception ex){
-                return BadRequest("Error: " + ex.Message);
-            }
-        }
-        
-        // GET api/operationrequest/operationtype
-        [HttpGet("operationtype/{operationType}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByOperationType(Guid operationType, string? pageNumber)
-        {
-            try{
-                if(operationType == null)
-                    return BadRequest("Operation type is required.");
-
-                var id = new OperationTypeId(operationType);
-                
-                var operationRequests = await _operationRequestService.GetByOperationTypeAsync(id);
-
-                if(operationRequests == null)
-                    return NotFound();
-
-                if (pageNumber != null)
-                {
-                    var paginated = operationRequests
-                        .Skip((int.Parse(pageNumber) - 1) *
-                              _pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                        .Take(_pageSize) // Seleciona a quantidade especificada de itens para a página atual
-                        .ToList();
-
-                    return Ok(paginated);
-                }
-
-                return Ok(operationRequests);
-
             }
             catch(Exception ex)
             {
@@ -146,42 +89,6 @@ namespace DDDNetCore.Controllers
             }
         }
 
-        // GET api/operationrequest/status
-        [HttpGet("status/{status}")]
-        //[HttpGet("status={status}")]        
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByStatus(RequestStatus status, string? pageNumber)
-        {
-            try{
-                if(status == null)
-                    return BadRequest("Status is required.");
-
-                // var requestStatus = Enum.Parse<RequestStatus>(status);
-                
-                var operationRequests = await _operationRequestService.GetByRequestStatusAsync(status);
-
-                if(operationRequests == null)
-                    return NotFound();
-
-                if (pageNumber != null)
-                {
-                    var paginated = operationRequests
-                        .Skip((int.Parse(pageNumber) - 1) *
-                              _pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                        .Take(_pageSize) // Seleciona a quantidade especificada de itens para a página atual
-                        .ToList();
-
-                    return Ok(paginated);
-                }
-                
-                return Ok(operationRequests);
-
-            }
-            catch(Exception ex)
-            {
-                return BadRequest("Error: " + ex.Message);
-            }
-        }
-        
         // POST: api/operationRequests
         [HttpPost]
         // [Route("operationRequests")]
@@ -207,7 +114,7 @@ namespace DDDNetCore.Controllers
                     return BadRequest("Operation Request was not created.");
                 }
 
-                return CreatedAtAction(nameof(GetById), new { id = operationRequest.Id }, operationRequest);
+                return CreatedAtAction(nameof(Get), new { id = operationRequest.Id }, operationRequest);
             }
             catch (Exception ex)
             {

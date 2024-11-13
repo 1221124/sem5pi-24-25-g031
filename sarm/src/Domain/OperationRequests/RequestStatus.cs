@@ -29,5 +29,10 @@ namespace Domain.OperationRequests
                 _ => throw new ArgumentException("Invalid request status value")
             };
         }
+
+        public static bool Equals(RequestStatus status1, RequestStatus status2)
+        {
+            return status1.ToString() == status2.ToString();
+        }
     }
 }
