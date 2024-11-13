@@ -28,9 +28,17 @@ export class StaffsComponent {
   filterText: string = '';
 
   searchName: string = '';
+  searchEmail: string = '';
+  searchSpecialization: string = '';
   currentPage: number = 1;
   totalPages: number = 1; // Total de páginas após o filtro
   itemsPerPage: number = 5;  // Número de itens por página
+
+  editingSlotAvailabilityIndex: number | null = null;
+  isAddSlotAvailabilityFormVisible = false;  // Controls visibility of the Add Slot form
+  newSlotStart: string = '';  // To bind the start datetime of the new slot
+  newSlotEnd: string = '';    // To bind the end datetime of the new slot
+
 
   firstNameTouched = false;
   lastNameTouched = false;
@@ -99,20 +107,33 @@ export class StaffsComponent {
 
   // Função para escolher os funcionários filtrados
   getFilteredStaffs() {
-    return this.staffs.filter(staff =>
-      `${staff.fullName.firstName.value} ${staff.fullName.lastName.value}`
-        .toLowerCase()
-        .includes(this.searchName.toLowerCase())
-    );
+    return this.staffs.filter(staff => {
+      const fullName = `${staff.fullName?.firstName?.value || ""} ${staff.fullName?.lastName?.value || ""}`.toLowerCase();
+      const email = staff.contactInformation?.email?.value.toLowerCase() || ""; // Use .value se necessário
+      const specialization = staff.specialization?.toLowerCase() || "";
+
+      return (
+        fullName.includes(this.searchName.toLowerCase()) &&
+        email.includes(this.searchEmail.toLowerCase()) &&
+        specialization.includes(this.searchSpecialization.toLowerCase())
+      );
+    });
   }
 
+  // Função para paginar os funcionários filtrados
   pagedStaffs() {
-    // Filtra os staffs com base no nome (First Name + Last Name)
-    const filteredStaffs = this.staffs.filter(staff =>
-      `${staff.fullName.firstName.value} ${staff.fullName.lastName.value}`
-        .toLowerCase()
-        .includes(this.searchName.toLowerCase())
-    );
+    // Filtra os staffs com base no nome, e-mail e especialização
+    const filteredStaffs = this.staffs.filter(staff => {
+      const fullName = `${staff.fullName?.firstName?.value || ""} ${staff.fullName?.lastName?.value || ""}`.toLowerCase();
+      const email = staff.contactInformation.email?.value.toLowerCase() || "";
+      const specialization = staff.specialization?.toLowerCase() || "";
+
+      return (
+        fullName.includes(this.searchName.toLowerCase()) &&
+        email.includes(this.searchEmail?.toLowerCase() || "") &&
+        specialization.includes(this.searchSpecialization?.toLowerCase() || "")
+      );
+    });
 
     // Calcula o total de páginas após o filtro
     this.totalPages = Math.ceil(filteredStaffs.length / this.itemsPerPage);
@@ -124,17 +145,18 @@ export class StaffsComponent {
     return pagedStaffs;
   }
 
+  // Atualiza a página atual para a nova página selecionada
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
   }
 
-
   // Aplicar filtro
   applyFilter() {
     this.currentPage = 1;
   }
+
 
   // This method is triggered when the user clicks the "edit" button
   editStaff(patient: any) {
@@ -237,8 +259,65 @@ export class StaffsComponent {
     if (!this.selectedStaff.slotAvailability) {
       this.selectedStaff.slotAvailability = [];
     }
-    this.selectedStaff.slotAvailability.push({ start: '', end: '' });
+
+    // Only add a new slot if there is no ongoing slot creation
+    const hasEmptySlot = this.selectedStaff.slotAvailability.some(
+      (slot: { start: string; end: string; }) => slot.start === '' && slot.end === ''
+    );
+
+    if (!hasEmptySlot) {
+      this.selectedStaff.slotAvailability.push({ start: '', end: '' });
+      this.editingSlotAvailabilityIndex = this.selectedStaff.slotAvailability.length - 1;
+    }
   }
 
+  addNewSlotAvailability() {
+    if (this.newSlotStart && this.newSlotEnd) {
+      // Create a new slot object
+      const newSlot = {
+        start: this.newSlotStart,
+        end: this.newSlotEnd
+      };
+
+      // Add the new slot to the patient's appointment history
+      if (!this.selectedStaff.slotAvailability) {
+        this.selectedStaff.slotAvailability = [];
+      }
+      this.selectedStaff.slotAvailability.push(newSlot);
+
+      // Reset the form fields and hide the Add Slot form
+      this.newSlotStart = '';
+      this.newSlotEnd = '';
+      this.isAddSlotAvailabilityFormVisible = false;
+    } else {
+      alert("Please select both start and end dates for the slot.");
+    }
+  }
+
+  openAddSlotAvailabilityForm() {
+    this.isAddSlotAvailabilityFormVisible = true;
+  }
+
+  // Method to save the updated patient data
+  saveStaff() {
+    // Ensure valid Date objects for each slot
+    this.selectedStaff.slotAvailability = this.selectedStaff.slotAvailability.map((slot: { start: Date; end: Date; }) => ({
+      start: new Date(slot.start),
+      end: new Date(slot.end)
+    }));
+
+    // Call the service to save the patient data
+    this.staffService.editStaff(this.selectedStaff).subscribe(
+      () => {
+        this.isEditModalOpen = false;
+        this.refreshStaffs();  // Refresh to show updated data
+      },
+      error => console.error('Error updating patient:', error)
+    );
+  }
+
+  deleteSlotAvailability() {
+
+  }
 
 }

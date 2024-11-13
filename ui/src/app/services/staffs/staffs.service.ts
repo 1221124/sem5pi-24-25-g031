@@ -131,8 +131,8 @@ export class StaffsService {
     return this.http.get(this.apiUrl, httpOptions);
   }
 
-  editStaff(staffId: string, staffDto: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${staffId}`, staffDto, httpOptions);
+  editStaff(staffEmail: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update/${staffEmail}`, httpOptions);
   }
 
   deleteStaff(staffEmail: any): Observable<any> {
