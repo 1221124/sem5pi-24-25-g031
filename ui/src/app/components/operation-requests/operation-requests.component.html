@@ -1,6 +1,7 @@
 <div class="operationRequests-request">
   <h1>Operation Request</h1>
-  <button type="button" (click)="openCreateModal()">Create Operation Request</button>
+  <button type="button" class ="open" (click)="openCreateModal()">Create Operation Request</button>
+  <!-- <button type="button" (click)="return()">Return</button> -->
 
   <!-- Create Modal -->
   <div *ngIf="isCreateModalOpen" class="modal">
@@ -69,14 +70,54 @@
     <table>
       <thead>
         <tr>
-          <th>Request</th>
-          <th>Staff</th>
-          <th>Patient</th>
-          <th>Operation Type</th>
-          <th>Deadline Date</th>  
-          <th>Priority</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th>Request
+            <div class="filter-container">
+              <input type="text" id="searchId" name="searchId" [(ngModel)]="searchId" placeholder="Enter Request Id" />
+            </div>
+          </th>
+          <th>Staff
+            <div class="filter-container">
+              <input type="text" id="searchId" name="searchId" [(ngModel)]="searchId" placeholder="Enter License Number" />
+            </div>
+          </th>
+          <th>Patient
+            <div class="filter-container">
+              <input type="text" id="searchPatientName" name="searchPatientName" [(ngModel)]="searchPatientName" placeholder="Enter Patient Name" />
+            </div>
+          </th>
+          <th>Operation Type
+            <div class="filter-container">
+              <select id="searchOperationType" name="searchOperationType" [(ngModel)]="searchOperationType">
+                <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">{{ operationType.Name }}</option>
+              </select>
+            </div>
+          </th>
+          <th>Deadline Date
+            <div class="filter-container">
+              <input type="date" id="searchDeadlineDate" name="searchDeadlineDate" [(ngModel)]="searchDeadlineDate" placeholder="Enter Date" />
+            </div>
+          </th>  
+          <th>Priority
+            <div class="filter-container">
+              <select id="searchPriority" name="searchPriority" [(ngModel)]="searchPriority">
+                <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
+              </select>
+            </div>
+          </th>
+          <th>Status
+            <div class="filter-container">
+              <select id="searchStatus" name="searchStatus" [(ngModel)]="searchStatus">
+                <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+              </select>
+            </div>
+          </th>
+          <th>Actions
+            <div>
+              <button type="button" (click)="filterRequests()">
+                Filter
+              </button>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -101,6 +142,13 @@
       </tbody>
     </table>
   </div>
+
+  <div class="pagination">
+    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage <= 1">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages">Next</button>
+  </div>
+
 
   <!-- Delete Modal -->
   <div *ngIf="isDeleteModalOpen" class="modal">

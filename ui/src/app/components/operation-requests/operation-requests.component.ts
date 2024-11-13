@@ -25,7 +25,9 @@ export class OperationRequestsComponent {
   operationTypes: OperationType[] = [];
   priorities: string[] = [];
   // status: string[] = [];
-  statuses: string[] = ['Pending', 'Accepted', 'Rejected']; 
+  statuses: string[] = ['Pending', 'Accepted', 'Rejected'];
+  filters: any[] = [];
+  filteredRequests: OperationRequest[] = [];
 
   id: string = '';
   staff: string = '';
@@ -34,6 +36,16 @@ export class OperationRequestsComponent {
   deadlineDate: Date = new Date();
   priority: string = '';
   status: string = '';
+
+  searchId: string = '';
+  searchLicenseNumber: string = '';
+  searchPatientName: string = '';
+  searchOperationType: string = '';
+  searchDeadlineDate: Date = new Date();
+  searchPriority: string = '';
+  searchStatus: string = '';
+  searchActions: string = '';
+
   errorMessage: string = '';
 
   request: OperationRequest = {
@@ -59,6 +71,7 @@ export class OperationRequestsComponent {
   isCreateModalOpen: boolean = false;
   isUpdateModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
+  isFilterModalOpen: boolean = false;
 
   filter = {
     pageNumber: 0,
@@ -66,6 +79,10 @@ export class OperationRequestsComponent {
     specialization: '',
     status: ''
   }
+
+  currentPage: number = 1;
+  totalPages: number = 1; // Total de páginas após o filtro
+  itemsPerPage: number = 5;  // Número de itens por página
 
   constructor(
     private service: OperationRequestsService,
@@ -84,18 +101,22 @@ export class OperationRequestsComponent {
     // this.loadRequestStatus();
   }
 
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
   refresh() {
-    this.loadOperationRequests();
+    this.currentPage = 1;
+    this.totalPages = Math.ceil(this.requests.length / this.itemsPerPage);
+
     this.cdr.detectChanges();
   }
 
-  // loadRequestStatus(){
-  //   this.statuses = Object.values
-  // }
-
   loadPriority() {
     this.priorities = ['Elective', 'Urgent', 'Emergency'];
-     }
+  }
 
   loadOperationRequests() {
     this.service.getAll().subscribe(
@@ -170,20 +191,14 @@ export class OperationRequestsComponent {
     this.isCreateModalOpen = false;
   }
 
-  openUpdateModal(request: OperationRequest) {
-    console.log('Open Update Modal clicked');
-
-    this.request = request; // This will ensure the modal gets the correct request object
-    this.status = request.status;  // Initialize the status model in the form
-    this.deadlineDate = request.deadlineDate;  // Initialize deadlineDate model
-    this.priority = request.priority;  // Initialize priority model
-    this.isUpdateModalOpen = true;
-    console.log('Request:', this.request);
-  }
-
-  closeUpdateModal() {
-    console.log('Close Update Modal clicked');
-    this.isUpdateModalOpen = false;
+  create() {
+    console.log('Create button clicked');
+    if (!this.isFormValid()) return;
+    this.service.post(this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
+    this.closeCreateModal();
+    this.refresh();
+    console.log('Operation Request submitted successfully!');
+    this.clearForm();
   }
 
   openDeleteModal(request: OperationRequest) {
@@ -198,16 +213,6 @@ export class OperationRequestsComponent {
     this.isDeleteModalOpen = false;
 
     this.id = '';
-  }
-
-  create() {
-    console.log('Create button clicked');
-    if (!this.isFormValid()) return;
-    this.service.post(this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
-    this.closeCreateModal();
-    this.refresh();
-    console.log('Operation Request submitted successfully!');
-    this.clearForm();
   }
 
   delete(request: string) {
@@ -225,6 +230,22 @@ export class OperationRequestsComponent {
       this.isDeleteModalOpen = false;
       this.closeDeleteModal();
     }
+  }
+
+  openUpdateModal(request: OperationRequest) {
+    console.log('Open Update Modal clicked');
+
+    this.request = request; // This will ensure the modal gets the correct request object
+    this.status = request.status;  // Initialize the status model in the form
+    this.deadlineDate = request.deadlineDate;  // Initialize deadlineDate model
+    this.priority = request.priority;  // Initialize priority model
+    this.isUpdateModalOpen = true;
+    console.log('Request:', this.request);
+  }
+
+  closeUpdateModal() {
+    console.log('Close Update Modal clicked');
+    this.isUpdateModalOpen = false;
   }
 
   update(){
@@ -268,6 +289,27 @@ export class OperationRequestsComponent {
     }
   }
   
+  filterRequests() {
+    console.log('Filter button clicked');
+
+    this.service.get(this.searchId, this.searchLicenseNumber, this.searchPatientName, this.searchOperationType, this.searchDeadlineDate, this.searchPriority, this.searchStatus).subscribe(
+      (data) => {
+        this.filteredRequests = data;
+        this.requests = this.filteredRequests;
+        console.log('Filtered Operation Requests:', this.requests);
+        console.log('Operation Requests filtered successfully!');
+        this.applyFilter();
+      },
+      (error) => {
+        console.error('Error filtering Operation Requests:', error);
+      }
+    );
+    console.log('Operation Requests filtered successfully!');
+  }
+
+  applyFilter(): void {
+    this.refresh();
+  }
 
   isFormValid(): boolean {
     if (!this.staff || !this.patient || !this.operationType || !this.priority || !this.deadlineDate) {
