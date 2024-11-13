@@ -39,6 +39,11 @@ namespace Infrastructure.StaffRepository
             return (await _objs
                 .AsQueryable().Where(x => specialization.Equals(x.Specialization)).ToListAsync())!;
         }
+
+        public async Task<Staff> GetByLicenseNumber(LicenseNumber licenseNumber)
+        {
+            return await _objs.FirstOrDefaultAsync(x => licenseNumber.Equals(x.LicenseNumber));
+        }
     }
 
 }

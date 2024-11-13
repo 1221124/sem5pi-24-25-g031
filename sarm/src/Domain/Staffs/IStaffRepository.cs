@@ -9,5 +9,6 @@ namespace Domain.Staffs
         Task<Staff> GetByPhoneNumberAsync(PhoneNumber phoneNumber);
         Task<List<Staff>> GetByFullNameAsync(Name firstName, Name lastName);
         Task<List<Staff>> GetBySpecializationAsync(Specialization specialization);
+        Task<Staff> GetByLicenseNumber(LicenseNumber licenseNumber);
     }
 }

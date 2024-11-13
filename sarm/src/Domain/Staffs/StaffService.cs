@@ -298,5 +298,21 @@ namespace Domain.Staffs
                 return null;
             }
         }
+
+        //GetByLicenseNumber
+        public async Task<StaffDto?> GetByLicenseNumber(LicenseNumber licenseNumber){
+            try{
+                var staff = await _repo.GetByLicenseNumber(licenseNumber);
+
+                if(staff == null)
+                    return null;
+
+                return StaffMapper.ToDto(staff);
+
+            }catch(Exception){
+                return null;
+            }
+            
+        }
     }
 }

@@ -17,6 +17,8 @@ namespace Domain.Staffs
             Value = value;
         }
 
+        public LicenseNumber(){}
+
         public static implicit operator LicenseNumber(string value)
         {
             return new LicenseNumber(value);
@@ -26,5 +28,6 @@ namespace Domain.Staffs
         {
             return licenseNumber.Value;
         }
+
     }
 }
