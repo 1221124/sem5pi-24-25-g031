@@ -17,7 +17,7 @@ export const routes: Route[] = [
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/operationTypes', component: OperationTypesComponent },
   { path: 'admin/patients', component: AdminPatientsComponent },
-  { path: 'patient/patients', component: PatientComponent }
+  { path: 'patient', component: PatientComponent }
 ];
 
 @NgModule({

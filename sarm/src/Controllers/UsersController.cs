@@ -96,10 +96,10 @@ namespace Controllers
 
                 if (user == null)
                 {
-                    return BadRequest(new { Message = $"User with email {email.Value} not found." });
+                    return Ok(new {exists = false});
                 }
 
-                return Ok(new { user.Id, user.Email, user.Role });
+                return Ok(new {exists = true});
             }
             catch (Exception ex)
             {
@@ -141,6 +141,8 @@ namespace Controllers
                     {
                         patientDto.UserId = new UserId(user.Id);
                         await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
+                    } else {
+                        return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
                     }
                 }
             }

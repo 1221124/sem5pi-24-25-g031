@@ -100,7 +100,7 @@ export class AuthService {
       const body = {
           accessToken : accessToken
       };
-      return firstValueFrom(this.http.post<boolean>(`${environment.usersApiUrl}/callback`, body, {observe: 'response'}));
+      return firstValueFrom(this.http.post<any>(`${environment.usersApiUrl}/callback`, body, {observe: 'response'}));
     }
 
     extractEmailFromAccessToken(accessToken: string): string | null {
@@ -134,8 +134,7 @@ export class AuthService {
       const queryParams = new HttpParams()
         .set('accessToken', accessToken);
 
-      return firstValueFrom(this.http.post(`${environment.usersApiUrl}/login`, null, { params: queryParams, observe: 'response', responseType: 'text' }));
-
+      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}/login`, null, { params: queryParams, observe: 'response'}));
     }
 
     async redirectBasedOnRole(accessToken: string) {

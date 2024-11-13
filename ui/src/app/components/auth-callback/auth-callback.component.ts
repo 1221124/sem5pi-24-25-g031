@@ -41,27 +41,28 @@ export class AuthCallbackComponent implements OnInit {
           const userCallbackResponse = await this.authService.handleUserCallback(accessToken);
           
           if (userCallbackResponse.status === 200) {
-            try {
-              const response = await this.authService.login(accessToken);
-              if (response.status === 200) {
+            if (userCallbackResponse.body?.exists == true) {
+              const loginResponse = await this.authService.login(accessToken);
+              if (loginResponse.status == 200) {
                 console.log('Login successful');
                 this.authService.updateMessage('Login successful!');
                 this.authService.redirectBasedOnRole(accessToken);
                 return;
               } else {
-                if (response && response.body) {
-                  this.authService.updateMessage('Error during login (not Ok): ' + response.body); 
-                  this.authService.updateIsError(true);
-                }
+                console.log('Error during login: ' + loginResponse.body);
+                this.authService.updateMessage('Error during login: ' + loginResponse.body);
+                this.authService.updateIsError(true);
+                return;
               }
-            } catch (error) {
-              const err = error as Error;
-              this.authService.updateMessage('Error during login:' + err.message);
-              this.authService.updateIsError(true);
+            } else {
+              console.log('Creating user...');
+              this.authService.updateMessage('Creating user...');
+              await this.createUser(accessToken);
+              return;
             }
           } else {
-            this.authService.updateMessage('Creating user...');
-            await this.createUser(accessToken);
+            this.authService.updateMessage('Error during user callback: ' + userCallbackResponse.body);  
+            this.authService.updateIsError(true);
             return;
           }
         }
