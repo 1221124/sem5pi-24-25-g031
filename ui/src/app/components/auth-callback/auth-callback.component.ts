@@ -27,14 +27,6 @@ export class AuthCallbackComponent implements OnInit {
     });
 
     try {
-      // this.route.fragment.subscribe(fragment => {
-      //   const params = new URLSearchParams(fragment);
-    
-      //   Captura dos parâmetros do token
-      //   const accessToken = params.get('access_token');
-      //   const tokenType = params.get('token_type');
-      //   const expiresIn = params.get('expires_in');
-
       const fragment = window.location.hash;
       const params = new URLSearchParams(fragment.replace('#', ''));
       const accessToken = params.get('access_token');
