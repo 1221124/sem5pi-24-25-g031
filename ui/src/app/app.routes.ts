@@ -4,7 +4,8 @@ import { NgModule } from '@angular/core';
 import { HomeComponent } from './components/home/home.component';
 import { StaffsComponent } from './components/staffs/staffs.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
-import { PatientsComponent } from './components/patients/patients.component';
+import { PatientComponent } from './components/patient/patient.component';
+import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminComponent } from './components/admin/admin.component';
 
@@ -16,7 +17,8 @@ export const routes: Route[] = [
   { path: 'admin/staffs', component: StaffsComponent },
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/operationTypes', component: OperationTypesComponent },
-  { path: 'admin/patients', component: PatientsComponent }
+  { path: 'patients', component: PatientComponent },
+  { path: 'admin/patients', component: AdminPatientsComponent }
 ];
 
 @NgModule({
