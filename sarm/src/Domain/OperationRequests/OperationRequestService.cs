@@ -1,10 +1,13 @@
-using DDDNetCore.Domain.OperationRequests;
-using DDDNetCore.Domain.Patients;
+using Domain.Patients;
 using Domain.DbLogs;
 using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.OperationRequests;
 using Domain.Staffs;
+using DDDNetCore.Domain.Patients;
+using System.Linq;
+using Azure.Core;
+using Google.Type;
 
 namespace DDDNetCore.Domain.OperationRequests
 {
@@ -132,97 +135,121 @@ namespace DDDNetCore.Domain.OperationRequests
             }
         }
 
-        public async Task<List<OperationRequestDto>> GetFilteredAsync(OperationRequestFilters filters)
+        public async Task<List<OperationRequestDto>> GetFilteredAsync(
+            string? searchId, 
+            string? searchLicenseNumber, 
+            string? searchPatientName, 
+            string? searchOperationType, 
+            string? searchDeadlineDate, 
+            string? searchPriority, 
+            string? searchRequestStatus
+        )
         {
             try{
-                var list = await _repo.GetFilteredAsync(filters);
+                List<OperationRequestDto?>? requestQuery = (await GetAllAsync())!;
 
-                if(filters.SearchLicenseNumber != new LicenseNumber()){
-                    var staff = await _staffService.GetByLicenseNumber(filters.SearchLicenseNumber);
+                List<OperationTypeDto> operationType = [];
 
-                    list = list.Where(l => l.Staff.Equals(filters.SearchLicenseNumber)).ToList();
+                List<StaffDto> staff = [];
+
+                List<PatientDto> patient = [];
+
+                if(!string.IsNullOrEmpty(searchId)){
+                    var request = await _repo.GetByIdAsync(searchId);
+
+                    requestQuery = requestQuery
+                        .Where(r => r.Id == request.Id)
+                        .ToList();
                 }
 
-                if(filters.SearchPatientName != new Name("")){
-                    var patients = await _patientService.GetByNameAsync(filters.SearchPatientName);
+                if(!string.IsNullOrEmpty(searchLicenseNumber)){
+                    var staffMember = await _staffService.GetByLicenseNumber(searchLicenseNumber);
 
-                    list = list.Where(l => patients.Any(p => l.Patient.Equals(p.MedicalRecordNumber))).ToList();
+                    if(staffMember == null) return [];
+                    
+                    requestQuery = requestQuery
+                        .Where(r => r != null && r.Staff.Value == staffMember.LicenseNumber)
+                        .ToList();
                 }
 
-                if(list == null)
-                    return [];
+                if (!string.IsNullOrEmpty(searchPatientName))
+                {
+                    var names = searchPatientName.Split('-');
+                
+                    if(names.Length != 2)
+                    {
+                        return null;
+                    }
+                
+                    var firstName = names[0].Trim();
+                    var lastName = names[1].Trim();
+                
+                    var fullName = new FullName(new Name(firstName), new Name(lastName));
+                
+                    var patients = await _patientService.GetByNameAsync(fullName);
+                    if(patients == null || patients.Count == 0) return [];
+                    
+                    var patientsMedicalRecordNumbers = patients.Select(p => p.MedicalRecordNumber.Value).ToList();
+                    if(patientsMedicalRecordNumbers == null || patientsMedicalRecordNumbers.Count == 0) return [];
+                    
+                    requestQuery = requestQuery
+                        .Where(r => r != null && patientsMedicalRecordNumbers.Contains(r.Patient.Value))
+                        .ToList();
+                }
+                
+                if (!string.IsNullOrEmpty(searchLicenseNumber))
+                {
+                    var staffMember = await _staffService.GetByLicenseNumber(searchLicenseNumber);
 
-                return OperationRequestMapper.ToDtoList(list);
-            }catch(Exception){
-                return [];
+                    if (staffMember == null) return new List<OperationRequestDto>(); // Adjust the return type accordingly
+
+                    requestQuery = requestQuery
+                        .Where(r => r != null && r.Staff.Value == staffMember.LicenseNumber)
+                        .ToList();
+                }
+
+
+                if(!string.IsNullOrEmpty(searchOperationType)){
+                    var operationTypeName = await _operationTypeService.GetByNameAsync(searchOperationType);
+
+                    requestQuery = requestQuery
+                        .Where(r => r != null && r.OperationType.Value == operationTypeName.Name)
+                        .ToList();
+                }
+
+                if(!string.IsNullOrEmpty(searchDeadlineDate)){
+                    var date = new DeadlineDate(searchDeadlineDate);
+
+                    requestQuery = requestQuery
+                        .Where(r => r != null && r.DeadlineDate.Date == date.Date)
+                        .ToList();
+                }
+
+                if(!string.IsNullOrEmpty(searchPriority)){
+                    var priority = PriorityUtils.FromString(searchPriority);
+
+                    requestQuery = requestQuery
+                        .Where(r => r != null && r.Priority.Equals(priority))
+                        .ToList();
+                }
+                
+                if(!string.IsNullOrEmpty(searchRequestStatus)){
+                    var status = RequestStatusUtils.FromString(searchRequestStatus);
+
+                    requestQuery = requestQuery
+                        .Where(r => r != null && r.Status.Equals(status))
+                        .ToList();
+                }
+
+                if(requestQuery == null || requestQuery.Count == 0) return [];
+                
+                return requestQuery;
+            
+            }
+            catch(Exception)
+            {
+                return null;
             }
         }
-    //         try
-    //         {
-    //             // Fetch all requests
-    //             var list = await _repo.GetAllAsync();
-
-    //             // Apply filters conditionally
-    //             var filteredList = new List<OperationRequest>();
-
-    //             if (filters.SearchId != Guid.Empty)
-    //             {
-    //                 filteredList = list.Where(x => x.Id == filters.SearchId).ToList();
-    //                 list = filteredList;
-    //             }
-
-    //             if (filters.SearchPatientName != new Name(""))
-    //             {
-    //                 var patients = await _patientService.GetAllAsync();
-
-    //                 var patient = patients.FirstOrDefault(x => x.FullName == filters.SearchPatientName);
-
-    //                 if (patient != null)
-    //                 {
-    //                     filteredList = list.Where(x => x.Patient == patient.MedicalRecordNumber).ToList();
-    //                     list = filteredList;
-    //                 }
-    //             }
-
-    //             if (filters.SearchOperationType != new Name(""))
-    //             {
-    //                 var operationTypes = await _operationTypeService.GetAllAsync();
-
-    //                 var operationType = operationTypes.FirstOrDefault(x => x.Name == filters.SearchOperationType);
-
-    //                 if (operationType != null)
-    //                 {
-    //                     filteredList = list.Where(x => x.OperationType == operationType.Name).ToList();
-    //                     list = filteredList;
-    //                 }
-    //             }
-
-    //             if (filters.SearchDeadlineDate != new DeadlineDate())
-    //             {
-    //                 filteredList = list.Where(x => x.DeadlineDate == filters.SearchDeadlineDate).ToList();
-    //                 list = filteredList;
-    //             }
-
-    //             if (filters.SearchPriority.ToString() != "")
-    //             {
-    //                 filteredList = list.Where(x => x.Priority == filters.SearchPriority).ToList();
-    //                 list = filteredList;
-    //             }
-
-    //             if (filters.SearchRequestStatus.ToString() != "")
-    //             {
-    //                 filteredList = list.Where(x => x.Status == filters.SearchRequestStatus).ToList();
-    //                 list = filteredList;
-    //             }
-
-    //             // Map to DTOs and return
-    //             return OperationRequestMapper.ToDtoList(filteredList);
-    //         }
-    //         catch (Exception)
-    //         {
-    //             return [];
-    //         }
-    //     }
-    // }
     }
 }

@@ -54,29 +54,24 @@ namespace DDDNetCore.Controllers
         // GET api/operationrequest/filtered
         [HttpGet("filtered")]
         public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetFiltered(
-            [FromQuery] Guid searchId,
-            [FromQuery] string searchPatientName,
-            [FromQuery] string searchLicenseNumber,
-            [FromQuery] string searchOperationType,
-            [FromQuery] DateTime searchDeadlineDate,
-            [FromQuery] string searchPriority,
-            [FromQuery] string searchRequestStatus
+            [FromQuery] string? searchId,
+            [FromQuery] string? searchLicenseNumber,
+            [FromQuery] string? searchPatientName,
+            [FromQuery] string? searchOperationType,
+            [FromQuery] string? searchDeadlineDate,
+            [FromQuery] string? searchPriority,
+            [FromQuery] string? searchRequestStatus
         ){
             try{
-
-                var filters = new OperationRequestFilters(
-                    searchId, 
-                    searchLicenseNumber,
-                    new FullName(searchPatientName), 
+                var operationRequests = await _operationRequestService.GetFilteredAsync(
+                    searchId,
+                    searchLicenseNumber, 
+                    searchPatientName, 
                     searchOperationType, 
-                    new DeadlineDate(searchDeadlineDate.ToString("yyyy-MM-dd")), 
-                    PriorityUtils.FromString(searchPriority),
-                    RequestStatusUtils.FromString(searchRequestStatus)
-                );
-
-                Console.WriteLine("Filters: " + filters);
-
-                var operationRequests = await _operationRequestService.GetFilteredAsync(filters);
+                    searchDeadlineDate, 
+                    searchPriority, 
+                    searchRequestStatus
+                    );
 
                 if(operationRequests == null || operationRequests.Count == 0)
                     return NotFound();

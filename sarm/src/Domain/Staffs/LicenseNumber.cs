@@ -28,6 +28,16 @@ namespace Domain.Staffs
         {
             return licenseNumber.Value;
         }
+        
+        public override string ToString()
+        {
+            return Value;
+        }
+        
+        public bool Equals(LicenseNumber a, LicenseNumber b)
+        {
+            return a.ToString().Trim().ToLower().Equals(b.ToString().Trim().ToLower());
+        }
 
     }
 }
