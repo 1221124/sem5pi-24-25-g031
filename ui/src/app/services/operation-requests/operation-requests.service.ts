@@ -7,8 +7,7 @@ import { PatientsService } from '../admin-patients/admin-patients.service';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { OperationRequest } from '../../models/operation-request.model';
-import { formatDate } from '@angular/common';
-import { LOCALE_ID, Inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +16,6 @@ export class OperationRequestsService {
   message: string = '';
 
   constructor(
-    @Inject(LOCALE_ID)
-    private locale: string,
     private http: HttpClient, private router: Router,
     private patientsService: PatientsService
   ) {}
@@ -117,70 +114,67 @@ export class OperationRequestsService {
     );
   }
 
-  getPatients(){
-    return this.patientsService.getPatients();
-  }
-
-  getPriority(){
-    return this.http.get<string[]>(environment.enums, httpOptions)
-    .pipe(
-      catchError(error => {
-        console.error('Error fetching Priority:', error);
-        return throwError(() => new Error('Failed to fetch priority. Please try again.'));
-      })
-    );
-  }
-
   get(
     searchIdDto: string,
     searchLicenseNumber: string,
-    searchPatientPatientName: string,
+    searchPatientName: string,
     searchOperationType: string,
-    searchDeadlineDate: Date,
+    searchDeadlineDate: string,
     searchPriority: string,
     searchRequestStatus: string
   ){
 
-    let searchUrl = environment.operationRequests + '?';
+    let searchUrl = environment.operationRequests + '/filtered?';
     const params = [];
 
     if (searchIdDto) {
       console.log('ID:', searchIdDto);
-      params.push('id=' + encodeURIComponent(searchIdDto));
+      params.push('searchId=' + encodeURIComponent(searchIdDto));
     }
+
     if (searchLicenseNumber){
       console.log('License Number: ', searchLicenseNumber);
-      params.push('licenseNumber=' + encodeURIComponent(searchLicenseNumber))
+      params.push('searchLicenseNumber=' + encodeURIComponent(searchLicenseNumber))
     }
-    if (searchPatientPatientName) {
-      console.log('Patient Name:', searchPatientPatientName);
-      params.push('patientPatientName=' + encodeURIComponent(searchPatientPatientName));
+
+    if (searchPatientName) {
+      console.log('Patient Name:', searchPatientName);
+      const nameParts = searchPatientName.trim().split(' ');
+
+      if (nameParts.length === 2) {
+        const name = nameParts[0] + '-' + nameParts[1];
+
+        console.log('Name:', name);
+
+        params.push('searchPatientName=' + encodeURIComponent(name));
+      }
     }
+
     if (searchOperationType) {
       console.log('Operation Type:', searchOperationType);
-      params.push('operationType=' + encodeURIComponent(searchOperationType));
+      params.push('searchOperationType=' + encodeURIComponent(searchOperationType));
     }
+
     if (searchDeadlineDate) {
-
-      const deadlineDate = new Date(searchDeadlineDate);
-
-      const formattedDate = formatDate(searchDeadlineDate, 'yyyy-MM-dd', this.locale);
-      console.log('Formatted Date:', formattedDate);
-      params.push('deadlineDate=' + encodeURIComponent(formattedDate));
+      console.log("date: " + searchDeadlineDate);
+      params.push('searchDeadlineDate=' + encodeURIComponent(searchDeadlineDate));
     }
+
+
     if (searchPriority) {
       console.log('Priority:', searchPriority);
-      params.push('priority=' + encodeURIComponent(searchPriority));
+      params.push('searchPriority=' + encodeURIComponent(searchPriority));
     }
+
     if (searchRequestStatus) {
       console.log('Request Status:', searchRequestStatus);
-      params.push('requestStatus=' + encodeURIComponent(searchRequestStatus));
+      params.push('searchRequestStatus=' + encodeURIComponent(searchRequestStatus));
     }
 
     // Join all parameters with '&'
     searchUrl += params.join('&');
 
-    console.log('Search URL:', searchUrl);
+    console.log('Search URL:\n', searchUrl);
 
     return this.http.get<OperationRequest[]>(searchUrl, httpOptions)
     .pipe(
@@ -190,4 +184,26 @@ export class OperationRequestsService {
       })
     );
   }
+
+  getRequestStatus(){
+    return this.http.get<any[]>(environment.enums + "/requestStatuses", httpOptions)
+    .pipe(
+      catchError(error => {
+        console.error('Error fetching Request Statuses:', error);
+        return throwError(() => new Error('Failed to fetch request statuses. Please try again.'));
+      })
+    );
+  }
+
+  getPriority(){
+    return this.http.get<any[]>(environment.operationTypes + "/priorities", httpOptions)
+    .pipe(
+      catchError(error => {
+        console.error('Error fetching Priorities:', error);
+        return throwError(() => new Error('Failed to fetch priorities. Please try again.'));
+      })
+    );
+  }
+
+  
 }

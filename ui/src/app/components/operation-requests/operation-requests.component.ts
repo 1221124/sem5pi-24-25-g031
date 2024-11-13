@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
@@ -24,10 +24,7 @@ export class OperationRequestsComponent {
   patients: Patient[] = [];
   operationTypes: OperationType[] = [];
   priorities: string[] = [];
-  // status: string[] = [];
-  statuses: string[] = ['Pending', 'Accepted', 'Rejected'];
-  filters: any[] = [];
-  filteredRequests: OperationRequest[] = [];
+  statuses: string[] = [];
 
   id: string = '';
   staff: string = '';
@@ -36,15 +33,6 @@ export class OperationRequestsComponent {
   deadlineDate: Date = new Date();
   priority: string = '';
   status: string = '';
-
-  searchId: string = '';
-  searchLicenseNumber: string = '';
-  searchPatientName: string = '';
-  searchOperationType: string = '';
-  searchDeadlineDate: Date = new Date();
-  searchPriority: string = '';
-  searchStatus: string = '';
-  searchActions: string = '';
 
   errorMessage: string = '';
 
@@ -71,13 +59,23 @@ export class OperationRequestsComponent {
   isCreateModalOpen: boolean = false;
   isUpdateModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
-  isFilterModalOpen: boolean = false;
 
   filter = {
     pageNumber: 0,
     name: '',
     specialization: '',
     status: ''
+  }
+
+  filters = {
+    searchId: '',
+    searchLicenseNumber: '',
+    searchPatientName: '',
+    searchOperationType: '',
+    searchDeadlineDate: '',
+    searchPriority:  '',
+    searchStatus: '',
+    searchActions: ''
   }
 
   currentPage: number = 1;
@@ -89,7 +87,6 @@ export class OperationRequestsComponent {
     private serviceStaff: StaffsService,
     private servicePatient: PatientsService,
     private serviceOperationType: OperationTypesService,
-    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -98,7 +95,7 @@ export class OperationRequestsComponent {
     this.loadPatients();
     this.loadOperationTypes();
     this.loadPriority();
-    // this.loadRequestStatus();
+    this.loadRequestStatus();
   }
 
   changePage(page: number): void {
@@ -107,15 +104,38 @@ export class OperationRequestsComponent {
     }
   }
 
-  refresh() {
-    this.currentPage = 1;
-    this.totalPages = Math.ceil(this.requests.length / this.itemsPerPage);
+  // refresh() {
+  //   this.loadOperationRequests();
+  // }
 
-    this.cdr.detectChanges();
+  clear(){
+    this.clearForm();
+
+    this.ngOnInit();
+  }
+
+  loadRequestStatus(){
+    this.service.getRequestStatus().subscribe(
+      (data) => {
+        this.statuses = data;
+        console.log('Processed Request Status:', this.statuses);
+      },
+      (error) => {
+        console.error('Error loading Request Status:', error)
+      }
+    )
   }
 
   loadPriority() {
-    this.priorities = ['Elective', 'Urgent', 'Emergency'];
+    this.service.getPriority().subscribe(
+      (data) => {
+        this.priorities = data;
+        console.log('Processed Priority:', this.priorities);
+      },
+      (error) => {
+        console.error('Error loading Priority:', error);
+      }
+    );
   }
 
   loadOperationRequests() {
@@ -196,7 +216,7 @@ export class OperationRequestsComponent {
     if (!this.isFormValid()) return;
     this.service.post(this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
     this.closeCreateModal();
-    this.refresh();
+    // this.refresh();
     console.log('Operation Request submitted successfully!');
     this.clearForm();
   }
@@ -220,7 +240,7 @@ export class OperationRequestsComponent {
     this.service.delete(request);
     console.log('Operation Request deleted successfully!');
     this.clearForm();
-    this.refresh();
+    // this.refresh();
   }
 
   confirmDelete() {
@@ -255,7 +275,7 @@ export class OperationRequestsComponent {
 
     this.service.put(this.request.id, this.request.deadlineDate, this.request.priority, this.request.status);
     this.closeUpdateModal();
-    this.refresh();
+    // this.refresh();
     console.log('Operation Request updated successfully!');
     this.clearForm();
   }
@@ -292,23 +312,42 @@ export class OperationRequestsComponent {
   filterRequests() {
     console.log('Filter button clicked');
 
-    this.service.get(this.searchId, this.searchLicenseNumber, this.searchPatientName, this.searchOperationType, this.searchDeadlineDate, this.searchPriority, this.searchStatus).subscribe(
-      (data) => {
-        this.filteredRequests = data;
-        this.requests = this.filteredRequests;
-        console.log('Filtered Operation Requests:', this.requests);
-        console.log('Operation Requests filtered successfully!');
-        this.applyFilter();
-      },
-      (error) => {
-        console.error('Error filtering Operation Requests:', error);
-      }
-    );
+    this.applyFilter();
+    // this.refresh();
+
     console.log('Operation Requests filtered successfully!');
   }
 
-  applyFilter(): void {
-    this.refresh();
+  applyFilter() {
+    this.service.get(
+      this.filters.searchId,
+      this.filters.searchLicenseNumber,
+      this.filters.searchPatientName,
+      this.filters.searchOperationType,
+      this.filters.searchDeadlineDate,
+      this.filters.searchPriority,
+      this.filters.searchStatus
+    ).subscribe(
+      (data) => {
+        this.requests = data.map(request =>
+          ({
+            id: request.id,
+            staff: request.staff,
+            patient: request.patient,
+            operationType: request.operationType,
+            deadlineDate: request.deadlineDate,
+            priority: request.priority,
+            status: request.status
+          })
+        );
+        console.log('Filtered Operation Requests:', this.requests);
+        this.currentPage = 1;
+        this.totalPages = Math.ceil(this.requests.length / this.itemsPerPage);
+      },
+      (error) => {
+        console.error('Error loading Operation Requests:', error);
+      }
+    );
   }
 
   isFormValid(): boolean {
@@ -337,7 +376,7 @@ export class OperationRequestsComponent {
     this.patient = '';
     this.operationType = '';
     this.deadlineDate = new Date();
-    this.priority = 'null';
+    this.priority = '';
     this.status = '';
 
     this.staffTouched = false;
@@ -349,11 +388,43 @@ export class OperationRequestsComponent {
 
     this.errorMessage = '';
 
+    this.request = {
+      id: '',
+      staff: '',
+      patient: '',
+      operationType: '',
+      deadlineDate: new Date(),
+      priority: 'null',
+      status: ''
+    };
+
     this.deleteConfirmation = false;
     this.updateConfirmation = false;
 
     this.isCreateModalOpen = false;
     this.isUpdateModalOpen = false;
     this.isDeleteModalOpen = false;
+
+    this.filter = {
+      pageNumber: 0,
+      name: '',
+      specialization: '',
+      status: ''
+    }
+
+    this.filters = {
+      searchId: '',
+      searchLicenseNumber: '',
+      searchPatientName: '',
+      searchOperationType: '',
+      searchDeadlineDate: '',
+      searchPriority:  '',
+      searchStatus: '',
+      searchActions: ''
+    }
+
+    this.currentPage = 1;
+    this.totalPages = 1;
+    this.itemsPerPage = 5;
   }
 }
