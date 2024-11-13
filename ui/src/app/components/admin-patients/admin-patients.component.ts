@@ -9,8 +9,8 @@ import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
   selector: 'app-patients',
   standalone: true,
   imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf, NgOptimizedImage],
-  templateUrl: './patients.component.html',
-  styleUrls: ['./patients.component.css'],
+  templateUrl: './admin-patients.component.html',
+  styleUrls: ['./admin-patients.component.css'],
   providers: [PatientsService]
 })
 
@@ -232,6 +232,7 @@ export class PatientsComponent{
     }
 
     this.patientService.post(this.firstName, this.lastName, this.dateOfBirth, this.email, this.phoneNumber, this.gender);
+    this.refreshPatients();
   }
 
   isValidEmail(email: string): boolean {
