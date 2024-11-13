@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
 import { OperationRequest } from '../../models/operation-request.model';
 import { StaffsService } from '../../services/staffs/staffs.service';
-import { PatientsService } from '../../services/patients/patients.service';
+import { PatientsService } from '../../services/admin-patients/admin-patients.service';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
 import { Staff } from '../../models/staff.model';
 import { Patient } from '../../models/patient.model';
@@ -57,7 +57,7 @@ export class OperationRequestsComponent {
     priority: 'null',
     status: ''
   };
-  
+
   staffTouched: boolean = false;
   patientTouched: boolean = false;
   operationTypeTouched: boolean = false;
@@ -67,7 +67,7 @@ export class OperationRequestsComponent {
 
   deleteConfirmation: boolean = false;
   updateConfirmation: boolean = false;
-  
+
   isCreateModalOpen: boolean = false;
   isUpdateModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
@@ -222,7 +222,7 @@ export class OperationRequestsComponent {
     this.clearForm();
     this.refresh();
   }
-  
+
   confirmDelete() {
     if (this.id) {
       console.log('Delete confirmed');
@@ -263,7 +263,7 @@ export class OperationRequestsComponent {
   confirmUpdate(update: OperationRequest) {
     if (this.request) {
       console.log("Request before update:", this.request);
-  
+
       if (update.status !== undefined) {
         console.log("Updating status:", update.status);
         this.request.status = update.status;
@@ -276,19 +276,19 @@ export class OperationRequestsComponent {
         console.log("Updating priority:", update.priority);
         this.request.priority = update.priority;
       }
-  
+
       this.update();
-  
+
       console.log('Update confirmed');
       console.log("Updated request:", this.request);
-  
+
       this.isUpdateModalOpen = false; // Close the modal after update
       this.closeUpdateModal(); // Close modal properly
     } else {
       console.error("Request object is not defined.");
     }
   }
-  
+
   filterRequests() {
     console.log('Filter button clicked');
 

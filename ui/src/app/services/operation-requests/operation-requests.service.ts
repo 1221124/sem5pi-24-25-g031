@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment, httpOptions } from '../../../environments/environment';
-import { PatientsService } from '../patients/patients.service';
+import { PatientsService } from '../admin-patients/admin-patients.service';
 
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -24,13 +24,13 @@ export class OperationRequestsService {
   ) {}
 
   post(
-    staffDto: string, 
-    patientDto: string, 
-    operationTypeDto: string, 
-    deadlineDateDto: Date, 
+    staffDto: string,
+    patientDto: string,
+    operationTypeDto: string,
+    deadlineDateDto: Date,
     priorityDto: string
-  ){    
-    
+  ){
+
     const dto ={ //creatingOperationRequestDto
       "staff": {
         "value": staffDto

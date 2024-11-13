@@ -1,6 +1,6 @@
 import { Component} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PatientsService } from '../../services/patients/patients.service';
+import { PatientsService } from '../../services/admin-patients/admin-patients.service';
 import {RouterModule, RouterOutlet} from '@angular/router';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 
@@ -50,6 +50,9 @@ export class AdminPatientsComponent{
   newSlotStart: string = '';  // To bind the start datetime of the new slot
   newSlotEnd: string = '';    // To bind the end datetime of the new slot
 
+  currentPage: number = 1;
+  totalPages: number = 1; // Total de páginas após o filtro
+  itemsPerPage: number = 5;  // Número de itens por página
 
 
   firstNameTouched = false;

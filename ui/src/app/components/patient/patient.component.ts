@@ -1,12 +1,63 @@
 import { Component } from '@angular/core';
+import {AuthService} from '../../services/auth/auth.service';
+import {PatientService} from '../../services/patient/patient.service';
+import {RouterModule} from '@angular/router';
+import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-patient',
   standalone: true,
   imports: [],
   templateUrl: './patient.component.html',
-  styleUrl: './patient.component.css'
+  styleUrl: './patient.component.css',
+  providers: [AuthService, PatientService]
 })
 export class PatientComponent {
 
+  constructor(private authorizationService: AuthService, private patientService: PatientService) { }
+
+  token: any;
+  patientEmail: any;
+
+  patients: any[] = [];
+  firstName: string = '';
+  lastName: string = '';
+  dateOfBirth: Date = new Date();
+  gender: string = '';
+  medicalRecordNumber: string = '';
+  phoneNumber: string = '';
+  email: string = '';
+  medicalCondition: string = '';
+  emergencyContact: string = '';
+  appointmentHistory: string = '';
+  userId: string = '';
+
+  ngOnInit(): void {
+    this.getPatient();
+  }
+
+  getPatient(): void{
+    this.token = this.authorizationService.getToken();
+
+    this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.token);
+    this.getPatientByEmail(this.patientEmail);
+  }
+
+  getPatientByEmail(email: string): void {
+    this.patientService.getByEmail(email).subscribe(
+      (data) => {
+        this.patients = data.map((patient: { appointmentHistory: any[]; }) => ({
+          ...patient,
+          appointmentHistory: patient.appointmentHistory.map(slot => ({
+            start: new Date(slot.start),
+            end: new Date(slot.end)
+          }))
+        }));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 }
