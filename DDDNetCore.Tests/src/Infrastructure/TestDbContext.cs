@@ -1,7 +1,7 @@
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace DDDNetCore.Tests.Infrastructure
+namespace DDDNetCore.Tests.src.Infrastructure
 {
     public class TestDbContext : SARMDbContext
     {

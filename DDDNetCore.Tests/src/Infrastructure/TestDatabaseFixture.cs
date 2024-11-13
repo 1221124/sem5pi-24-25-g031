@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 
-namespace DDDNetCore.Tests.Infrastructure
+namespace DDDNetCore.Tests.src.Infrastructure
 {
     public class TestDatabaseFixture : IDisposable
     {

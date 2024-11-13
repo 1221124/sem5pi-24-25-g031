@@ -1,13 +1,13 @@
 ﻿using Xunit;
 using Moq;
-using DDDNetCore.Tests.Infrastructure;
 using Domain.OperationRequests;
 using Domain.Shared;
 using DDDNetCore.Domain.Patients;
 using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Tests.src.Infrastructure;
 
 
-namespace DDDNetCore.Tests.Domain.OperationRequests
+namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.OperationRequests
 {
     public class OperationRequestsServiceUnitTest : IClassFixture<TestDatabaseFixture>
     {

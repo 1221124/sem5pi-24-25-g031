@@ -4,12 +4,12 @@ using Domain.Shared;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using Domain.Users;
-using DDDNetCore.Tests.Infrastructure;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using DDDNetCore.Tests.src.Infrastructure;
 
-namespace DDDNetCore.Tests.Domain.Users
+namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.Users
 {
     public class UserServiceUnitTest : IClassFixture<TestDatabaseFixture>
     {

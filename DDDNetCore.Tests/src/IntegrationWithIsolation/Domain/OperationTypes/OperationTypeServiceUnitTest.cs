@@ -4,12 +4,12 @@ using Domain.Shared;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using Domain.OperationTypes;
-using DDDNetCore.Tests.Infrastructure;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using DDDNetCore.Tests.src.Infrastructure;
 
-namespace DDDNetCore.Tests.Domain.OperationTypes
+namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.OperationTypes
 {
     public class OperationTypeServiceUnitTest : IClassFixture<TestDatabaseFixture>
     {

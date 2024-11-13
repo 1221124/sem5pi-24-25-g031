@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Domain.Shared;
 
-namespace DDDNetCore.Tests.Infrastructure
+namespace DDDNetCore.Tests.src.Infrastructure
 {
     public class TestUnitOfWork : IUnitOfWork
     {

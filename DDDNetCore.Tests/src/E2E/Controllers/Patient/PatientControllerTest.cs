@@ -2,7 +2,7 @@
 // using JetBrains.Annotations;
 // using Xunit;
 
-// namespace DDDNetCore.Tests.Controllers.Patient;
+// namespace E2E.Controllers.Patient;
 
 // [TestSubject(typeof(PatientController))]
 // public class PatientControllerTest

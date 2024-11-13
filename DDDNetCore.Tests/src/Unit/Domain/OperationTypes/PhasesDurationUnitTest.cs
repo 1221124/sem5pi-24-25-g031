@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Domain.OperationTypes;
 using Domain.Shared;
 
-namespace Tests.Domain.OperationTypes
+namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
 {
     public class PhasesDurationUnitTest
     {

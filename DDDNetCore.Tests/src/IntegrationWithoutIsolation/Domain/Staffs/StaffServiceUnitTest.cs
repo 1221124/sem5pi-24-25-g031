@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DDDNetCore.Tests.Infrastructure;
+using DDDNetCore.Tests.src.Infrastructure;
 using Domain.Shared;
 using Domain.Staffs;
 using Domain.Users;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 
-namespace DDDNetCore.Tests.Domain.Staffs
+namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.Staffs
 {
     public class StaffServiceUnitTest : IClassFixture<TestDatabaseFixture>
     {

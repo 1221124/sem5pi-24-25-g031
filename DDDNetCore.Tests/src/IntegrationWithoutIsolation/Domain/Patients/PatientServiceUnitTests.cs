@@ -9,14 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using Domain.Users;
-using DDDNetCore.Tests.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Emails;
 using Domain.Patients;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
+using DDDNetCore.Tests.src.Infrastructure;
 
-namespace DDDNetCore.Tests.Domain.Patients
+namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.Patients
 {
     
     public class PatientServiceUnitTest: IClassFixture<TestDatabaseFixture>

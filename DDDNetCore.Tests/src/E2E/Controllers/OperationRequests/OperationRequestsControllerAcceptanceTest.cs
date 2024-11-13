@@ -14,7 +14,7 @@
 // using Xunit;
 // using IOperationRequestService = DDDNetCore.Domain.OperationRequests.IOperationRequestService;
 
-// namespace DDDNetCore.Tests.Controllers.OperationRequests
+// namespace E2E.Controllers.OperationRequests
 // {
 //     public class OperationRequestControllerAcceptanceTest
 //     {
