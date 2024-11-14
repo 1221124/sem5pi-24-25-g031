@@ -129,11 +129,17 @@ namespace Domain.Users
             return UserMapper.ToDto(User);
         }
 
-        public UserDto Login(UserDto user)
+        public bool Login(UserDto user)
         {
-            if (user == null || user.UserStatus == UserStatus.Inactive)
-                throw new BusinessRuleValidationException("User not found.");
-            return user;
+            if (user == null) {
+                return false;
+                throw new BusinessRuleValidationException($"User with email {user.Email} not found.");
+            } else if (user.UserStatus == UserStatus.Inactive) {
+                return false;
+                throw new BusinessRuleValidationException($"User with email {user.Email} is not active." );
+            } else {
+                return true;
+            }
         }
     }
 }

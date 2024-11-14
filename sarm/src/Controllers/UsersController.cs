@@ -168,7 +168,9 @@ namespace Controllers
                 if (user == null)
                     return BadRequest(new { message = $"User with email {email} not found." });
 
-                user = _service.Login(user);
+                var loggedIn = _service.Login(user);
+                if (!loggedIn)
+                    return BadRequest(new { message = $"User with email {email} is not active." });
 
                 return Ok( new { message = $"User with email {email} logged in." });
             } catch (BusinessRuleValidationException ex) {
