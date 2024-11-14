@@ -8,6 +8,7 @@ import { PatientComponent } from './components/patient/patient.component';
 import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
+import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -17,6 +18,7 @@ export const routes: Route[] = [
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/operationTypes', component: OperationTypesComponent },
   { path: 'admin/patients', component: AdminPatientsComponent },
+  { path: 'admin/users', component: AdminUsersComponent },
   { path: 'patient', component: PatientComponent }
 ];
 

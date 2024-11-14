@@ -1,0 +1,20 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <h2>Create Backoffice User</h2>
+  
+    <div>
+      <label for="email">Email:</label>
+      <input id="email" formControlName="email" type="email" />
+      <div *ngIf="userForm.get('email')?.hasError('invalidEmail')" class="error-message">
+        The email must start with the first letter of the role (d/n/t) followed by `&#64;isep.ipp.pt`.
+      </div>
+    </div>
+  
+    <div>
+      <label for="role">Role:</label>
+      <select id="role" formControlName="role">
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+    </div>
+  
+    <button type="submit" [disabled]="userForm.invalid">Create Backoffice User</button>
+  </form>  

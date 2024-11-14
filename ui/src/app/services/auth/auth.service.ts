@@ -92,7 +92,7 @@ export class AuthService {
       }
     }
 
-    async createUser(email: string, role: string): Promise<HttpResponse<any>> {
+    async createUser(email: string, role: string): Promise<HttpResponse<any> | null> {
       const dto = {
           email: email,
           role: role

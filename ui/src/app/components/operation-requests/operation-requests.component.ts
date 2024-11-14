@@ -115,47 +115,47 @@ export class OperationRequestsComponent {
   }
 
   loadRequestStatus(){
-    this.service.getRequestStatus().subscribe(
-      (data) => {
-        this.statuses = data;
-        console.log('Processed Request Status:', this.statuses);
-      },
-      (error) => {
-        console.error('Error loading Request Status:', error)
-      }
-    )
+    // this.service.getRequestStatus().subscribe(
+    //   (data) => {
+    //     this.statuses = data;
+    //     console.log('Processed Request Status:', this.statuses);
+    //   },
+    //   (error) => {
+    //     console.error('Error loading Request Status:', error)
+    //   }
+    // )
   }
 
   loadPriority() {
-    this.service.getPriority().subscribe(
-      (data) => {
-        this.priorities = data;
-        console.log('Processed Priority:', this.priorities);
-      },
-      (error) => {
-        console.error('Error loading Priority:', error);
-      }
-    );
+    // this.service.getPriority().subscribe(
+    //   (data) => {
+    //     this.priorities = data;
+    //     console.log('Processed Priority:', this.priorities);
+    //   },
+    //   (error) => {
+    //     console.error('Error loading Priority:', error);
+    //   }
+    // );
   }
 
   loadOperationRequests() {
-    this.service.getAll().subscribe(
-      (data) => {
-        this.requests = data.map(request => ({
-          id: request.id,
-          staff: request.staff.value,
-          patient: request.patient.value,
-          operationType: request.operationType.value,
-          deadlineDate: request.deadlineDate.date,
-          priority: request.priority,
-          status: request.status
-        }));
-        console.log('Processed Operation Requests:', this.requests);
-      },
-      (error) => {
-        console.error('Error loading Operation Requests:', error);
-      }
-    );
+    // this.service.getAll().subscribe(
+    //   (data) => {
+    //     this.requests = data.map(request => ({
+    //       id: request.id,
+    //       staff: request.staff.value,
+    //       patient: request.patient.value,
+    //       operationType: request.operationType.value,
+    //       deadlineDate: request.deadlineDate.date,
+    //       priority: request.priority,
+    //       status: request.status
+    //     }));
+    //     console.log('Processed Operation Requests:', this.requests);
+    //   },
+    //   (error) => {
+    //     console.error('Error loading Operation Requests:', error);
+    //   }
+    // );
   }
 
   loadStaffs() {
@@ -319,35 +319,35 @@ export class OperationRequestsComponent {
   }
 
   applyFilter() {
-    this.service.get(
-      this.filters.searchId,
-      this.filters.searchLicenseNumber,
-      this.filters.searchPatientName,
-      this.filters.searchOperationType,
-      this.filters.searchDeadlineDate,
-      this.filters.searchPriority,
-      this.filters.searchStatus
-    ).subscribe(
-      (data) => {
-        this.requests = data.map(request =>
-          ({
-            id: request.id,
-            staff: request.staff,
-            patient: request.patient,
-            operationType: request.operationType,
-            deadlineDate: request.deadlineDate,
-            priority: request.priority,
-            status: request.status
-          })
-        );
-        console.log('Filtered Operation Requests:', this.requests);
-        this.currentPage = 1;
-        this.totalPages = Math.ceil(this.requests.length / this.itemsPerPage);
-      },
-      (error) => {
-        console.error('Error loading Operation Requests:', error);
-      }
-    );
+    // this.service.get(
+    //   this.filters.searchId,
+    //   this.filters.searchLicenseNumber,
+    //   this.filters.searchPatientName,
+    //   this.filters.searchOperationType,
+    //   this.filters.searchDeadlineDate,
+    //   this.filters.searchPriority,
+    //   this.filters.searchStatus
+    // ).subscribe(
+    //   (data) => {
+    //     this.requests = data.map(request =>
+    //       ({
+    //         id: request.id,
+    //         staff: request.staff,
+    //         patient: request.patient,
+    //         operationType: request.operationType,
+    //         deadlineDate: request.deadlineDate,
+    //         priority: request.priority,
+    //         status: request.status
+    //       })
+    //     );
+    //     console.log('Filtered Operation Requests:', this.requests);
+    //     this.currentPage = 1;
+    //     this.totalPages = Math.ceil(this.requests.length / this.itemsPerPage);
+    //   },
+    //   (error) => {
+    //     console.error('Error loading Operation Requests:', error);
+    //   }
+    // );
   }
 
   isFormValid(): boolean {

@@ -108,17 +108,28 @@ export class AuthCallbackComponent implements OnInit {
       this.authService.updateMessage('Invalid role.');  
       this.authService.updateIsError(true);
       return;
+    } else {
+      role = role.toLowerCase();
+    }
+
+    if (role == 'doctor'
+      || role == 'nurse'
+      || role == 'technician') {
+        this.authService.updateMessage('Please contact your system administrator to create an account.');
+        this.authService.updateIsError(false);
+        this.authService.redirectToLogin();
+        return;
     }
 
     try {
       const response = await this.authService.createUser(email, role);
-      if (response.status === 201) {
+      if (response?.status === 201) {
         this.authService.updateMessage('User with email ${email} created successfully! Redirecting to login...');  
         this.authService.updateIsError(false);
         this.authService.redirectToLogin();
         return;
       } else {
-        this.authService.updateMessage('Bad request during user creation: ' + response.body);  
+        this.authService.updateMessage('Bad request during user creation: ' + response?.body);  
         this.authService.updateIsError(true);
       }
     } catch (error) {

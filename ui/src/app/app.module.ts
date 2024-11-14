@@ -10,11 +10,14 @@ import { OperationRequestsComponent } from './components/operation-requests/oper
 import { StaffsComponent } from './components/staffs/staffs.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
+import { AdminUsersComponent } from './components/admin-users/admin-users.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
     AdminMenuComponent,
+    AdminUsersComponent,
     AppComponent,
     AuthCallbackComponent,
     HomeComponent,
@@ -25,6 +28,7 @@ import { AdminMenuComponent } from './components/admin-menu/admin-menu.component
   imports: [
     BrowserModule,
     CommonModule,
+    ReactiveFormsModule,
     RouterModule.forRoot(routes)
   ],
   providers: [],

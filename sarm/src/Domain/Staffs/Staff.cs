@@ -30,7 +30,7 @@ namespace Domain.Staffs
             FullName = fullName;
             ContactInformation = contactInformation;
             Specialization = specialization;
-            Status = Status.Pending;
+            Status = Status.Active;
             SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
         }
