@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { environment, httpOptions } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { TokenResponse } from '../../models/token-response';
 
 @Injectable({
   providedIn: 'root'
@@ -67,40 +66,11 @@ export class AuthService {
       this.isErrorSource.next(errorStatus);
     }
 
-    // async exchangeCodeForToken(code: string) {
-    //   const body = new HttpParams()
-    //     .set('code', code)
-    //     .set('client_id', environment.authConfig.clientId)
-    //     .set('client_secret', environment.authConfig.clientSecret)
-    //     .set('redirect_uri', environment.authConfig.redirectUri)
-    //     .set('grant_type', 'authorization_code')
-    //     .set('audience', environment.authConfig.audience)
-    //     .set('scope', 'openid email profile');
-
-    //   const headers = new HttpHeaders()
-    //     .set('Content-Type', 'application/x-www-form-urlencoded');
-      
-    //   console.log('Sending request to exchange code for token');
-    //   const response = await firstValueFrom(this.http.post<any>(environment.tokenUrl, body, { headers: headers, observe: 'response', responseType: 'json' }));
-      
-    //   if (response && response.body) {
-    //     // console.log('Token response: ' + JSON.stringify(response.body));
-    //     console.log('Setting tokens');
-    //     this.setTokens(response.body.id_token, response.body.access_token);
-    //     console.log('Tokens set');
-    //     return;
-    //   } else {
-    //     this.updateMessage('Token response is empty');
-    //     this.updateIsError(true);
-    //   }
-    //   return;
-    // }
-
     async handleUserCallback(accessToken: string) {
       const body = {
           accessToken : accessToken
       };
-      return await firstValueFrom(this.http.post<any>(`${environment.usersApiUrl}/callback`, body, {observe: 'response'}));
+      return await firstValueFrom(this.http.post<any>(`${environment.usersApiUrl}/callback`, body, httpOptions));
     }
 
     extractEmailFromAccessToken(accessToken: string): string | null {
@@ -150,18 +120,21 @@ export class AuthService {
       const role = roleFromAccessToken.toLowerCase() as string;
 
       if (role) {
-          console.log('Redirecting to ' + role + ' page');
           this.updateMessage('Redirecting to ' + role + ' page...');
           setTimeout(() => {
             this.router.navigateByUrl("/" + role, { replaceUrl: true });
           }, 2000);
       } else {
-        console.log('Unable to redirect based on role');
-          this.updateMessage('Unable to redirect based on role.\nRedirecting to home page...');
-          this.updateIsError(true);
+          this.updateMessage('Redirecting to home page...');
           setTimeout(() => {
             this.router.navigateByUrl("", { replaceUrl: true });
           }, 2000);
       }
     }
+
+    async redirectToLogin() {
+      setTimeout(() => {
+        this.router.navigateByUrl('', { replaceUrl: true });
+      }, 2000);
+  }
 }

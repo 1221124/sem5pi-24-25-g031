@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Configuration;
-
 namespace Infrastructure
 {
     public static class AppSettings
@@ -27,7 +25,7 @@ namespace Infrastructure
         public static string RolePatient { get; private set; }
         public static void Initialize(IConfiguration configuration)
         {
-            EmailDomain = configuration["EmailSettings:Email"];
+            EmailDomain = configuration["EmailSettings:EmailDomain"];
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
             Email = configuration["SendEmailSettings:Email"];
             Password = configuration["SendEmailSettings:Password"];

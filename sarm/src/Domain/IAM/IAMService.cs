@@ -1,12 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Domain.Shared;
-using Domain.Users;
-using Domain.UsersSession;
 using Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -166,52 +162,76 @@ namespace Domain.IAM
 
         public async Task<string> GetIAMUserIdByEmailAsync(string email, string accessToken)
         {
-            var url = $"https://{AppSettings.IAMDomain}/api/v2/users-by-email?email={email}";
+            var url = $"{AppSettings.IAMDomain}api/v2/users-by-email?email={email}";
 
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
 
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to retrieve user. Status code: {response.StatusCode}");
+            }
 
             var content = await response.Content.ReadAsStringAsync();
-            var user = JsonConvert.DeserializeObject<dynamic>(content);
-            
-            if (user != null && user.Count == 0)
+            var users = JsonConvert.DeserializeObject<List<Auth0User>>(content);
+
+            if (users == null || users.Count == 0)
             {
                 throw new Exception("User not found");
             }
 
-            return user[0].user_id;
+            return users[0].UserId;
         }
 
-        public async Task<bool> AssignRoleToUserAsync(string email)
+        public async Task<(bool done, string role)> AssignRoleToUserAsync(string email)
         {
-            string accessToken = await GetAccessTokenAsync();
+            string role = "a";
+            string roleId = "a";
 
+            string accessToken = await GetAccessTokenAsync();
+            string emailTrimmed = email.Trim().ToLower();
             string userId = await GetIAMUserIdByEmailAsync(email, accessToken);
 
-            var url = $"https://{AppSettings.IAMDomain}/api/v2/users/{userId}/roles";
+            var url = $"{AppSettings.IAMDomain}api/v2/users/{userId}/roles";
 
-            string role = AppSettings.RolePatient;
-            string emailTrimmed = email.Trim().ToLower();
-            if (emailTrimmed == AppSettings.AdminEmail)
+            Console.WriteLine("Email: " + emailTrimmed);
+            Console.WriteLine("AdminEmail: " + AppSettings.AdminEmail.Trim().ToLower());
+            Console.WriteLine("DoctorEmail: " + AppSettings.DoctorEmail.Trim().ToLower());
+            Console.WriteLine("NurseEmail: " + AppSettings.NurseEmail.Trim().ToLower());
+            Console.WriteLine("TechnicianEmail: " + AppSettings.TechnicianEmail.Trim().ToLower());
+            Console.WriteLine("EmailDomain: " + AppSettings.EmailDomain.Trim().ToLower());
+            Console.WriteLine("UserId: " + userId);
+            Console.WriteLine("Url: " + url);
+
+            if (emailTrimmed.Equals(AppSettings.AdminEmail.Trim().ToLower()))
             {
-                role = AppSettings.RoleAdmin;
-            } else if (emailTrimmed.EndsWith(AppSettings.EmailDomain))
+                roleId = AppSettings.RoleAdmin;
+                role = "Admin";
+            } else if (emailTrimmed.EndsWith(AppSettings.EmailDomain.Trim().ToLower()))
             {
-                if (emailTrimmed.StartsWith("d") || emailTrimmed == AppSettings.DoctorEmail) {
-                    role = AppSettings.RoleDoctor;
-                } else if (emailTrimmed.StartsWith("n") || emailTrimmed == AppSettings.NurseEmail) {
-                    role = AppSettings.RoleNurse;
-                } else if (emailTrimmed.StartsWith("t") || emailTrimmed == AppSettings.TechnicianEmail) {
-                    role = AppSettings.RoleTechnician;
+                if (emailTrimmed.StartsWith("d") || emailTrimmed.Equals(AppSettings.DoctorEmail.Trim().ToLower())) {
+                    roleId = AppSettings.RoleDoctor;
+                    role = "Doctor";
+                } else if (emailTrimmed.StartsWith("n") || emailTrimmed.Equals(AppSettings.NurseEmail.Trim().ToLower())) {
+                    roleId = AppSettings.RoleNurse;
+                    role = "Nurse";
+                } else if (emailTrimmed.StartsWith("t") || emailTrimmed.Equals(AppSettings.TechnicianEmail.Trim().ToLower())) {
+                    roleId = AppSettings.RoleTechnician;
+                    role = "Technician";
                 }
+            } else {
+                roleId = AppSettings.RolePatient;
+                role = "Patient";
             }
+
+            Console.WriteLine("Role: " + role);
+            Console.WriteLine("RoleId: " + roleId);
 
             var requestBody = new
             {
-                roles = new[] { role }
+                roles = new[] { roleId }
             };
 
             var request = new HttpRequestMessage(HttpMethod.Post, url)
@@ -219,25 +239,32 @@ namespace Domain.IAM
                 Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json")
             };
 
-            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var response = await _httpClient.SendAsync(request);
-            return response.IsSuccessStatusCode;
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Role {role} assigned to user {email}");
+                return (true, role);
+            }
+            else
+            {
+                Console.WriteLine($"Failed to assign role. Body: {response.Content.ReadAsStringAsync()}");
+                return (false, role);
+            }
         }
 
         private async Task<string> GetAccessTokenAsync()
         {
-            var url = $"https://{AppSettings.IAMDomain}/oauth/token";
+            var url = $"{AppSettings.IAMDomain}oauth/token";
 
             var requestBody = new
             {
-                grant_type = "password",
+                grant_type = "client_credentials",
                 client_id = AppSettings.IAMClientId,
                 client_secret = AppSettings.IAMClientSecret,
-                username = AppSettings.Email,
-                password = AppSettings.Password,
-                audience = AppSettings.IAMAudience,
-                scope = "openid profile"
+                audience = "https://dev-sagir8s22k2ehmk0.us.auth0.com/api/v2/",
+                scope = "read:roles update:users"
             };
 
             var response = await _httpClient.PostAsync(url, new StringContent(
@@ -266,6 +293,37 @@ namespace Domain.IAM
     public class JwksResponse
     {
         public List<Jwk> Keys { get; set; }
+    }
+
+    public class Auth0User
+    {
+        [JsonProperty("user_id")]
+        public string UserId { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("nickname")]
+        public string Nickname { get; set; }
+
+        [JsonProperty("picture")]
+        public string Picture { get; set; }
+        public Auth0User() {}
+
+        public Auth0User(string UserId) {
+            this.UserId = UserId;
+        }
+
+        public Auth0User(string UserId, string Email, string Name, string Nickname, string Picture) {
+            this.UserId = UserId;
+            this.Email = Email;
+            this.Name = Name;
+            this.Nickname = Nickname;
+            this.Picture = Picture;
+        }
     }
 
     public class Jwk

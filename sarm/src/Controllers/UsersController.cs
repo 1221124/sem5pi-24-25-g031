@@ -89,14 +89,18 @@ namespace Controllers
                 Email email = new Email(emailAndRole.Email);
                 if (email == null)
                 {
-                    return BadRequest(new { Message = "Email not found access token." });
+                    return BadRequest(new { Message = "Email not found in access token." });
                 }
 
                 var user = await _service.GetByEmailAsync(email);
 
                 if (user == null)
                 {
-                    if (await _iamService.AssignRoleToUserAsync(email)) return Ok(new {exists = false});
+                    var assignedRole = await _iamService.AssignRoleToUserAsync(email);
+                    if (assignedRole.done)
+                    {
+                        return Ok(new { exists = false, Message = assignedRole.role });
+                    }
                     return BadRequest(new { Message = "Failed to assign role to user." });
                 }
 
