@@ -9,16 +9,18 @@ import { AdminPatientsComponent } from './components/admin-patients/admin-patien
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
+import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
   { path: 'callback', component: AuthCallbackComponent },
-  { path: 'admin', component: AdminMenuComponent },
   { path: 'admin/staffs', component: StaffsComponent },
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/operationTypes', component: OperationTypesComponent },
   { path: 'admin/patients', component: AdminPatientsComponent },
   { path: 'admin/users', component: AdminUsersComponent },
+  { path: 'admin', component: AdminMenuComponent },
+  { path: 'doctor', component: DoctorMenuComponent },
   { path: 'patient', component: PatientComponent }
 ];
 

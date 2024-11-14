@@ -12,6 +12,7 @@ import { OperationTypesComponent } from './components/operation-types/operation-
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     AdminUsersComponent,
     AppComponent,
     AuthCallbackComponent,
+    DoctorMenuComponent,
     HomeComponent,
     OperationRequestsComponent,
     OperationTypesComponent,
