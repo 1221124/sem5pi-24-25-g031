@@ -98,21 +98,25 @@ namespace DDDNetCore.Controllers
             
             return paginatedPatients;
         }
-        
-        // GET: api/Patient/email/{email}
-        [HttpGet("email/{email}")]
-        public async Task<ActionResult<PatientDto>> GetByEmail(string email)
+         */
+        // GET: api/Patient/email/?email={email}
+        [HttpGet("email")]
+        public async Task<ActionResult<PatientDto>> GetByEmail([FromQuery] string? email)
         {
-            var patient = await _service.GetByEmailAsync(new Email(email));
-
-            if (patient == null)
+            if (email != null)
             {
-                return NotFound();
+                var patient = await _service.GetByEmailAsync(new Email(email));
+
+                if (patient != null)
+                {
+                    return patient;
+                }
             }
             
-            return patient;
+            return BadRequest();
+            
         }
-        
+        /*
         // GET: api/Patient/phoneNumber/{phoneNumber}
         [HttpGet("phoneNumber/{phoneNumber}")]
         public async Task<ActionResult<PatientDto>> GetByPhoneNumber(string phoneNumber)
