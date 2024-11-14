@@ -8,7 +8,10 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-patient',
   standalone: true,
-  imports: [],
+  imports: [
+    DatePipe,
+    NgIf
+  ],
   templateUrl: './patient.component.html',
   styleUrl: './patient.component.css',
   providers: [AuthService, PatientService]
@@ -37,11 +40,17 @@ export class PatientComponent {
     this.getPatient();
   }
 
-  getPatient(): void{
+  getPatient(): void {
     this.token = this.authorizationService.getToken();
-
+    console.log("Token:", this.token);  // Log token
     this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.token);
-    this.getPatientByEmail(this.patientEmail);
+    console.log("Extracted Email:", this.patientEmail);  // Log email
+
+    if (this.patientEmail) {
+      this.getPatientByEmail(this.patientEmail);
+    } else {
+      console.error("Email could not be extracted.");
+    }
   }
 
   getPatientByEmail(email: string): void {

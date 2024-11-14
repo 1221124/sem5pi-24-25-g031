@@ -13,13 +13,13 @@ export class PatientService {
   constructor(private http: HttpClient) {
   }
 
-  getByEmail(email: any):Observable<any> {
+  getByEmail(email: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     };
 
-    return this.http.get(`${this.apiUrl}/email/?${email}`, httpOptions);
+    return this.http.get(`${this.apiUrl}/email?email=${email}`, httpOptions);
   }
 }

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { PatientsService } from '../../services/admin-patients/admin-patients.service';
 import {RouterModule, RouterOutlet} from '@angular/router';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -66,7 +67,7 @@ export class AdminPatientsComponent{
   isAppoitmentHistoryModalOpen = false;
   isDeleteModalOpen = false;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.fetchPatients();
     if (this.selectedPatient.appointmentHistory) {
       this.selectedPatient.appointmentHistory.forEach((slot: { formattedStart: string; start: string | number | Date; }, i: any) => {
@@ -170,33 +171,34 @@ export class AdminPatientsComponent{
   }
 
   // Method to refresh the list of patients
-  refreshPatients() {
-    this.patientService.getFilterPatients(this.filter).subscribe(
-      (data) => {
-        this.patients = data; // Update the patients list
-      },
-      (error) => {
+  async refreshPatients(){
+    try {
+      this.patients = await this.patientService.getFilterPatients(this.filter).toPromise();
+    } catch (error) {
+      const httpError = error as HttpErrorResponse;
+      if (httpError.status === 404 || httpError.status === 400) {
+        this.patients = [];
+        console.warn('No patients found or invalid filter parameters.');
+      } else {
         console.error('Error refreshing patients:', error);
       }
-    );
+    }
   }
 
   // Fetch all patients initially or apply the filter
-  fetchPatients(): void {
-    this.patientService.getPatients().subscribe(
-      (data) => {
-        this.patients = data.map((patient: { appointmentHistory: any[]; }) => ({
-          ...patient,
-          appointmentHistory: patient.appointmentHistory.map(slot => ({
-            start: new Date(slot.start),
-            end: new Date(slot.end)
-          }))
-        }));
-      },
-      (error) => {
-        console.error('Error fetching patients:', error);
-      }
-    );
+  async fetchPatients(): Promise<void> {
+    try {
+      const data = await this.patientService.getPatients().toPromise();
+      this.patients = data.map((patient: { appointmentHistory: any[] }) => ({
+        ...patient,
+        appointmentHistory: patient.appointmentHistory.map(slot => ({
+          start: new Date(slot.start),
+          end: new Date(slot.end)
+        }))
+      }));
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    }
   }
 
   applyFilter(): void {

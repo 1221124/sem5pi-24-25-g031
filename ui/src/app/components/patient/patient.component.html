@@ -1,5 +1,33 @@
 <div class="patient-component">
   <h1>Patient</h1>
 
+  <p>{{patients.length}}</p>
+
+  <div *ngIf="patients.length > 0">
+    <h2>Patient Details</h2>
+    <div class="patient-details">
+      <div><strong>First Name:</strong> {{ patients[0].firstName }}</div>
+      <div><strong>Last Name:</strong> {{ patients[0].lastName }}</div>
+      <div><strong>Date of Birth:</strong> {{ patients[0].dateOfBirth | date: 'yyyy-MM-dd' }}</div>
+      <div><strong>Email:</strong> {{ patients[0].contactInformation?.email?.value }}</div>
+      <div><strong>Phone Number:</strong> {{ patients[0].contactInformation?.phoneNumber?.value }}</div>
+      <div><strong>Gender:</strong> {{ patients[0].gender === 0 ? 'Male' : 'Female' }}</div>
+      <div><strong>Medical Record Number:</strong> {{ patients[0].medicalRecordNumber }}</div>
+      <div><strong>Emergency Contact:</strong> {{ patients[0].emergencyContact?.number?.value || 'N/A' }}</div>
+
+      <div><strong>Appointment History:</strong></div>
+      <div *ngIf="patients[0].appointmentHistory.length > 0">
+        <div *ngFor="let slot of patients[0].appointmentHistory">
+          <div>Start: {{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</div>
+          <div>End: {{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</div>
+        </div>
+      </div>
+      <div *ngIf="patients[0].appointmentHistory.length === 0">No appointments available</div>
+    </div>
+  </div>
+  <div *ngIf="patients.length === 0">
+    <p>No patient data available.</p>
+  </div>
+
 
 </div>
