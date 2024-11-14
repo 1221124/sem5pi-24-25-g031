@@ -10,6 +10,6 @@ export class AdminMenuComponent {
   constructor(private router: Router) {}
 
   navigateTo(path: string) {
-    this.router.navigate(['/admin/' + path]);
+    this.router.navigateByUrl('/doctor/' + path), { replaceUrl: true };
   }
 }

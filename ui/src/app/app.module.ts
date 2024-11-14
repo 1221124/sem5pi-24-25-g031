@@ -13,6 +13,8 @@ import { AdminMenuComponent } from './components/admin-menu/admin-menu.component
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
+import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
+import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 
 
 @NgModule({
@@ -23,9 +25,11 @@ import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.compon
     AuthCallbackComponent,
     DoctorMenuComponent,
     HomeComponent,
+    NurseMenuComponent,
     OperationRequestsComponent,
     OperationTypesComponent,
-    StaffsComponent
+    StaffsComponent,
+    TechnicianMenuComponent
   ],
   imports: [
     BrowserModule,
