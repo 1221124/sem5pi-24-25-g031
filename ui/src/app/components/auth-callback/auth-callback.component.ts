@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
+import { response } from 'express';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-callback',
@@ -26,56 +28,60 @@ export class AuthCallbackComponent implements OnInit {
       this.isError = errorStatus;  
     });
 
-    try {
-      const fragment = window.location.hash;
-      const params = new URLSearchParams(fragment.replace('#', ''));
-      const accessToken = params.get('access_token');
-      
-      if (accessToken) {
-        console.log('Setting token');
-        this.authService.setToken(accessToken);
-        console.log('Token set');
+    const fragment = await firstValueFrom(this.route.fragment);
+    if (!fragment) {
+      return;
+    }
+    const params = new URLSearchParams(fragment);
+    const accessToken = params.get('access_token');
+    
+    if (accessToken) {
+      console.log('Setting token');
+      this.authService.setToken(accessToken);
+      console.log('Token set');
 
-        if (this.authService.verifyToken()) {
-          console.log('Handling user callback');
-          const userCallbackResponse = await this.authService.handleUserCallback(accessToken);
-          
-          if (userCallbackResponse.status === 200) {
-            if (userCallbackResponse.body?.exists == true) {
-              const loginResponse = await this.authService.login(accessToken);
+      if (this.authService.verifyToken()) {
+        console.log('Handling user callback');
+        const userCallbackResponse = await this.authService.handleUserCallback(accessToken);
+        
+        if (userCallbackResponse.status === 200) {
+          if (userCallbackResponse.body?.exists == true) {
+            const loginResponse = await this.authService.login(accessToken);
+            try {
               if (loginResponse.status == 200) {
                 console.log('Login successful');
                 this.authService.updateMessage('Login successful!');
                 this.authService.redirectBasedOnRole(accessToken);
                 return;
               } else {
-                console.log('Error during login: ' + loginResponse.body);
-                this.authService.updateMessage('Error during login: ' + loginResponse.body);
+                console.log('Unexpected response during login: ' + loginResponse.body?.message);
+                this.authService.updateMessage('Unexpected response during login: ' + loginResponse.body?.message);
                 this.authService.updateIsError(true);
                 return;
               }
-            } else {
-              console.log('Creating user...');
-              this.authService.updateMessage('Creating user...');
-              await this.createUser(accessToken);
-              return;
+            } catch {
+              if (loginResponse.status == 400) {
+                this.authService.updateMessage('Bad request during login: ' + loginResponse.body?.message);
+                this.authService.updateIsError(true);
+                return;
+              }
             }
           } else {
-            this.authService.updateMessage('Error during user callback: ' + userCallbackResponse.body);  
-            this.authService.updateIsError(true);
+            console.log('Creating user...');
+            this.authService.updateMessage('Creating user...');
+            await this.createUser(accessToken);
             return;
           }
+        } else {
+          this.authService.updateMessage('Error during user callback: ' + userCallbackResponse.body);  
+          this.authService.updateIsError(true);
+          return;
         }
-
       } else {
-        this.authService.updateMessage('Error: Fragment is null');
+        this.authService.updateMessage('Token verification failed');  
         this.authService.updateIsError(true);
         return;
       }
-    } catch (error) {
-      const err = error as Error;
-      this.authService.updateMessage('Error during callback: ' + err.message);
-      this.authService.updateIsError(true);
     }
   }
 

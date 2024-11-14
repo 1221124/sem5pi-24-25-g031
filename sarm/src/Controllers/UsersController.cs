@@ -161,13 +161,13 @@ namespace Controllers
                 var user = await _service.GetByEmailAsync(email);
 
                 if (user == null)
-                    return BadRequest(new { Message = $"User with email {email} not found." });
+                    return BadRequest(new { message = $"User with email {email} not found." });
 
                 user = _service.Login(user);
 
-                return Ok(user.Email.Value.Split('@')[0]);
+                return Ok( new { message = $"User with email {email} logged in." });
             } catch (BusinessRuleValidationException ex) {
-                return BadRequest(new { ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
         }
 

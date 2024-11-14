@@ -100,7 +100,7 @@ export class AuthService {
       const body = {
           accessToken : accessToken
       };
-      return firstValueFrom(this.http.post<any>(`${environment.usersApiUrl}/callback`, body, {observe: 'response'}));
+      return await firstValueFrom(this.http.post<any>(`${environment.usersApiUrl}/callback`, body, {observe: 'response'}));
     }
 
     extractEmailFromAccessToken(accessToken: string): string | null {
@@ -127,14 +127,22 @@ export class AuthService {
           email: email,
           role: role
       };
-      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response', responseType: 'json' }));
+      return await firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response', responseType: 'json' }));
     }
 
-    async login(accessToken: string) {
+    async login(accessToken: string) : Promise<HttpResponse<{ message: string }>> {
       const queryParams = new HttpParams()
         .set('accessToken', accessToken);
 
-      return firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}/login`, null, { params: queryParams, observe: 'response'}));
+      const response = await firstValueFrom(
+        this.http.post<{ message: string }>(
+          `${environment.usersApiUrl}/login`,
+          null,
+          { params: queryParams, observe: 'response' }
+        )
+      );
+
+      return response;
     }
 
     async redirectBasedOnRole(accessToken: string) {
