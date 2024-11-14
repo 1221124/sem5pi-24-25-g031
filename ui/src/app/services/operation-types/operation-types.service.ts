@@ -16,21 +16,21 @@ export class OperationTypesService {
 
   async getStaffRoles() {
       const url = `${environment.enums}/staffRoles`;
-      return await firstValueFrom(this.http.get<string[]>(url, httpOptions));
+      return await firstValueFrom(this.http.get<string[]>(url));
   }
 
   async getSpecializations() {
     const url = `${environment.enums}/specializations`;
-    return await firstValueFrom(this.http.get<string[]>(url, httpOptions));
+    return await firstValueFrom(this.http.get<string[]>(url));
   }
 
   async getStatuses() {
     const url = `${environment.enums}/statuses`;
-    return await firstValueFrom(this.http.get<string[]>(url, httpOptions));
+    return await firstValueFrom(this.http.get<string[]>(url));
   }
 
-  async post(operationType: OperationType) {    
-    
+  async post(operationType: OperationType) {
+
     const dto = {
       "Name": {
         "Value": operationType.Name

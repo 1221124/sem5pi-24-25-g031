@@ -9,7 +9,7 @@ export const environment = {
   operationRequests: 'http://localhost:5500/api/OperationRequest',
   operationTypes: 'http://localhost:5500/api/OperationTypes',
   enums: 'http://localhost:5500/api/Enums',
-  staffs: 'http://localhost:5500/api/Staff',  
+  staffs: 'http://localhost:5500/api/Staff',
   patients: 'http://localhost:5500/api/Patient',
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
@@ -21,7 +21,7 @@ export const environment = {
 };
 
 export const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
+  contentType: 'application/json',
+  observe: 'response' as const,
+  accept: 'application/json'
 };
