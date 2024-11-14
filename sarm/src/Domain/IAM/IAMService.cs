@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Domain.Shared;
@@ -98,13 +99,7 @@ namespace Domain.IAM
             }
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseContent);
-
-            if (tokenResponse == null)
-            {
-                throw new Exception("Token not found in response.");
-            }
-
+            var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseContent) ?? throw new Exception("Token not found in response.");
             return tokenResponse;
         }
 
@@ -167,6 +162,92 @@ namespace Domain.IAM
             }
 
             return new Email(emailClaim);
+        }
+
+        public async Task<string> GetIAMUserIdByEmailAsync(string email, string accessToken)
+        {
+            var url = $"https://{AppSettings.IAMDomain}/api/v2/users-by-email?email={email}";
+
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var user = JsonConvert.DeserializeObject<dynamic>(content);
+            
+            if (user != null && user.Count == 0)
+            {
+                throw new Exception("User not found");
+            }
+
+            return user[0].user_id;
+        }
+
+        public async Task<bool> AssignRoleToUserAsync(string email)
+        {
+            string accessToken = await GetAccessTokenAsync();
+
+            string userId = await GetIAMUserIdByEmailAsync(email, accessToken);
+
+            var url = $"https://{AppSettings.IAMDomain}/api/v2/users/{userId}/roles";
+
+            string role = AppSettings.RolePatient;
+            string emailTrimmed = email.Trim().ToLower();
+            if (emailTrimmed == AppSettings.AdminEmail)
+            {
+                role = AppSettings.RoleAdmin;
+            } else if (emailTrimmed.EndsWith(AppSettings.EmailDomain))
+            {
+                if (emailTrimmed.StartsWith("d") || emailTrimmed == AppSettings.DoctorEmail) {
+                    role = AppSettings.RoleDoctor;
+                } else if (emailTrimmed.StartsWith("n") || emailTrimmed == AppSettings.NurseEmail) {
+                    role = AppSettings.RoleNurse;
+                } else if (emailTrimmed.StartsWith("t") || emailTrimmed == AppSettings.TechnicianEmail) {
+                    role = AppSettings.RoleTechnician;
+                }
+            }
+
+            var requestBody = new
+            {
+                roles = new[] { role }
+            };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json")
+            };
+
+            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+            var response = await _httpClient.SendAsync(request);
+            return response.IsSuccessStatusCode;
+        }
+
+        private async Task<string> GetAccessTokenAsync()
+        {
+            var url = $"https://{AppSettings.IAMDomain}/oauth/token";
+
+            var requestBody = new
+            {
+                grant_type = "password",
+                client_id = AppSettings.IAMClientId,
+                client_secret = AppSettings.IAMClientSecret,
+                username = AppSettings.Email,
+                password = AppSettings.Password,
+                audience = AppSettings.IAMAudience,
+                scope = "openid profile"
+            };
+
+            var response = await _httpClient.PostAsync(url, new StringContent(
+                JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json"));
+
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var tokenResponse = JsonConvert.DeserializeObject<dynamic>(content) ?? throw new Exception("Failed to retrieve access token.");
+            return tokenResponse.access_token;
         }
     }
 

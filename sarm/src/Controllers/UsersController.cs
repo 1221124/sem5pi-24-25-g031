@@ -96,7 +96,8 @@ namespace Controllers
 
                 if (user == null)
                 {
-                    return Ok(new {exists = false});
+                    if (await _iamService.AssignRoleToUserAsync(email)) return Ok(new {exists = false});
+                    return BadRequest(new { Message = "Failed to assign role to user." });
                 }
 
                 return Ok(new {exists = true});
@@ -151,7 +152,7 @@ namespace Controllers
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        // POST: api/Users/login?idToken={idToken}
+        // POST: api/Users/login?accessToken={accessToken}
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromQuery] string accessToken)
         {
@@ -208,10 +209,10 @@ namespace Controllers
             {
                 user.UserStatus = UserStatus.Active;
                 await _service.UpdateAsync(user);
-                return Ok(new { Message = "Email verified." });
+                return Ok(new { message = "Email verified." });
             }
 
-            return NotFound();
+            return NotFound(new { message = "User not found." });
         }
 
         // Inactivate: api/Users/5

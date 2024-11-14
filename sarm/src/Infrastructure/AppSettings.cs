@@ -17,10 +17,17 @@ namespace Infrastructure
         public static string IAMLogoutUrl { get; private set; }
         public static string VerifyEmailUrl { get; private set; }
         public static string AdminEmail { get; private set; }
-
+        public static string DoctorEmail { get; private set; }
+        public static string NurseEmail { get; private set; }
+        public static string TechnicianEmail { get; private set; }
+        public static string RoleAdmin { get; private set; }
+        public static string RoleDoctor { get; private set; }
+        public static string RoleNurse { get; private set; }
+        public static string RoleTechnician { get; private set; }
+        public static string RolePatient { get; private set; }
         public static void Initialize(IConfiguration configuration)
         {
-            EmailDomain = configuration["SendEmailSettings:Email"];
+            EmailDomain = configuration["EmailSettings:Email"];
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
             Email = configuration["SendEmailSettings:Email"];
             Password = configuration["SendEmailSettings:Password"];
@@ -32,7 +39,15 @@ namespace Infrastructure
             IAMLoginUrl = configuration["IAM:LoginURL"];
             IAMLogoutUrl = configuration["IAM:LogoutURL"];
             VerifyEmailUrl = configuration["VerifyEmailUrl"];
-            AdminEmail = configuration["AdminEmail"];
+            AdminEmail = configuration["Email:Admin"];
+            DoctorEmail = configuration["Email:Doctor"];
+            NurseEmail = configuration["Email:Nurse"];
+            TechnicianEmail = configuration["Email:Technician"];
+            RoleAdmin = configuration["RoleId:Admin"];
+            RoleDoctor = configuration["RoleId:Doctor"];
+            RoleNurse = configuration["RoleId:Nurse"];
+            RoleTechnician = configuration["RoleId:Technician"];
+            RolePatient = configuration["RoleId:Patient"];
         }
     }
 }
