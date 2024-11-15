@@ -32,6 +32,7 @@ using DDDNetCore.Domain.Appointments;
 using Infrastructure.Appointments;
 using DDDNetCore.Infrastructure.Surgeries;
 using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.PrologIntegration.PrologIntegrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -133,6 +134,10 @@ builder.Services.AddTransient<AppointmentService>();
 
 builder.Services.AddTransient<ISurgeryRepository, SurgeryRepository>();
 builder.Services.AddTransient<SurgeryService>();
+
+builder.Services.AddScoped<PrologIntegration>();
+builder.Services.AddScoped<PrologIntegrationService>();
+builder.Services.AddScoped<PrologService>();
 
 builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.com", "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"));
 
