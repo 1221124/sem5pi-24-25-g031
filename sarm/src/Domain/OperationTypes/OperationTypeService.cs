@@ -69,6 +69,11 @@ namespace Domain.OperationTypes
             if (await this._repo.GetByNameAsync(operationType.Name) != null)
                 return null;
 
+            if (string.IsNullOrWhiteSpace(operationType.Name)
+            || operationType.RequiredStaff == null || operationType.RequiredStaff.Count == 0
+            || operationType.PhasesDuration == null || operationType.PhasesDuration.Phases == null || operationType.PhasesDuration.Phases.Count == 0)
+                return null;
+
             await this._repo.AddAsync(operationType);
 
             await this._unitOfWork.CommitAsync();
@@ -126,41 +131,46 @@ namespace Domain.OperationTypes
 
         public async Task<List<OperationTypeDto>> GetAsync(string? name, string? specialization, string? status)
         {
-            List<OperationType> operationTypes = await this._repo.GetAllAsync();
+            List<OperationType> operationTypes = await this._repo.GetAsync(name, specialization, status);
 
-            OperationType operationTypeWithName;
-            List<OperationType> operationTypesWithSpecialization;
-            List<OperationType> operationTypesWithStatus;
-
-            if (name != null)
-            {
-                operationTypeWithName = await _repo.GetByNameAsync(new Name(name));
-                if (operationTypeWithName != null)
-                {
-                    operationTypes = new List<OperationType> { operationTypeWithName };
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            if (specialization != null)
-            {
-                operationTypesWithSpecialization = await _repo.GetBySpecializationAsync(SpecializationUtils.FromString(specialization));
-                operationTypes = operationTypes.Intersect(operationTypesWithSpecialization).ToList();
-            }
-
-            if (status != null)
-            {
-                operationTypesWithStatus = await _repo.GetByStatusAsync(StatusUtils.FromString(status));
-                operationTypes = operationTypes.Intersect(operationTypesWithStatus).ToList();
-            }
-
-            if (operationTypes == null || !operationTypes.Any())
+            if (operationTypes == null || operationTypes.Count == 0)
             {
                 return null;
             }
+
+            // OperationType operationTypeWithName;
+            // List<OperationType> operationTypesWithSpecialization;
+            // List<OperationType> operationTypesWithStatus;
+
+            // if (name != null)
+            // {
+            //     operationTypeWithName = await _repo.GetByNameAsync(new Name(name));
+            //     if (operationTypeWithName != null)
+            //     {
+            //         operationTypes = new List<OperationType> { operationTypeWithName };
+            //     }
+            //     else
+            //     {
+            //         return null;
+            //     }
+            // }
+
+            // if (specialization != null)
+            // {
+            //     operationTypesWithSpecialization = await _repo.GetBySpecializationAsync(SpecializationUtils.FromString(specialization));
+            //     operationTypes = operationTypes.Intersect(operationTypesWithSpecialization).ToList();
+            // }
+
+            // if (status != null)
+            // {
+            //     operationTypesWithStatus = await _repo.GetByStatusAsync(StatusUtils.FromString(status));
+            //     operationTypes = operationTypes.Intersect(operationTypesWithStatus).ToList();
+            // }
+
+            // if (operationTypes == null || !operationTypes.Any())
+            // {
+            //     return null;
+            // }
 
             List<OperationTypeDto> listDto = OperationTypeMapper.ToDtoList(operationTypes);
 

@@ -18,6 +18,34 @@ namespace Infrastructure.OperationTypes
             this._objs = context.OperationTypes;
         }
 
+        public async Task<List<OperationType>> GetAsync(string? name, string? specialization, string? status)
+        {
+            var operationTypes = await this._objs.ToListAsync();
+
+            if (name != null)
+            {
+                operationTypes = operationTypes
+                    .Where(x => name.Equals(x.Name.Value))
+                    .ToList();
+            }
+
+            if (specialization != null)
+            {
+                operationTypes = operationTypes
+                    .Where(x => specialization.Equals(SpecializationUtils.ToString(x.Specialization)))
+                    .ToList();
+            }
+
+            if (status != null)
+            {
+                operationTypes = operationTypes
+                    .Where(x => status.Equals(StatusUtils.ToString(x.Status)))
+                    .ToList();
+            }
+
+            return operationTypes;
+        }
+
         public async Task<OperationType> GetByNameAsync(Name name)
         {
             return await this._objs

@@ -105,7 +105,7 @@ namespace Controllers
                     return NotFound();
                 }
                 _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Update, new Message($"Update {operationType.Id}"));
-                return Ok(operationType);
+                return Ok(new { operationType = operationType });
             }
             catch(BusinessRuleValidationException ex)
             {
