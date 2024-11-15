@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "123e4567-e89b-12d3-a456-426614174000",
+    "Name": "Operation 1",
+    "Specialization": "Cardiology",
+    "RequiredStaff": [{ "Role": "Doctor", "Specialization": "Cardiology", "Quantity": 1 }],
+    "PhasesDuration": { "Preparation": 30, "Surgery": 120, "Cleaning": 15 },
+    "Status": "Active"
+  }
+]
