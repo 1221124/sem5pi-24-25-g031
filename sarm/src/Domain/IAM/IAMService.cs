@@ -19,43 +19,43 @@ namespace Domain.IAM
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<SecurityKey>> LoadPublicKeysAsync()
-        {
-            try
-            {
-                var jwksUrl = $"{AppSettings.IAMDomain}.well-known/jwks.json";
-                var response = await _httpClient.GetAsync(jwksUrl);
-                response.EnsureSuccessStatusCode();
+        // public async Task<IEnumerable<SecurityKey>> LoadPublicKeysAsync()
+        // {
+        //     try
+        //     {
+        //         var jwksUrl = $"{AppSettings.IAMDomain}.well-known/jwks.json";
+        //         var response = await _httpClient.GetAsync(jwksUrl);
+        //         response.EnsureSuccessStatusCode();
 
-                var jwksJson = await response.Content.ReadAsStringAsync();
-                var jwks = JsonConvert.DeserializeObject<JwksResponse>(jwksJson);
-                if (jwks?.Keys == null || jwks.Keys.Count == 0)
-                {
-                    throw new Exception("No keys found in JWKS.");
-                }
+        //         var jwksJson = await response.Content.ReadAsStringAsync();
+        //         var jwks = JsonConvert.DeserializeObject<JwksResponse>(jwksJson);
+        //         if (jwks?.Keys == null || jwks.Keys.Count == 0)
+        //         {
+        //             throw new Exception("No keys found in JWKS.");
+        //         }
 
-                return jwks.Keys.Select(key => new JsonWebKey
-                {
-                    Kty = key.Kty,
-                    Alg = key.Alg,
-                    Use = key.Use,
-                    N = key.N,
-                    E = key.E
-                });
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new Exception("Error fetching JWKS: " + ex.Message);
-            }
-            catch (Newtonsoft.Json.JsonException ex)
-            {
-                throw new Exception("Error deserializing JWKS: " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An unexpected error occurred: " + ex.Message);
-            }
-        }
+        //         return jwks.Keys.Select(key => new JsonWebKey
+        //         {
+        //             Kty = key.Kty,
+        //             Alg = key.Alg,
+        //             Use = key.Use,
+        //             N = key.N,
+        //             E = key.E
+        //         });
+        //     }
+        //     catch (HttpRequestException ex)
+        //     {
+        //         throw new Exception("Error fetching JWKS: " + ex.Message);
+        //     }
+        //     catch (Newtonsoft.Json.JsonException ex)
+        //     {
+        //         throw new Exception("Error deserializing JWKS: " + ex.Message);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         throw new Exception("An unexpected error occurred: " + ex.Message);
+        //     }
+        // }
 
         public IEnumerable<SecurityKey> GetPublicKeys()
         {

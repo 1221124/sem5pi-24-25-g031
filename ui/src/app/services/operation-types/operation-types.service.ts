@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { OperationType } from '../../models/operation-type.model';
 import { Injectable } from '@angular/core';
 import { environment, httpOptions } from '../../../environments/environment';
@@ -29,7 +29,7 @@ export class OperationTypesService {
     return await firstValueFrom(this.http.get<string[]>(url));
   }
 
-  async post(operationType: OperationType) {
+  async post(operationType: OperationType, accessToken: string) {
 
     const dto = {
       "Name": {
@@ -64,11 +64,14 @@ export class OperationTypesService {
       }
     };
 
-    const options = { ...httpOptions, observe: 'response' as const };
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers};
     return await firstValueFrom(this.http.post(environment.operationTypes, dto, options));
   }
 
-  async updateOperationType(id: string, operationType: OperationType) {
+  async updateOperationType(id: string, operationType: OperationType, accessToken: string) {
     const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     if (!guidRegex.test(id)) {
       throw new Error('Invalid ID format. Please provide a valid GUID.');
@@ -109,11 +112,14 @@ export class OperationTypesService {
       "Status": operationType.Status
     };
 
-    const options = { ...httpOptions, observe: 'response' as const };
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers};
     return await firstValueFrom(this.http.put(`${environment.operationTypes}/${id}`, dto, options));
   }
 
-  async getOperationTypes(filter: any) {
+  async getOperationTypes(filter: any, accessToken: string) {
     let params = new HttpParams();
 
     if (filter.pageNumber > 0) params = params.set('pageNumber', filter.pageNumber.toString());
@@ -121,7 +127,12 @@ export class OperationTypesService {
     if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
     if (filter.status !== '') params = params.set('status', filter.status);
 
-    const options = { contentType : 'application/json', observe: 'response' as const, accept : 'application/json', params };
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const, params };
 
     return await firstValueFrom(this.http.get<{ operationTypes: any[], totalItems: number }>(`${environment.operationTypes}`, options))
       .then(response => {
@@ -156,8 +167,11 @@ export class OperationTypesService {
       });
   }
 
-  async getOperationTypeById(id: string) {
-    const options = { contentType : 'application/json', observe: 'response' as const, accept : 'application/json' };
+  async getOperationTypeById(id: string, accessToken: string) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers};
     return await firstValueFrom(this.http.get<{ operationType: any }>(`${environment.operationTypes}/${id}`, options))
       .then(response => {
         if (response.status === 200 && response.body) {
@@ -187,13 +201,16 @@ export class OperationTypesService {
       });
   }
 
-  async deleteOperationType(id: string) {
+  async deleteOperationType(id: string, accessToken: string) {
     const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     if (!guidRegex.test(id)) {
       throw new Error('Invalid ID format. Please provide a valid GUID.');
     }
 
-    const options = { observe: 'response' as const };
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers};
     return await firstValueFrom(this.http.delete(`${environment.operationTypes}/${id}`, options));
   }
 }

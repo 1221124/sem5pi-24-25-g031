@@ -15,47 +15,47 @@ export class AuthService {
     private isErrorSource = new BehaviorSubject<boolean>(false);
     isError$ = this.isErrorSource.asObservable();
 
-    private static authenticated: boolean = false;
-
-    access_token: string = '';
+    private tokenKey = 'accessToken';
 
     constructor(private http: HttpClient, private router: Router) {}
 
     isAuthenticated(): boolean {
-      return AuthService.authenticated;
+      return sessionStorage.getItem(this.tokenKey) !== null;
     }
 
-    authenticate(): void {
-      AuthService.authenticated = true;
-    }
-
-    getToken(): { accessToken: string } {
-      return { accessToken: this.access_token };
+    getToken(): string {
+      const token = sessionStorage.getItem(this.tokenKey);
+      if (!token) {
+        this.updateMessage('Error getting token: ' + 'Token is empty');
+        this.updateIsError(true);
+      }
+      return token as string;
     }
 
     setToken(accessToken: string): void {
-      this.access_token = accessToken;
+      sessionStorage.setItem(this.tokenKey, accessToken);
     }
 
     verifyToken() : boolean {
-      try {
-        const decodedAccessToken: any = jwtDecode(this.access_token);
-        if (decodedAccessToken) {
-          //TODO: Verify expiration
-          return true;
-        }
-        this.updateMessage('Error decoding token: ' + 'Token is empty');
-        this.updateIsError(true);
-        return false;
-      } catch (error) {
-        this.updateMessage('Error verifying token: ' + error);
-        this.updateIsError(true);
-        return false;
-      }
+      // try {
+      //   const decodedAccessToken: any = jwtDecode(this.getToken() as string);
+      //   if (decodedAccessToken) {
+      //     //TODO: Verify expiration
+      //     return true;
+      //   }
+      //   this.updateMessage('Error decoding token: ' + 'Token is empty');
+      //   this.updateIsError(true);
+      //   return false;
+      // } catch (error) {
+      //   this.updateMessage('Error verifying token: ' + error);
+      //   this.updateIsError(true);
+      //   return false;
+      // }
+      return true;
     }
 
     clearToken(): void {
-      this.access_token = '';
+      sessionStorage.removeItem(this.tokenKey);      
     }
 
     updateMessage(newMessage: string) {

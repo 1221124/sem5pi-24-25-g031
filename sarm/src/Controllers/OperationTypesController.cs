@@ -4,6 +4,7 @@ using Domain.OperationTypes;
 using Domain.UsersSession;
 using Domain.DbLogs;
 using DDDNetCore.Domain.DbLogs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
@@ -25,6 +26,7 @@ namespace Controllers
 
         // GET: api/OperationTypes?pageNumber={pageNumber}&?name={name}&?specialization={specialization}&?status={status}
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> Get([FromQuery] string? pageNumber, [FromQuery] string? name, [FromQuery] string? specialization, [FromQuery] string? status)
         {
             var operationTypes = await _service.GetAsync(name, specialization, status);

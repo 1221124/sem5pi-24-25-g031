@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {AuthService} from '../../services/auth/auth.service';
 import {PatientService} from '../../services/patient/patient.service';
 import {RouterModule} from '@angular/router';
-import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
+import {DatePipe, NgFor, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     DatePipe,
-    NgIf
+    NgIf,
+    NgFor,
   ],
   templateUrl: './patient.component.html',
   styleUrl: './patient.component.css',

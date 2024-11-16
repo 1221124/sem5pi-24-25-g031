@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { OperationType } from '../../models/operation-type.model';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-operation-types',
@@ -55,7 +56,9 @@ export class OperationTypesComponent implements OnInit {
   showCreateForm: boolean = false;
   isEditMode: boolean = false;
 
-  constructor(private operationTypesService: OperationTypesService, private router: Router) {}
+  accessToken : string = '';
+
+  constructor(private authService: AuthService, private operationTypesService: OperationTypesService, private router: Router) {}
 
   async ngOnInit() {
     await this.operationTypesService.getStaffRoles().then((data) => {
@@ -67,6 +70,7 @@ export class OperationTypesComponent implements OnInit {
     await this.operationTypesService.getStatuses().then((data) => {
       this.statuses = data;
     });
+    this.accessToken = this.authService.getToken() as string;
     await this.fetchOperationTypes();
   }
 
@@ -75,7 +79,7 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async fetchOperationTypes() {
-    await this.operationTypesService.getOperationTypes(this.filter)
+    await this.operationTypesService.getOperationTypes(this.filter, this.accessToken)
     .then(response => {
       if (response.status === 200) {
         if (response.body) {
@@ -158,7 +162,7 @@ export class OperationTypesComponent implements OnInit {
     if (this.isEditMode) {
       await this.update(this.operationType.Id);
     } else {
-      await this.operationTypesService.post(this.operationType)
+      await this.operationTypesService.post(this.operationType, this.accessToken)
         .then(response => {
           if (response.status === 201) {
             this.message = 'Operation Type successfully created!';
@@ -186,7 +190,7 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async update(id: string) {
-    await this.operationTypesService.updateOperationType(id, this.operationType)
+    await this.operationTypesService.updateOperationType(id, this.operationType, this.accessToken)
       .then(response => {
         if (response.status === 200) {
           this.message = 'Operation Type successfully updated!';
@@ -194,7 +198,6 @@ export class OperationTypesComponent implements OnInit {
           setTimeout(() => {
             this.clearForm();
             this.showCreateForm = false;
-            this.fetchOperationTypes();
           }, 3000);
         } else {
           this.message = 'Unexpected response status: ' + response.status;
@@ -205,6 +208,7 @@ export class OperationTypesComponent implements OnInit {
         this.message = 'There was an error updating the Operation Type: ' + error;
         this.success = false;
     });
+    await this.fetchOperationTypes();
   }
 
   async activate(operationType: OperationType) {
@@ -213,12 +217,11 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async inactivate(id: string) {
-    await this.operationTypesService.deleteOperationType(id)
+    await this.operationTypesService.deleteOperationType(id, this.accessToken)
       .then(response => {
         if (response.status === 200) {
           this.message = 'Operation Type successfully deleted!';
           this.success = true;
-          this.fetchOperationTypes();
         } else {
           this.message = 'Unexpected response status: ' + response.status;
           this.success = false;
@@ -228,6 +231,7 @@ export class OperationTypesComponent implements OnInit {
         this.message = 'There was an error deleting the Operation Type: ' + error;
         this.success = false;
       });
+    await this.fetchOperationTypes();
   }
 
   clearForm(): void {

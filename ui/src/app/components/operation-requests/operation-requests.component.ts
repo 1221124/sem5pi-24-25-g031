@@ -189,7 +189,7 @@ export class OperationRequestsComponent {
   }
 
   loadOperationTypes() {
-    this.serviceOperationType.getOperationTypes(this.filter).then(
+    this.serviceOperationType.getOperationTypes(this.filter, '').then(
       (response) => {
         if (response.status === 200 && response.body) {
           this.operationTypes = response.body.operationTypes;
