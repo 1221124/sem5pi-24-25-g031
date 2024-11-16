@@ -1,9 +1,10 @@
-import { Component} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PatientsService } from '../../services/admin-patients/admin-patients.service';
-import {RouterModule, RouterOutlet} from '@angular/router';
+import {Router, RouterModule, RouterOutlet} from '@angular/router';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../services/auth/auth.service';
 
 
 @Component({
@@ -15,10 +16,9 @@ import { HttpErrorResponse } from '@angular/common/http';
   providers: [PatientsService]
 })
 
-export class AdminPatientsComponent{
+export class AdminPatientsComponent implements OnInit {
 
-  constructor(private patientService: PatientsService) {
-  }
+  constructor(private patientService: PatientsService, private authService: AuthService, private router: Router) {}
   patients: any[] = [];
   filter = {
     fullName: '',
@@ -55,7 +55,6 @@ export class AdminPatientsComponent{
   totalPages: number = 1; // Total de páginas após o filtro
   itemsPerPage: number = 5;  // Número de itens por página
 
-
   firstNameTouched = false;
   lastNameTouched = false;
   dateOfBirthTouched = false;
@@ -67,7 +66,18 @@ export class AdminPatientsComponent{
   isAppoitmentHistoryModalOpen = false;
   isDeleteModalOpen = false;
 
-  async ngOnInit(): Promise<void> {
+  accessToken: string = '';
+
+  async ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      return;
+    }
+    this.accessToken = this.authService.getToken();
     this.fetchPatients();
     if (this.selectedPatient.appointmentHistory) {
       this.selectedPatient.appointmentHistory.forEach((slot: { formattedStart: string; start: string | number | Date; }, i: any) => {

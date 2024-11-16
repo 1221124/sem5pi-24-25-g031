@@ -1,8 +1,9 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StaffsService } from '../../services/staffs/staffs.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-staffs',
@@ -12,9 +13,9 @@ import { DatePipe, NgForOf, NgIf } from '@angular/common';
   styleUrl: './staffs.component.css',
   providers: [StaffsService]
 })
-export class StaffsComponent {
+export class StaffsComponent implements OnInit {
 
-  constructor(private staffService: StaffsService) { }
+  constructor(private staffService: StaffsService, private authService: AuthService, private router: Router) { }
 
   staffs: any[] = [];
   firstName: string = '';
@@ -51,7 +52,18 @@ export class StaffsComponent {
   isSlotAppointmentModal = false;
   isSlotAvailabilityModal = false;
 
+  accessToken: string = '';
+
   ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.updateMessage('You are not authenticated or are not a staff! Please login...');
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      return;
+    }
+    this.accessToken = this.authService.getToken();
     this.refreshStaffs();
     this.staffs.forEach(staff => {
       staff.status = staff.status;

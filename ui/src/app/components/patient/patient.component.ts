@@ -46,6 +46,7 @@ export class PatientComponent {
       }, 3000);
       return;
     }
+    this.accessToken = this.authorizationService.getToken();
     this.getPatient();
   }
 

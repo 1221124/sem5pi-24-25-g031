@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
@@ -10,6 +10,7 @@ import { Staff } from '../../models/staff.model';
 import { Patient } from '../../models/patient.model';
 import { OperationType } from '../../models/operation-type.model';
 import { AuthService } from '../../services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-operation-requests',
@@ -19,7 +20,7 @@ import { AuthService } from '../../services/auth/auth.service';
   styleUrls: ['./operation-requests.component.css'],
   providers: [OperationRequestsService, StaffsService, PatientsService, OperationTypesService]
 })
-export class OperationRequestsComponent {
+export class OperationRequestsComponent implements OnInit {
   requests: OperationRequest[] = [];
   staffs: Staff[] = [];
   patients: Patient[] = [];
@@ -90,10 +91,19 @@ export class OperationRequestsComponent {
     private serviceStaff: StaffsService,
     private servicePatient: PatientsService,
     private serviceOperationType: OperationTypesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.updateMessage('You are not authenticated or are not a doctor! Please login...');
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      return;
+    }
     this.accessToken = this.authService.getToken();
     this.loadOperationRequests();
     this.loadStaffs();

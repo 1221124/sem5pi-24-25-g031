@@ -61,6 +61,14 @@ export class OperationTypesComponent implements OnInit {
   constructor(private authService: AuthService, private operationTypesService: OperationTypesService, private router: Router) {}
 
   async ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      return;
+    }
     await this.operationTypesService.getStaffRoles().then((data) => {
       this.roles = data;
     });
