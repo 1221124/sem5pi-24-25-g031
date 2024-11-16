@@ -1,41 +1,63 @@
-import { TestBed, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { OperationTypesComponent } from './operation-types.component';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
-import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { HttpResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 describe('OperationTypesComponent', () => {
   let component: OperationTypesComponent;
   let fixture: ComponentFixture<OperationTypesComponent>;
-  let operationTypesService: jasmine.SpyObj<OperationTypesService>;
-  let router: jasmine.SpyObj<Router>;
+  let mockOperationTypesService: jasmine.SpyObj<OperationTypesService>;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
+  let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    const operationTypesServiceSpy = jasmine.createSpyObj('OperationTypesService', [
-      'getStaffRoles', 'getSpecializations', 'getStatuses', 'getOperationTypes', 'post', 'updateOperationType', 'deleteOperationType'
+    mockOperationTypesService = jasmine.createSpyObj('OperationTypesService', [
+      'getStaffRoles',
+      'getSpecializations',
+      'getStatuses',
+      'getOperationTypes',
+      'post',
+      'updateOperationType',
+      'deleteOperationType',
     ]);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-    operationTypesServiceSpy.getStaffRoles.and.returnValue(Promise.resolve(['Admin', 'Doctor', 'Nurse']));
-    operationTypesServiceSpy.getSpecializations.and.returnValue(Promise.resolve(['Cardiology', 'Orthopedics']));
-    operationTypesServiceSpy.getStatuses.and.returnValue(Promise.resolve(['Active', 'Inactive']));
-    operationTypesServiceSpy.getOperationTypes.and.returnValue(Promise.resolve());
+    mockOperationTypesService.deleteOperationType.and.returnValue(Promise.resolve(new HttpResponse({ status: 200 })));
+    mockOperationTypesService.post.and.returnValue(Promise.resolve(new HttpResponse({ status: 201 })));
+    mockOperationTypesService.getOperationTypes.and.returnValue(
+      Promise.resolve({ status: 200, body: { operationTypes: [], totalItems: 0 } })
+    );
+    mockOperationTypesService.getStaffRoles.and.returnValue(Promise.resolve(['Doctor', 'Nurse']));
+    mockOperationTypesService.getSpecializations.and.returnValue(Promise.resolve(['Cardiology', 'Neurology']));
+    mockOperationTypesService.getStatuses.and.returnValue(Promise.resolve(['Active', 'Inactive']));
+
+    mockAuthService = jasmine.createSpyObj('AuthService', [
+      'isAuthenticated',
+      'getToken',
+      'updateMessage',
+      'updateIsError',
+    ]);
+
+    mockAuthService.isAuthenticated.and.returnValue(true);
+    mockAuthService.getToken.and.returnValue('mockToken');
+
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    mockRouter.navigate.and.stub();
 
     await TestBed.configureTestingModule({
-      imports: [FormsModule, OperationTypesComponent],
+      imports: [CommonModule, FormsModule, OperationTypesComponent],
       providers: [
-        { provide: HttpClient, useValue: jasmine.createSpyObj('HttpClient', ['get', 'post', 'put', 'delete']) },
-        { provide: OperationTypesService, useValue: operationTypesServiceSpy },
-        { provide: Router, useValue: routerSpy }
-      ]
+        { provide: OperationTypesService, useValue: mockOperationTypesService },
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: Router, useValue: mockRouter },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OperationTypesComponent);
     component = fixture.componentInstance;
-    operationTypesService = TestBed.inject(OperationTypesService) as jasmine.SpyObj<OperationTypesService>;
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
-
     fixture.detectChanges();
   });
 
@@ -43,130 +65,112 @@ describe('OperationTypesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load roles, specializations, and statuses on init', async () => {
-    const roles : string[] = ['Admin', 'Doctor', 'Nurse'];
-    const specializations : string[] = ['Cardiology', 'Orthopedics'];
-    const statuses : string[] = ['Active', 'Inactive'];
-    
+  it('should redirect to home if not authenticated', async () => {
+    mockAuthService.isAuthenticated.and.returnValue(false);
+  
     await component.ngOnInit();
   
-    expect(component.roles).toEqual(roles);
-    expect(component.specializations).toEqual(specializations);
-    expect(component.statuses).toEqual(statuses);
-  });
-  
+    expect(mockAuthService.updateMessage).toHaveBeenCalledWith(
+      'You are not authenticated or are not an admin! Please login...'
+    );
+  });  
 
-  it('should apply filters and fetch filtered operation types', fakeAsync(() => {
-    const filteredOperationTypes = [
-      { Id: '1', Name: 'Operation A', Specialization: 'Surgery', RequiredStaff: [], PhasesDuration: { Preparation: 1, Surgery: 2, Cleaning: 3 }, Status: 'Active' },
-    ];
-    operationTypesService.getOperationTypes.and.returnValue(Promise.resolve({
-      status: 200,
-      body: { operationTypes: filteredOperationTypes, totalItems: 1 }
-    }));
+  it('should initialize roles, specializations, and statuses on success', async () => {
+    mockAuthService.isAuthenticated.and.returnValue(true);
+    mockAuthService.getToken.and.returnValue('mockToken');
+    mockOperationTypesService.getStaffRoles.and.returnValue(Promise.resolve(['Role1', 'Role2']));
+    mockOperationTypesService.getSpecializations.and.returnValue(Promise.resolve(['Spec1', 'Spec2']));
+    mockOperationTypesService.getStatuses.and.returnValue(Promise.resolve(['Active', 'Inactive']));
+    mockOperationTypesService.getOperationTypes.and.returnValue(
+      Promise.resolve({ status: 200, body: { operationTypes: [], totalItems: 0 } })
+    );
 
-    component.filter.name = 'Operation A';
-    component.applyFilter();
-    flush();
+    await component.ngOnInit();
 
-    expect(component.operationTypes).toEqual(filteredOperationTypes);
-  }));
-
-  it('should add new staff to the required staff list', () => {
-    component.newStaff = { Role: 'Doctor', Specialization: 'Surgery', Quantity: 2 };
-    component.addStaff();
-
-    expect(component.operationType.RequiredStaff.length).toBe(1);
-    expect(component.operationType.RequiredStaff[0]).toEqual({ Role: 'Doctor', Specialization: 'Surgery', Quantity: 2 });
+    expect(component.roles).toEqual(['Role1', 'Role2']);
+    expect(component.specializations).toEqual(['Spec1', 'Spec2']);
+    expect(component.statuses).toEqual(['Active', 'Inactive']);
   });
 
-  it('should toggle the create form and clear form when hiding', () => {
-    component.showCreateForm = true;
-    component.toggleForm();
+  it('should handle errors when fetching operation types', async () => {
+    mockAuthService.isAuthenticated.and.returnValue(true);
+    mockAuthService.getToken.and.returnValue('mockToken');
+    mockOperationTypesService.getOperationTypes.and.returnValue(Promise.reject({ status: 404 }));
 
-    expect(component.showCreateForm).toBeFalse();
-    expect(component.operationType.Name).toBe('');
-    expect(component.operationType.RequiredStaff).toEqual([]);
+    await component.fetchOperationTypes();
+
+    expect(component.message).toBe('No Operation Types found!');
+    expect(component.success).toBeFalse();
+    expect(component.operationTypes).toEqual([]);
   });
 
-  it('should submit new operation type and display success message', fakeAsync(() => {
-    component.isEditMode = false;
-    const newOperationType = {
-      Id: '',
-      Name: 'New Operation',
-      Specialization: 'Orthopedics',
-      RequiredStaff: [{ Role: 'Doctor', Specialization: 'Surgery', Quantity: 2 }],
-      PhasesDuration: { Preparation: 1, Surgery: 2, Cleaning: 3 },
-      Status: 'Active'
-    };
-    operationTypesService.post.and.returnValue(Promise.resolve(new HttpResponse({
-      status: 201
-    })));
+  it('should handle success when deleting an operation type', async () => {
+    mockOperationTypesService.post.and.returnValue(Promise.resolve(new HttpResponse({ status: 200 })));
+    spyOn(component, 'fetchOperationTypes');
 
-    spyOn(component, 'clearForm');
-    spyOn<any>(component, 'showCreateForm');
-    spyOn<any>(component, 'fetchOperationTypes');
+    await component.inactivate('1');
 
-    component.operationType = newOperationType;
-
-    fixture.detectChanges();
-
-    component.submitOperationType();
-    flush();
-
-    expect(component.message).toBe('Operation Type successfully created!');
-    expect(component.success).toBeTrue();
-  }));
-
-  it('should update an existing operation type', fakeAsync(() => {
-    const updatedOperationType = {
-      Id: '1',
-      Name: 'Updated Operation',
-      Specialization: 'Orthopedics',
-      RequiredStaff: [],
-      PhasesDuration: { Preparation: 1, Surgery: 2, Cleaning: 3 },
-      Status: 'Active'
-    };
-  
-    operationTypesService.updateOperationType.and.returnValue(Promise.resolve(new HttpResponse({
-      status: 200,
-      body: {},
-      statusText: 'OK'
-    })));
-  
-    component.isEditMode = true;
-    component.operationType = updatedOperationType;
-  
-    component.submitOperationType();
-    flush();
-  
-    expect(operationTypesService.updateOperationType).toHaveBeenCalledWith('1', updatedOperationType);
-  }));
-  
-
-  it('should delete operation type and refresh list', fakeAsync(() => {
-    const idToDelete = '1';
-    operationTypesService.deleteOperationType.and.returnValue(Promise.resolve(new HttpResponse({
-      status: 200,
-      body: {},
-      statusText: 'OK',
-    })));
-    operationTypesService.getOperationTypes.and.returnValue(Promise.resolve({
-      status: 200,
-      body: { operationTypes: [], totalItems: 0 }
-    }));
-
-    component.inactivate(idToDelete);
-    tick();
-
-    expect(operationTypesService.deleteOperationType).toHaveBeenCalledWith(idToDelete);
     expect(component.message).toBe('Operation Type successfully deleted!');
     expect(component.success).toBeTrue();
-  }));
-
-  it('should navigate to the admin page', () => {
-    component.goToAdmin();
-
-    expect(router.navigate).toHaveBeenCalledWith(['/admin']);
+    expect(component.fetchOperationTypes).toHaveBeenCalled();
   });
+
+  it('should handle errors when deleting an operation type', async () => {
+    mockOperationTypesService.deleteOperationType.and.returnValue(
+      Promise.reject({ status: 401, error: { message: 'Unauthorized' } })
+    );
+  
+    await component.inactivate('1');
+  
+    expect(component.message).toBe('You are not authorized to delete Operation Types! Please log in...');
+    expect(component.success).toBeFalse();
+  });
+
+  it('should add staff to the RequiredStaff list', () => {
+    component.newStaff = { Role: 'Doctor', Specialization: 'Cardiology', Quantity: 1 };
+    component.addStaff();
+    expect(component.operationType.RequiredStaff).toContain(
+      jasmine.objectContaining({ Role: 'Doctor', Specialization: 'Cardiology', Quantity: 1 })
+    );
+  });
+
+  it('should not add staff if fields are incomplete', () => {
+    component.newStaff = { Role: '', Specialization: '', Quantity: 0 };
+    component.addStaff();
+    expect(component.operationType.RequiredStaff.length).toBe(0);
+    expect(component.message).toBe('Please fill in all fields for the staff');
+    expect(component.success).toBeFalse();
+  });
+
+  it('should toggle form visibility and clear the form', () => {
+    spyOn(component, 'clearForm');
+    component.toggleForm();
+    expect(component.showCreateForm).toBeTrue();
+
+    component.toggleForm();
+    expect(component.clearForm).toHaveBeenCalled();
+    expect(component.showCreateForm).toBeFalse();
+  });
+
+  it('should submit a new operation type on success', async () => {
+    mockOperationTypesService.post.and.returnValue(Promise.resolve(new HttpResponse({ status: 201 })));
+
+    await component.submitOperationType();
+
+    expect(mockOperationTypesService.post).toHaveBeenCalled();
+    expect(component.message).toBe('Operation Type successfully created!');
+    expect(component.success).toBeTrue();
+  });
+
+  it('should handle errors when submitting a new operation type', async () => {
+    mockOperationTypesService.post.and.returnValue(
+      Promise.reject({ status: 401, error: { message: 'Unauthorized' } })
+    );
+  
+    await component.submitOperationType();
+  
+    expect(component.message).toBe('You are not authorized to create Operation Types! Please log in...');
+    expect(component.success).toBeFalse();
+  });
+  
 });

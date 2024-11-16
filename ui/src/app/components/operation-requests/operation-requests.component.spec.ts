@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
 import { StaffsService } from '../../services/staffs/staffs.service';
-import { PatientsService } from '../../services/patients/patients.service';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
+import { PatientsService } from '../../services/admin-patients/admin-patients.service';
 
 describe('OperationRequestsComponent', () => {
   let component: OperationRequestsComponent;

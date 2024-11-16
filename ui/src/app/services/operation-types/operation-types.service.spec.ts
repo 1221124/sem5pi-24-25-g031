@@ -68,7 +68,7 @@ describe('OperationTypesService', () => {
 
       httpClientSpy.post.and.returnValue(of(mockResponse));
 
-      service.post(mockOperationType).then(response => {
+      service.post(mockOperationType, '').then(response => {
         expect(response.status).toBe(201);
       });
 
@@ -93,7 +93,7 @@ describe('OperationTypesService', () => {
 
       httpClientSpy.put.and.returnValue(of(mockResponse));
 
-      service.updateOperationType(mockOperationType.Id, mockOperationType).then(response => {
+      service.updateOperationType(mockOperationType.Id, mockOperationType, '').then(response => {
         expect(response.status).toBe(200);
       });
 
@@ -111,7 +111,7 @@ describe('OperationTypesService', () => {
 
       httpClientSpy.delete.and.returnValue(of(mockResponse));
 
-      service.deleteOperationType(id).then(response => {
+      service.deleteOperationType(id, '').then(response => {
         expect(response.status).toBe(200);
       });
 
