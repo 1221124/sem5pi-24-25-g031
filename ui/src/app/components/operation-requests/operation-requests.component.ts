@@ -9,6 +9,7 @@ import { OperationTypesService } from '../../services/operation-types/operation-
 import { Staff } from '../../models/staff.model';
 import { Patient } from '../../models/patient.model';
 import { OperationType } from '../../models/operation-type.model';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-operation-requests',
@@ -82,14 +83,18 @@ export class OperationRequestsComponent {
   totalPages: number = 1; // Total de páginas após o filtro
   itemsPerPage: number = 5;  // Número de itens por página
 
+  accessToken: string = '';
+
   constructor(
     private service: OperationRequestsService,
     private serviceStaff: StaffsService,
     private servicePatient: PatientsService,
     private serviceOperationType: OperationTypesService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.accessToken = this.authService.getToken();
     this.loadOperationRequests();
     this.loadStaffs();
     this.loadPatients();
@@ -189,7 +194,7 @@ export class OperationRequestsComponent {
   }
 
   loadOperationTypes() {
-    this.serviceOperationType.getOperationTypes(this.filter, '').then(
+    this.serviceOperationType.getOperationTypes(this.filter, this.accessToken).then(
       (response) => {
         if (response.status === 200 && response.body) {
           this.operationTypes = response.body.operationTypes;
