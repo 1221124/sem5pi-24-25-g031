@@ -51,7 +51,7 @@ export default class Maze {
                      *          1          |     No     |    Yes
                      *          2          |    Yes     |     No
                      *          3          |    Yes     |    Yes
-                     *         4           |     No     |     No
+                     *          4          |     No     |     No
                      */
                     if (description.map[j][i] == 2 || description.map[j][i] == 3) {
                         wallObject = this.wall.object.clone();
