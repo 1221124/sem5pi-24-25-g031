@@ -17,11 +17,8 @@ using Infrastructure.Shared;
 using Newtonsoft.Json.Serialization;
 using Domain.Emails;
 using Domain.IAM;
-using Infrastructure.UsersSession;
-using Domain.UsersSession;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Domain.Authz;
 using Domain.DbLogs;
 using Infrastructure.DbLogs;
 using Microsoft.OpenApi.Models;
@@ -112,12 +109,6 @@ builder.Services.AddTransient<StaffService>();
 
 builder.Services.AddTransient<IDbLogRepository, DbLogRepository>();
 builder.Services.AddTransient<DbLogService>();
-
-builder.Services.AddTransient<UsersSessionRepository>();
-builder.Services.AddTransient<IUserSessionRepository, UsersSessionRepository>();
-builder.Services.AddTransient<SessionService>();
-
-builder.Services.AddTransient<AuthorizationService>();
 
 builder.Services.AddTransient<EnumsService>();
 

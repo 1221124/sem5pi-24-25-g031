@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.OperationTypes;
-using Domain.UsersSession;
 using Domain.DbLogs;
 using DDDNetCore.Domain.DbLogs;
 using Microsoft.AspNetCore.Authorization;
@@ -14,13 +13,11 @@ namespace Controllers
     {
         private readonly int pageSize = 2;
         private readonly OperationTypeService _service;
-        private readonly SessionService _sessionService;
         private readonly DbLogService _dbLogService;
 
-        public OperationTypesController(OperationTypeService service, SessionService sessionService, DbLogService dbLogService)
+        public OperationTypesController(OperationTypeService service, DbLogService dbLogService)
         {
             _service = service;
-            _sessionService = sessionService;
             _dbLogService = dbLogService;
         }
 

@@ -15,8 +15,6 @@ using Domain.Users;
 using Infrastructure.Patients;
 using Domain.Staffs;
 using Infrastructure.Staffs;
-using Infrastructure.UsersSession;
-using Domain.UsersSession;
 using Infrastructure.DbLogs;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.Surgeries;
@@ -32,7 +30,6 @@ namespace Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Staff> Staffs { get; set; }
-        public DbSet<UserSession> UsersSessions { get; set; }
         public DbSet<DbLog> Logs { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Surgery> Surgeries { get; set; }
@@ -58,7 +55,6 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new DbLogEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new UsersSessionEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AppointmentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SurgeryEntityTypeConfiguration());
         }
