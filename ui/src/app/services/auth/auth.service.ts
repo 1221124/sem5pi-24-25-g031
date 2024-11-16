@@ -92,12 +92,12 @@ export class AuthService {
       }
     }
 
-    async createUser(email: string, role: string): Promise<HttpResponse<any> | null> {
+    async createUser(email: string, role: string, accessToken: string): Promise<HttpResponse<any> | null> {
       const dto = {
           email: email,
           role: role
       };
-      return await firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response', responseType: 'json' }));
+      return await firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response', responseType: 'json', headers: new HttpHeaders({ 'Authorization': `Bearer ${accessToken}` }) }));
     }
 
     async login(accessToken: string) : Promise<HttpResponse<{ message: string }>> {

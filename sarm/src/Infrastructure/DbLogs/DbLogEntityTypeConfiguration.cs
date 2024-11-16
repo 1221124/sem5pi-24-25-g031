@@ -9,6 +9,8 @@ namespace Infrastructure.DbLogs
     {
         public void Configure(EntityTypeBuilder<DbLog> builder)
         {
+            builder.ToTable("DbLogs");
+            
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.EntityType)

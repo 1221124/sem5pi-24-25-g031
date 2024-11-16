@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {AuthService} from '../../services/auth/auth.service';
 import {PatientService} from '../../services/patient/patient.service';
-import {RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {DatePipe, NgFor, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,9 +19,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class PatientComponent {
 
-  constructor(private authorizationService: AuthService, private patientService: PatientService) { }
+  constructor(private authorizationService: AuthService, private patientService: PatientService, private router: Router) { }
 
-  token: any;
+  accessToken: string = '';
   patientEmail: any;
 
   patients: any[] = [];
@@ -38,13 +38,21 @@ export class PatientComponent {
   userId: string = '';
 
   ngOnInit(): void {
+    if (!this.authorizationService.isAuthenticated()) {
+      this.authorizationService.updateMessage('You are not authenticated or are not a patient! Please login...');
+      this.authorizationService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      return;
+    }
     this.getPatient();
   }
 
   getPatient(): void {
-    this.token = this.authorizationService.getToken();
-    console.log("Token:", this.token);  // Log token
-    this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.token);
+    this.accessToken = this.authorizationService.getToken();
+    console.log("Token:", this.accessToken);  // Log token
+    this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.accessToken);
     console.log("Extracted Email:", this.patientEmail);  // Log email
 
     if (this.patientEmail) {

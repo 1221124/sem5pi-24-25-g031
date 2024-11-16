@@ -107,6 +107,15 @@ export class OperationTypesComponent implements OnInit {
         this.success = false;
         this.totalItems = 0;
         this.totalPages = 1;
+      } else if (error.status === 401) {
+        this.message = 'You are not authorized to view Operation Types! Please log in...';
+        this.success = false;
+        this.totalItems = 0;
+        this.totalPages = 1;
+        setTimeout(() => {
+          this.router.navigate(['']);
+        }, 3000);
+        return;
       } else {
         this.operationTypes = [];
         this.message = 'There was an error fetching the Operation Types: ' + error;
@@ -167,18 +176,28 @@ export class OperationTypesComponent implements OnInit {
           if (response.status === 201) {
             this.message = 'Operation Type successfully created!';
             this.success = true;
-            this.clearForm();
-            this.showCreateForm = false;
-            this.fetchOperationTypes();
+            setTimeout(() => {
+              this.clearForm();
+              this.showCreateForm = false;
+            }, 1500);
           } else {
             this.message = 'Unexpected response status: ' + response.status;
             this.success = false;
           }
         })
         .catch(error => {
+          if (error.status === 401) {
+            this.message = 'You are not authorized to create Operation Types! Please log in...';
+            this.success = false;
+            setTimeout(() => {
+              this.router.navigate(['']);
+            }, 3000);
+            return;
+          }
           this.message = 'There was an error creating the Operation Type: ' + error;
           this.success = false;
       });
+      await this.fetchOperationTypes();
     }
   }
 
@@ -205,6 +224,14 @@ export class OperationTypesComponent implements OnInit {
         }
       })
       .catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to update Operation Types! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        }
         this.message = 'There was an error updating the Operation Type: ' + error;
         this.success = false;
     });
@@ -228,6 +255,14 @@ export class OperationTypesComponent implements OnInit {
         }
       })
       .catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to delete Operation Types! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        }
         this.message = 'There was an error deleting the Operation Type: ' + error;
         this.success = false;
       });

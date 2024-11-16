@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../services/auth/auth.service';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-users',
@@ -16,7 +17,9 @@ export class AdminUsersComponent implements OnInit {
   roles : string[] = [];
   emailPattern = /^[a-zA-Z0-9._%+-]+@isep\.ipp\.pt$/;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private operationTypesService: OperationTypesService) {
+  accessToken : string = '';
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private operationTypesService: OperationTypesService, private router: Router) {
     this.userForm = this.fb.group({
       email: ['', [Validators.required, Validators.email, this.emailValidator.bind(this)]],
       role: ['', Validators.required]
@@ -24,6 +27,15 @@ export class AdminUsersComponent implements OnInit {
   }
 
   async ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      return;
+    }
+    this.accessToken = this.authService.getToken();
     await this.operationTypesService.getStaffRoles().then((data) => {
       this.roles = data;
     });
@@ -42,7 +54,7 @@ export class AdminUsersComponent implements OnInit {
   async onSubmit() {
     if (this.userForm.valid) {
       const { email, role } = this.userForm.value;
-      const response = await this.authService.createUser(email, role);
+      const response = await this.authService.createUser(email, role, this.accessToken);
       if (response?.status === 201) {
         this.authService.updateMessage('User created successfully');
         this.authService.updateIsError(false);

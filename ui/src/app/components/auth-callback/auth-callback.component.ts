@@ -122,7 +122,7 @@ export class AuthCallbackComponent implements OnInit {
     }
 
     try {
-      const response = await this.authService.createUser(email, role);
+      const response = await this.authService.createUser(email, role, accessToken);
       if (response?.status === 201) {
         this.authService.updateMessage('User with email ${email} created successfully! Redirecting to login...');  
         this.authService.updateIsError(false);
