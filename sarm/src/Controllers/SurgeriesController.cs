@@ -35,10 +35,18 @@ namespace DDDNetCore.Controllers{
         }
 
         [HttpPost]
-        public ActionResult<Surgery> CreateSurgery([FromBody] Surgery surgery)
+        public async Task<ActionResult<Surgery>> CreateSurgery(
+            [FromQuery] string name,
+            [FromQuery] string roomType, 
+            [FromQuery] string roomCapacity,
+            [FromQuery] string assignedEquipment
+            )
         {
-            try{
-                var createdSurgery = _surgeryService.AddAsync(surgery);
+            try
+            {
+                var surgery = SurgeryMapper.ToCreating(name, roomType, roomCapacity, assignedEquipment);
+                
+                var createdSurgery = await _surgeryService.AddAsync(surgery);
                 return CreatedAtAction(nameof(CreateSurgery), new { id = createdSurgery.Id }, createdSurgery);
             }
             catch(Exception ex){
