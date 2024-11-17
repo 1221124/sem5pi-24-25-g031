@@ -1,4 +1,3 @@
-using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
 using DDDNetCore.Infrastructure.OperationRequests;
 using Domain.DbLogs;
@@ -6,10 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 using Domain.OperationTypes;
 using Domain.OperationRequests;
-using Domain.Patients;
 
 using Infrastructure.OperationTypes;
-using Infrastructure.OperationRequests;
 using Infrastructure.Users;
 using Domain.Users;
 using Infrastructure.Patients;
@@ -19,6 +16,7 @@ using Infrastructure.DbLogs;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Infrastructure.Appointments;
+using DDDNetCore.Infrastructure.Surgeries;
 
 namespace Infrastructure
 {
