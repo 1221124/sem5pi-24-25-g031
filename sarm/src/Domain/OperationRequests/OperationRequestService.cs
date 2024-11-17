@@ -79,7 +79,7 @@ namespace DDDNetCore.Domain.OperationRequests
             
             try
             {
-                var operationRequest = await _repo.GetByIdAsync(dto.Id);
+                var operationRequest = await _repo.GetByIdAsync(new OperationRequestId(dto.Id));
 
                 var newOperationRequest = OperationRequestMapper.ToEntityFromUpdating(dto, operationRequest);
 
@@ -94,7 +94,7 @@ namespace DDDNetCore.Domain.OperationRequests
                 await _unitOfWork.CommitAsync();
 
 
-                await _logService.LogAction(entity, log, "Updated {" + operationRequest.Id + "}");
+                //await _logService.LogAction(entity, log, "Updated {" + operationRequest.Id + "}");
                 
                 return OperationRequestMapper.ToDto(operationRequest);
 
@@ -154,11 +154,14 @@ namespace DDDNetCore.Domain.OperationRequests
 
                 List<PatientDto> patient = [];
 
-                if(!string.IsNullOrEmpty(searchId)){
-                    var request = await _repo.GetByIdAsync(searchId);
+                if(!string.IsNullOrEmpty(searchId))
+                {
+                    var id = new OperationRequestId(searchId);
+                    
+                    var request = await _repo.GetByIdAsync(id);
 
                     requestQuery = requestQuery
-                        .Where(r => r.Id == request.Id)
+                        .Where(r => r.Id.ToString() == request.Id.Value)
                         .ToList();
                 }
 

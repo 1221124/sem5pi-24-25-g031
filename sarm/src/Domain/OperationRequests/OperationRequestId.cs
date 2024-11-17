@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Domain.Shared;
+using Newtonsoft.Json;
 
 namespace Domain.OperationRequests
 {
@@ -10,17 +10,17 @@ namespace Domain.OperationRequests
         {
         }
 
-        public OperationRequestId(string value) : base(value)
+        public OperationRequestId(String value) : base(value)
         {
         }
 
         override
-        public  Object createFromString(string text){
+            public  Object createFromString(String text){
             return new Guid(text);
         }
 
         override
-        public string AsString(){
+            public String AsString(){
             Guid obj = (Guid) base.ObjValue;
             return obj.ToString();
         }
@@ -29,17 +29,20 @@ namespace Domain.OperationRequests
         public Guid AsGuid(){
             return (Guid) base.ObjValue;
         }
+        
+        // Ensure that ToString() and other methods are consistent for comparisons
+        public override bool Equals(object? obj)
+        {
+            if (obj is OperationRequestId other)
+            {
+                return this.Value == other.Value;  // Ensure correct GUID comparison
+            }
+            return false;
+        }
 
-
-        public static implicit operator OperationRequestId(Guid value)
-            => new OperationRequestId(value);
-
-        public static implicit operator OperationRequestId(string value)
-            => new OperationRequestId(value);
-
-        public static implicit operator Guid(OperationRequestId id)
-            => id.AsGuid();
-
-            
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
     }
 }
