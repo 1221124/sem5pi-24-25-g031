@@ -20,7 +20,7 @@ namespace Infrastructure.OperationTypes
 
         public async Task<List<OperationType>> GetAsync(string? name, string? specialization, string? status)
         {
-            var operationTypes = await this._objs.ToListAsync();
+            var operationTypes = await this._objs.AsQueryable().ToListAsync();
 
             if (name != null)
             {

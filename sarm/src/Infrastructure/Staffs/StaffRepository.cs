@@ -16,6 +16,34 @@ namespace Infrastructure.StaffRepository
         {
             this._objs = context.Staffs;
         }
+        
+        public async Task<List<Staff>> GetAsync(string? name, string? email, string? specialization)
+        {
+            var staffs = await this._objs.AsQueryable().ToListAsync();
+
+            if (name != null)
+            {
+                staffs = staffs
+                    .Where(x => name.Equals(new FullName(x.FullName.FirstName, x.FullName.LastName).ToString()))
+                    .ToList();
+            }
+
+            if (specialization != null)
+            {
+                staffs = staffs
+                    .Where(x => specialization.Equals(SpecializationUtils.ToString(x.Specialization)))
+                    .ToList();
+            }
+
+            if (email != null)
+            {
+                staffs = staffs
+                    .Where(x => email.Equals(x.ContactInformation.Email.Value))
+                    .ToList();
+            }
+
+            return staffs;
+        }
 
         public async Task<Staff> GetByEmailAsync(Email email)
         {

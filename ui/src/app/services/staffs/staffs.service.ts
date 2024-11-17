@@ -144,7 +144,7 @@ export class StaffsService {
 
     const options = { headers, observe: 'response' as const, params };
 
-    return await firstValueFrom(this.http.get<{ staffs: any[], totalItems: number }>(`${environment.staffs}`, options))
+    return await firstValueFrom(this.http.get<{ staff: any[], totalItems: number }>(`${environment.staffs}`, options))
       .then(response => {
         if (response.status === 200 && response.body) {
 
@@ -152,7 +152,7 @@ export class StaffsService {
           console.log('Resposta da API:', response.body);
 
           // Mapeia os dados dos funcionários
-          const mappedStaffs = response.body.staffs.map(item => ({
+          const mappedStaffs = response.body.staff.map(item => ({
             FullName: {
               FirstName: item.fullName.firstName.value,
               LastName: item.fullName.lastName.value
@@ -164,14 +164,17 @@ export class StaffsService {
               PhoneNumber: item.contactInformation.phoneNumber.value
             },
             status: item.status.toString(),
-            SlotAppointement: item.slotAppointment.map((appointment: { start: string, end: string }) => ({
-              Start: appointment.start,
-              End: appointment.end
-            })),
-            SlotAvailability: item.slotAvailability.map((availability: { start: string, end: string }) => ({
-              Start: availability.start,
-              End: availability.end
-            }))
+            SlotAppointement: Array.isArray(item.slotAppointment) && item.slotAppointment !== null ?
+              item.slotAppointment.map((appointment: { start: string, end: string }) => ({
+                Start: appointment.start,
+                End: appointment.end
+              })) : [],
+            
+            SlotAvailability: Array.isArray(item.slotAvailability) && item.slotAvailability !== null ?
+              item.slotAvailability.map((availability: { start: string, end: string }) => ({
+                Start: availability.start,
+                End: availability.end
+              })) : []
           }));
 
           return {
