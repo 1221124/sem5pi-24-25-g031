@@ -1,18 +1,14 @@
+using DDDNetCore.Domain.Surgeries;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DDDNetCore.Domain.Surgeries{
+namespace DDDNetCore.Infrastructure.Surgeries{
     public class SurgeryEntityTypeConfiguration : IEntityTypeConfiguration<Surgery>
     {
         public void Configure(EntityTypeBuilder<Surgery> builder)
         {
-            builder.ToTable("Surgeries");
-
             builder.HasKey(x => x.Id);
-
-            builder.Property(x => x.Id)
-                .HasColumnName("Id");
 
             builder.Property(x => x.Name)
                 .IsRequired()
@@ -42,10 +38,11 @@ namespace DDDNetCore.Domain.Surgeries{
                 .IsRequired()
                 .HasColumnName("RoomCapacity")
                 .HasConversion(
-                    v => v.Capacity,
+                    v => v.Capacity.ToString(),
                     v => new RoomCapacity(v)
                 );
-
+               
+                
             builder.Property(x => x.AssignedEquipment)
                 .IsRequired()
                 .HasColumnName("AssignedEquipment")
