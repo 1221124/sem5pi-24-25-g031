@@ -15,14 +15,20 @@ public class Surgery: Entity<SurgeryId>, IAggregateRoot
     public Surgery()
     {
     }
-    public Surgery(Name name, SurgeryNumber surgeryNumber, RoomType roomType, RoomCapacity roomCapacity, AssignedEquipment assignedEquipment, CurrentStatus currentStatus, List<Slot> maintenanceSlots)
+    public Surgery(Name name, SurgeryNumber surgeryNumber, RoomType roomType, RoomCapacity roomCapacity, AssignedEquipment assignedEquipment)
     {
-        Name = name;
+        Id = new SurgeryId(Guid.NewGuid());
+        Name = name;    
         SurgeryNumber = surgeryNumber;
         RoomType = roomType;
         RoomCapacity = roomCapacity;
         AssignedEquipment = assignedEquipment;
+        CurrentStatus = CurrentStatus.AVAILABLE;
+        MaintenanceSlots = [];
+    }
+    
+    public void UpdateCurrentStatus(CurrentStatus currentStatus)
+    {
         CurrentStatus = currentStatus;
-        MaintenanceSlots = maintenanceSlots;
     }
 }

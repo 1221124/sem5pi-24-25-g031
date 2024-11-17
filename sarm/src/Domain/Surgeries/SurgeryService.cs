@@ -14,11 +14,15 @@ namespace DDDNetCore.Domain.Surgeries{
         }
 
         //AddAsync
-        public async Task<Surgery> AddAsync(Surgery surgery){
-            if(surgery == null)
-                throw new ArgumentNullException(nameof(surgery));
-
-            await _repo.AddAsync(surgery);
+        public async Task<Surgery> AddAsync(CreatingSurgery creating){
+            if(creating == null)
+                throw new ArgumentNullException(nameof(creating));
+            
+            //var all = await _repo.GetAllAsync();
+            
+            var surgery = SurgeryMapper.ToEntity(creating, /*all.Count +*/ 1);
+            
+                await _repo.AddAsync(surgery);
             await _unitOfWork.CommitAsync();
 
             //await _logService.AddAsync(new DbLog("Surgery", "Add", surgery.Id.AsString()));
