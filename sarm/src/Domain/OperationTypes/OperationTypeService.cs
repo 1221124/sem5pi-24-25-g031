@@ -138,40 +138,6 @@ namespace Domain.OperationTypes
                 return null;
             }
 
-            // OperationType operationTypeWithName;
-            // List<OperationType> operationTypesWithSpecialization;
-            // List<OperationType> operationTypesWithStatus;
-
-            // if (name != null)
-            // {
-            //     operationTypeWithName = await _repo.GetByNameAsync(new Name(name));
-            //     if (operationTypeWithName != null)
-            //     {
-            //         operationTypes = new List<OperationType> { operationTypeWithName };
-            //     }
-            //     else
-            //     {
-            //         return null;
-            //     }
-            // }
-
-            // if (specialization != null)
-            // {
-            //     operationTypesWithSpecialization = await _repo.GetBySpecializationAsync(SpecializationUtils.FromString(specialization));
-            //     operationTypes = operationTypes.Intersect(operationTypesWithSpecialization).ToList();
-            // }
-
-            // if (status != null)
-            // {
-            //     operationTypesWithStatus = await _repo.GetByStatusAsync(StatusUtils.FromString(status));
-            //     operationTypes = operationTypes.Intersect(operationTypesWithStatus).ToList();
-            // }
-
-            // if (operationTypes == null || !operationTypes.Any())
-            // {
-            //     return null;
-            // }
-
             List<OperationTypeDto> listDto = OperationTypeMapper.ToDtoList(operationTypes);
 
             return listDto;
