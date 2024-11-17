@@ -1,6 +1,6 @@
 <div class="operationRequests-request">
   <h1>Operation Request</h1>
-  <button type="button" class ="open" (click)="openCreateModal()">Create Operation Request</button>
+  <button type="button" class="open" (click)="openCreateModal()">Create Operation Request</button>
   <!-- <button type="button" (click)="return()">Return</button> -->
 
   <!-- Create Modal -->
@@ -8,7 +8,7 @@
     <div class="modal-content">
       <span type="button" class="close" (click)="closeCreateModal()">&times;</span>
       <h2>Operation Request Form</h2>
-      
+
       <section>
         <form class="form-group">
           <!-- Staff Selection -->
@@ -16,11 +16,11 @@
             <label for="staff">Select Staff:</label>
             <select id="staff" name="staff" [(ngModel)]="staff" (focus)="staffTouched = true">
               <option *ngFor="let staff of staffs" [value]="staff.licenseNumber">
-                {{ staff.licenseNumber }} - {{ staff.email }}
+                {{ staff.licenseNumber }} - {{ staff.ContactInformation.Email }}
               </option>
             </select>
           </div>
-          
+
           <!-- Patient Selection -->
           <div>
             <label for="patient">Select Patient:</label>
@@ -34,7 +34,8 @@
           <!-- Operation Type Selection -->
           <div>
             <label for="operationType">Select Operation Type:</label>
-            <select id="operationType" name="operationType" [(ngModel)]="operationType" (focus)="operationTypeTouched = true">
+            <select id="operationType" name="operationType" [(ngModel)]="operationType"
+              (focus)="operationTypeTouched = true">
               <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">
                 {{ operationType.Name }} - {{ operationType.Specialization }}
               </option>
@@ -44,7 +45,8 @@
           <!-- Date Selection -->
           <div>
             <label for="deadlineDate">Select Date:</label>
-            <input type="date" id="deadlineDate" name="deadlineDate" [(ngModel)]="deadlineDate" (focus)="deadlineDateTouched = true" />
+            <input type="date" id="deadlineDate" name="deadlineDate" [(ngModel)]="deadlineDate"
+              (focus)="deadlineDateTouched = true" />
           </div>
 
           <!-- Priority Selection -->
@@ -77,7 +79,8 @@
           </th>
           <th>Staff
             <div class="filter-container">
-              <input type="text" id="filters.searchLicenseNumber" [(ngModel)]="filters.searchLicenseNumber" placeholder="Enter License Number" />
+              <input type="text" id="filters.searchLicenseNumber" [(ngModel)]="filters.searchLicenseNumber"
+                placeholder="Enter License Number" />
             </div>
           </th>
           <th>Patient
@@ -87,8 +90,10 @@
           </th>
           <th>Operation Type
             <div class="filter-container">
-              <select id="filters.searchOperationType" name="filters.searchOperationType" [(ngModel)]="filters.searchOperationType">
-                <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">{{ operationType.Name }}</option>
+              <select id="filters.searchOperationType" name="filters.searchOperationType"
+                [(ngModel)]="filters.searchOperationType">
+                <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">{{ operationType.Name
+                  }}</option>
               </select>
             </div>
           </th>
@@ -96,7 +101,7 @@
             <div class="filter-container">
               <input type="date" [(ngModel)]="filters.searchDeadlineDate" placeholder="Enter Date" />
             </div>
-          </th>  
+          </th>
           <th>Priority
             <div class="filter-container">
               <select id="filters.searchPriority" name="filters.searchPriority" [(ngModel)]="filters.searchPriority">
@@ -176,9 +181,10 @@
           <!-- Date Selection -->
           <div>
             <label for="updateDeadlineDate">Select Date:</label>
-            <input type="date" id="updateDeadlineDate" name="deadlineDate" [(ngModel)]="request.deadlineDate" (focus)="deadlineDateTouched = true" />
+            <input type="date" id="updateDeadlineDate" name="deadlineDate" [(ngModel)]="request.deadlineDate"
+              (focus)="deadlineDateTouched = true" />
           </div>
-  
+
           <!-- Priority Selection -->
           <div>
             <label for="updatePriority">Select Priority:</label>
