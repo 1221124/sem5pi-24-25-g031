@@ -1,6 +1,10 @@
 using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Domain.Surgeries;
+using Domain.OperationRequests;
+using Domain.Shared;
 
 namespace DDDNetCore.Controllers
 {
@@ -19,10 +23,9 @@ namespace DDDNetCore.Controllers
             _logService = logService;
         }
 
-        // GET api/appointements
+        // GET planning api/appointements
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Appointment>>> Get([FromQuery] string date)
-        // public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetPlanning([FromQuery] string date)
         {
             try
             {
@@ -36,8 +39,70 @@ namespace DDDNetCore.Controllers
             }catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);
             }
-
-            // return Ok();
         }
+        
+        //GET ALL
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetAll()
+        {
+            try
+            {
+                var appointments = await _service.GetAll();
+                
+                if(appointments == null)
+                    return NotFound();
+
+                return Ok(appointments);
+                
+            }catch(Exception ex){
+                return BadRequest("Error: " + ex.Message);
+            }
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult<Appointment>> Post(
+            [FromQuery] string operationRequestId,
+            [FromQuery] string surgeryNumber,
+            [FromQuery] string appointmentDate
+        ){
+            try
+            {
+                var appointment = new CreatingAppointment(
+                    new OperationRequestId(operationRequestId),
+                    new SurgeryNumber(surgeryNumber),
+                    new AppointmentDate(appointmentDate)
+                );
+
+                if (appointment == null)
+                    return BadRequest();
+                
+                var newAppointment = await _service.AddAsync(appointment);
+                
+                if(newAppointment == null)
+                    return NotFound();
+
+                return Ok(newAppointment);
+                
+            }catch(Exception ex){
+                return BadRequest("Error: " + ex.Message);
+            }
+        }
+        
+        // [HttpDelete]
+        // public async Task<ActionResult<Appointment>> Delete([FromQuery] string id)
+        // {
+        //     try
+        //     {
+        //         var appointment = await _service.DeleteAsync(new AppointmentId(id));
+        //         
+        //         if(appointment == null)
+        //             return NotFound();
+        //
+        //         return Ok(appointment);
+        //         
+        //     }catch(Exception ex){
+        //         return BadRequest("Error: " + ex.Message);
+        //     }
+        // }
     }
 }
