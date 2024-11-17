@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment, httpOptions } from '../../../environments/environment';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -121,15 +121,72 @@ export class StaffsService {
       );;
   }
 
-  getStaff(): Observable<any> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    };
-
-    return this.http.get(this.apiUrl, httpOptions);
+  async getSpecializations() {
+    const url = `${environment.enums}/specializations`;
+    return await firstValueFrom(this.http.get<string[]>(url));
   }
+
+  async getStaff(filter: any, accessToken: string) {
+    let params = new HttpParams();
+
+    if (filter.pageNumber > 0) {
+      params = params.set('pageNumber', filter.pageNumber.toString());
+      if (filter.name !== '') params = params.set('name', filter.name);
+      if (filter.email !== '') params = params.set('email', filter.email);
+      if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
+
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const, params };
+
+    return await firstValueFrom(this.http.get<{ staffs: any[], totalItems: number }>(`${environment.staffs}`, options))
+      .then(response => {
+        if (response.status === 200 && response.body) {
+
+          // Log para verificar a resposta
+          console.log('Resposta da API:', response.body);
+
+          // Mapeia os dados dos funcionários
+          const mappedStaffs = response.body.staffs.map(item => ({
+            FullName: {
+              FirstName: item.fullName.firstName.value,
+              LastName: item.fullName.lastName.value
+            },
+            licenseNumber: item.licenseNumber.toString(),
+            specialization: item.specialization.toString(),
+            ContactInformation: {
+              Email: item.contactInformation.email.value,
+              PhoneNumber: item.contactInformation.phoneNumber.value
+            },
+            status: item.status.toString(),
+            SlotAppointement: item.slotAppointment.map((appointment: { start: string, end: string }) => ({
+              Start: appointment.start,
+              End: appointment.end
+            })),
+            SlotAvailability: item.slotAvailability.map((availability: { start: string, end: string }) => ({
+              Start: availability.start,
+              End: availability.end
+            }))
+          }));
+
+          return {
+            status: response.status,
+            body: {
+              staffs: mappedStaffs,
+              totalItems: response.body.totalItems
+            }
+          };
+        } else {
+          throw new Error('Estrutura de resposta inesperada ou status diferente de 200');
+        }
+      });
+  }
+
 
   editStaff(staffEmail: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/update/${staffEmail}`, httpOptions);

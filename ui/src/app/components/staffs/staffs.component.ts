@@ -4,6 +4,7 @@ import { StaffsService } from '../../services/staffs/staffs.service';
 import { Router, RouterModule } from '@angular/router';
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
 import { AuthService } from '../../services/auth/auth.service';
+import { Staff } from '../../models/staff.model';
 
 @Component({
   selector: 'app-staffs',
@@ -17,22 +18,19 @@ export class StaffsComponent implements OnInit {
 
   constructor(private staffService: StaffsService, private authService: AuthService, private router: Router) { }
 
-  staffs: any[] = [];
+  staffs: Staff[] = [];
   firstName: string = '';
   lastName: string = '';
   email: string = '';
   phoneNumber: string = '';
   specialization: string = '';
-  message: string = '';
   role: string = '';
   selectedStaff: any = null;
-  filterText: string = '';
 
   searchName: string = '';
   searchEmail: string = '';
   searchSpecialization: string = '';
   currentPage: number = 1;
-  totalPages: number = 1; // Total de páginas após o filtro
   itemsPerPage: number = 5;  // Número de itens por página
 
   editingSlotAvailabilityIndex: number | null = null;
@@ -54,7 +52,24 @@ export class StaffsComponent implements OnInit {
 
   accessToken: string = '';
 
-  ngOnInit() {
+
+  filter = {
+    pageNumber: 1,
+    name: '',
+    email: '',
+    specialization: ''
+  }
+  totalItems: number = 0;
+  totalPages: number = 1;
+
+  message: string = '';
+  success: boolean = true;
+
+  specializations: string[] = [];
+  names: string[] = [];
+  emails: string[] = [];
+
+  async ngOnInit() {
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not a staff! Please login...');
       this.authService.updateIsError(true);
@@ -63,12 +78,61 @@ export class StaffsComponent implements OnInit {
       }, 3000);
       return;
     }
-    this.accessToken = this.authService.getToken();
-    this.refreshStaffs();
-    this.staffs.forEach(staff => {
-      staff.status = staff.status;
+    await this.staffService.getSpecializations().then((data) => {
+      this.specializations = data;
     });
+    this.accessToken = this.authService.getToken();
+    await this.fetchStaffs();
   }
+
+  async fetchStaffs() {
+    await this.staffService.getStaff(this.filter, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          if (response.body) {
+            this.staffs = response.body.staffs;
+            this.totalItems = response.body.totalItems || 0;
+            this.totalPages = Math.ceil(this.totalItems / 2);
+          } else {
+            this.staffs = [];
+            this.message = 'Response body is null: ' + response.body;
+            this.success = false;
+            this.totalItems = 0;
+            this.totalPages = 1;
+          }
+        } else {
+          this.staffs = [];
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        }
+      }).catch(error => {
+        if (error.status === 404) {
+          this.staffs = [];
+          this.message = 'No staffs found!';
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        } else if (error.status === 401) {
+          this.message = 'You are not authorized to view Staffs! Please log in...';
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        } else {
+          this.staffs = [];
+          this.message = 'There was an error fetching the Staffs: ' + error;
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        }
+      });
+  }
+
 
 
   submitRequest() {
@@ -117,45 +181,6 @@ export class StaffsComponent implements OnInit {
     this.isDeleteModalOpen = false;
   }
 
-  // Função para escolher os funcionários filtrados
-  getFilteredStaffs() {
-    return this.staffs.filter(staff => {
-      const fullName = `${staff.fullName?.firstName?.value || ""} ${staff.fullName?.lastName?.value || ""}`.toLowerCase();
-      const email = staff.contactInformation?.email?.value.toLowerCase() || ""; // Use .value se necessário
-      const specialization = staff.specialization?.toLowerCase() || "";
-
-      return (
-        fullName.includes(this.searchName.toLowerCase()) &&
-        email.includes(this.searchEmail.toLowerCase()) &&
-        specialization.includes(this.searchSpecialization.toLowerCase())
-      );
-    });
-  }
-
-  // Função para paginar os funcionários filtrados
-  pagedStaffs() {
-    // Filtra os staffs com base no nome, e-mail e especialização
-    const filteredStaffs = this.staffs.filter(staff => {
-      const fullName = `${staff.fullName?.firstName?.value || ""} ${staff.fullName?.lastName?.value || ""}`.toLowerCase();
-      const email = staff.contactInformation.email?.value.toLowerCase() || "";
-      const specialization = staff.specialization?.toLowerCase() || "";
-
-      return (
-        fullName.includes(this.searchName.toLowerCase()) &&
-        email.includes(this.searchEmail?.toLowerCase() || "") &&
-        specialization.includes(this.searchSpecialization?.toLowerCase() || "")
-      );
-    });
-
-    // Calcula o total de páginas após o filtro
-    this.totalPages = Math.ceil(filteredStaffs.length / this.itemsPerPage);
-
-    // Pagina os resultados filtrados
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const pagedStaffs = filteredStaffs.slice(startIndex, startIndex + this.itemsPerPage);
-
-    return pagedStaffs;
-  }
 
   // Atualiza a página atual para a nova página selecionada
   changePage(page: number): void {
@@ -165,8 +190,24 @@ export class StaffsComponent implements OnInit {
   }
 
   // Aplicar filtro
-  applyFilter() {
-    this.currentPage = 1;
+  async applyFilter() {
+    this.filter = {
+      pageNumber: 1,
+      name: this.filter.name,
+      email: this.filter.email,
+      specialization: this.filter.specialization
+    };
+    await this.fetchStaffs();
+  }
+
+  async clearFilters() {
+    this.filter = {
+      pageNumber: 1,
+      name: '',
+      email: '',
+      specialization: ''
+    };
+    await this.fetchStaffs();
   }
 
 
@@ -184,18 +225,6 @@ export class StaffsComponent implements OnInit {
     //this.isCreateModalOpen = false;
   }
 
-  // Method to refresh the list of patients
-  refreshStaffs() {
-    this.staffService.getStaff().subscribe(
-      (data) => {
-        this.staffs = data; // Update the patients list
-      },
-      (error) => {
-        console.error('Error fetching patients:', error);
-      }
-    );
-  }
-
   deactivate(staff: any) {
     staff.Status = 'Inactive';
     console.log("Status ativado:", staff.Status); // Verificação de debug
@@ -210,22 +239,8 @@ export class StaffsComponent implements OnInit {
 
   deleteConfirmed() {
     if (this.selectedStaff) {
-      this.deleteStaff(this.selectedStaff);
       this.closeDeleteModal();
-      this.refreshStaffs();
     }
-  }
-
-  deleteStaff(staff: any) {
-    this.staffService.deleteStaff(staff.contactInformation.email.value).subscribe(
-      () => {
-        this.staffs = this.staffs.filter(s => s !== staff);
-        this.refreshStaffs();
-      },
-      error => {
-        console.error('Erro ao inativar o staff:', error);
-      }
-    );
   }
 
 
@@ -310,26 +325,13 @@ export class StaffsComponent implements OnInit {
     this.isAddSlotAvailabilityFormVisible = true;
   }
 
-  // Method to save the updated patient data
-  saveStaff() {
-    // Ensure valid Date objects for each slot
-    this.selectedStaff.slotAvailability = this.selectedStaff.slotAvailability.map((slot: { start: Date; end: Date; }) => ({
-      start: new Date(slot.start),
-      end: new Date(slot.end)
-    }));
-
-    // Call the service to save the patient data
-    this.staffService.editStaff(this.selectedStaff).subscribe(
-      () => {
-        this.isEditModalOpen = false;
-        this.refreshStaffs();  // Refresh to show updated data
-      },
-      error => console.error('Error updating patient:', error)
-    );
-  }
-
   deleteSlotAvailability() {
 
   }
+
+  goToAdmin() {
+    this.router.navigate(['/admin']);
+  }
+  saveStaff() { }
 
 }

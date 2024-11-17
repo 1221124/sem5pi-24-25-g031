@@ -35,25 +35,27 @@ namespace Controllers
 
         // GET: api/Staff/?pageNumber=1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll([FromQuery] string? pageNumber)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> Get([FromQuery] string? pageNumber,[FromQuery] string? name, [FromQuery] string? email, [FromQuery] string? specialization)
         {
-            var staff = await _service.GetAllAsync();
+            var staff = await _service.GetAsync(name, email, specialization);
 
             if (staff == null)
             {
                 return NotFound();
             }
 
-            if (pageNumber != null)
+            var totalItems = staff.Count;
+            
+            if (pageNumber != null && int.TryParse(pageNumber, out int page))
             {
-                var paginatedStaff = staff
-                    .Skip(int.Parse(pageNumber) * pageSize)
+                var paginatedStaffs = staff
+                    .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
-                return staff;
+                staff = paginatedStaffs;
             }
 
-            return staff;
+            return Ok(new { staff = staff, totalItems = totalItems });
         }
 
         //GET: api/Staff/5

@@ -314,5 +314,19 @@ namespace Domain.Staffs
             }
             
         }
+
+        public async Task<List<StaffDto>> GetAsync(string? name, string? email, string? specialization)
+        {
+            List<Staff> staff = await this._repo.GetAsync(name, email, specialization);
+
+            if (staff == null || staff.Count == 0)
+            {
+                return null;
+            }
+
+            List<StaffDto> listDto = StaffMapper.ToDtoList(staff);
+
+            return listDto;
+        }
     }
 }

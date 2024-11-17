@@ -75,7 +75,7 @@ export class OperationRequestsComponent implements OnInit {
     searchPatientName: '',
     searchOperationType: '',
     searchDeadlineDate: '',
-    searchPriority:  '',
+    searchPriority: '',
     searchStatus: '',
     searchActions: ''
   }
@@ -93,7 +93,7 @@ export class OperationRequestsComponent implements OnInit {
     private serviceOperationType: OperationTypesService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (!this.authService.isAuthenticated()) {
@@ -106,7 +106,7 @@ export class OperationRequestsComponent implements OnInit {
     }
     this.accessToken = this.authService.getToken();
     this.loadOperationRequests();
-    this.loadStaffs();
+    // this.loadStaffs();
     this.loadPatients();
     this.loadOperationTypes();
     this.loadPriority();
@@ -123,13 +123,13 @@ export class OperationRequestsComponent implements OnInit {
   //   this.loadOperationRequests();
   // }
 
-  clear(){
+  clear() {
     this.clearForm();
 
     this.ngOnInit();
   }
 
-  loadRequestStatus(){
+  loadRequestStatus() {
     // this.service.getRequestStatus().subscribe(
     //   (data) => {
     //     this.statuses = data;
@@ -173,20 +173,20 @@ export class OperationRequestsComponent implements OnInit {
     // );
   }
 
-  loadStaffs() {
-    this.serviceStaff.getStaff().subscribe(
-      (data) => {
-        this.staffs = data.map((staff: { licenseNumber: any; contactInformation: any; }) => ({
-          licenseNumber: staff.licenseNumber.value,
-          email: staff.contactInformation.email.value
-        }));
-        console.log('Processed Staff:', this.staffs);
-      },
-      (error) => {
-        console.error('Error loading Staff:', error);
-      }
-    );
-  }
+  /* loadStaffs() {
+     this.serviceStaff.getStaff().subscribe(
+       (data) => {
+         this.staffs = data.map((staff: { licenseNumber: any; contactInformation: any; }) => ({
+           licenseNumber: staff.licenseNumber.value,
+           email: staff.contactInformation.email.value
+         }));
+         console.log('Processed Staff:', this.staffs);
+       },
+       (error) => {
+         console.error('Error loading Staff:', error);
+       }
+     );
+   }*/
 
   loadPatients() {
     this.servicePatient.getPatients().subscribe(
@@ -283,7 +283,7 @@ export class OperationRequestsComponent implements OnInit {
     this.isUpdateModalOpen = false;
   }
 
-  update(){
+  update() {
     console.log('Update button clicked');
 
     console.log('Request:', this.request);
@@ -433,7 +433,7 @@ export class OperationRequestsComponent implements OnInit {
       searchPatientName: '',
       searchOperationType: '',
       searchDeadlineDate: '',
-      searchPriority:  '',
+      searchPriority: '',
       searchStatus: '',
       searchActions: ''
     }
