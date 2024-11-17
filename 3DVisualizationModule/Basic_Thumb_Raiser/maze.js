@@ -2,6 +2,7 @@ import * as THREE from "three";
 import Ground from "./ground.js";
 import Wall from "./wall.js";
 import Door from "./door.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 /*
  * parameters = {
@@ -39,9 +40,11 @@ export default class Maze {
             this.doorMaterial.transparent = true;
             this.doorMaterial.opacity = 0.5;
             
+             // Load hospital bed model
+             const bedLoader = new GLTFLoader();
 
             // Build the maze
-            let wallObject;
+            let wallObject, bedObject;
             for (let i = 0; i <= description.size.width; i++) { // In order to represent the eastmost walls, the map width is one column greater than the actual maze width
                 for (let j = 0; j <= description.size.height; j++) { // In order to represent the southmost walls, the map height is one row greater than the actual maze height
                     /*
@@ -69,7 +72,33 @@ export default class Maze {
                         const door = new Door({ textureUrl: description.doorTextureUrl });
                         door.object.position.set(i - description.size.width / 2.0 + 0.5, 0.5, j - description.size.height / 2.0);
                         this.object.add(door.object);
-                    }                    
+                    }            
+                    if (description.map[j][i] == 5) {
+                        bedLoader.load('./models/gltf/bed.glb', (gltf) => {
+                            bedObject = gltf.scene;
+                            bedObject.position.set(
+                                i - description.size.width / 2.0 + 0.5,
+                                0.5,
+                                j - description.size.height / 2.0
+                            );
+                            bedObject.scale.set(0.8, 0.8, 0.8); // Ajuste de escala, se necessário
+                            this.object.add(bedObject);
+                        });
+                    }
+                    if (description.map[j][i] == 6) {
+                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                            bedObject = gltf.scene;
+                            bedObject.position.set(
+                                i - description.size.width / 2.0 + 0.5,
+                                0.5,
+                                j - description.size.height / 2.0
+                            );
+                            bedObject.scale.set(0.8, 0.8, 0.8); // Ajuste de escala, se necessário
+                            this.object.add(bedObject);
+                        });
+                    }
+
+        
                 }
             }
 
