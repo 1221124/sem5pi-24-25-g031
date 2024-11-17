@@ -1,8 +1,8 @@
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Surgeries;
 using Domain.OperationRequests;
 using Domain.Shared;
-using Domain.Staffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,12 +18,12 @@ namespace DDDNetCore.Infrastructure.Appointments{
             builder.Property(x => x.Id)
                 .HasColumnName("Id");
 
-            builder.Property(x => x.Staff)
+            builder.Property(x => x.OperationRequestId)
                 .IsRequired()
-                .HasColumnName("Staff")
+                .HasColumnName("OperationRequestId")
                 .HasConversion(
-                    v => v.ToString(),
-                    v => new LicenseNumber(v)
+                    v => v.Value,
+                    v => new OperationRequestId(v)
                 );
 
             builder.Property(x => x.Priority)
