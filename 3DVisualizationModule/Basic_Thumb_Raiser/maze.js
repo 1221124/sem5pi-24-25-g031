@@ -39,12 +39,16 @@ export default class Maze {
             this.doorMaterial = this.wall.object.children[0].material.clone();
             this.doorMaterial.transparent = true;
             this.doorMaterial.opacity = 0.5;
+
+            this.door = new Door({ textureUrl: description.doorTextureUrl });
             
              // Load hospital bed model
              const bedLoader = new GLTFLoader();
 
+             this.doors = []; // Lista de todas as portas no labirinto
+
             // Build the maze
-            let wallObject, bedObject;
+            let wallObject, bedObject, doorObject;
             for (let i = 0; i <= description.size.width; i++) { // In order to represent the eastmost walls, the map width is one column greater than the actual maze width
                 for (let j = 0; j <= description.size.height; j++) { // In order to represent the southmost walls, the map height is one row greater than the actual maze height
                     /*
@@ -69,9 +73,9 @@ export default class Maze {
                     }
                     // Construir portas
                     if (description.map[j][i] === 4) {
-                        const door = new Door({ textureUrl: description.doorTextureUrl });
-                        door.object.position.set(i - description.size.width / 2.0 + 0.5, 0.5, j - description.size.height / 2.0);
-                        this.object.add(door.object);
+                        doorObject = this.door.object.clone();
+                        doorObject.position.set(i - description.size.width / 2.0 + 0.5, 0.5, j - description.size.height / 2.0);
+                        this.object.add(doorObject);
                     }            
                     if (description.map[j][i] == 5) {
                         bedLoader.load('./models/gltf/bed.glb', (gltf) => {
@@ -224,4 +228,8 @@ export default class Maze {
     foundExit(position) {
         return Math.abs(position.x - this.exitLocation.x) < 0.5 * this.scale.x && Math.abs(position.z - this.exitLocation.z) < 0.5 * this.scale.z
     };
+
+    addDoor(door) {
+        this.doors.push(door); // Adicionar porta ao labirinto
+    }
 }

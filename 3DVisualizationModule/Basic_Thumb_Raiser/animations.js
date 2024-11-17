@@ -78,14 +78,13 @@ export default class Animations {
         const distance = robotPosition.distanceTo(doorPosition);
         return distance < threshold;
     }
-    updateDoor(robotPosition) {
-        // Verifique todas as portas
-        this.object.children.forEach(child => {
-            if (child instanceof Door) {
-                // Verifique se o robô está perto da porta
-                this.openDoorIfNearby(robotPosition, child, description);
-                this.animateDoorOpening(child, robotPosition);
-            }
+    updateDoors(robotPosition, doors, description) {
+        doors.forEach((door) => {
+            // Open the door if the robot is near
+            this.openDoorIfNearby(robotPosition, door, description);
+    
+            // Animate the door opening
+            this.animateDoorOpening(door, robotPosition);
         });
     }
 }
