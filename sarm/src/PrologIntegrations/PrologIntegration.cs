@@ -1,14 +1,13 @@
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Surgeries;
 using Domain.OperationTypes;
 using Domain.Staffs;
 
-namespace DDDNetCore.PrologIntegration.PrologIntegrations
+namespace DDDNetCore.PrologIntegrations
 {
     public class PrologIntegration
     {
-        private const string KnowledgeBase = "PlanningModule\\knowledge_base";
-
         // Services
         private readonly PrologService _prologService;
         private readonly PrologIntegrationService _prologIntegrationService;    
@@ -16,6 +15,7 @@ namespace DDDNetCore.PrologIntegration.PrologIntegrations
         private readonly AppointmentService _appointmentService;
         private readonly SurgeryService _surgeryService;
         private readonly OperationTypeService _operationTypeService;
+        private readonly OperationRequestService _operationRequestService;
 
         // Knowledge Base
         private readonly Dictionary<string, List<string>> staff;
@@ -25,13 +25,16 @@ namespace DDDNetCore.PrologIntegration.PrologIntegrations
         private readonly Dictionary<string, string> surgery_id;
         private readonly Dictionary<string, string> assignment_surgery;
 
-        public PrologIntegration(PrologService prologService, PrologIntegrationService prologIntegrationService, StaffService staffService, AppointmentService appointmentService, SurgeryService surgeryService, OperationTypeService operationTypeService){
+        public PrologIntegration(PrologService prologService, PrologIntegrationService prologIntegrationService, 
+            StaffService staffService, AppointmentService appointmentService, SurgeryService surgeryService, 
+            OperationTypeService operationTypeService, OperationRequestService operationRequestService){
             _prologService = prologService;
             _prologIntegrationService = prologIntegrationService;
             _staffService = staffService;
             _appointmentService = appointmentService;
             _surgeryService = surgeryService;
             _operationTypeService = operationTypeService;
+            _operationRequestService = operationRequestService;
 
             staff = [];
             agenda_staff = [];
@@ -60,7 +63,6 @@ namespace DDDNetCore.PrologIntegration.PrologIntegrations
             {
                 throw new ArgumentException("Error: Prolog Integration failed");
             }
-            
         }
 
         //create file
@@ -80,27 +82,27 @@ namespace DDDNetCore.PrologIntegration.PrologIntegrations
 
                 foreach(var item in dictionary)
                 {
-                    var staff = await _staffService.GetByLicenseNumber(item.Key.Staff);
+                    var request = await _operationRequestService.GetFilteredAsync(
+                        item.Key.OperationRequestId.ToString(), 
+                        null, null, null, null, null, null);
 
-                    if(staff == null)
+                    if (request.Count != 0) return false;
+                    
+                    var staffDto = await _staffService.GetByLicenseNumber(request[0].Staff);
+                    
+                    if(staffDto == null)
                     {
                         throw new ArgumentException("Staff not found; Fix the appointment");
                     }
 
-                    PopulateStaff(item.Key, item.Value, staff);
-                    PopulateAgendaStaffAndTimetable(item.Key, item.Value, staff, date);
+                    PopulateStaff(item.Key, item.Value, staffDto);
+                    PopulateAgendaStaffAndTimetable(item.Key, item.Value, staffDto, date);
                     
                     PopulateSurgery(item.Key, item.Value);
                     PopulateSurgeryId(item.Key, item.Value);
-                    PopulateAssignmentSurgery(item.Key, item.Value);
+                    PopulateAssignmentSurgery(item.Key, item.Value, staffDto);
 
                 }
-                
-                //create file
-
-                string path = KnowledgeBase + "\\" + date.ToString("yyyy-MM-dd") + ".pl";
-            
-                // Write to file logic here (omitted for brevity)
                 return true;
             }
             catch (Exception)
@@ -230,10 +232,10 @@ namespace DDDNetCore.PrologIntegration.PrologIntegrations
             else this.surgery_id.Add(value, surgery.Name);
         }
 
-        private void PopulateAssignmentSurgery(Appointment appointment, Surgery surgery)
+        private void PopulateAssignmentSurgery(Appointment appointment, Surgery surgery, StaffDto staff)
         {//assignment_surgery(so100001,d001).
             
-                string value = "assignment_surgery(" + surgery.Id + "," + appointment.Staff + ")";
+                string value = "assignment_surgery(" + surgery.Id + "," + staff.LicenseNumber + ")";
     
                 if(this.assignment_surgery.ContainsKey(value))
                     if(!this.assignment_surgery[value].Contains(surgery.Name))

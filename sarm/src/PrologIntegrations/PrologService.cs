@@ -1,4 +1,4 @@
-namespace DDDNetCore.PrologIntegration.PrologIntegrations
+namespace DDDNetCore.PrologIntegrations
 {
     public class PrologService
     {
