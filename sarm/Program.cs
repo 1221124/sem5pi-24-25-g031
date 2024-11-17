@@ -27,7 +27,7 @@ using DDDNetCore.Domain.Appointments;
 using Infrastructure.Appointments;
 using DDDNetCore.Infrastructure.Surgeries;
 using DDDNetCore.Domain.Surgeries;
-using DDDNetCore.PrologIntegration.PrologIntegrations;
+using DDDNetCore.PrologIntegrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
