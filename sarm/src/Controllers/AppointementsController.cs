@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.OperationRequests;
 using Domain.Shared;
 
@@ -67,11 +68,7 @@ namespace DDDNetCore.Controllers
         ){
             try
             {
-                var appointment = new CreatingAppointment(
-                    new OperationRequestId(operationRequestId),
-                    new SurgeryNumber(surgeryNumber),
-                    new AppointmentDate(appointmentDate)
-                );
+                var appointment = AppointmentMapper.ToCreating(operationRequestId, surgeryNumber, appointmentDate);
 
                 if (appointment == null)
                     return BadRequest();
