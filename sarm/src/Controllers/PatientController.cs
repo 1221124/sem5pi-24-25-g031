@@ -109,7 +109,7 @@ namespace DDDNetCore.Controllers
 
                 if (patient != null)
                 {
-                    return patient;
+                    return Ok(new { patient = patient});;
                 }
             }
             
