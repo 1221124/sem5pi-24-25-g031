@@ -8,15 +8,14 @@ import {firstValueFrom} from 'rxjs';
 })
 export class PatientService {
 
-  private apiUrl = environment.patients + '/filter';
+  private apiUrl = environment.patients + '/email';
 
   constructor(private http: HttpClient) {
   }
 
-  async getByEmail(email: any, filter: any){
+  async getByEmail(email: any){
     let params = new HttpParams();
 
-    if (filter.pageNumber > 0) params = params.set('pageNumber', filter.pageNumber.toString());
     if (email) params = params.set('email', email);
     const headers = new HttpHeaders({
         'Content-Type': 'application/json'
@@ -24,38 +23,38 @@ export class PatientService {
 
     const options = { headers, observe: 'response' as const, params };
 
-    return await firstValueFrom(this.http.get<{ patient: any[], totalItems: number }>(`${this.apiUrl}`, options))
+    return await firstValueFrom(this.http.get<{ patient: any}>(`${this.apiUrl}`, options))
       .then(response => {
         if(response.status === 200 && response.body){
-          const patient = response.body.patient.map(item => ({
+          const item = response.body.patient;
+          const patient = {
             Id: item.id,
             FullName: {
-              FirstName: item.FullName.FirstName.Value,
-              LastName: item.FullName.FastName.Value
+              FirstName: item.fullName.firstName.value,
+              LastName: item.fullName.lastName.value
             },
-            DateOfBirth: item.DateOfBirth,
-            Gender: item.Gender,
-            MedicalRecordNumber: item.MedicalRecordNumber.Value,
+            DateOfBirth: item.dateOfBirth.birthDate,
+            Gender: item.gender,
+            MedicalRecordNumber: item.medicalRecordNumber.value,
             ContactInformation: {
-              Email: item.ContactInformation.Email.Value,
-              PhoneNumber: item.ContactInformation.PhoneNumber.Value
+              Email: item.contactInformation.email.value,
+              PhoneNumber: item.contactInformation.phoneNumber.value
             },
-            MedicalCondition: item.medicalConditions.map((patient: { Condition: any; }) => ({
-              Condition: patient.Condition
+            MedicalCondition: item.medicalConditions.map((patient: { condition: any; }) => ({
+              Condition: patient.condition
             })),
-            EmergencyContact: item.EmergencyContact.Number.Value,
-            AppointmentHistory: item.AppointmentHistory.map((slot: { Start: any; End: any; }) => ({
-              Start: slot.Start,
-              End: slot.End
+            EmergencyContact: item.emergencyContact?.number?.value || null,
+            AppointmentHistory: item.appointmentHistory.map((slot: { start: any; end: any; }) => ({
+              Start: slot.start,
+              End: slot.end
             })),
-            UserId: item.UserId
-          }));
+            UserId: item.userId || null
+          }
           console.log("Mapped patients:", patient);
           return {
             status: response.status,
             body: {
-              patient,
-              totalItems: response.body.totalItems
+              patient
             }
           };
         } else {
