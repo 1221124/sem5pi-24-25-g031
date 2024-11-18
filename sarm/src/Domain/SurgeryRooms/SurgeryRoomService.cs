@@ -1,26 +1,27 @@
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
 using Domain.Shared;
 
 namespace DDDNetCore.Domain.Surgeries{
-    public class SurgeryService{
+    public class SurgeryRoomService{
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISurgeryRepository _repo;
+        private readonly ISurgeryRoomRepository _repo;
         private readonly DbLogService _logService;
-        public SurgeryService(IUnitOfWork unitOfWork, ISurgeryRepository surgeryRepository, DbLogService logService){
+        public SurgeryRoomService(IUnitOfWork unitOfWork, ISurgeryRoomRepository surgeryRoomRepository, DbLogService logService){
             _unitOfWork = unitOfWork;
-            _repo = surgeryRepository;
+            _repo = surgeryRoomRepository;
             _logService = logService;
         }
 
         //AddAsync
-        public async Task<Surgery> AddAsync(CreatingSurgery creating){
+        public async Task<SurgeryRoom> AddAsync(CreatingSurgeryRoom creating){
             if(creating == null)
                 throw new ArgumentNullException(nameof(creating));
             
-            //var all = await _repo.GetAllAsync();
+            var surgery = SurgeryRoomMapper.ToEntity(creating);
             
-            var surgery = SurgeryMapper.ToEntity(creating, /*all.Count +*/ 1);
+            await Console.Error.WriteLineAsync("Surgery: " + surgery);
             
                 await _repo.AddAsync(surgery);
             await _unitOfWork.CommitAsync();
@@ -31,23 +32,24 @@ namespace DDDNetCore.Domain.Surgeries{
         }
 
         //GetAll
-        public async Task<List<Surgery>> GetAll(){
+        public async Task<List<SurgeryRoom>> GetAll(){
             try{
                 return await _repo.GetAllAsync();
             }
             catch(Exception){
-                return new List<Surgery>();
+                return new List<SurgeryRoom>();
             }
         }
 
         //GetBySurgeryNumber
-        public async Task<Surgery?> GetBySurgeryNumberAsync(SurgeryNumber surgeryNumber)
+        public async Task<SurgeryRoom> GetBySurgeryRoomNumberAsync(SurgeryRoomNumber surgeryRoomNumber)
         {
             try{
-            if(surgeryNumber == null)
-                return null;
+                if(surgeryRoomNumber == null)
+                    return null;
 
-            return await _repo.GetBySurgeryNumberAsync(surgeryNumber);
+                //return await _repo.GetBySurgeryNumberAsync(surgeryRoomNumber);
+                return await _repo.GetBySurgeryRoomNumberAsync(surgeryRoomNumber);
             }
             catch(Exception){
                 return null;

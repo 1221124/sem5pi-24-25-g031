@@ -2,10 +2,10 @@ using Domain.Shared;
 
 namespace DDDNetCore.Domain.Surgeries{
     public class RoomCapacity{
-        public int Capacity { get; private set; }
+        public string Capacity { get; private set; }
 
         public RoomCapacity(int capacity){
-            Capacity = capacity;
+            Capacity = capacity.ToString();
         }
 
         public RoomCapacity(string capacity)
@@ -18,7 +18,7 @@ namespace DDDNetCore.Domain.Surgeries{
                 if(int.Parse(capacity) < 0)
                     throw new BusinessRuleValidationException("Room capacity cannot be negative");
                 
-                Capacity = int.Parse(capacity);
+                Capacity = capacity;
             }
             catch (Exception)
             {
@@ -28,7 +28,7 @@ namespace DDDNetCore.Domain.Surgeries{
 
         public void UpdateCapacity(int capacity)
         {
-            Capacity = capacity;
+            Capacity = capacity.ToString();
         }
         
         public override string ToString()
