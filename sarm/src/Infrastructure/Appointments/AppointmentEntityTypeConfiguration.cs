@@ -1,6 +1,7 @@
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.OperationRequests;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -25,30 +26,21 @@ namespace DDDNetCore.Infrastructure.Appointments{
                     v => v.Value,
                     v => new OperationRequestId(v)
                 );
-
-            builder.Property(x => x.Priority)
-                .IsRequired()
-                .HasColumnName("Priority")
-                .HasConversion(
-                    v => PriorityUtils.ToString(v),
-                    v => PriorityUtils.FromString(v)
-                );
-
-            builder.Property(x => x.OperationType)
-                .IsRequired()
-                .HasColumnName("OperationType")
-                .HasMaxLength(100)
-                .HasConversion(
-                    v => v.Value,
-                    v => new Name(v)
-                );
             
-            builder.Property(x => x.SurgeryNumber)
+            builder.Property(x => x.SurgeryRoomNumber)
                 .IsRequired()
                 .HasColumnName("SurgeryNumber")
                 .HasConversion(
-                    v => v.ToString(),
-                    v => new SurgeryNumber(v)                    
+                    v => SurgeryRoomNumberUtils.ToString(v),
+                    v => SurgeryRoomNumberUtils.FromString(v)                    
+                );
+            
+            builder.Property(x => x.AppointmentNumber)
+                .IsRequired()
+                .HasColumnName("AppointmentNumber")
+                .HasConversion(
+                    v => v.Value,
+                    v => new AppointmentNumber(v)
                 );
 
             builder.Property(x => x.AppointmentDate)

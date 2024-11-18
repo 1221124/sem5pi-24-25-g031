@@ -1,19 +1,27 @@
-using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.OperationRequests;
-using Domain.OperationTypes;
-using Domain.Shared;
+
 
 namespace DDDNetCore.Domain.Appointments
 {
     public class AppointmentMapper
     {
-        public static Appointment ToEntity(CreatingAppointment creatingAppointment, OperationRequestDto operationRequestDto)
+        public static CreatingAppointment ToCreating(
+        string operationRequestId, string surgeryNumber, string appointmentDate
+        ){
+            return new CreatingAppointment(
+                new OperationRequestId(operationRequestId),
+                SurgeryRoomNumberUtils.FromString(surgeryNumber),
+                new AppointmentDate(appointmentDate)
+            );
+        }
+        
+        public static Appointment ToEntity(CreatingAppointment creatingAppointment, int count)
         {
             return new Appointment(
                 creatingAppointment.OperationRequestId,
-                operationRequestDto.Priority,
-                operationRequestDto.OperationType,
-                creatingAppointment.SurgeryNumber,
+                creatingAppointment.SurgeryRoomNumber,
+                new AppointmentNumber("so" +  count),
                 creatingAppointment.AppointmentDate
             );
         }

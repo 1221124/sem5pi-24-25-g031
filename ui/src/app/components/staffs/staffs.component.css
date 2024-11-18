@@ -5,7 +5,7 @@ body {
 }
 
 .staffs-request {
-    max-width: 300px;
+    max-width: 800px;
     margin: 0 auto;
     font-family: Arial, sans-serif;
     color: #333;
@@ -13,7 +13,6 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
 }
 
 h1 {
@@ -233,4 +232,48 @@ tr:hover {
 .pagination span {
     margin: 0 10px;
     font-size: 16px;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    position: relative;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert strong {
+    font-weight: bold;
+}
+
+.alert-top-right {
+    position: fixed;
+    top: 100px;
+    right: 100px;
+    z-index: 1050;
+    /* Garante que o alert fique acima de outros elementos */
+    max-width: 300px;
+    /* Define um tamanho máximo, opcional */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Adiciona uma leve sombra */
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Animação opcional para o alert aparecer suavemente */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }

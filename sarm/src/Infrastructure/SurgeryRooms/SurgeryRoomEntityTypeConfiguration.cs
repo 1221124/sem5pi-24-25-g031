@@ -1,29 +1,22 @@
 using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DDDNetCore.Infrastructure.Surgeries{
-    public class SurgeryEntityTypeConfiguration : IEntityTypeConfiguration<Surgery>
+namespace DDDNetCore.Infrastructure.SurgeryRooms{
+    public class SurgeryRoomEntityTypeConfiguration : IEntityTypeConfiguration<SurgeryRoom>
     {
-        public void Configure(EntityTypeBuilder<Surgery> builder)
+        public void Configure(EntityTypeBuilder<SurgeryRoom> builder)
         {
             builder.HasKey(x => x.Id);
-
-            builder.Property(x => x.Name)
+            
+            builder.Property(x => x.SurgeryRoomNumber)
                 .IsRequired()
-                .HasColumnName("SurgeryRoom")
+                .HasColumnName("SurgeryRoomNumber")
                 .HasConversion(
-                    v => v.Value,
-                    v => (Name) v
-                );
-
-            builder.Property(x => x.SurgeryNumber)
-                .IsRequired()
-                .HasColumnName("SurgeryNumber")
-                .HasConversion(
-                    v => v.Value,
-                    v => new SurgeryNumber(v)
+                    v => SurgeryRoomNumberUtils.ToString(v),
+                    v => SurgeryRoomNumberUtils.FromString(v)
                 );
 
             builder.Property(x => x.RoomType)
@@ -33,21 +26,20 @@ namespace DDDNetCore.Infrastructure.Surgeries{
                     v => RoomTypeUtils.ToString(v),
                     v => RoomTypeUtils.FromString(v)
                 );
-
+            
             builder.Property(x => x.RoomCapacity)
                 .IsRequired()
                 .HasColumnName("RoomCapacity")
                 .HasConversion(
-                    v => v.Capacity.ToString(),
+                    v => v.ToString(),
                     v => new RoomCapacity(v)
                 );
-               
-                
+            
             builder.Property(x => x.AssignedEquipment)
                 .IsRequired()
                 .HasColumnName("AssignedEquipment")
                 .HasConversion(
-                    v => string.Join(",", v.Equipment),
+                    v => v.ToString(),
                     v => new AssignedEquipment(v)
                 );
 
@@ -59,15 +51,16 @@ namespace DDDNetCore.Infrastructure.Surgeries{
                     v => CurrentStatusUtils.FromString(v)
                 );
 
-            builder.OwnsMany(p => p.MaintenanceSlots, slots =>
+            builder.OwnsMany(o => o.MaintenanceSlots, slot =>
             {
-                slots.Property(h => h.Start)
+                slot.Property(s => s.Start)
                     .HasColumnName("Start")
                     .HasConversion(
                         v => v.ToString("yyyy-MM-dd HH:mm"),
                         v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                     );
-                slots.Property(h => h.End)
+
+                slot.Property(s => s.End)
                     .HasColumnName("End")
                     .HasConversion(
                         v => v.ToString("yyyy-MM-dd HH:mm"),
