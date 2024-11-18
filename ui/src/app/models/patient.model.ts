@@ -16,8 +16,8 @@ export interface Patient {
   MedicalCondition: string[];
   EmergencyContact: number;
   AppointmentHistory: {
-    Start: string,
-    End: string
+    Start: Date,
+    End: Date
   }[],
   UserId: string;
 }
