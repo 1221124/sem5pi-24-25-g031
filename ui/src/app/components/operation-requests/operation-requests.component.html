@@ -25,8 +25,8 @@
           <div>
             <label for="patient">Select Patient:</label>
             <select id="patient" name="patient" [(ngModel)]="patient" (focus)="patientTouched = true">
-              <option *ngFor="let patient of patients" [value]="patient.medicalRecordNumber">
-                {{ patient.medicalRecordNumber }} - {{ patient.email }}
+              <option *ngFor="let patient of patients" [value]="patient.MedicalRecordNumber">
+                {{ patient.MedicalRecordNumber }} - {{ patient.ContactInformation.Email }}
               </option>
             </select>
           </div>
