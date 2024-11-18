@@ -45,12 +45,9 @@ export class PatientComponent {
   }
 
   appointmentHistory: {
-    Start: string,
-    End: string
-  } = {
-    Start: '',
-    End: ''
-  }
+    Start: Date,
+    End: Date
+  }[] = [];
 
   patients: Patient[] = [];
   filter = {
@@ -78,9 +75,7 @@ export class PatientComponent {
 
   getPatient() {
     this.accessToken = this.authorizationService.getToken();
-    console.log("Token:", this.accessToken);  // Log token
     this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.accessToken);
-    console.log("Extracted Email:", this.patientEmail);  // Log email
 
     if (this.patientEmail) {
       this.getPatientByEmail(this.patientEmail);
@@ -91,13 +86,11 @@ export class PatientComponent {
 
   async getPatientByEmail(email: string) {
     console.log("Fetching patient by email:", email);
-    await this.patientService.getByEmail(email, this.filter)
+    await this.patientService.getByEmail(email)
       .then(response => {
         if(response.status === 200) {
           if(response.body) {
-            this.patients = response.body.patient;
-            console.log("Patients array populated:", this.patients);
-            this.totalItems = response.body.totalItems || 0;
+            this.patient = response.body.patient;
             this.totalPages = Math.ceil(this.totalItems / 2);
           } else {
             this.patients = [];

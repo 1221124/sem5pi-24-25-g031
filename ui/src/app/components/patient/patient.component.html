@@ -1,33 +1,27 @@
 <div class="patient-component">
   <h1>Patient</h1>
 
-  <p>{{patients.length}}</p>
-
-  <div *ngIf="patients.length > 0">
+  <div>
     <h2>Patient Details</h2>
     <div class="patient-details">
-      <div><strong>First Name:</strong> {{ patients[0].FullName.FirstName }}</div>
-      <div><strong>Last Name:</strong> {{ patients[0].FullName.LastName }}</div>
-      <div><strong>Date of Birth:</strong> {{ patients[0].DateOfBirth | date: 'yyyy-MM-dd' }}</div>
-      <div><strong>Email:</strong> {{ patients[0].ContactInformation.Email }}</div>
-      <div><strong>Phone Number:</strong> {{ patients[0].ContactInformation.PhoneNumber }}</div>
+      <div><strong>First Name:</strong> {{ patient.FullName.FirstName }}</div>
+      <div><strong>Last Name:</strong> {{ patient.FullName.LastName }}</div>
+      <div><strong>Date of Birth:</strong> {{ patient.DateOfBirth | date: 'yyyy-MM-dd' }}</div>
+      <div><strong>Email:</strong> {{ patient.ContactInformation.Email }}</div>
+      <div><strong>Phone Number:</strong> {{ patient.ContactInformation.PhoneNumber }}</div>
       <!--div><strong>Gender:</strong> {{ patients[0].Gender === 0 ? 'Male' : 'Female' }}</div-->
-      <div><strong>Medical Record Number:</strong> {{ patients[0].MedicalRecordNumber }}</div>
-      <div><strong>Emergency Contact:</strong> {{ patients[0].EmergencyContact || 'N/A' }}</div>
+      <div><strong>Medical Record Number:</strong> {{ patient.MedicalRecordNumber }}</div>
+      <div><strong>Emergency Contact:</strong> {{ patient.EmergencyContact || 'N/A' }}</div>
 
       <div><strong>Appointment History:</strong></div>
-      <div *ngIf="patients[0].AppointmentHistory.length > 0">
-        <div *ngFor="let slot of patients[0].AppointmentHistory">
+      <div *ngIf="patient.AppointmentHistory.length > 0">
+        <div *ngFor="let slot of patient.AppointmentHistory">
           <div>Start: {{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</div>
           <div>End: {{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</div>
         </div>
       </div>
-      <div *ngIf="patients[0].AppointmentHistory.length === 0">No appointments available</div>
+      <div *ngIf="patient.AppointmentHistory.length === 0">No appointments available</div>
     </div>
   </div>
-  <div *ngIf="patients.length === 0">
-    <p>No patient data available.</p>
-  </div>
-
 
 </div>
