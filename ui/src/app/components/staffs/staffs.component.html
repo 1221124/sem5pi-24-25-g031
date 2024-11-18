@@ -257,7 +257,9 @@
     <div *ngIf="isSlotAvailabilityModal" class="modal">
         <div class="modal-content">
             <span type="button" class="close" (click)="closeSlotAvailabilityModal()">&times;</span>
-            <h2>Slots Availability</h2>
+            <h2>Slot Availability for {{ selectedStaff?.FullName?.FirstName }} {{ selectedStaff?.FullName?.LastName }}
+            </h2>
+
             <table>
                 <thead>
                     <tr>
@@ -267,7 +269,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <div *ngIf="selectedStaff.slotAvailability?.length > 0; else noSlotsMessage">
+                            <div *ngIf="selectedStaff.SlotAvailability?.length > 0; else noSlotsMessage">
                                 <table>
                                     <thead>
                                         <tr>
@@ -277,11 +279,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let slot of selectedStaff.slotAvailability">
-                                            <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
-                                            <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                        <tr *ngFor="let slot of selectedStaff.SlotAvailability;">
+                                            <td>{{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                            <td>{{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</td>
                                             <td><button type="button" class="action-btn delete-btn"
-                                                    (click)="deleteSlotAvailability()">Delete</button>
+                                                    (click)="deleteSlotAvailability(slot)">Remove</button>
                                             </td>
                                         </tr>
                                     </tbody>

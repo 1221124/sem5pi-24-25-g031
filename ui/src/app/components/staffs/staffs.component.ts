@@ -5,6 +5,8 @@ import { Router, RouterModule } from '@angular/router';
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
 import { AuthService } from '../../services/auth/auth.service';
 import { Staff } from '../../models/staff.model';
+import { response } from 'express';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-staffs',
@@ -107,9 +109,11 @@ export class StaffsComponent implements OnInit {
     await this.staffService.getStaffRoles().then((data) => {
       this.roles = data;
     });
+
     await this.staffService.getSpecializations().then((data) => {
       this.specializations = data;
     });
+
     this.accessToken = this.authService.getToken();
     await this.fetchStaffs();
   }
@@ -328,10 +332,8 @@ export class StaffsComponent implements OnInit {
   }
 
   openSlotAppointmentModal(staff: any) {
-    this.selectedStaff = {
-      slotAppointment: staff.slotAppointment
-    };
-    this.isSlotAppointmentModal = true;
+    this.selectedStaff = staff;
+    this.isSlotAvailabilityModal = true;
     this.isEditModalOpen = false;
     this.isCreateModalOpen = false;
   }
@@ -341,9 +343,7 @@ export class StaffsComponent implements OnInit {
   }
 
   openSlotAvailabilityModal(staff: any) {
-    this.selectedStaff = {
-      slotAvailability: staff.slotAvailability
-    };
+    this.selectedStaff = staff;
     this.isSlotAvailabilityModal = true;
     this.isEditModalOpen = false;
     this.isCreateModalOpen = false;
@@ -403,8 +403,30 @@ export class StaffsComponent implements OnInit {
     this.isAddSlotAvailabilityFormVisible = true;
   }
 
-  deleteSlotAvailability() {
+  deleteSlotAvailability(index: number) {
+    console.log(index);
 
+    if (this.selectedStaff && this.selectedStaff.slotAvailability) {
+      this.selectedStaff.slotAvailability.splice(index, 1);
+
+      this.staffService.update(this.selectedStaff.Id, this.selectedStaff, this.accessToken)
+        .then(response => {
+          if (response.status === 200) {
+            this.message = 'Slot removed successfully!';
+            this.success = true;
+
+            this.fetchStaffs();
+          } else {
+            this.message = 'Failed to update staff: ' + response.status;
+            this.success = false;
+          }
+        })
+        .catch(error => {
+          console.error('Error updating staff:', error);
+          this.message = 'An error occurred while updating the staff!';
+          this.success = false;
+        });
+    }
   }
 
   goToAdmin() {
