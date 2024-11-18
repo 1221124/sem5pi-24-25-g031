@@ -18,13 +18,35 @@ export class StaffsComponent implements OnInit {
 
   constructor(private staffService: StaffsService, private authService: AuthService, private router: Router) { }
 
+  staff: Staff = {
+    Id: '',
+    FullName: {
+      FirstName: '',
+      LastName: ''
+    },
+    licenseNumber: '',
+    specialization: '',
+    ContactInformation: {
+      Email: '',
+      PhoneNumber: ''
+    },
+    status: '',
+    SlotAppointement: [
+      {
+        Start: '',
+        End: ''
+      }
+    ],
+    SlotAvailability: [
+      {
+        Start: '',
+        End: ''
+      }
+    ],
+    RoleFirstChar: ''
+  };
+
   staffs: Staff[] = [];
-  firstName: string = '';
-  lastName: string = '';
-  email: string = '';
-  phoneNumber: string = '';
-  specialization: string = '';
-  role: string = '';
   selectedStaff: any = null;
 
   searchName: string = '';
@@ -66,8 +88,12 @@ export class StaffsComponent implements OnInit {
   success: boolean = true;
 
   specializations: string[] = [];
+  roles: string[] = [];
   names: string[] = [];
   emails: string[] = [];
+
+  showCreateForm: boolean = false;
+  isEditMode: boolean = false;
 
   async ngOnInit() {
     if (!this.authService.isAuthenticated()) {
@@ -78,6 +104,9 @@ export class StaffsComponent implements OnInit {
       }, 3000);
       return;
     }
+    await this.staffService.getStaffRoles().then((data) => {
+      this.roles = data;
+    });
     await this.staffService.getSpecializations().then((data) => {
       this.specializations = data;
     });
@@ -135,31 +164,84 @@ export class StaffsComponent implements OnInit {
 
 
 
-  submitRequest() {
-    // this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
-    this.staffService.createStaff(this.firstName, this.lastName, this.phoneNumber, this.email, this.specialization, this.role);
+  async submitRequest() {
+    this.staffService.post(this.staff, this.accessToken)
+      .then(response => {
+        if (response.status === 201) {
+          this.message = 'Staff successfully created!';
+          this.success = true;
+          this.closeModal();
+          this.fetchStaffs();
+          setTimeout(() => {
+            this.success = false;
+          }, 3000);
+        } else {
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+        }
+      })
+      .catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to create Staff! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        } else if (error.status == 400) {
+          this.message = 'Bad Request... ' + error;
+        }
+        this.message = 'There was an error creating the Staff: ' + error;
+        this.success = false;
+      });
+    await this.fetchStaffs();
+  }
+  // this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
+  //this.staffService.createStaff(this.firstName, this.lastName, this.phoneNumber, this.email, this.specialization, this.role);
 
-    console.log("Staff profile submitted");
+  //console.log("Staff profile submitted");
 
-    // response => {
-    //   this.message = 'Staff profile submitted successfully!';
-    //   this.clearForm();
-    // },
-    // error => {
-    //   this.message = 'Error submitting staff profile. Please try again.';
-    // }
-    //);
+  // response => {
+  //   this.message = 'Staff profile submitted successfully!';
+  //   this.clearForm();
+  // },
+  // error => {
+  //   this.message = 'Error submitting staff profile. Please try again.';
+  // }
+  //);
 
+  async update(id: string) {
+    await this.staffService.update(id, this.staff, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.message = 'Staff successfully updated!';
+          this.success = true;
+          setTimeout(() => {
+            this.clearForm();
+            this.showCreateForm = false;
+          }, 3000);
+        } else {
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+        }
+      })
+      .catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to update Staffs! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        }
+        this.message = 'There was an error updating the Staff: ' + error;
+        this.success = false;
+      });
+    await this.fetchStaffs();
   }
 
-  clearForm() {
-    this.firstName = '';
-    this.lastName = '';
-    this.email = '';
-    this.phoneNumber = '';
-    this.specialization = '';
-    this.role = '';
 
+  clearForm() {
     this.firstNameTouched = false;
     this.lastNameTouched = false;
     this.emailTouched = false;
@@ -183,9 +265,10 @@ export class StaffsComponent implements OnInit {
 
 
   // Atualiza a página atual para a nova página selecionada
-  changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
+  async changePage(pageNumber: number) {
+    if (pageNumber > 0 && pageNumber <= this.totalPages) {
+      this.filter.pageNumber = pageNumber;
+      await this.fetchStaffs();
     }
   }
 
@@ -212,13 +295,8 @@ export class StaffsComponent implements OnInit {
 
 
   // This method is triggered when the user clicks the "edit" button
-  editStaff(patient: any) {
-    this.selectedStaff = {
-      firstName: patient.fullName.firstName,
-      lastName: patient.fullName.lastName,
-      email: patient.contactInformation.email,
-      phoneNumber: patient.contactInformation.phoneNumber,
-    };
+  editStaff(staff: Staff) {
+    this.staff = { ...staff };
     this.isEditModalOpen = true;
     this.isCreateModalOpen = false;
 

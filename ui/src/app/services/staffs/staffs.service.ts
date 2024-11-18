@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment, httpOptions } from '../../../environments/environment';
 import { firstValueFrom, Observable } from 'rxjs';
+import { Staff } from '../../models/staff.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,109 +17,9 @@ export class StaffsService {
 
   constructor(private http: HttpClient) { }
 
-  //createStaff(creatingStaffDto: any): Observable<any> {
-  createStaff(
-    firstNameDto: string,
-    lastNameDto: string,
-    phoneNumberDto: string,
-    emailDto: string,
-    specializationDto: string,
-    roleDto: string
-  ) {
-
-    //   fetch(environment.staffs, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       firstname: firstNameDto,
-    //       lastName: lastNameDto,
-    //       phoneNumber: phoneNumberDto,
-    //       email: emailDto,
-    //       specialization: specializationDto,
-    //       role: roleDto,
-
-    //     }),
-    //   })
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok');
-    //     }
-    //     return response.json();
-    //   })
-    //   .then(data => console.log(data))
-    //   .catch(error => {
-    //     console.error('Error:', error);
-    //     console.error('Response status:', error?.status);
-    //     console.error('Response text:', error?.message);
-    //   });
-    // };
-
-    const staffDto = {
-      "fullName": {
-        "firstName": {
-          "value": firstNameDto
-        },
-        "lastName": {
-          "value": lastNameDto
-        }
-      },
-      "phoneNumber": {
-        "value": phoneNumberDto
-      },
-      "email": {
-        "value": emailDto
-      },  // wrapping email in an object with a 'value' field
-      "specialization": specializationDto,  // wrapping specialization in an object with a 'value' field
-      "roleFirstChar": {
-        "value": roleDto
-      }  // wrapping role in an object with a 'value' field
-    };
-
-    // const body = JSON.stringify(creatingStaffDto);
-
-    // {
-    //   "fullName": {
-    //     "firstName": {
-    //       "value": "string"
-    //     },
-    //     "lastName": {
-    //       "value": "string"
-    //     }
-    //   },
-    //   "phoneNumber": {
-    //     "value": 0
-    //   },
-    //   "email": {
-    //     "value": "string"
-    //   },
-    //   "specialization": 0,
-    //   "roleFirstChar": {
-    //     "value": "string"
-    //   }
-    // }
-
-
-    // this.http.post(this.apiUrl, staffDto, httpOptions).subscribe(
-    //   response =>{ 
-    //     console.log('Staff submitted successfully:', response);
-    //   },
-    //   error => {
-    //     console.error('Error submitting staff:', error)
-    //   }
-    // );;
-
-    return this.http.post(this.apiUrl, staffDto, httpOptions)
-      .subscribe(
-        response => {
-          console.log('Staff submitted successfully:', response);
-        },
-        error => {
-          console.log('Staff:', staffDto);
-          console.error('Error submitting staff:', error)
-        }
-      );;
+  async getStaffRoles() {
+    const url = `${environment.enums}/staffRoles`;
+    return await firstValueFrom(this.http.get<string[]>(url));
   }
 
   async getSpecializations() {
@@ -153,6 +54,7 @@ export class StaffsService {
 
           // Mapeia os dados dos funcionários
           const mappedStaffs = response.body.staff.map(item => ({
+            Id: item.id.value,
             FullName: {
               FirstName: item.fullName.firstName.value,
               LastName: item.fullName.lastName.value
@@ -169,12 +71,13 @@ export class StaffsService {
                 Start: appointment.start,
                 End: appointment.end
               })) : [],
-            
+
             SlotAvailability: Array.isArray(item.slotAvailability) && item.slotAvailability !== null ?
               item.slotAvailability.map((availability: { start: string, end: string }) => ({
                 Start: availability.start,
                 End: availability.end
-              })) : []
+              })) : [],
+            RoleFirstChar: item.roleFirstChar
           }));
 
           return {
@@ -191,15 +94,58 @@ export class StaffsService {
   }
 
 
-  editStaff(staffEmail: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update/${staffEmail}`, httpOptions);
-  }
-
   deleteStaff(staffEmail: any): Observable<any> {
     console.log('Deleting staff 2:', staffEmail);
     return this.http.delete(`${this.apiUrl}/${staffEmail}`, httpOptions);
   }
 
 
-}
+  async post(staff: Staff, accessToken: string) {
+    const staffDto = {
+      "fullName": {
+        "firstName": {
+          "value": staff.FullName.FirstName
+        },
+        "lastName": {
+          "value": staff.FullName.LastName
+        }
+      },
+      "phoneNumber": {
+        "value": staff.ContactInformation.PhoneNumber
+      },
+      "email": {
+        "value": staff.ContactInformation.Email
+      },
+      "specialization": staff.specialization,
+      "roleFirstChar": {
+        "value": staff.RoleFirstChar,
+      }
+    };
 
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers };
+
+    return await firstValueFrom(this.http.post(environment.staffs, staffDto, options));
+  }
+
+
+  async update(id: string, staff: Staff, accessToken: string) {
+    const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    if (!guidRegex.test(id)) {
+      throw new Error('Invalid ID format. Please provide a valid GUID.');
+    }
+
+    const dto = {
+
+    };
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers };
+    return await firstValueFrom(this.http.put(`${environment.staffs}/update/${id}`, dto, options));
+  }
+
+}
