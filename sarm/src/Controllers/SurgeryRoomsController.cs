@@ -1,8 +1,6 @@
-
 using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
-using Domain.SurgeryRooms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDNetCore.Controllers{
@@ -21,12 +19,12 @@ namespace DDDNetCore.Controllers{
         }
 
         [HttpGet]
-        public ActionResult<List<SurgeryRoom>> GetAll()
+        public async Task<ActionResult<List<SurgeryRoom>>> GetAll()
         {
             try{
-                var surgeries = _surgeryRoomService.GetAll();
+                var surgeries = await _surgeryRoomService.GetAll();
 
-                if(surgeries == null)
+                if(surgeries == null || surgeries.Count == 0)
                     return NotFound();
 
                 return Ok(surgeries);
