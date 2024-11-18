@@ -41,10 +41,10 @@ namespace DDDNetCore.Controllers
                 return NotFound();
             }
 
-            if (pageNumber != null)
+            if (pageNumber != null && int.TryParse(pageNumber, out int page))
             {
                 var paginatedPatients = patients
-                    .Skip((int.Parse(pageNumber)) * PageSize)
+                    .Skip((page - 1) * PageSize)
                     .Take(PageSize)
                     .ToList();
                 return paginatedPatients;
@@ -197,14 +197,16 @@ namespace DDDNetCore.Controllers
         {
             // Initialize a base query
 
-            List<PatientDto?>? patientsQuery = await _service.SearchByFilterAsync(fullName, email, phoneNumber, medicalRecordNumber, dateOfBirth, gender, pageNumber);
+            List<PatientDto> patientsQuery = await _service.SearchByFilterAsync(fullName, email, phoneNumber, medicalRecordNumber, dateOfBirth, gender, pageNumber);
             
             if(patientsQuery == null)
             {
                 return NotFound("Patients not found with that search criteria");
             }
 
-            return Ok(patientsQuery);
+            var patientCount = patientsQuery.Count;
+
+            return Ok(new { patient = patientsQuery, totalItems = patientCount });
 
         }
         
