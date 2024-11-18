@@ -10,13 +10,22 @@ namespace DDDNetCore.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.RenameColumn(
+                name: "RoomCapacityStaffs",
+                table: "Surgeries",
+                newName: "RoomCapacity"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.RenameColumn(
+                name: "RoomCapacity",
+                table: "Surgeries",
+                newName: "RoomCapacityStaffs"
+            );
         }
+
     }
 }
