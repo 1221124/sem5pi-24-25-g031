@@ -1,28 +1,30 @@
 
 using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
+using Domain.SurgeryRooms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDNetCore.Controllers{
     
     [ApiController]
     [Route("api/[controller]")]
-    public class SurgeriesController : ControllerBase
+    public class SurgeryRoomsController : ControllerBase
     {
-        private readonly SurgeryService _surgeryService;
+        private readonly SurgeryRoomService _surgeryRoomService;
         private readonly DbLogService _logService;
 
-        public SurgeriesController(SurgeryService surgeryService, DbLogService logService)
+        public SurgeryRoomsController(SurgeryRoomService surgeryRoomService, DbLogService logService)
         {
-            _surgeryService = surgeryService;
+            _surgeryRoomService = surgeryRoomService;
             _logService = logService;
         }
 
         [HttpGet]
-        public ActionResult<List<Surgery>> GetAllSurgeries()
+        public ActionResult<List<SurgeryRoom>> GetAll()
         {
             try{
-                var surgeries = _surgeryService.GetAll();
+                var surgeries = _surgeryRoomService.GetAll();
 
                 if(surgeries == null)
                     return NotFound();
@@ -35,8 +37,8 @@ namespace DDDNetCore.Controllers{
         }
 
         [HttpPost]
-        public async Task<ActionResult<Surgery>> CreateSurgery(
-            [FromQuery] string name,
+        public async Task<ActionResult<SurgeryRoom>> Create(
+            [FromQuery] string surgeryRoomNumber,
             [FromQuery] string roomType, 
             [FromQuery] string roomCapacity,
             [FromQuery] string assignedEquipment
@@ -44,10 +46,10 @@ namespace DDDNetCore.Controllers{
         {
             try
             {
-                var surgery = SurgeryMapper.ToCreating(name, roomType, roomCapacity, assignedEquipment);
+                var surgery = SurgeryRoomMapper.ToCreating(surgeryRoomNumber, roomType, roomCapacity, assignedEquipment);
                 
-                var createdSurgery = await _surgeryService.AddAsync(surgery);
-                return CreatedAtAction(nameof(CreateSurgery), new { id = createdSurgery.Id }, createdSurgery);
+                var createdSurgery = await _surgeryRoomService.AddAsync(surgery);
+                return CreatedAtAction(nameof(Create), new { id = createdSurgery.Id }, createdSurgery);
             }
             catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);
