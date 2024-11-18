@@ -24,31 +24,30 @@ namespace DDDNetCore.Domain.Appointments
             _operationRequestService = operationRequestService;
         }
 
-        public async Task<Dictionary<Appointment, SurgeryRoom>> Planning(AppointmentDate date)
+        public async Task<List<Appointment>> Planning(AppointmentDate date)
         {
-            Dictionary<Appointment, SurgeryRoom> bc = []; //bc - Base de Conhecimento 
+            List<Appointment> dateAppointments = []; //bc - Base de Conhecimento 
         
-        //     var appointments = await _appointmentRepository.GetAllAsync();
-        //
-        //     foreach (var appointment in appointments)
-        //     {
-        //         if (appointment.AppointmentDate.Date == date.Date)
-        //         {
-        //             var surgery = await _surgeryRoomService.GetBySurgeryRoomNumberAsync(appointment.SurgeryRoomNumber);
-        //
-        //             if (surgery == null) return [];
-        //
-        //             bc.Add(appointment, surgery);
-        //         }
-        //     }
-        //
-        //     if (bc.Count == 0)
-        //     {
-        //         return [];
-        //     }
-        //
-            // return bc.OrderBy(x => x.Key.Priority).ToDictionary(x => x.Key, x => x.Value);
-            return bc;
+            var appointments = await _appointmentRepository.GetAllAsync();
+        
+            foreach (var appointment in appointments)
+            {
+                if (appointment.AppointmentDate.Date == date.Date)
+                {
+                    var surgery = await _surgeryRoomService.GetBySurgeryRoomNumberAsync(appointment.SurgeryRoomNumber);
+        
+                    if (surgery == null) return [];
+        
+                    dateAppointments.Add(appointment);
+                }
+            }
+        
+            if (dateAppointments.Count == 0)
+            {
+                return [];
+            }
+        
+            return dateAppointments;
         }
 
         public async Task<IEnumerable<Appointment>> GetAll()

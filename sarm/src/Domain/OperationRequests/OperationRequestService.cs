@@ -161,7 +161,7 @@ namespace DDDNetCore.Domain.OperationRequests
                     var request = await _repo.GetByIdAsync(id);
 
                     requestQuery = requestQuery
-                        .Where(r => r.Id.ToString() == request.Id.Value)
+                        .Where(r => r!.Id.ToString() == request.Id.Value)
                         .ToList();
                 }
 
