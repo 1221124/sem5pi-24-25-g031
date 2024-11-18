@@ -1,5 +1,6 @@
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
 using Domain.OperationRequests;
 using Domain.Shared;
@@ -10,43 +11,44 @@ namespace DDDNetCore.Domain.Appointments
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAppointmentRepository _appointmentRepository;
-        private readonly SurgeryService _surgeryService;
+        private readonly SurgeryRoomService _surgeryRoomService;
         private readonly OperationRequestService _operationRequestService;
 
 
-        public AppointmentService(IUnitOfWork unitOfWork, SurgeryService surgeryService,
+        public AppointmentService(IUnitOfWork unitOfWork, SurgeryRoomService surgeryRoomService,
             IAppointmentRepository appointmentRepository, OperationRequestService operationRequestService)
         {
             _unitOfWork = unitOfWork;
             _appointmentRepository = appointmentRepository;
-            _surgeryService = surgeryService;
+            _surgeryRoomService = surgeryRoomService;
             _operationRequestService = operationRequestService;
         }
 
-        public async Task<Dictionary<Appointment, Surgery>> Planning(AppointmentDate date)
+        public async Task<Dictionary<Appointment, SurgeryRoom>> Planning(AppointmentDate date)
         {
-            Dictionary<Appointment, Surgery> bc = []; //bc - Base de Conhecimento 
-
-            var appointments = await _appointmentRepository.GetAllAsync();
-
-            foreach (var appointment in appointments)
-            {
-                if (appointment.AppointmentDate.Date == date.Date)
-                {
-                    var surgery = await _surgeryService.GetBySurgeryNumberAsync(appointment.SurgeryNumber);
-
-                    if (surgery == null) return [];
-
-                    bc.Add(appointment, surgery);
-                }
-            }
-
-            if (bc.Count == 0)
-            {
-                return [];
-            }
-
-            return bc.OrderBy(x => x.Key.Priority).ToDictionary(x => x.Key, x => x.Value);
+            Dictionary<Appointment, SurgeryRoom> bc = []; //bc - Base de Conhecimento 
+        
+        //     var appointments = await _appointmentRepository.GetAllAsync();
+        //
+        //     foreach (var appointment in appointments)
+        //     {
+        //         if (appointment.AppointmentDate.Date == date.Date)
+        //         {
+        //             var surgery = await _surgeryRoomService.GetBySurgeryRoomNumberAsync(appointment.SurgeryRoomNumber);
+        //
+        //             if (surgery == null) return [];
+        //
+        //             bc.Add(appointment, surgery);
+        //         }
+        //     }
+        //
+        //     if (bc.Count == 0)
+        //     {
+        //         return [];
+        //     }
+        //
+            // return bc.OrderBy(x => x.Key.Priority).ToDictionary(x => x.Key, x => x.Value);
+            return bc;
         }
 
         public async Task<IEnumerable<Appointment>> GetAll()
@@ -74,8 +76,10 @@ namespace DDDNetCore.Domain.Appointments
                     );
 
                     if (op == null || op.Count != 1) return null;
+                    
+                    var all = await _appointmentRepository.GetAllAsync();
 
-                    var newAppointment = AppointmentMapper.ToEntity(appointment, op[0]);
+                    var newAppointment = AppointmentMapper.ToEntity(appointment, all.Count + 1);
 
                     await _appointmentRepository.AddAsync(newAppointment);
                     await _unitOfWork.CommitAsync();
