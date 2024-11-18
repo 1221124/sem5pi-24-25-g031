@@ -25,8 +25,9 @@ using Microsoft.OpenApi.Models;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Appointments;
 using Infrastructure.Appointments;
-using DDDNetCore.Infrastructure.Surgeries;
+using DDDNetCore.Infrastructure.SurgeryRooms;
 using DDDNetCore.Domain.Surgeries;
+using DDDNetCore.Domain.SurgeryRooms;
 using DDDNetCore.PrologIntegrations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -115,8 +116,8 @@ builder.Services.AddTransient<EnumsService>();
 builder.Services.AddTransient<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddTransient<AppointmentService>();
 
-builder.Services.AddTransient<ISurgeryRepository, SurgeryRepository>();
-builder.Services.AddTransient<SurgeryService>();
+builder.Services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
+builder.Services.AddTransient<SurgeryRoomService>();
 
 builder.Services.AddScoped<PrologIntegration>();
 builder.Services.AddScoped<PrologIntegrationService>();
