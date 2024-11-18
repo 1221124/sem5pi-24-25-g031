@@ -232,14 +232,15 @@ namespace DDDNetCore.Domain.Patients
                 
                 if (patientsQuery.Count != 0)
                 {
-                    if (pageNumber != null)
+                    if (pageNumber != null && int.TryParse(pageNumber, out int page))
                     {
-                        List<PatientDto?> paginatedPatients = patientsQuery
-                            .Skip((int.Parse(pageNumber)) * PageSize)
+                        var paginatedPatients = patientsQuery
+                            .Skip((page - 1) * PageSize)
                             .Take(PageSize)
                             .ToList();
                         return paginatedPatients;
                     }
+
                     return patientsQuery;
             
                 }

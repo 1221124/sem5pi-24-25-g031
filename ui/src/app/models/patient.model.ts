@@ -6,7 +6,7 @@ export interface Patient {
     FirstName: string,
     LastName: string
   },
-  DateOfBirth: string,
+  DateOfBirth: Date,
   Gender: string,
   MedicalRecordNumber: string,
   ContactInformation: {

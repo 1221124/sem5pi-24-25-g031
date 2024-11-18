@@ -4,6 +4,7 @@ import {PatientService} from '../../services/patient/patient.service';
 import {Router, RouterModule} from '@angular/router';
 import {DatePipe, NgFor, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {Patient} from '../../models/patient.model';
 
 @Component({
   selector: 'app-patient',
@@ -24,18 +25,43 @@ export class PatientComponent {
   accessToken: string = '';
   patientEmail: any;
 
-  patients: any[] = [];
-  firstName: string = '';
-  lastName: string = '';
-  dateOfBirth: Date = new Date();
-  gender: string = '';
-  medicalRecordNumber: string = '';
-  phoneNumber: string = '';
-  email: string = '';
-  medicalCondition: string = '';
-  emergencyContact: string = '';
-  appointmentHistory: string = '';
-  userId: string = '';
+  patient: Patient = {
+    Id: '',
+    FullName: {
+      FirstName: '',
+      LastName: ''
+    },
+    DateOfBirth: new Date(),
+    Gender: '',
+    MedicalRecordNumber: '',
+    ContactInformation: {
+      Email: '',
+      PhoneNumber: 0
+    },
+    MedicalCondition: [],
+    EmergencyContact: 0,
+    AppointmentHistory: [],
+    UserId: ''
+  }
+
+  appointmentHistory: {
+    Start: string,
+    End: string
+  } = {
+    Start: '',
+    End: ''
+  }
+
+  patients: Patient[] = [];
+  filter = {
+    pageNumber: 1,
+  }
+  totalItems: number = 0;
+  totalPages: number = 1;
+
+  message: string = '';
+  success: boolean = true;
+
 
   ngOnInit(): void {
     if (!this.authorizationService.isAuthenticated()) {
@@ -50,7 +76,7 @@ export class PatientComponent {
     this.getPatient();
   }
 
-  getPatient(): void {
+  getPatient() {
     this.accessToken = this.authorizationService.getToken();
     console.log("Token:", this.accessToken);  // Log token
     this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.accessToken);
@@ -63,20 +89,53 @@ export class PatientComponent {
     }
   }
 
-  getPatientByEmail(email: string): void {
-    this.patientService.getByEmail(email).subscribe(
-      (data) => {
-        this.patients = data.map((patient: { appointmentHistory: any[]; }) => ({
-          ...patient,
-          appointmentHistory: patient.appointmentHistory.map(slot => ({
-            start: new Date(slot.start),
-            end: new Date(slot.end)
-          }))
-        }));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+  async getPatientByEmail(email: string) {
+    console.log("Fetching patient by email:", email);
+    await this.patientService.getByEmail(email, this.filter)
+      .then(response => {
+        if(response.status === 200) {
+          if(response.body) {
+            this.patients = response.body.patient;
+            console.log("Patients array populated:", this.patients);
+            this.totalItems = response.body.totalItems || 0;
+            this.totalPages = Math.ceil(this.totalItems / 2);
+          } else {
+            this.patients = [];
+            this.message = 'Response body is null: ' + response.body;
+            this.success = false;
+            this.totalItems = 0;
+            this.totalPages = 1;
+          }
+        } else {
+          this.patients = [];
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        }
+      }).catch(error => {
+        if(error.status === 404) {
+          this.patients = [];
+          this.message = 'Patient not found';
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        } else if (error.status === 401) {
+          this.message = 'You are not authorized to view patient information! Please log in...';
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        } else {
+          this.patients = [];
+          this.message = 'There was an error fetching the patient information: ' + error;
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        }
+      });
   }
 }

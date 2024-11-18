@@ -1,7 +1,13 @@
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+
 <div class="staffs-request">
     <h1>Staffs</h1>
     <button (click)="goToAdmin()" class="btn btn-outline-primary back-btn">Back to Admin Home</button>
     <button type="button" class="create-staff-btn" (click)="openModal()">Create Staff</button>
+
+
 
     <div *ngIf="isCreateModalOpen" class="modal">
         <div class="modal-content">
@@ -11,43 +17,36 @@
             <section>
                 <form>
                     <div class="form-group">
-                        <input type="text" id="firstName" name="firstName" [(ngModel)]="firstName"
+                        <input type="text" id="firstName" name="firstName" [(ngModel)]="staff.FullName.FirstName"
                             (focus)="firstNameTouched = true" placeholder="Enter First Name" />
                     </div>
 
                     <div class="form-group">
-                        <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName"
+                        <input type="text" id="lastName" name="lastName" [(ngModel)]="staff.FullName.LastName"
                             (focus)="lastNameTouched = true" placeholder="Enter Last Name" />
                     </div>
 
                     <div class="form-group">
-                        <input type="text" id="email" name="email" [(ngModel)]="email" (focus)="emailTouched = true"
-                            placeholder="Enter Email" />
+                        <input type="text" id="email" name="email" [(ngModel)]="staff.ContactInformation.Email"
+                            (focus)="emailTouched = true" placeholder="Enter Email" />
                     </div>
 
                     <div class="form-group">
-                        <input type="text" id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber"
-                            (focus)="phoneNumberTouched = true" placeholder="Enter Phone Number" />
+                        <input type="text" id="phoneNumber" name="phoneNumber"
+                            [(ngModel)]="staff.ContactInformation.PhoneNumber" (focus)="phoneNumberTouched = true"
+                            placeholder="Enter Phone Number" />
                     </div>
 
                     <div class="form-group">
                         <label for="specialization">Select Specialization:</label>
-                        <select id="specialization" name="specialization" [(ngModel)]="specialization"
-                            (focus)="specializationTouched = true">
-                            <option value="Anaesthesiology">Anaesthesiology</option>
-                            <option value="Cardiology">Cardiology</option>
-                            <option value="Circulating">Circulating</option>
-                            <option value="Instrumental">Instrumental</option>
-                            <option value="Medical_Action">Medical Action</option>
-                            <option value="Orthopaedics">Orthopaedics</option>
-                            <option value="X_Ray">X Ray</option>
+                        <select id="specialization" name="specialization" [(ngModel)]="staff.specialization">
+                            <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
                         </select>
                     </div>
 
-                    <div class="radio-staff">
-                        <label><input type="radio" name="role" [(ngModel)]="role" value="D"> Doctor</label>
-                        <label><input type="radio" name="role" [(ngModel)]="role" value="N"> Nurse</label>
-                        <label><input type="radio" name="role" [(ngModel)]="role" value="T"> Technician</label>
+                    <div *ngFor="let role of roles">
+                        <input type="radio" id="{{role}}" name="role" [value]="role" [(ngModel)]="staff.RoleFirstChar">
+                        <label for="{{role}}">{{ role }}</label>
                     </div>
 
                     <div class="button-group">
@@ -59,24 +58,23 @@
         </div>
     </div>
 
+    <div *ngIf="success && message" class="alert alert-success alert-top-right">
+        <strong>Success!</strong> {{ message }}
+    </div>
+
+
+
+
     <div *ngIf="staffs.length > 0; else noStaffs">
         <table>
             <thead>
                 <tr>
                     <th colspan="2">
                         Name
-                        <select [(ngModel)]="filter.name" name="name" id="name">
-                            <option *ngFor="let name of names" [value]="name">
-                                {{ name }}
-                            </option>
-                        </select>
+                        <input type="text" [(ngModel)]="filter.name" name="name" placeholder="Filter by Name" />
                     <th>
                         Email
-                        <select [(ngModel)]=" filter.email" name="email" id="email">
-                            <option *ngFor="let email of emails" [value]="email">
-                                {{ email }}
-                            </option>
-                        </select>
+                        <input type="text" [(ngModel)]="filter.email" name="email" placeholder="Filter by Email" />
                     </th>
                     <th colspan="2">
                         Specialization
@@ -85,6 +83,12 @@
                                 {{ spec }}
                             </option>
                         </select>
+                    </th>
+                    <th>
+                        <div class="filter-buttons">
+                            <button (click)="applyFilter()">Apply Filters</button>
+                            <button (click)="clearFilters()">Clear Filters</button>
+                        </div>
                     </th>
                 </tr>
                 <tr>
@@ -127,10 +131,7 @@
                 </tr>
             </tbody>
         </table>
-        <div class="filter-buttons">
-            <button (click)="applyFilter()">Apply Filters</button>
-            <button (click)="clearFilters()">Clear Filters</button>
-        </div>
+
     </div>
 
     <ng-template #noStaffs>
@@ -147,10 +148,13 @@
 
 
     <div class="pagination">
-        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage <= 1">Previous</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages">Next</button>
+        <button (click)="changePage(filter.pageNumber - 1)" [disabled]="filter.pageNumber <= 1">Previous</button>
+        <span>Page {{ filter.pageNumber }} of {{ totalPages }}</span>
+        <button (click)="changePage(filter.pageNumber + 1)" [disabled]="filter.pageNumber >= totalPages">Next</button>
     </div>
+
+
+
 
     <div *ngIf="isDeleteModalOpen" class="modal">
         <div class="modal-content">
@@ -173,20 +177,19 @@
             <form (ngSubmit)="saveStaff()">
                 <div>
                     <label for="firstName">First Name</label>
-                    <input type="text" id="firstNameEdit" [(ngModel)]="selectedStaff.firstName.value"
-                        name="firstName" />
+                    <input type="text" id="firstNameEdit" [(ngModel)]="staff.FullName.FirstName" name="firstName" />
                 </div>
                 <div>
                     <label for="lastName">Last Name</label>
-                    <input type="text" id="lastNameEdit" [(ngModel)]="selectedStaff.lastName.value" name="lastName" />
+                    <input type="text" id="lastNameEdit" [(ngModel)]="staff.FullName.LastName" name="lastName" />
                 </div>
                 <div>
                     <label for="email">Email</label>
-                    <input type="text" id="emailEdit" [(ngModel)]="selectedStaff.email.value" name="email" />
+                    <input type="text" id="emailEdit" [(ngModel)]="staff.ContactInformation.Email" name="email" />
                 </div>
                 <div>
                     <label for="phoneNumber">Phone Number</label>
-                    <input type="text" id="phoneNumberEdit" [(ngModel)]="selectedStaff.phoneNumber.value"
+                    <input type="text" id="phoneNumberEdit" [(ngModel)]="staff.ContactInformation.PhoneNumber"
                         name="phoneNumber" />
                 </div>
                 <h3>Slots History</h3>
@@ -206,7 +209,7 @@
                 </div>
 
                 <div class="button-group">
-                    <button type="button" (click)="saveStaff()">Save Staff</button>
+                    <button type="button" (click)="submitRequest()">Save Staff</button>
                 </div>
             </form>
         </div>
@@ -254,7 +257,9 @@
     <div *ngIf="isSlotAvailabilityModal" class="modal">
         <div class="modal-content">
             <span type="button" class="close" (click)="closeSlotAvailabilityModal()">&times;</span>
-            <h2>Slots Availability</h2>
+            <h2>Slot Availability for {{ selectedStaff?.FullName?.FirstName }} {{ selectedStaff?.FullName?.LastName }}
+            </h2>
+
             <table>
                 <thead>
                     <tr>
@@ -264,7 +269,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <div *ngIf="selectedStaff.slotAvailability?.length > 0; else noSlotsMessage">
+                            <div *ngIf="selectedStaff.SlotAvailability?.length > 0; else noSlotsMessage">
                                 <table>
                                     <thead>
                                         <tr>
@@ -274,11 +279,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let slot of selectedStaff.slotAvailability">
-                                            <td>{{ slot.start | date: 'yyyy-MM-dd HH:mm' }}</td>
-                                            <td>{{ slot.end | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                        <tr *ngFor="let slot of selectedStaff.SlotAvailability;">
+                                            <td>{{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</td>
+                                            <td>{{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</td>
                                             <td><button type="button" class="action-btn delete-btn"
-                                                    (click)="deleteSlotAvailability()">Delete</button>
+                                                    (click)="deleteSlotAvailability(slot)">Remove</button>
                                             </td>
                                         </tr>
                                     </tbody>
