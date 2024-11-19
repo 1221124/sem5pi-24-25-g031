@@ -185,3 +185,7 @@ button:hover {
 .delete-account:hover {
   background-color: darkred; /* Slightly darker red on hover */
 }
+
+.End-Slot {
+  margin-left: 20px;
+}

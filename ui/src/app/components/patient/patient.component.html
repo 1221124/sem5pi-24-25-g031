@@ -23,8 +23,8 @@
       <div><strong>Appointment History:</strong></div>
       <div *ngIf="patient.AppointmentHistory.length > 0">
         <div *ngFor="let slot of patient.AppointmentHistory">
-          <div>Start: {{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</div>
-          <div>End: {{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</div>
+          <span><strong>Start:</strong> {{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</span>
+          <span class="End-Slot"><strong>End:</strong> {{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</span>
         </div>
       </div>
       <div *ngIf="patient.AppointmentHistory.length === 0">No appointments available</div>
