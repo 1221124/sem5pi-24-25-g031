@@ -18,12 +18,16 @@ namespace DDDNetCore.PrologIntegrations
         private readonly OperationRequestService _operationRequestService;
 
         // Knowledge Base
-        private readonly Dictionary<string, List<string>> _staff;
-        private readonly Dictionary<string, List<string>> _agendaStaff;
-        private readonly Dictionary<string, string> _timetable;
-        private readonly Dictionary<string, List<string>> _surgery;
-        private readonly List<string> _surgeryId;
-        private readonly List<string> _assignmentSurgery;
+        // private readonly Dictionary<string, List<string>> _staff; //remove comma and add ]).
+        // private readonly Dictionary<string, List<string>> _agendaStaff; //remove comma and add ]).
+        // private readonly Dictionary<string, string> _timetable; //already closed
+        // private readonly Dictionary<string, List<string>> _surgery; //remove comma and add ).
+        private readonly List<string> _staff; //remove comma and add ]).
+        private readonly List<string> _agendaStaff; //remove comma and add ]).
+        private readonly List<string> _timetable; //already closed
+        private readonly List<string> _surgery; //remove comma and add ).
+        private readonly List<string> _surgeryId; //already closed
+        private readonly List<string> _assignmentSurgery; //already closed
 
         public PrologIntegration(PrologService prologService, PrologIntegrationService prologIntegrationService,
             StaffService staffService, AppointmentService appointmentService, SurgeryRoomService surgeryRoomService,
@@ -62,9 +66,9 @@ namespace DDDNetCore.PrologIntegrations
 
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new ArgumentException("Error: Prolog Integration failed");
+                throw new ArgumentException("Error: Prolog Integration failed - " + e.Message.ToString());
             }
         }
 
@@ -74,7 +78,7 @@ namespace DDDNetCore.PrologIntegrations
             try
             {
                 //obtain data
-                var list = await _appointmentService.Planning(new AppointmentDate(date));
+                var list = await _appointmentService.GetByDateAsync(new AppointmentDate(date));
 
                 if (list == null || list.Count == 0)
                 {
@@ -99,11 +103,13 @@ namespace DDDNetCore.PrologIntegrations
                     }
 
                     await PopulateStaff(item, staffDto);
-                    PopulateAgendaStaffAndTimetable(staffDto, date);
+                    PopulateAgendaStaffAndTimetable(item, staffDto, date);
 
                     await PopulateSurgeryAndSurgeryId(item);
                     PopulateAssignmentSurgery(item, staffDto);
                 }
+
+                CloseLists();
 
                 return true;
             }
@@ -118,55 +124,91 @@ namespace DDDNetCore.PrologIntegrations
             // staff(d001,doctor,orthopaedist,[so2,so3,so4]).
             //staff(license number, 'doctor', specialization, [op. types associated]).
 
-            var firstChar = staff.LicenseNumber.Value[..1][0];
+            var firstChar = staff.LicenseNumber.Value[0];
 
-            if (firstChar == 'D')
+            if (char.ToUpper(firstChar) == 'D')
             {
                 //populate staff
-                string value = "staff(" + staff.LicenseNumber + ",doctor," + staff.Specialization + ",[";
+                var value = "staff(" + staff.LicenseNumber + ",doctor," + staff.Specialization + ",[";
 
                 var operationRequest = await _operationRequestService.GetFilteredAsync(
                     appointment.OperationRequestId.Value,
                     null, null, null, null, null, null);
 
-                if (operationRequest.Count != 1) return;
+                if (operationRequest.Count != 1) throw new ArgumentException("Operation Request not found; Fix the appointment");
 
-                if (this._staff.ContainsKey(value))
+                var operationTypeValue = "'" + operationRequest[0].OperationType.Value + "',";
+
+                var existingString = this._staff.FirstOrDefault(s => s.StartsWith(value));
+
+                if (existingString != null)
                 {
-                    if (!this._staff[value].Contains(operationRequest[0].OperationType.Value))
-                        this._staff[value].Add(operationRequest[0].OperationType.Value);
+                    int index = this._staff.IndexOf(existingString);
+                    this._staff[index] = existingString + operationTypeValue;
                 }
+                else
+                {
+                    this._staff.Add(value + operationTypeValue);
+                }
+
+                // if (this._staff.ContainsKey(value))
+                // {
+                //     if (!this._staff[value].Contains(operationTypeValue)) {
+                //         var list = this._staff[value];
+                //         list.Add(operationTypeValue);
+                //         this._staff[value] = list;
+                //     }
+                // }
                 
-                else this._staff.Add(value, [operationRequest[0].OperationType.Value]);
+                // else this._staff.Add(value, [operationTypeValue]);
             }
         }
 
-        private void PopulateAgendaStaffAndTimetable(StaffDto staff, DateTime date)
+        private void PopulateAgendaStaffAndTimetable(Appointment appointment, StaffDto staff, DateTime date)
         {
-            char firstChar = staff.LicenseNumber.Value[..1][0];
-            string dateFormat = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
+            var firstChar = staff.LicenseNumber.Value[0];
 
-            if (firstChar == 'D')
+            if (char.ToUpper(firstChar) == 'D') 
             {
-                //populate agenda_staff // agenda_staff(d001,20241028,[(720,840,m01),(1080,1200,c01)]).
+                //populate agenda_staff
+                //agenda_staff(d001,20241028,[(720,840,m01),(1080,1200,c01)]).
+                string dateFormat = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
                 string value = "agenda_staff(" + staff.LicenseNumber + "," + dateFormat + ",";
 
-                //fill with appointment stlots
-
-
+                int startToMinutes;
+                int endToMinutes;
+                var existingString = "";
+                //fill with appointment slots
                 foreach (var slot in staff.SlotAppointement)
                 {
-                    if (slot.Start.Date != date || slot.End.Date != date) continue;
+                    if (slot.Start.Date != date.Date || slot.End.Date != date) continue;
 
-                    if (this._agendaStaff.ContainsKey(value))
+                    startToMinutes = slot.Start.Hour * 60 + slot.Start.Minute;
+                    endToMinutes = slot.End.Hour * 60 + slot.End.Minute;
+                    var slotValue = "(" + startToMinutes + "," + endToMinutes + "," + appointment.AppointmentNumber + "),";
+
+                    existingString = this._agendaStaff.FirstOrDefault(s => s.StartsWith(value));
+
+                    if (existingString != null)
                     {
-                        if (!this._staff[value].Contains(slot))
-                            this._agendaStaff[value].Add(slot);
+                        int index = this._agendaStaff.IndexOf(existingString);
+                        this._agendaStaff[index] = existingString + slotValue;
                     }
-                    else this._agendaStaff[value].Add(slot);
+                    else
+                    {
+                        this._agendaStaff.Add(value + slotValue);
+                    }
+
+                    // if (this._agendaStaff.ContainsKey(value))
+                    // {
+                    //     if (!this._agendaStaff[value].Contains(slotValue))
+                    //         this._agendaStaff[value].Add(slotValue);
+                    // }
+                    // else this._agendaStaff[value].Add(slotValue);
                 }
 
-                //populate timetable // timetable(d003,20241028,(600,1320)).
+                //populate timetable
+                //timetable(d003,20241028,(600,1320)).
                 value = "timetable(" + staff.LicenseNumber + "," + dateFormat + ",";
 
                 //fill with timetable
@@ -193,14 +235,28 @@ namespace DDDNetCore.PrologIntegrations
                 if (end < start)
                     throw new ArgumentException("Invalid Timetable; Fix Slot");
 
-                string timetable = "(" + start + "," + end + ")";
+                startToMinutes = start.Hour * 60 + start.Minute;
+                endToMinutes = end.Hour * 60 + end.Minute;
+                string timetable = "(" + startToMinutes + "," + endToMinutes + ")).";
 
-                if (this._timetable.ContainsKey(value))
+                existingString = this._timetable.FirstOrDefault(s => s.StartsWith(value));
+
+                if (existingString != null)
                 {
-                    if (!this._timetable[value].Contains(timetable))
-                        this._timetable.Add(value, timetable);
+                    int index = this._timetable.IndexOf(existingString);
+                    this._timetable[index] = value + timetable;
                 }
-                else this._timetable.Add(value, timetable);
+                else
+                {
+                    this._timetable.Add(value + timetable);
+                }
+
+                // if (this._timetable.ContainsKey(value))
+                // {
+                //     if (!this._timetable[value].Contains(timetable))
+                //         this._timetable.Add(value, timetable);
+                // }
+                // else this._timetable.Add(value, timetable);
             }
         }
 
@@ -221,37 +277,71 @@ namespace DDDNetCore.PrologIntegrations
             if (operationType == null)
                 throw new ArgumentException("Operation Type not found; Fix the appointment");
 
-            string value = "surgery(" + operationType.Name.Value + ",";
+            string value = "surgery('" + operationType.Name.Value + "',";
+
+            var existingString = "";
 
             foreach (var phase in operationType.PhasesDuration.Phases)
             {
-                if (this._surgery.ContainsKey(value))
+                var phaseValue = phase.Value.Value + ",";
+
+                existingString = this._surgery.FirstOrDefault(s => s.StartsWith(value));
+
+                if (existingString != null)
                 {
-                    
-                    //FIXXXXXXXXXX
-                    if (!this._surgery[value].Contains(phase.Value.Value.ToString()))
-                    {
-                        var list = this._surgery[value];
-                        list.Add(phase.);
-                        this._surgery[value] = list;
-                    }
+                    int index = this._surgery.IndexOf(existingString);
+                    this._surgery[index] = existingString + phaseValue;
                 }
-                else this._surgery.Add(value, [phase.Value.Value.ToString()]);
+                else
+                {
+                    this._surgery.Add(value + phaseValue);
+                }
+                // if (this._surgery.ContainsKey(value))
+                // {
+                    
+                //     if (!this._surgery[value].Contains(phaseValue))
+                //     {
+                //         var list = this._surgery[value];
+                //         list.Add(phaseValue);
+                //         this._surgery[value] = list;
+                //     }
+                // }
+                // else this._surgery.Add(value, [phaseValue]);
             }
             
             
             //populate surgery_id
-            value = "surgery_id(" + appointment.AppointmentNumber.Value + "," + operationType.Name.Value + ")";
+            //surgery_id(so100001,s02).
+            value = "surgery_id(" + appointment.AppointmentNumber.Value + ",'" + operationType.Name.Value + "').";
 
             if (!this._surgeryId.Contains(value)) this._surgeryId.Add(value);
         }
         private void PopulateAssignmentSurgery(Appointment appointment, StaffDto staff)
         {
+            //populate assignment surgery
             //assignment_surgery(so100001,d001).
 
-            string value = "assignment_surgery(" + appointment.AppointmentNumber + "," + staff.LicenseNumber + ")";
+            string value = "assignment_surgery(" + appointment.AppointmentNumber + "," + staff.LicenseNumber + ").";
 
             if(!this._assignmentSurgery.Contains(value)) _assignmentSurgery.Add(value);
+        }
+
+        private void CloseLists()
+        {
+            for (int i = 0; i < this._staff.Count; i++)
+            {
+                this._staff[i] = this._staff[i].Substring(0, this._staff[i].Length - 1) + "]).";
+            }
+
+            for (int i = 0; i < this._agendaStaff.Count; i++)
+            {
+                this._agendaStaff[i] = this._agendaStaff[i].Substring(0, this._agendaStaff[i].Length - 1) + "]).";
+            }
+
+            for (int i = 0; i < this._surgery.Count; i++)
+            {
+                this._surgery[i] = this._surgery[i].Substring(0, this._surgery[i].Length - 1) + ").";
+            }
         }
     }
 }

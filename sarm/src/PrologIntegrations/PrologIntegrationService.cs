@@ -4,9 +4,17 @@ namespace DDDNetCore.PrologIntegrations
     {
         //CreateFileContent
         public async Task<bool> CreateFile(
-            Dictionary<string, List<string>> _staff, Dictionary<string, List<string>> _agendaStaff,
-            Dictionary<string, string> _timetable, Dictionary<string, List<string>> _surgery,
-            List<string> _surgeryId, List<string> _assignmentSurgery, DateTime date)
+            // Dictionary<string, List<string>> _staff,
+            // Dictionary<string, List<string>> _agendaStaff,
+            // Dictionary<string, string> _timetable,
+            // Dictionary<string, List<string>> _surgery,
+            List<string> _staff,
+            List<string> _agendaStaff,
+            List<string> _timetable,
+            List<string> _surgery,
+            List<string> _surgeryId,
+            List<string> _assignmentSurgery,
+            DateTime date)
         {
             try{
                 string content = "";
@@ -63,6 +71,41 @@ namespace DDDNetCore.PrologIntegrations
                 // }
                 // content = content.Substring(0, content.Length - 1);
                 // content += ").\n";
+
+                foreach (var item in _staff)
+                {
+                    content += item + "\n";
+                }
+                content += "\n";
+
+                foreach (var item in _agendaStaff)
+                {
+                    content += item + "\n";
+                }
+                content += "\n";
+
+                foreach (var item in _timetable)
+                {
+                    content += item + "\n";
+                }
+                content += "\n";
+
+                foreach (var item in _surgery)
+                {
+                    content += item + "\n";
+                }
+                content += "\n";
+
+                foreach (var item in _surgeryId)
+                {
+                    content += item + "\n";
+                }
+                content += "\n";
+
+                foreach (var item in _assignmentSurgery)
+                {
+                    content += item + "\n";
+                }
 
                 // Navigate to the project root directory safely
                 string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
