@@ -33,7 +33,7 @@ export class StaffsComponent implements OnInit {
       PhoneNumber: ''
     },
     status: '',
-    SlotAppointement: [
+    SlotAppointment: [
       {
         Start: '',
         End: ''
@@ -169,36 +169,42 @@ export class StaffsComponent implements OnInit {
 
 
   async submitRequest() {
-    this.staffService.post(this.staff, this.accessToken)
-      .then(response => {
-        if (response.status === 201) {
-          this.message = 'Staff successfully created!';
-          this.success = true;
-          this.closeModal();
-          this.fetchStaffs();
-          setTimeout(() => {
+    console.log("Staff:", this.staffs);
+    if (this.isEditMode) {
+      console.log("Updating staff:", this.staff.Id);
+      await this.update(this.staff.Id);
+    } else {
+      this.staffService.post(this.staff, this.accessToken)
+        .then(response => {
+          if (response.status === 201) {
+            this.message = 'Staff successfully created!';
+            this.success = true;
+            this.closeModal();
+            this.fetchStaffs();
+            setTimeout(() => {
+              this.success = false;
+            }, 3000);
+          } else {
+            this.message = 'Unexpected response status: ' + response.status;
             this.success = false;
-          }, 3000);
-        } else {
-          this.message = 'Unexpected response status: ' + response.status;
+          }
+        })
+        .catch(error => {
+          if (error.status === 401) {
+            this.message = 'You are not authorized to create Staff! Please log in...';
+            this.success = false;
+            setTimeout(() => {
+              this.router.navigate(['']);
+            }, 3000);
+            return;
+          } else if (error.status == 400) {
+            this.message = 'Bad Request... ' + error;
+          }
+          this.message = 'There was an error creating the Staff: ' + error;
           this.success = false;
-        }
-      })
-      .catch(error => {
-        if (error.status === 401) {
-          this.message = 'You are not authorized to create Staff! Please log in...';
-          this.success = false;
-          setTimeout(() => {
-            this.router.navigate(['']);
-          }, 3000);
-          return;
-        } else if (error.status == 400) {
-          this.message = 'Bad Request... ' + error;
-        }
-        this.message = 'There was an error creating the Staff: ' + error;
-        this.success = false;
-      });
-    await this.fetchStaffs();
+        });
+      await this.fetchStaffs();
+    }
   }
   // this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
   //this.staffService.createStaff(this.firstName, this.lastName, this.phoneNumber, this.email, this.specialization, this.role);
@@ -259,6 +265,7 @@ export class StaffsComponent implements OnInit {
     this.isCreateModalOpen = true;
     this.isEditModalOpen = false;
     this.isDeleteModalOpen = false;
+    this.isEditMode = false;
   }
 
   closeModal() {
@@ -300,9 +307,11 @@ export class StaffsComponent implements OnInit {
 
   // This method is triggered when the user clicks the "edit" button
   editStaff(staff: Staff) {
-    this.staff = { ...staff };
+    this.staff = JSON.parse(JSON.stringify(staff));
     this.isEditModalOpen = true;
     this.isCreateModalOpen = false;
+    this.isEditMode = true; // Configura para o modo de edição
+    console.log("Editing staff:", this.staff); // Log para debug
 
     //this.isCreateModalOpen = false;
   }
@@ -403,31 +412,44 @@ export class StaffsComponent implements OnInit {
     this.isAddSlotAvailabilityFormVisible = true;
   }
 
-  deleteSlotAvailability(index: number) {
-    console.log(index);
-
-    if (this.selectedStaff && this.selectedStaff.slotAvailability) {
-      this.selectedStaff.slotAvailability.splice(index, 1);
-
-      this.staffService.update(this.selectedStaff.Id, this.selectedStaff, this.accessToken)
-        .then(response => {
-          if (response.status === 200) {
-            this.message = 'Slot removed successfully!';
-            this.success = true;
-
-            this.fetchStaffs();
-          } else {
-            this.message = 'Failed to update staff: ' + response.status;
-            this.success = false;
-          }
-        })
-        .catch(error => {
-          console.error('Error updating staff:', error);
-          this.message = 'An error occurred while updating the staff!';
-          this.success = false;
-        });
+  deleteSlotAvailability(staff: Staff, slotIndex: number) {
+    if (!staff) {
+      console.warn('Staff object is null or undefined.');
+      return;
     }
+
+    if (!Array.isArray(staff.SlotAvailability)) {
+      console.warn('SlotAvailability is not a valid array.');
+      return;
+    }
+
+    if (slotIndex < 0 || slotIndex >= staff.SlotAvailability.length) {
+      console.warn('Invalid slot index.');
+      return;
+    }
+
+    staff.SlotAvailability.splice(slotIndex, 1);
+    console.log("Updated Staff", staff);
+
+    this.staffService.update(staff.Id, staff, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.message = 'Slot removed successfully!';
+          this.success = true;
+
+          this.fetchStaffs();
+        } else {
+          this.message = 'Failed to update staff: ' + response.status;
+          this.success = false;
+        }
+      })
+      .catch(error => {
+        console.error('Error updating staff:', error);
+        this.message = 'An error occurred while updating the staff!';
+        this.success = false;
+      });
   }
+
 
   goToAdmin() {
     this.router.navigate(['/admin']);

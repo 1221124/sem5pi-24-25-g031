@@ -176,14 +176,6 @@
 
             <form (ngSubmit)="saveStaff()">
                 <div>
-                    <label for="firstName">First Name</label>
-                    <input type="text" id="firstNameEdit" [(ngModel)]="staff.FullName.FirstName" name="firstName" />
-                </div>
-                <div>
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastNameEdit" [(ngModel)]="staff.FullName.LastName" name="lastName" />
-                </div>
-                <div>
                     <label for="email">Email</label>
                     <input type="text" id="emailEdit" [(ngModel)]="staff.ContactInformation.Email" name="email" />
                 </div>
@@ -192,28 +184,54 @@
                     <input type="text" id="phoneNumberEdit" [(ngModel)]="staff.ContactInformation.PhoneNumber"
                         name="phoneNumber" />
                 </div>
-                <h3>Slots History</h3>
-                <button type="button" (click)="openAddSlotAvailabilityForm()">Add Slot</button>
+                <div>
+                    <label for="specialization">Specialization</label>
+                    <select id="specialization" name="specialization" [(ngModel)]="staff.specialization">
+                        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+                    </select>
+                </div>
 
-                <!-- Add Slot Form - Initially hidden, shows when Add Slot button is clicked -->
-                <div *ngIf="isAddSlotAvailabilityFormVisible">
-                    <div>
-                        <label for="start">Start Date</label>
-                        <input type="datetime-local" id="start" [(ngModel)]="newSlotStart" name="start" required />
+                <h3>Slots Availability</h3>
+
+                <div *ngIf="!staff.SlotAvailability || staff.SlotAvailability.length === 0" class="no-slots">
+                    <p>No slots available.</p>
+                </div>
+
+                <div>
+                    <div *ngIf="staff.SlotAvailability && staff.SlotAvailability.length > 0">
+                        <table class="slots-table">
+                            <thead>
+                                <tr>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let slot of staff.SlotAvailability; let i = index">
+                                    <td>
+                                        <input type="datetime-local" [(ngModel)]="slot.Start" name="slotStart{{i}}" />
+                                    </td>
+                                    <td>
+                                        <input type="datetime-local" [(ngModel)]="slot.End" name="slotEnd{{i}}" />
+                                    </td>
+                                    <!-- <td>
+                                        <button type="button" (click)="removeSlot(i)">Remove</button> </td>
+                                        -->
+
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div>
-                        <label for="end">End Date</label>
-                        <input type="datetime-local" id="end" [(ngModel)]="newSlotEnd" name="end" required />
-                    </div>
-                    <button type="button" (click)="addNewSlotAvailability()">Add Slot</button>
                 </div>
 
                 <div class="button-group">
-                    <button type="button" (click)="submitRequest()">Save Staff</button>
+                    <button type="submit" (click)="submitRequest()">{{ isEditMode ? 'Update' : 'Submit' }}
+                        Save</button>
                 </div>
             </form>
         </div>
     </div>
+
 
     <div *ngIf="isSlotAppointmentModal" class="modal">
         <div class="modal-content">
@@ -279,12 +297,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let slot of selectedStaff.SlotAvailability;">
+                                        <tr *ngFor="let slot of selectedStaff.SlotAvailability; let i = index">
                                             <td>{{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</td>
                                             <td>{{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</td>
-                                            <td><button type="button" class="action-btn delete-btn"
-                                                    (click)="deleteSlotAvailability(slot)">Remove</button>
-                                            </td>
+                                            <!-- <td><button type="button" class="action-btn delete-btn"
+                                                    (click)="deleteSlotAvailability(selectedStaff, i)">Remove</button>
+                                            </td> -->
                                         </tr>
                                     </tbody>
                                 </table>
