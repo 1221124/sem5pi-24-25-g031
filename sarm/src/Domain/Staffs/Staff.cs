@@ -90,6 +90,16 @@ namespace Domain.Staffs
             UserId = userId;
         }
 
+        public void AddAppointmentSlot(Slot slot)
+        {
+            SlotAppointement.Add(slot);
+        }
+
+        public void AddAvailabilitySlot(Slot slot)
+        {
+            SlotAvailability.Add(slot);
+        }
+
         public void MarkAsInative()
         {
             Status = Status.Inactive;

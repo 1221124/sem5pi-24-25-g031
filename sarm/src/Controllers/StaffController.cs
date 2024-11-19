@@ -161,6 +161,62 @@ namespace Controllers
         }
 
         // PUT: api/Staff/5
+        [HttpPut("updateSlotAvailability/{id}")]
+        public async Task<ActionResult<StaffDto>> UpdateSlotAvailability(Guid id, [FromBody] Slot slot)
+        {
+            try
+            {
+                var staff = await _service.GetByIdAsync(new StaffId(id));
+
+                if (staff == null)
+                {
+                    return NotFound("Staff not found");
+                }
+
+                var updateStaff = await _service.AddSlotAvailability(staff, slot);
+                if (updateStaff == null)
+                {
+                    return BadRequest("Staff slot availability could not be updated.");
+                }
+
+                return Ok(updateStaff);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        // PUT: api/Staff/5
+        [HttpPut("updateSlotAppointment/{id}")]
+        public async Task<ActionResult<StaffDto>> UpdateSlotAppointment(Guid id, [FromBody] Slot slot)
+        {
+            try
+            {
+                var staff = await _service.GetByIdAsync(new StaffId(id));
+
+                if (staff == null)
+                {
+                    return NotFound("Staff not found");
+                }
+
+                var updateStaff = await _service.AddSlotAppointment(staff, slot);
+                if (updateStaff == null)
+                {
+                    return BadRequest("Staff slot availability could not be updated.");
+                }
+
+                return Ok(updateStaff);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        // PUT: api/Staff/5
         [HttpPut("update/{oldEmail}")]
         public async Task<ActionResult<StaffDto>> Update(string oldEmail, [FromBody] UpdatingStaffDto dto)
         {
@@ -194,8 +250,6 @@ namespace Controllers
             }
 
         }
-
-
 
         //GET: api/Staff/sensitiveInfo/?email={email}&token={token}&pendingPhoneNumber={phoneNumber}&pendingEmail={newEmail}
         [HttpGet("sensitiveInfo")]

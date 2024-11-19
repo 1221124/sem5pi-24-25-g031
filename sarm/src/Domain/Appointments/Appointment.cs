@@ -28,4 +28,5 @@ public class Appointment : Entity<AppointmentId>, IAggregateRoot
     public void UpdateTime(DateTime dateTime){
         AppointmentDate.UpdateTime(dateTime);
     }
+
 }

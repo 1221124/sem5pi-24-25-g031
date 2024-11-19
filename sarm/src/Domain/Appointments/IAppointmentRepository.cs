@@ -7,5 +7,6 @@ namespace DDDNetCore.Domain.Appointments
 {
     public interface IAppointmentRepository : IRepository<Appointment, AppointmentId>
     {
+        Task<List<Appointment>> GetByDateAsync(AppointmentDate date);
     }
 }

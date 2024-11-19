@@ -2,12 +2,12 @@
 
 public enum SurgeryRoomNumber
 {
-    SO1,
-    SO2,
-    SO3,
-    SO4,
-    SO5,
-    SO6
+    OR1,
+    OR2,
+    OR3,
+    OR4,
+    OR5,
+    OR6
 }
 
 public class SurgeryRoomNumberUtils
@@ -16,12 +16,12 @@ public class SurgeryRoomNumberUtils
     {
         return surgeryRoomNumber.ToUpper() switch
         {
-            "SO1" => SurgeryRoomNumber.SO1,
-            "SO2" => SurgeryRoomNumber.SO2,
-            "SO3" => SurgeryRoomNumber.SO3,
-            "SO4" => SurgeryRoomNumber.SO4,
-            "SO5" => SurgeryRoomNumber.SO5,
-            "SO6" => SurgeryRoomNumber.SO6,
+            "OR1" => SurgeryRoomNumber.OR1,
+            "OR2" => SurgeryRoomNumber.OR2,
+            "OR3" => SurgeryRoomNumber.OR3,
+            "OR4" => SurgeryRoomNumber.OR4,
+            "OR5" => SurgeryRoomNumber.OR5,
+            "OR6" => SurgeryRoomNumber.OR6,
             _ => throw new ArgumentException("Invalid surgery room number")
         };
     }
@@ -30,12 +30,12 @@ public class SurgeryRoomNumberUtils
     {
         return surgeryRoomNumber switch
         {
-            SurgeryRoomNumber.SO1 => "SO1",
-            SurgeryRoomNumber.SO2 => "SO2",
-            SurgeryRoomNumber.SO3 => "SO3",
-            SurgeryRoomNumber.SO4 => "SO4",
-            SurgeryRoomNumber.SO5 => "SO5",
-            SurgeryRoomNumber.SO6 => "SO6",
+            SurgeryRoomNumber.OR1 => "OR1",
+            SurgeryRoomNumber.OR2 => "OR2",
+            SurgeryRoomNumber.OR3 => "OR3",
+            SurgeryRoomNumber.OR4 => "OR4",
+            SurgeryRoomNumber.OR5 => "OR5",
+            SurgeryRoomNumber.OR6 => "OR6",
             _ => throw new ArgumentException("Invalid surgery room number")
         };
     }

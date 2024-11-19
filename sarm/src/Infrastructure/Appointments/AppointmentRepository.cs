@@ -13,5 +13,10 @@ namespace Infrastructure.Appointments
         {
             this._objs = context.Appointments;
         }
+
+        public async Task<List<Appointment>> GetByDateAsync(AppointmentDate date)
+        {
+            return await _objs.Where(x => x.AppointmentDate == date).ToListAsync();
+        }
     }
 }

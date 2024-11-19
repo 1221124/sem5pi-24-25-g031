@@ -24,33 +24,12 @@ namespace DDDNetCore.Domain.Appointments
             _operationRequestService = operationRequestService;
         }
 
-        public async Task<List<Appointment>> Planning(AppointmentDate date)
+        public async Task<List<Appointment>> GetByDateAsync(AppointmentDate date)
         {
-            List<Appointment> dateAppointments = []; //bc - Base de Conhecimento 
-        
-            var appointments = await _appointmentRepository.GetAllAsync();
-        
-            foreach (var appointment in appointments)
-            {
-                if (appointment.AppointmentDate.Date == date.Date)
-                {
-                    var surgery = await _surgeryRoomService.GetBySurgeryRoomNumberAsync(appointment.SurgeryRoomNumber);
-        
-                    if (surgery == null) return [];
-        
-                    dateAppointments.Add(appointment);
-                }
-            }
-        
-            if (dateAppointments.Count == 0)
-            {
-                return [];
-            }
-        
-            return dateAppointments;
+            return await _appointmentRepository.GetByDateAsync(date);
         }
 
-        public async Task<IEnumerable<Appointment>> GetAll()
+        public async Task<List<Appointment>> GetAll()
         {
             return await _appointmentRepository.GetAllAsync();
         }

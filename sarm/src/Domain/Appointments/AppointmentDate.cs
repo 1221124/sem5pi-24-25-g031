@@ -33,5 +33,18 @@ namespace DDDNetCore.Domain.Appointments{
         public void UpdateTime(DateTime time){
             Date = new DateTime(this.Date.Year, this.Date.Month, this.Date.Day, time.Hour, time.Minute, time.Second);
         }
+
+        override
+        public bool Equals(object obj){
+            if(obj == null || GetType() != obj.GetType()){
+                return false;
+            }
+
+            var date = (AppointmentDate)obj;
+
+            return this.Date.Year == date.Date.Year
+            && this.Date.Month == date.Date.Month
+            && this.Date.Day == date.Date.Day;
+        }
     }
 }

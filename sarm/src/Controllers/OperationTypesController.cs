@@ -23,7 +23,7 @@ namespace Controllers
 
         // GET: api/OperationTypes?pageNumber={pageNumber}&?name={name}&?specialization={specialization}&?status={status}
         [HttpGet]
-        [Authorize(Roles = "Admin,Doctor")]
+        // [Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> Get([FromQuery] string? pageNumber, [FromQuery] string? name, [FromQuery] string? specialization, [FromQuery] string? status)
         {
             var operationTypes = await _service.GetAsync(name, specialization, status);
