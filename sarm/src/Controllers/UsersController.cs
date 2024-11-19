@@ -149,7 +149,7 @@ namespace Controllers
                     if (patientDto != null)
                     {
                         patientDto.UserId = new UserId(user.Id);
-                        await _patientService.UpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
+                        await _patientService.AdminUpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
                     } else {
                         return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
                     }
