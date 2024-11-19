@@ -3,16 +3,23 @@
 
   <div>
     <h2>Patient Details</h2>
+    <button class="delete-button delete-account" (click)="delete(patient.Id)">Delete Account</button>
     <div class="patient-details">
       <div><strong>First Name:</strong> {{ patient.FullName.FirstName }}</div>
       <div><strong>Last Name:</strong> {{ patient.FullName.LastName }}</div>
       <div><strong>Date of Birth:</strong> {{ patient.DateOfBirth | date: 'yyyy-MM-dd' }}</div>
-      <div><strong>Email:</strong> {{ patient.ContactInformation.Email }}</div>
-      <div><strong>Phone Number:</strong> {{ patient.ContactInformation.PhoneNumber }}</div>
-      <!--div><strong>Gender:</strong> {{ patients[0].Gender === 0 ? 'Male' : 'Female' }}</div-->
-      <div><strong>Medical Record Number:</strong> {{ patient.MedicalRecordNumber }}</div>
+      <div>
+        <strong>Email:</strong>
+        {{ patient.ContactInformation.Email }}
+        <button (click)="openEditModal('email')">Edit</button>
+      </div>
+      <div>
+        <strong>Phone Number:</strong>
+        {{ patient.ContactInformation.PhoneNumber }}
+        <button (click)="openEditModal('phoneNumber')">Edit</button>
+      </div>
+      <div><strong>Gender:</strong> {{ patient.Gender.toLowerCase()}}</div>
       <div><strong>Emergency Contact:</strong> {{ patient.EmergencyContact || 'N/A' }}</div>
-
       <div><strong>Appointment History:</strong></div>
       <div *ngIf="patient.AppointmentHistory.length > 0">
         <div *ngFor="let slot of patient.AppointmentHistory">
@@ -21,6 +28,22 @@
         </div>
       </div>
       <div *ngIf="patient.AppointmentHistory.length === 0">No appointments available</div>
+    </div>
+  </div>
+
+  <div class="modal" [class.show]="showModal">
+    <div class="modal-content">
+      <span class="close" (click)="closeEditModal()">&times;</span>
+      <div *ngIf="editingField === 'email'">
+        <label for="email">Edit Email:</label>
+        <input [(ngModel)]="tempEmail" id="email" type="email" />
+        <button (click)="updateField('email')">Save</button>
+      </div>
+      <div *ngIf="editingField === 'phoneNumber'">
+        <label for="phoneNumber">Edit Phone Number:</label>
+        <input [(ngModel)]="tempPhoneNumber" id="phoneNumber" type="text" />
+        <button (click)="updateField('phoneNumber')">Save</button>
+      </div>
     </div>
   </div>
 

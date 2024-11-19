@@ -13,6 +13,7 @@ import {Patient} from '../../models/patient.model';
     DatePipe,
     NgIf,
     NgFor,
+    FormsModule,
   ],
   templateUrl: './patient.component.html',
   styleUrl: './patient.component.css',
@@ -59,6 +60,12 @@ export class PatientComponent {
   message: string = '';
   success: boolean = true;
 
+  showModal: boolean = false;
+  editingField: string = '';
+  tempEmail: string = '';
+  tempPhoneNumber: string = '';
+
+  oldEmail: string = '';
 
   ngOnInit(): void {
     if (!this.authorizationService.isAuthenticated()) {
@@ -73,6 +80,80 @@ export class PatientComponent {
     this.getPatient();
   }
 
+  openEditModal(field: string) {
+    this.editingField = field;
+    this.showModal = true;
+
+    if (field === 'email') {
+      this.tempEmail = this.patient.ContactInformation.Email;
+    } else if (field === 'phoneNumber') {
+      this.tempPhoneNumber = this.patient.ContactInformation.PhoneNumber.toString();
+    }
+  }
+
+  closeEditModal() {
+    this.showModal = false;
+    this.editingField = '';
+  }
+
+  async updateField(field: string) {
+    this.oldEmail= this.patient.ContactInformation.Email;
+    if (field === 'email') {
+      this.patient.ContactInformation.Email = this.tempEmail;
+    } else if (field === 'phoneNumber') {
+      this.patient.ContactInformation.PhoneNumber = parseInt(this.tempPhoneNumber);
+    }
+    await this.patientService.update(this.patient, this.oldEmail, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.message = 'Patient information updated successfully!';
+          this.success = true;
+          this.getPatient();
+        } else {
+          this.message = 'There was an error updating the patient information: ' + response.body;
+          this.success = false;
+        }
+      }).catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to update Operation Types! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        }
+        this.message = 'There was an error updating the Operation Type: ' + error;
+        this.success = false;
+      });
+    this.closeEditModal();
+
+  }
+
+  async delete(id: string){
+    await this.patientService.deletePatient(id, this.accessToken)
+      .then(response => {
+        if(response.status === 200){
+          this.message = 'Patient deleted successfully!';
+          this.success = true;
+          //this.getPatient();
+        } else {
+          this.message = 'There was an error deleting the patient: ' + response.body;
+          this.success = false;
+        }
+      }).catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to delete patients! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        }
+        this.message = 'There was an error deleting the patient: ' + error;
+        this.success = false;
+      });
+  }
+
   getPatient() {
     this.accessToken = this.authorizationService.getToken();
     this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.accessToken);
@@ -85,7 +166,6 @@ export class PatientComponent {
   }
 
   async getPatientByEmail(email: string) {
-    console.log("Fetching patient by email:", email);
     await this.patientService.getByEmail(email)
       .then(response => {
         if(response.status === 200) {
