@@ -9,9 +9,6 @@ namespace Domain.OperationRequests
     public class OperationRequestDto
     {
         public Guid Id { get; set; }
-        // public PatientId PatientId { get; set; }
-        // public StaffId DoctorId { get; set; }
-        // public OperationTypeId OperationTypeId { get; set; }
         public LicenseNumber Staff { get; set; }
         public MedicalRecordNumber Patient { get; set; }
         public Name OperationType { get; set; }
@@ -19,26 +16,6 @@ namespace Domain.OperationRequests
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
         
-        // public OperationRequestDto(Guid id, PatientId patientId, StaffId doctorId, OperationTypeId operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
-        // {
-        //     Id = id;
-        //     PatientId = patientId;
-        //     DoctorId = doctorId;
-        //     OperationTypeId = operationTypeId;
-        //     DeadlineDate = deadlineDate;
-        //     Priority = priority;
-        //     Status = status;
-        // }
-
-        // public OperationRequestDto(Guid id)
-        // {
-        //     Id = id;
-        // }
-
-        // public OperationRequestDto()
-        // {
-        // }
-
         public OperationRequestDto(Guid id, LicenseNumber staff, MedicalRecordNumber patient, Name operationType, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
         {
             Id = id;

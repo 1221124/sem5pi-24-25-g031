@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
 using Domain.OperationRequests;
@@ -146,9 +149,12 @@ namespace DDDNetCore.Controllers
 
         // DELETE api/operationrequest/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<OperationRequestDto>> Delete(Guid id)
+        public async Task<ActionResult<OperationRequestDto>> Delete(string id)
         {
-            try{   
+            try
+            {
+                if (id == null) return BadRequest();
+                
                 var operationRequestDto = await _operationRequestService.DeleteAsync(new OperationRequestId(id));
 
                 if (operationRequestDto == null)

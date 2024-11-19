@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 
@@ -29,17 +31,23 @@ namespace DDDNetCore.Controllers
         }
 
         [HttpGet("requestStatuses")]
-        public Task<ActionResult<List<string>>> GetRequestStatuses()
+        public ActionResult<List<string>> GetRequestStatuses()
         {
             var requestStatuses = _enumsService.GetRequestStatuses();
-            return Task.FromResult<ActionResult<List<string>>>(Ok(requestStatuses));
+            
+            if(requestStatuses == null || requestStatuses.Count == 0) return NotFound();
+
+            return Ok(requestStatuses);
         }
 
         [HttpGet("priorities")]
-        public Task<ActionResult<List<string>>> GetPriorities()
+        public ActionResult<List<string>> GetPriorities()
         {
             var priorities = _enumsService.GetRPriorities();
-            return Task.FromResult<ActionResult<List<string>>>(Ok(priorities));
+
+            if (priorities == null || priorities.Count == 0) return NotFound();
+            
+            return Ok(priorities);
         }
 
         [HttpGet("genders")]

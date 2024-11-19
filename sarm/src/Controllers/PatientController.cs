@@ -51,7 +51,7 @@ namespace DDDNetCore.Controllers
                 return paginatedPatients;
             }
 
-            return patients;
+            return Ok(patients);
 
         }
         
