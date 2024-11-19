@@ -76,12 +76,15 @@ export class PatientsService {
   getFilterPatients(filter: any): Observable<any> {
     const params: any = {};
 
-    if (filter.fullName) params.fullName = filter.fullName;
-    if (filter.email) params.email = filter.email;
-    if (filter.phoneNumber) params.phoneNumber = filter.phoneNumber;
-    if (filter.medicalRecordNumber) params.medicalRecordNumber = filter.medicalRecordNumber;
-    if (filter.dateOfBirth) params.dateOfBirth = filter.dateOfBirth;
-    if (filter.gender) params.gender = filter.gender;
+    if(filter.pageNumber > 0){
+      params.pageNumber = filter.pageNumber;
+      if (filter.fullName) params.fullName = filter.fullName;
+      if (filter.email) params.email = filter.email;
+      if (filter.phoneNumber) params.phoneNumber = filter.phoneNumber;
+      if (filter.medicalRecordNumber) params.medicalRecordNumber = filter.medicalRecordNumber;
+      if (filter.dateOfBirth) params.dateOfBirth = filter.dateOfBirth;
+      if (filter.gender) params.gender = filter.gender;
+    }
 
     return this.http.get<any[]>(`${this.apiUrl}/filter`, { params });
   }
