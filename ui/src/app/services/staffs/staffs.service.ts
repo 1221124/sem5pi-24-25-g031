@@ -27,6 +27,11 @@ export class StaffsService {
     return await firstValueFrom(this.http.get<string[]>(url));
   }
 
+  async getSlotsAvailability(staffId: string) {
+    const url = `${environment.staffs}/slots-availability/${staffId}`;
+    return await firstValueFrom(this.http.get<string[]>(url));
+  }
+
   async getStaff(filter: any, accessToken: string) {
     let params = new HttpParams();
 
@@ -54,19 +59,19 @@ export class StaffsService {
 
           // Mapeia os dados dos funcionários
           const mappedStaffs = response.body.staff.map(item => ({
-            Id: item.id.value,
+            Id: item.id,
             FullName: {
               FirstName: item.fullName.firstName.value,
               LastName: item.fullName.lastName.value
             },
-            licenseNumber: item.licenseNumber.toString(),
+            licenseNumber: item.licenseNumber.value,
             specialization: item.specialization.toString(),
             ContactInformation: {
               Email: item.contactInformation.email.value,
               PhoneNumber: item.contactInformation.phoneNumber.value
             },
             status: item.status.toString(),
-            SlotAppointement: Array.isArray(item.slotAppointment) && item.slotAppointment !== null ?
+            SlotAppointment: Array.isArray(item.slotAppointment) && item.slotAppointment !== null ?
               item.slotAppointment.map((appointment: { start: string, end: string }) => ({
                 Start: appointment.start,
                 End: appointment.end
@@ -132,20 +137,39 @@ export class StaffsService {
 
 
   async update(id: string, staff: Staff, accessToken: string) {
+    console.log("Updating staff" + id);
+
     const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     if (!guidRegex.test(id)) {
       throw new Error('Invalid ID format. Please provide a valid GUID.');
     }
 
-    const dto = {
-
+    const staffDto = {
+      "email": {
+        "value": staff.ContactInformation.Email
+      },
+      "phoneNumber": {
+        "value": staff.ContactInformation.PhoneNumber
+      },
+      "availabilitySlots": staff.SlotAvailability.map(staff => ({
+        "start": staff.Start,
+        "end": staff.End
+      })),
+      "specialization": staff.specialization,
+      "pendingPhoneNumber": {
+        "value": staff.ContactInformation.PhoneNumber
+      },
+      "pendingEmail": {
+        "value": staff.ContactInformation.Email
+      }
     };
+
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${accessToken}`
     });
     const options = { ...httpOptions, headers };
-    return await firstValueFrom(this.http.put(`${environment.staffs}/update/${id}`, dto, options));
+    return await firstValueFrom(this.http.put(`${environment.staffs}/update/${staff.ContactInformation.Email}`, staffDto, options));
   }
 
 }

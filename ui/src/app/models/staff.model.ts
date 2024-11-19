@@ -13,7 +13,7 @@ export interface Staff {
     PhoneNumber: string;
   };
   status: string;
-  SlotAppointement: {
+  SlotAppointment: {
     Start: string;
     End: string;
   }[];
