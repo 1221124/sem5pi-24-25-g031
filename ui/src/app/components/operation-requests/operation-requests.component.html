@@ -14,7 +14,7 @@
           <!-- Staff Selection -->
           <div>
             <label for="staff">Select Staff:</label>
-            <select id="staff" name="staff" [(ngModel)]="staff" (focus)="staffTouched = true">
+            <select *ngIf="staffs?.length" id="staff" name="staff" [(ngModel)]="staff" (focus)="staffTouched = true">
               <option *ngFor="let staff of staffs" [value]="staff.licenseNumber">
                 {{ staff.licenseNumber }} - {{ staff.ContactInformation.Email }}
               </option>
@@ -92,7 +92,7 @@
             <div class="filter-container">
               <select id="filters.searchOperationType" name="filters.searchOperationType"
                 [(ngModel)]="filters.searchOperationType">
-                <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">{{ operationType.Name
+                <option *ngFor="let operationType of operationTypes" [value]="operationType">{{ operationType
                   }}</option>
               </select>
             </div>

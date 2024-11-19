@@ -1,13 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment, httpOptions } from '../../../environments/environment';
 import { PatientsService } from '../admin-patients/admin-patients.service';
 
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import {firstValueFrom, throwError} from 'rxjs';
 import { OperationRequest } from '../../models/operation-request.model';
-import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +22,18 @@ export class OperationRequestsService {
     staffDto: string,
     patientDto: string,
     operationTypeDto: string,
-    deadlineDateDto: Date,
+    deadlineDateDto: string,
     priorityDto: string
   ){
+
+    try{
+      const deadlineDate = new Date(deadlineDateDto);
+      console.log('Deadline Date:', deadlineDate);
+    }
+    catch(error){
+      console.error('Error parsing date:', error);
+      return throwError('Error parsing date');
+    }
 
     const dto ={ //creatingOperationRequestDto
       "staff": {
@@ -76,12 +83,21 @@ export class OperationRequestsService {
 
   put(
     idDto: string,
-    deadlineDateDto: Date,
+    deadlineDateDto: string,
     priorityDto: string,
     statusDto: string
   ){
 
     console.log('ID:', idDto);
+
+    try{
+      const deadlineDate = new Date(deadlineDateDto);
+      console.log('Deadline Date:', deadlineDate);
+    }
+    catch(error){
+      console.error('Error parsing date:', error);
+      return throwError('Error parsing date');
+    }
 
     const dto = { //updatingOperationRequestDto
       "id": idDto,
@@ -104,17 +120,46 @@ export class OperationRequestsService {
     });
   }
 
-  getAll(){
-    return this.http.get<any[]>(environment.operationRequests, httpOptions)
-    .pipe(
-      catchError(error => {
-        console.error('Error fetching Operation Requests:', error);
-        return throwError(() => new Error('Failed to fetch operation requests. Please try again.'));
-      })
-    );
+  async getAll(accessToken: string) {
+    let params = new HttpParams();
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const, params };
+
+    return await firstValueFrom(this.http.get<any[]>(`${environment.operationRequests}`, options))
+      .then(response => {
+        console.log(response);
+
+        if (response.status === 200 && response.body) {
+          return {
+            status: response.status,
+            body: response.body.map(request => {
+              return {
+                id: request.id,
+                staff: request.staff.value,
+                patient: request.patient.value,
+                operationType: request.operationType.value,
+                deadlineDate: request.deadlineDate.date,
+                priority: request.priority,
+                status: request.status
+              };
+            })
+          };
+        } else {
+          return {
+            status: response.status,
+            body: []
+          };
+        }
+      });
   }
 
-  get(
+  async get(
+    accessToken: string,
     searchIdDto: string,
     searchLicenseNumber: string,
     searchPatientName: string,
@@ -176,34 +221,104 @@ export class OperationRequestsService {
 
     console.log('Search URL:\n', searchUrl);
 
-    return this.http.get<OperationRequest[]>(searchUrl, httpOptions)
-    .pipe(
-      catchError(error => {
+    let httpParams = new HttpParams();
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const, httpParams };
+
+    return await firstValueFrom(this.http.get<{ operationRequests: any[], totalItems: number }>(searchUrl, options))
+      .then(response => {
+        console.log(response);
+
+        if (response.status === 200 && response.body) {
+          return {
+            status: response.status,
+            body: response.body
+          };
+        } else {
+          return {
+            status: response.status,
+            body: []
+          };
+        }
+      }).catch(error => {
         console.error('Error fetching Operation Request:', error);
-        return throwError(() => new Error('Failed to fetch operation request. Please try again.'));
-      })
-    );
+        return {
+          status: error.status,
+          body: []
+        };
+      });
   }
 
-  getRequestStatus(){
-    return this.http.get<any[]>(environment.enums + "/requestStatuses", httpOptions)
-    .pipe(
-      catchError(error => {
-        console.error('Error fetching Request Statuses:', error);
-        return throwError(() => new Error('Failed to fetch request statuses. Please try again.'));
-      })
-    );
+  async getRequestStatus(accessToken: string){
+    let params = new HttpParams();
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const, params };
+
+    return await firstValueFrom(this.http.get<any[]>(environment.enums + "/requestStatuses", options))
+      .then(response => {
+        console.log(response);
+
+        if (response.status === 200 && response.body) {
+          return {
+            status: response.status,
+            body: response.body
+          };
+        }else{
+          return {
+            status: response.status,
+            body: []
+          }
+        }
+
+      }).catch(error => {
+        console.error('Error fetching Request Status:', error);
+        return {
+          status: error.status,
+          body: []
+        }
+      });
   }
 
-  getPriority(){
-    return this.http.get<any[]>(environment.operationTypes + "/priorities", httpOptions)
-    .pipe(
-      catchError(error => {
-        console.error('Error fetching Priorities:', error);
-        return throwError(() => new Error('Failed to fetch priorities. Please try again.'));
-      })
-    );
-  }
+  async getPriority(accessToken: string){
+    let params = new HttpParams();
 
-  
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const, params };
+
+    return firstValueFrom(this.http.get<string[]>(environment.enums + "/priorities", options))
+      .then(response => {
+        console.log(response);
+
+        if (response.status === 200 && response.body) {
+          return {
+            status: response.status,
+            body: response.body
+          };
+        }else{
+          return {
+            status: response.status,
+            body: []
+          }
+        }
+    }).catch(error => {
+    console.error('Error fetching Priorities:', error);
+    return {
+      status: error.status,
+      body: []
+    }});
+  }
 }

@@ -5,8 +5,7 @@ export interface OperationRequest {
     staff: string;
     patient: string;
     operationType: string;
-    deadlineDate: Date;
+    deadlineDate: string;
     priority: string; // 0 = Elective, 1 = Urgent, 2 = Emergency
     status: string;   // 0 = Pending, 1 = Accepted, 2 = Rejected
   }
-  
