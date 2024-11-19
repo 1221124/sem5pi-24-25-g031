@@ -1,6 +1,7 @@
 <div class="patient-request">
   <h1>Patients</h1>
   <button type="button" (click)="openCreatePatientModal()">Create Patient</button>
+  <button (click)="goToAdmin()" class="button-back-admin">Back to Admin Home</button>
 
   <div *ngIf="isCreateModalOpen" class="modal">
     <div class="modal-content">

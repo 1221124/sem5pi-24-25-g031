@@ -21,6 +21,7 @@ export class AdminPatientsComponent implements OnInit {
   constructor(private patientService: PatientsService, private authService: AuthService, private router: Router) {}
   patients: any[] = [];
   filter = {
+    pageNumber: 1,
     fullName: '',
     email: '',
     phoneNumber: '',
@@ -89,6 +90,18 @@ export class AdminPatientsComponent implements OnInit {
           year: 'numeric'
         });
       });
+    }
+  }
+
+  goToAdmin() {
+    this.router.navigate(['/admin']);
+  }
+
+  // Atualiza a página atual para a nova página selecionada
+  async changePage(pageNumber: number) {
+    if (pageNumber > 0 && pageNumber <= this.totalPages) {
+      this.filter.pageNumber = pageNumber;
+      await this.refreshPatients();
     }
   }
 
@@ -217,6 +230,7 @@ export class AdminPatientsComponent implements OnInit {
 
   clearFilters(): void {
     this.filter = {
+      pageNumber: 1,
       fullName: '',
       email: '',
       phoneNumber: '',

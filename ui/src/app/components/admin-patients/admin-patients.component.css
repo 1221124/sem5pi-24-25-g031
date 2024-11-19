@@ -207,3 +207,16 @@ th, td {
 .span-slot-end {
   margin-left: 14px;
 }
+
+.button-back-admin {
+  position: absolute;
+  right: 50px;
+  top: 160px;
+  background-color: rgba(128, 128, 128, 0.63);
+  color: white;
+}
+
+.button-back-admin:hover {
+  background-color: #7e7e7e;
+}
+
