@@ -15,7 +15,7 @@ namespace DDDNetCore.Domain.Patients
         public Gender? Gender { get; set; }
         public PhoneNumber? PhoneNumber { get; set; }
         public EmergencyContact? EmergencyContact { get; set; }
-        public List<Slot> AppointmentHistory { get; set; }
+        public List<Slot>? AppointmentHistory { get; set; }
         public List<MedicalConditions>? MedicalConditions { get; set; }
         public UserId? UserId { get; set; }
         public PhoneNumber? PendingPhoneNumber { get; set; }

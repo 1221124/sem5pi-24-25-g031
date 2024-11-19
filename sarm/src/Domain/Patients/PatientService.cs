@@ -309,7 +309,7 @@ namespace DDDNetCore.Domain.Patients
             
         }
 
-        public async Task<PatientDto?> UpdateAsync(UpdatingPatientDto dto)
+        public async Task<PatientDto?> AdminUpdateAsync(UpdatingPatientDto dto)
         {
             try
             {
@@ -372,6 +372,8 @@ namespace DDDNetCore.Domain.Patients
                 return null;
             }
         }
+        
+        
         
         public async Task<PatientDto> PatientDeleteAsync(PatientId id)
         {
