@@ -154,24 +154,22 @@ namespace Domain.Staffs
         {
             try
             {
-                Staff newStaff = await _repo.GetByEmailAsync(oldEmail);
+                var staff = await _repo.GetByEmailAsync(oldEmail);
 
-                if (newStaff == null)
+                if (staff == null)
                 {
+                    await _dbLogService.LogAction(EntityType.Staff, DbLogType.Update, "Unable to update because Staff not found");
                     return null;
                 }
 
                 if(dto.AvailabilitySlots != null)
-                    newStaff.ChangeSlotAvailability(dto.AvailabilitySlots);
+                    staff.ChangeSlotAvailability(dto.AvailabilitySlots);
                 
-                if(dto.AvailabilitySlots != null)
-                    newStaff.ChangeSpecialization(dto.Specialization);
+                if(dto.Specialization != null)
+                    staff.ChangeSpecialization(dto.Specialization);
                 
-                await _unitOfWork.CommitAsync();
-
-                _dbLogService.LogAction(StaffEntityType, DbLogType.Update, "Updated {" + newStaff.Id.Value + "}");
-
-                if (dto.PhoneNumber != null)
+                
+                if (dto.PhoneNumber != null && dto.PhoneNumber != staff.ContactInformation.PhoneNumber)
                 {
                     var phoneNumberToCheck = dto.PhoneNumber;
                     var byPhoneNumberAsync = await _repo.GetByPhoneNumberAsync(phoneNumberToCheck);
@@ -180,7 +178,7 @@ namespace Domain.Staffs
                         throw new Exception("Phone number already exists");
                     }
                 }
-                if (dto.Email != null)
+                if (dto.Email != null && !dto.Email.Equals(staff.ContactInformation.Email))
                 {
                     var emailToCheck = dto.Email;
                     var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
@@ -191,13 +189,19 @@ namespace Domain.Staffs
                     } 
                 }
 
-                if (dto.PhoneNumber != null || dto.Email != null)
+                if (dto.PhoneNumber != null && staff.ContactInformation.PhoneNumber != dto.PhoneNumber)
                 {
-                    if (dto.PhoneNumber != null) dto.PendingPhoneNumber = dto.PhoneNumber;
-                    if (dto.Email != null) dto.PendingEmail = dto.Email;
+                    staff.ChangePhoneNumber(dto.PhoneNumber);
                 }
-
-                return StaffMapper.ToDto(newStaff);
+                if(dto.Email != null && !staff.ContactInformation.Email.Equals(dto.Email)) 
+                {
+                    staff.ChangeEmail(dto.Email);
+                }
+                
+                await _unitOfWork.CommitAsync();
+                
+                _dbLogService.LogAction(StaffEntityType, DbLogType.Update, "Updated {" + staff.Id.Value + "}");
+                return StaffMapper.ToDto(staff);
             }
             catch (Exception e)
             {

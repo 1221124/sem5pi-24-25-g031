@@ -69,6 +69,16 @@ namespace Domain.Staffs
         {
             ContactInformation = contactInformation;
         }
+        
+        public void ChangePhoneNumber(PhoneNumber phoneNumber)
+        {
+            ContactInformation.PhoneNumber = phoneNumber;
+        }
+
+        public void ChangeEmail(Email email)
+        {
+            ContactInformation.Email = email;
+        }
 
         public void ChangeLicenseNumber(LicenseNumber licenseNumber)
         {

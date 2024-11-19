@@ -237,12 +237,12 @@ namespace Controllers
 
                 var updateStaff = await _service.UpdateAsync(oldEmail, dto);
 
-                if (dto.PhoneNumber == null && dto.Email == null) return Ok(staff);
+                if (dto.PhoneNumber == null && dto.Email == null) return Ok(new { updateStaff = updateStaff });
 
                 var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfoStaff(oldEmail, dto);
                 await _emailService.SendEmailAsync(oldEmail, subject, body);
 
-                return Ok(staff);
+                return Ok(new { updateStaff = updateStaff });
             }
             catch (BusinessRuleValidationException ex)
             {
