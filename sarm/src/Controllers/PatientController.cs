@@ -4,6 +4,7 @@ using Domain.Emails;
 using Domain.Patients;
 using Domain.Shared;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDNetCore.Controllers
@@ -233,7 +234,8 @@ namespace DDDNetCore.Controllers
 
         // PUT: api/Patient/patientouUser
         [HttpPut]
-        public async Task<ActionResult<PatientDto>> Update(UpdatingPatientDto dto)
+        //[Authorize(Roles = "Admin,Patient")]
+        public async Task<ActionResult<PatientDto>> AdminUpdate(UpdatingPatientDto dto)
         {
             try
             {
@@ -242,19 +244,19 @@ namespace DDDNetCore.Controllers
                     await _dbLogService.LogAction( EntityType.Patient, DbLogType.Update, "Patient data is required.");
                     return BadRequest("Invalid UpdatingPatientDto");
                 }
-                var patient = await _service.UpdateAsync(dto);
+                var patient = await _service.AdminUpdateAsync(dto);
 
                 if (patient == null)
                 {
                     return NotFound("Patient not found");
                 }
 
-                if (dto.PendingPhoneNumber == null && dto.PendingEmail == null) return Ok(patient);
+                if (dto.PendingPhoneNumber == null && dto.PendingEmail == null) return Ok(new { patient = patient });
                 
                 var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(dto);
                 await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
 
-                return Ok(patient);
+                return Ok(new { patient = patient });
             }
             catch (BusinessRuleValidationException ex)
             {
@@ -283,14 +285,16 @@ namespace DDDNetCore.Controllers
             }
             
             await _unitOfWork.CommitAsync();
+            var patientDto2 = PatientMapper.ToDto(patient);
             
-            return PatientMapper.ToDto(patient);
+            return Ok (new {patient = patientDto2});
         }
 
         
         
         // DELETE: api/Patient/patient/5
         [HttpDelete("patient/{id}")]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult> PatientDelete(Guid id)
         {
             try
