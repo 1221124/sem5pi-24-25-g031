@@ -1,16 +1,33 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
+import {environment, httpOptions} from '../../../environments/environment';
 import {firstValueFrom} from 'rxjs';
+import {Patient} from '../../models/patient.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PatientService {
 
-  private apiUrl = environment.patients + '/email';
+  private apiUrlEmail = environment.patients + '/email';
+  private apiUrl = environment.patients;
 
   constructor(private http: HttpClient) {
+  }
+
+  async update(patient: Patient, oldEmail: string, accessToken: string){
+
+    const UpdatingDto = {
+      "emailId": { "Value": oldEmail },
+      "email": { "value": patient.ContactInformation.Email },
+      "phoneNumber": { "value": patient.ContactInformation.PhoneNumber }
+    };
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers };
+    return await firstValueFrom(this.http.put(this.apiUrl, UpdatingDto, options));
   }
 
   async getByEmail(email: any){
@@ -23,7 +40,7 @@ export class PatientService {
 
     const options = { headers, observe: 'response' as const, params };
 
-    return await firstValueFrom(this.http.get<{ patient: any}>(`${this.apiUrl}`, options))
+    return await firstValueFrom(this.http.get<{ patient: any}>(`${this.apiUrlEmail}`, options))
       .then(response => {
         if(response.status === 200 && response.body){
           const item = response.body.patient;
@@ -50,7 +67,6 @@ export class PatientService {
             })),
             UserId: item.userId || null
           }
-          console.log("Mapped patients:", patient);
           return {
             status: response.status,
             body: {
@@ -61,5 +77,18 @@ export class PatientService {
           throw new Error('Unexpected response structure or status');
         }
       });
+  }
+
+  async deletePatient(id: string, accessToken: string) {
+    const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    if (!guidRegex.test(id)) {
+      throw new Error('Invalid ID format. Please provide a valid GUID.');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers};
+    return await firstValueFrom(this.http.delete(`${environment.patients}/patient/${id}`, options));
   }
 }
