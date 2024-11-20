@@ -152,6 +152,22 @@ namespace Controllers
             return paginatedStaff;
         }
 
+        //GET: api/Staff/licenseNumber?role=role
+        [HttpGet("licenseNumber")]
+        public async Task<ActionResult<LicenseNumber>> AssignLicenseNumberAsync([FromQuery] string role)
+        {
+            var staffRole = StaffRoleUtils.FromString(role);
+
+            var licenseNumber = await _service.AssignLicenseNumberAsync(staffRole);
+
+            if (licenseNumber == null)
+            {
+                return BadRequest(new {message = "License number could not be assigned."});
+            }
+
+            return Ok(new {message = licenseNumber.Value});
+        }
+
         // POST: api/Staff
         [HttpPost]
         public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)

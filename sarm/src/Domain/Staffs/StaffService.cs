@@ -122,12 +122,9 @@ namespace Domain.Staffs
                     throw new InvalidDataException("Email or phone number exists!");
                 }
 
-                var numberStaff = staffList.Count + 1;
+                var licenseNumber = await AssignLicenseNumberAsync(dto.StaffRole);
 
-                string licenseNumber = StaffRoleUtils.IdStaff(dto.StaffRole) + DateTime.Now.ToString("yyyy") + numberStaff;
-
-                // Construct new Staff object
-                var staff = new Staff(new LicenseNumber(licenseNumber), dto.FullName, dto.ContactInformation, dto.Specialization, dto.StaffRole);
+                var staff = new Staff(licenseNumber, dto.FullName, dto.ContactInformation, dto.Specialization, dto.StaffRole);
 
                 if (staff == null)
                     return null;
@@ -148,6 +145,21 @@ namespace Domain.Staffs
                 return StaffMapper.ToDto(dto);
             }
         }
+
+        public async Task<LicenseNumber> AssignLicenseNumberAsync(StaffRole role)
+        {
+            var staff = await _repo.GetByRoleAsync(role);
+            if (staff == null)
+            {
+                throw new InvalidOperationException("Failed to retrieve staff list.");
+            }
+
+            var numberStaff = staff.Count + 1;
+            string licenseNumber = StaffRoleUtils.IdStaff(role) + DateTime.Now.ToString("yyyy") + numberStaff;
+
+            return new LicenseNumber(licenseNumber);
+        }
+        
         public async Task<StaffDto> UpdateAsync(string oldEmail, UpdatingStaffDto dto)
         {
             try
