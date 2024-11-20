@@ -360,7 +360,7 @@ export default class Maze {
 
                 const responseBody = await response.json();
 
-                if(responseBody && Array.isArray(responseBody.surgery)){
+                if(responseBody && Array.isArray(responseBody.surgeries)){
                     const surgeryRoom = responseBody.surgeries.map((surgeryRoom) =>({
                         Id: surgeryRoom.id,
                         SurgeryRoomNumber: surgeryRoom.surgeryRommNumber,
@@ -377,25 +377,6 @@ export default class Maze {
                         status: response.status,
                         body: {
                             surgeryRooms: [surgeryRoom]
-                        }
-                    };
-                } else if(responseBody && responseBody.surgery){
-                    const surgeryRoom = {
-                        Id: responseBody.surgery.id,
-                        SurgeryRoomNumber: responseBody.surgery.surgeryRommNumber,
-                        RoomType: responseBody.surgery.roomType,
-                        RoomCapacity: responseBody.surgery.roomCapacity.capacity,
-                        AssignedEquipment: responseBody.surgery.assignEquipment,
-                        CurrentStatus: responseBody.surgery.currentStatus,
-                        MaintenanceSlots: responseBody.surgery.maintenanceSlots.map(slot => ({
-                            Start: slot.start,
-                            End: slot.end
-                        }))
-                    };
-                    return {
-                        status: response.status,
-                        body: {
-                            surgeryRooms
                         }
                     };
                 } else {
