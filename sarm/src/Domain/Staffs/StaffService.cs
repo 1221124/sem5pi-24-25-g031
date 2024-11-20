@@ -221,21 +221,18 @@ namespace Domain.Staffs
             }
         }
 
-        public async Task<StaffDto> InactivateAsync(Email email)
+        public async Task<StaffDto> InactivateAsync(StaffId id)
         {
-            var staff = await _repo.GetByEmailAsync(email);
+            var staff = await this._repo.GetByIdAsync(id); 
 
             if (staff == null)
-                return null;
+                return null;   
 
-            // change all fields
-            staff.MarkAsInative();
-
-            await this._unitOfWork.CommitAsync();
+            staff.Status = Status.Inactive;
             
-            _dbLogService.LogAction(EntityType.Staff, DbLogType.Deactivate, "Deactivated {" + staff.Id.Value + "}");
+            await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return StaffMapper.ToDto(staff);
         }
 
         public async Task<StaffDto> DeleteAsync(StaffId id)

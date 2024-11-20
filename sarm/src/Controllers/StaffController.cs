@@ -317,29 +317,20 @@ namespace Controllers
         }
 
 
-        [HttpDelete("{email}")]
-        public async Task<ActionResult<StaffId>> SoftDelete(String email)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<StaffId>> SoftDelete(Guid id)
         {
             try
             {
-                if (email == null)
-                    return BadRequest("Invalid request data.");
-
-                var staff = await _service.GetByEmailAsync(email);
-
-                if (staff == null)
-                {
-                    return NotFound("Staff not found.");
-                }
-
-                var result = await _service.InactivateAsync(email);
+                var result = await _service.InactivateAsync(new StaffId(id));
 
                 if (result == null)
                 {
                     return NotFound("Staff could not be inactivated.");
                 }
 
-                return Ok("Deactivate staff profile successfully.");
+                await _dbLogService.LogAction(EntityType.Staff, DbLogType.Deactivate, "Staff deactivated");
+                return Ok();
             }
             catch (BusinessRuleValidationException ex)
             {
