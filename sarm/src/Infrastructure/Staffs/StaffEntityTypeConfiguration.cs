@@ -73,6 +73,15 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 v => SpecializationUtils.FromString(v)
             );
 
+        builder.Property(o => o.StaffRole)
+            .HasColumnName("StaffRole")
+            .IsRequired()
+            .HasMaxLength(100)
+            .HasConversion(
+                v => StaffRoleUtils.ToString(v),
+                v => StaffRoleUtils.FromString(v)
+            );
+
         builder.Property(o => o.Status)
             .HasColumnName("Status")
             .IsRequired()

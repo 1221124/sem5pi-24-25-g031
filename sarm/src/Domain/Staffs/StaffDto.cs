@@ -14,6 +14,7 @@ namespace Domain.Staffs
         public ContactInformation ContactInformation { get; set; }
         public LicenseNumber LicenseNumber { get; set; }
         public Specialization Specialization { get; set; }
+        public StaffRole StaffRole { get; set; }
         public Status Status { get; set; }
         public List<Slot> SlotAppointement { get; set; }
         public List<Slot> SlotAvailability { get; set; }
@@ -22,7 +23,7 @@ namespace Domain.Staffs
         {
         }
 
-        public StaffDto(Guid id, UserId userId, FullName fullName, ContactInformation contactInformation, LicenseNumber licenseNumber, Specialization specialization, Status status, List<Slot> slot)
+        public StaffDto(Guid id, UserId userId, FullName fullName, ContactInformation contactInformation, LicenseNumber licenseNumber, Specialization specialization, StaffRole staffRole, Status status, List<Slot> slot)
         {
             Id = id;
             UserId = userId;
@@ -30,6 +31,7 @@ namespace Domain.Staffs
             ContactInformation = contactInformation;
             LicenseNumber = licenseNumber;
             Specialization = specialization;
+            StaffRole = staffRole;
             Status = status;
             SlotAppointement = slot;
             SlotAvailability = slot;

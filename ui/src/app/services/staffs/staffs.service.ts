@@ -66,6 +66,7 @@ export class StaffsService {
             },
             licenseNumber: item.licenseNumber.value,
             specialization: item.specialization.toString(),
+            staffRole: item.staffRole.toString(),
             ContactInformation: {
               Email: item.contactInformation.email.value,
               PhoneNumber: item.contactInformation.phoneNumber.value
@@ -81,8 +82,7 @@ export class StaffsService {
               item.slotAvailability.map((availability: { start: string, end: string }) => ({
                 Start: availability.start,
                 End: availability.end
-              })) : [],
-            RoleFirstChar: item.roleFirstChar
+              })) : []
           }));
 
           return {
@@ -122,9 +122,7 @@ export class StaffsService {
         "value": staff.ContactInformation.Email
       },
       "specialization": staff.specialization,
-      "roleFirstChar": {
-        "value": staff.RoleFirstChar,
-      }
+      "staffRole": staff.staffRole
     };
 
     const headers = new HttpHeaders({

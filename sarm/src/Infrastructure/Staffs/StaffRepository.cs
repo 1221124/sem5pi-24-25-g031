@@ -72,6 +72,12 @@ namespace Infrastructure.StaffRepository
         {
             return await _objs.FirstOrDefaultAsync(x => licenseNumber.Equals(x.LicenseNumber));
         }
+
+        public async Task<List<Staff>> GetByRoleAsync(StaffRole staffRole)
+        {
+            return await this._objs
+                .AsQueryable().Where(x => staffRole.Equals(x.StaffRole)).ToListAsync();
+        }
     }
 
 }

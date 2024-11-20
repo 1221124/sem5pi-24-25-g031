@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Domain.Shared;
 using Domain.Users;
 
@@ -12,6 +9,7 @@ namespace Domain.Staffs
         public FullName FullName { get; set; }
         public LicenseNumber LicenseNumber { get; set; }
         public Specialization Specialization { get; set; }
+        public StaffRole StaffRole { get; set; }
         public ContactInformation ContactInformation { get; set; }
         public Status Status { get; set; }
         public List<Slot> SlotAppointement { get; set; }
@@ -23,45 +21,49 @@ namespace Domain.Staffs
             // SlotAvailability = new List<Slot>();
         }
 
-        public Staff(LicenseNumber licenseNumber, FullName fullName, ContactInformation contactInformation, Specialization specialization)
+        public Staff(LicenseNumber licenseNumber, FullName fullName, ContactInformation contactInformation, Specialization specialization, StaffRole staffRole)
         {
             Id = new StaffId(Guid.NewGuid());
             LicenseNumber = licenseNumber;
             FullName = fullName;
             ContactInformation = contactInformation;
             Specialization = specialization;
+            StaffRole = staffRole;
             Status = Status.Active;
             SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
         }
 
-        public Staff(StaffId staffId, UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, Status status)
+        public Staff(StaffId staffId, UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, StaffRole staffRole, Status status)
         {
             Id = staffId;
             UserId = userId;
             FullName = fullName;
             ContactInformation = contactInformation;
             Specialization = specialization;
+            StaffRole = staffRole;
             Status = status;
             SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
         }
 
-        public Staff(FullName fullName, ContactInformation contactInformation, Specialization specialization)
+        public Staff(FullName fullName, ContactInformation contactInformation, Specialization specialization, StaffRole staffRole)
         {
             FullName = fullName;
             ContactInformation = contactInformation;
             Specialization = specialization;
+            StaffRole = staffRole;
             SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
         }
 
 
-        public Staff(Guid id, Email email, PhoneNumber phoneNumber, List<Slot> avalibilitySlots, Specialization specialization)
+        public Staff(Guid id, Email email, PhoneNumber phoneNumber, List<Slot> avalibilitySlots, Specialization specialization, StaffRole staffRole)
         {
             Id = new StaffId(id);
             ContactInformation = new ContactInformation(email, phoneNumber);
             Specialization = specialization;
+            StaffRole = staffRole;
             SlotAvailability = avalibilitySlots;
         }
 

@@ -8,6 +8,7 @@ export interface Staff {
   };
   licenseNumber: string;
   specialization: string;
+  staffRole: string;
   ContactInformation: {
     Email: string;
     PhoneNumber: string;
@@ -21,5 +22,4 @@ export interface Staff {
     Start: string;
     End: string;
   }[];
-  RoleFirstChar: string;
 }

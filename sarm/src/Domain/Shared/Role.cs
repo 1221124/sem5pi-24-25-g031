@@ -144,40 +144,4 @@ namespace Domain.Shared
             return Role.Patient;
         }
     }
-
-    public class RoleFirstChar
-    {
-        public string Value { get; set; }
-        public static string FromRole(Role role)
-        {
-            return role switch
-            {
-                Role.Admin => "A",
-                Role.Doctor => "D",
-                Role.Nurse => "N",
-                Role.Technician => "T",
-                Role.Patient => "P",
-                _ => throw new System.ArgumentException($"Invalid role: {role}")
-            };
-        }
-
-        public static Role FromChar(string firstChar)
-        {
-            switch (firstChar.ToUpper())
-            {
-                case "A":
-                    return Role.Admin;
-                case "D":
-                    return Role.Doctor;
-                case "N":
-                    return Role.Nurse;
-                case "T":
-                    return Role.Technician;
-                case "P":
-                    return Role.Patient;
-                default:
-                    throw new System.ArgumentException($"Invalid first char: {firstChar}");
-            }
-        }
-    }
 }

@@ -45,7 +45,7 @@
                     </div>
 
                     <div *ngFor="let role of roles">
-                        <input type="radio" id="{{role}}" name="role" [value]="role" [(ngModel)]="staff.RoleFirstChar">
+                        <input type="radio" id="{{role}}" name="role" [value]="role" [(ngModel)]="staff.staffRole">
                         <label for="{{role}}">{{ role }}</label>
                     </div>
 

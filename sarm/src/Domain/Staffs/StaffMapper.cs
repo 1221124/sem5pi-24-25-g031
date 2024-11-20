@@ -16,6 +16,7 @@ namespace Domain.Staffs
                 LicenseNumber = staff.LicenseNumber,
                 Specialization = staff.Specialization,
                 ContactInformation = staff.ContactInformation,
+                StaffRole = staff.StaffRole,
                 Status = staff.Status,
                 SlotAppointement = staff.SlotAppointement,
                 SlotAvailability = staff.SlotAvailability
@@ -30,6 +31,7 @@ namespace Domain.Staffs
                 dto.FullName,
                 dto.ContactInformation,
                 dto.Specialization,
+                dto.StaffRole,
                 dto.Status
             );
         }
@@ -39,7 +41,8 @@ namespace Domain.Staffs
             return new Staff(
                 dto.FullName,
                 new ContactInformation(dto.Email, dto.PhoneNumber),
-                dto.Specialization
+                dto.Specialization,
+                dto.StaffRole
             );
         }
 

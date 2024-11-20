@@ -133,6 +133,25 @@ namespace Controllers
             return paginatedStaff;
         }
 
+        //GET: api/Staff/search/role?role=Doctor/?pageNumber=1
+        [HttpGet("search/role")]
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetByRoleAsync([FromQuery] String role, int pageNumber)
+        {
+            var staffList = await _service.SearchByRoleAsync(StaffRoleUtils.FromString(role));
+
+            if (staffList == null)
+            {
+                return NotFound();
+            }
+
+            var paginatedStaff = staffList
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return paginatedStaff;
+        }
+
         // POST: api/Staff
         [HttpPost]
         public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
@@ -146,7 +165,7 @@ namespace Controllers
                     return BadRequest("Invalid request data.");
                 }
 
-                var staff = await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto), staffDto.RoleFirstChar);
+                var staff = await _service.AddAsync(StaffMapper.ToEntityFromCreating(staffDto));
 
                 return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
             }

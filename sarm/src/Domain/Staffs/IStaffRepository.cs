@@ -11,5 +11,6 @@ namespace Domain.Staffs
         Task<List<Staff>> GetByFullNameAsync(Name firstName, Name lastName);
         Task<List<Staff>> GetBySpecializationAsync(Specialization specialization);
         Task<Staff> GetByLicenseNumber(LicenseNumber licenseNumber);
+        Task<List<Staff>> GetByRoleAsync(StaffRole staffRole);
     }
 }

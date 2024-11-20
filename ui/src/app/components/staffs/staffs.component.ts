@@ -28,6 +28,7 @@ export class StaffsComponent implements OnInit {
     },
     licenseNumber: '',
     specialization: '',
+    staffRole: '',
     ContactInformation: {
       Email: '',
       PhoneNumber: ''
@@ -44,8 +45,7 @@ export class StaffsComponent implements OnInit {
         Start: '',
         End: ''
       }
-    ],
-    RoleFirstChar: ''
+    ]
   };
 
   staffs: Staff[] = [];

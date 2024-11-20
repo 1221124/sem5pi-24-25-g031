@@ -97,7 +97,7 @@ namespace Domain.Staffs
         }
 
         //CREATE STAFF WITH first name, last name, contact information, and specialization
-        public async Task<StaffDto?> AddAsync(Staff dto, RoleFirstChar roleFirstChar)
+        public async Task<StaffDto?> AddAsync(Staff dto)
         {
             try
             {
@@ -124,12 +124,10 @@ namespace Domain.Staffs
 
                 var numberStaff = staffList.Count + 1;
 
-                string licenseNumber = roleFirstChar.Value + DateTime.Now.ToString("yyyy") + numberStaff;
-
-                Console.WriteLine("Generated License Number: " + licenseNumber); // Para debug    
+                string licenseNumber = StaffRoleUtils.IdStaff(dto.StaffRole) + DateTime.Now.ToString("yyyy") + numberStaff;
 
                 // Construct new Staff object
-                var staff = new Staff(new LicenseNumber(licenseNumber), dto.FullName, dto.ContactInformation, dto.Specialization);
+                var staff = new Staff(new LicenseNumber(licenseNumber), dto.FullName, dto.ContactInformation, dto.Specialization, dto.StaffRole);
 
                 if (staff == null)
                     return null;
@@ -290,6 +288,26 @@ namespace Domain.Staffs
             try
             {
                 var staff = await _repo.GetBySpecializationAsync(specialization);
+
+                if (staff == null)
+                    return null;
+                
+                List<StaffDto> listDto = StaffMapper.ToDtoList(staff);
+
+                return listDto;
+            }
+            catch (Exception e)
+            {
+                //_dbLogService.LogError(StaffEntityType, e.ToString());
+                return null;
+            }
+        }
+
+        public async Task<List<StaffDto>> SearchByRoleAsync(StaffRole role)
+        {
+            try
+            {
+                var staff = await _repo.GetByRoleAsync(role);
 
                 if (staff == null)
                     return null;

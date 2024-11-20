@@ -8,15 +8,15 @@ namespace Domain.Staffs
         public PhoneNumber PhoneNumber { get; set; }
         public Email Email { get; set; }
         public Specialization Specialization { get; set; }
-        public RoleFirstChar RoleFirstChar { get; set; }
+        public StaffRole StaffRole { get; set; }
 
-        public CreatingStaffDto(FullName fullName, PhoneNumber phoneNumber, Email email, Specialization specialization, RoleFirstChar roleFirstChar)
+        public CreatingStaffDto(FullName fullName, PhoneNumber phoneNumber, Email email, Specialization specialization, StaffRole staffRole)
         {
             FullName = fullName;
             PhoneNumber = phoneNumber;
             Email = email;
             Specialization = specialization;
-            RoleFirstChar = roleFirstChar;
+            StaffRole = staffRole;
         }
 
     }
