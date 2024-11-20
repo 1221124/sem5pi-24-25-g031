@@ -98,6 +98,7 @@
                     <th>Phone Number</th>
                     <th>License Number</th>
                     <th>Specialization</th>
+                    <th>Role</th>
                     <th>Status</th>
                     <th>Slots Appointment</th>
                     <th>Slots Availability</th>
@@ -112,6 +113,7 @@
                     <td>{{ staff.ContactInformation.PhoneNumber }}</td>
                     <td>{{ staff.licenseNumber || 'N/A' }}</td>
                     <td>{{ staff.specialization || 'N/A' }}</td>
+                    <td>{{ staff.staffRole || 'N/A' }}</td>
                     <td>{{ staff.status || 'N/A' }}</td>
                     <td>
                         <button type="button" (click)="openSlotAppointmentModal(staff)">View</button>
