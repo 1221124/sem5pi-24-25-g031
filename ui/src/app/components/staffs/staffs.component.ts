@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Staff } from '../../models/staff.model';
 import { response } from 'express';
 import { Console } from 'console';
+import {OperationType} from '../../models/operation-type.model';
 
 @Component({
   selector: 'app-staffs',
@@ -75,6 +76,7 @@ export class StaffsComponent implements OnInit {
   isSlotAvailabilityModal = false;
 
   accessToken: string = '';
+  staffToDelete: Staff | null = null;
 
 
   filter = {
@@ -316,17 +318,35 @@ export class StaffsComponent implements OnInit {
     //this.isCreateModalOpen = false;
   }
 
-  deactivate(staff: any) {
-    staff.Status = 'Inactive';
-    console.log("Status ativado:", staff.Status); // Verificação de debug
+  async inactivate(staff: string) {
+    await this.staffService.deleteStaff(staff, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.message = 'Staff successfully inactivated!';
+          this.success = true;
+        } else {
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+        }
+      })
+      .catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to delete Staff! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        }
+        this.message = 'There was an error deleting the Staff: ' + error;
+        this.success = false;
+      });
+    await this.fetchStaffs();
   }
 
-
-  confirmDelete(staff: any) {
-    this.isDeleteModalOpen = true;
-    this.selectedStaff = staff;
+  async activate(staff: Staff) {
+    await this.update(staff.Id);
   }
-
 
   deleteConfirmed() {
     if (this.selectedStaff) {
@@ -342,7 +362,7 @@ export class StaffsComponent implements OnInit {
 
   openSlotAppointmentModal(staff: any) {
     this.selectedStaff = staff;
-    this.isSlotAvailabilityModal = true;
+    this.isSlotAppointmentModal = true;
     this.isEditModalOpen = false;
     this.isCreateModalOpen = false;
   }
