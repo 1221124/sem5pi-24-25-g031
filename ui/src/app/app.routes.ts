@@ -10,6 +10,8 @@ import { OperationTypesComponent } from './components/operation-types/operation-
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
+import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
+import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -21,7 +23,9 @@ export const routes: Route[] = [
   { path: 'admin/users', component: AdminUsersComponent },
   { path: 'admin', component: AdminMenuComponent },
   { path: 'doctor', component: DoctorMenuComponent },
-  { path: 'patient', component: PatientComponent }
+  { path: 'patient', component: PatientComponent },
+  { path: 'nurse', component: NurseMenuComponent },
+  { path: 'technician', component: TechnicianMenuComponent}
 ];
 
 @NgModule({
