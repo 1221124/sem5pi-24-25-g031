@@ -78,6 +78,114 @@ export default class Maze {
                         this.object.add(doorObject);
                     }            
                     if (description.map[j][i] == 5) {
+                        this.getSurgeries().then((response) => {
+                            if(response.status === 200){
+                                const surgeryRooms = response.body.surgeryRooms;
+
+                                if (Array.isArray(surgeryRooms)) {
+                                    surgeryRooms.forEach((surgeryRoom) => {
+                                        if (surgeryRoom.CurrentStatus === 'OCUPIED') { // Verifica se está ocupada
+                                            const roomNumber = surgeryRoom.SurgeryRoomNumber;
+
+                                            switch (roomNumber) {
+                                                case 'OR1': {
+                                                    if (description.map[2][2]) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR1');
+                                                    }
+                                                    break;
+                                                }
+                                                case 'OR2': {
+                                                    if (description.map[2][6]) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR2');
+                                                    }
+                                                }
+                                                case 'OR3': {
+                                                    if (description.map[2][10]) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR3');
+                                                    }
+                                                }
+                                                case 'OR4': {
+                                                    if (description.map[10][2]) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR4');
+                                                    }
+                                                }
+                                                case 'OR5': {
+                                                    if (description.map[10][6]) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR5');
+                                                    }
+                                                }
+                                                case 'OR6': {
+                                                    if (description.map[10][10]) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR6');
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+
                         bedLoader.load('./models/gltf/bed.glb', (gltf) => {
                             bedObject = gltf.scene;
                             bedObject.position.set(
@@ -85,7 +193,7 @@ export default class Maze {
                                 0.5,
                                 j - description.size.height / 2.0
                             );
-                            bedObject.scale.set(0.8, 0.8, 0.8); // Ajuste de escala, se necessário
+                            bedObject.scale.set(1, 1, 1); // Ajuste de escala, se necessário
                             this.object.add(bedObject);
                         });
                     }
@@ -231,5 +339,74 @@ export default class Maze {
 
     addDoor(door) {
         this.doors.push(door); // Adicionar porta ao labirinto
+    }
+
+    async getSurgeries(){
+        let params = new URLSearchParams();
+
+        const headers = {
+            'Content-Type': 'application/json'
+        }
+        const options = {
+            method: 'GET',
+            headers: headers
+        };
+        const url = `http://localhost:5500/api/SurgeryRooms?${params.toString()}`;
+
+        try {
+            const response = await fetch(url, options);
+
+            if (response.status === 200) {
+
+                const responseBody = await response.json();
+
+                if(responseBody && Array.isArray(responseBody.surgery)){
+                    const surgeryRoom = responseBody.surgeries.map((surgeryRoom) =>({
+                        Id: surgeryRoom.id,
+                        SurgeryRoomNumber: surgeryRoom.surgeryRommNumber,
+                        RoomType: surgeryRoom.roomType,
+                        RoomCapacity: surgeryRoom.roomCapacity.capacity,
+                        AssignedEquipment: surgeryRoom.assignEquipment,
+                        CurrentStatus: surgeryRoom.currentStatus,
+                        MaintenanceSlots: surgeryRoom.maintenanceSlots.map(slot => ({
+                            Start: slot.start,
+                            End: slot.end
+                        }))
+                    }));
+                    return {
+                        status: response.status,
+                        body: {
+                            surgeryRooms: [surgeryRoom]
+                        }
+                    };
+                } else if(responseBody && responseBody.surgery){
+                    const surgeryRoom = {
+                        Id: responseBody.surgery.id,
+                        SurgeryRoomNumber: responseBody.surgery.surgeryRommNumber,
+                        RoomType: responseBody.surgery.roomType,
+                        RoomCapacity: responseBody.surgery.roomCapacity.capacity,
+                        AssignedEquipment: responseBody.surgery.assignEquipment,
+                        CurrentStatus: responseBody.surgery.currentStatus,
+                        MaintenanceSlots: responseBody.surgery.maintenanceSlots.map(slot => ({
+                            Start: slot.start,
+                            End: slot.end
+                        }))
+                    };
+                    return {
+                        status: response.status,
+                        body: {
+                            surgeryRooms
+                        }
+                    };
+                } else {
+                    throw new Error('Unexpected response structure or status');
+                }
+            } else {
+                throw new Error('Unexpected response status: ' + response.status);
+            }
+        } catch (error){
+            console.error('Error fetching surgery room by number:', error);
+            throw error;
+        }
     }
 }
