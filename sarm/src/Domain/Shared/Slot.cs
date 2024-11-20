@@ -1,12 +1,34 @@
 using System;
+using System.Globalization;
 
 namespace Domain.Shared
 {
     public class Slot : IValueObject
     {
-        public DateTime Start { get; private set; }
+        public DateTime Start { get; set; }
 
-        public DateTime End { get; private set; }
+        public DateTime End { get; set; }
+
+        public Slot() { }
+
+        public Slot(string start, string end)
+        {
+            var startDate = DateTime.ParseExact(start, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+            var endDate = DateTime.ParseExact(end, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+
+            if (startDate <= DateTime.Now || endDate <= DateTime.Now)
+            {
+                throw new ArgumentException("Appointment Date must be after this moment.");
+            }
+
+            if (startDate >= endDate)
+            {
+                throw new ArgumentException("End date must be greater than start date.");
+            }
+
+            Start = startDate;
+            End = endDate;
+        }
 
         public Slot(DateTime start, DateTime end)
         {
@@ -52,6 +74,28 @@ namespace Domain.Shared
             {
                 return $"{slot.Start:yyyy-MM-dd}:{slot.Start:HH'h'mm}/{slot.End:yyyy-MM-dd}:{slot.End:HH'h'mm}";
             }
+        }
+
+        public override bool Equals(object? obj) {
+            if(obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+
+            var date = (Slot)obj;
+
+            return this.Start.Date.Year == date.Start.Date.Year &&
+                   this.Start.Date.Month == date.Start.Date.Month &&
+                   this.Start.Date.Day == date.Start.Date.Day &&
+
+                   this.End.Date.Year == date.End.Date.Year &&
+                   this.End.Date.Month == date.End.Date.Month &&
+                   this.End.Date.Day == date.End.Date.Day &&
+
+                   this.Start.Hour == date.Start.Hour &&
+                   this.Start.Minute == date.Start.Minute &&
+
+                   this.End.Hour == date.End.Hour &&
+                   this.End.Minute == date.End.Minute;
         }
     }
 }

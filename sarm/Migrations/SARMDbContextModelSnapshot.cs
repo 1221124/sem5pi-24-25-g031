@@ -28,10 +28,6 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("Id");
 
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("AppointmentDate");
-
                     b.Property<string>("AppointmentNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -266,6 +262,35 @@ namespace DDDNetCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("DDDNetCore.Domain.Appointments.Appointment", b =>
+                {
+                    b.OwnsOne("Domain.Shared.Slot", "AppointmentDate", b1 =>
+                        {
+                            b1.Property<string>("AppointmentId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("End")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("AppointmentDatesEnd");
+
+                            b1.Property<string>("Start")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("AppointmentDatesStart");
+
+                            b1.HasKey("AppointmentId");
+
+                            b1.ToTable("Appointments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AppointmentId");
+                        });
+
+                    b.Navigation("AppointmentDate")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DDDNetCore.Domain.Patients.Patient", b =>

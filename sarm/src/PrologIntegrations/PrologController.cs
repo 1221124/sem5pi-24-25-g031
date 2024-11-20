@@ -6,9 +6,9 @@ namespace DDDNetCore.PrologIntegrations
     [ApiController]
     [Route("api/[controller]")]
     public class PrologController : ControllerBase {
-        private readonly PrologIntegration _prologIntegration;
+        private readonly PrologService _prologIntegration;
 
-         public PrologController(PrologIntegration prologIntegration){
+         public PrologController(PrologService prologIntegration){
              _prologIntegration = prologIntegration;
          }
 

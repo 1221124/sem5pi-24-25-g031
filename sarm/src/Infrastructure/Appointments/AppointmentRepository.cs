@@ -14,9 +14,9 @@ namespace Infrastructure.Appointments
             this._objs = context.Appointments;
         }
 
-        public async Task<List<Appointment>> GetByDateAsync(AppointmentDate date)
+        public async Task<List<Appointment>> GetByDateAsync(DateTime date)
         {
-            return await _objs.Where(x => x.AppointmentDate == date).ToListAsync();
+            return await _objs.Where(x => x.AppointmentDate.Start.Date == date.Date).ToListAsync();
         }
     }
 }

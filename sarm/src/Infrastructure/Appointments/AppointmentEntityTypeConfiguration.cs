@@ -43,14 +43,23 @@ namespace DDDNetCore.Infrastructure.Appointments{
                     v => new AppointmentNumber(v)
                 );
 
-            builder.Property(x => x.AppointmentDate)
-                .IsRequired()
-                .HasColumnName("AppointmentDate")
-                .HasConversion(
-                    v => v.Date,
-                    v => new AppointmentDate(v)
-                );
-            
+            builder.OwnsOne(x => x.AppointmentDate, ad =>
+            {
+                ad.Property(x => x.Start)
+                    .HasColumnName("AppointmentDatesStart")
+                    .HasConversion(
+                        v => v.ToString("yyyy-MM-dd HH:mm"),
+                        v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
+                    );
+
+                ad.Property(x => x.End)
+                    .HasColumnName("AppointmentDatesEnd")
+                    .HasConversion(
+                        v => v.ToString("yyyy-MM-dd HH:mm"),
+                        v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
+                    );
+            });
+
         }
     }
 }

@@ -390,32 +390,5 @@ namespace Domain.Staffs
                 return null;
             }
         }
-
-        public async Task<StaffDto> AddAppointment(StaffDto staff, Appointment newAppointment, OperationTypeDto operationType)
-        {
-            try
-            {
-                if (staff == null)
-                    return null;
-
-                if (newAppointment == null)
-                    return null;
-
-                DateTime start = newAppointment.AppointmentDate.Date;
-                int duration = 0;
-                foreach (var phase in operationType.PhasesDuration.Phases)
-                {
-                    duration += phase.Value.Value;
-                }
-                DateTime end = start.AddMinutes(duration);
-
-                return await this.AddSlotAppointment(staff, new Slot(start, end));
-            }
-            catch (Exception e)
-            {
-                //_dbLogService.LogError(StaffEntityType, e.ToString());
-                return null;
-            }
-        }
     }
 }

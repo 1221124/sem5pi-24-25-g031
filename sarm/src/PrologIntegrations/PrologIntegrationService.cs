@@ -2,12 +2,7 @@ namespace DDDNetCore.PrologIntegrations
 {
     public class PrologIntegrationService
     {
-        //CreateFileContent
         public async Task<bool> CreateFile(
-            // Dictionary<string, List<string>> _staff,
-            // Dictionary<string, List<string>> _agendaStaff,
-            // Dictionary<string, string> _timetable,
-            // Dictionary<string, List<string>> _surgery,
             List<string> _staff,
             List<string> _agendaStaff,
             List<string> _timetable,
@@ -18,59 +13,6 @@ namespace DDDNetCore.PrologIntegrations
         {
             try{
                 string content = "";
-                // content += "staff(";
-                // foreach (var item in staff)
-                // {
-                //     content += item.Key + ", [";
-                //     foreach (var item2 in item.Value)
-                //     {
-                //         content += item2 + ", ";
-                //     }
-                //     content = content.Substring(0, content.Length - 1);
-                //     content += "], ";
-                // }
-                // content = content.Substring(0, content.Length - 1);
-                // content += ").\n";
-                //
-                // content += "agenda_staff(";
-                // foreach (var item in _agendaStaff)
-                // {
-                //     content += item.Key + ", " + item.Value + ", ";
-                // }
-                // content = content.Substring(0, content.Length - 1);
-                // content += ").\n";
-                //
-                // content += "timetable(";
-                // foreach (var item in timetable)
-                // {
-                //     content += item.Key + ", " + item.Value + ", ";
-                // }
-                // content = content.Substring(0, content.Length - 1);
-                // content += ").\n";
-                //
-                // content += "surgery(";
-                // foreach (var item in surgery)
-                // {
-                //     content += item.Key + ", " + item.Value + ", ";
-                // }
-                // content = content.Substring(0, content.Length - 1);
-                // content += ").\n";
-                //
-                // content += "surgery_id(";
-                // foreach (var item in surgery_id)
-                // {
-                //     content += item.Key + ", " + item.Value + ", ";
-                // }
-                // content = content.Substring(0, content.Length - 1);
-                // content += ").\n";
-                //
-                // content += "assignment_surgery(";
-                // foreach (var item in assignment_surgery)
-                // {
-                //     content += item.Key + ", " + item.Value + ", ";
-                // }
-                // content = content.Substring(0, content.Length - 1);
-                // content += ").\n";
 
                 foreach (var item in _staff)
                 {
