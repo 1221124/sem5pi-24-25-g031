@@ -126,8 +126,11 @@
                             class="action-btn edit-btn">
                             Edit
                         </button>
-                        <button *ngIf="staff.status === 'Active'" type="button" class="action-btn delete-btn"
-                            (click)="confirmDelete(staff)">Inactive
+                        <button *ngIf="staff.status === 'Active'" (click)="inactivate(staff.Id)">
+                            Inactivate
+                        </button>
+                        <button *ngIf="staff.status === 'Inactive'" (click)="activate(staff)">
+                            Activate
                         </button>
                     </td>
                 </tr>
@@ -295,7 +298,6 @@
                                         <tr>
                                             <th>Start</th>
                                             <th>End</th>
-                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
