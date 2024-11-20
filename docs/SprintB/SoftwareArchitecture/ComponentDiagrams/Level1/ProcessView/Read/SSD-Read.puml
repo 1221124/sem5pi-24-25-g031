@@ -1,0 +1,13 @@
+@startuml SSD-Read
+
+actor User
+participant System
+participant AzureSQLDatabase
+
+User -> System : Request Read (include query with filters)
+System -> System : Validate filters
+System -> AzureSQLDatabase : Read data
+AzureSQLDatabase --> System : Return object
+System --> User : Return success/error message
+
+@enduml
