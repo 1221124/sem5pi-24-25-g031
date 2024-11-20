@@ -8,7 +8,7 @@ namespace DDDNetCore.PrologIntegrations
             List<string> _timetable,
             List<string> _surgery,
             List<string> _surgeryId,
-            List<string> _assignmentSurgery,
+            // List<string> _assignmentSurgery,
             DateTime date)
         {
             try{
@@ -42,16 +42,16 @@ namespace DDDNetCore.PrologIntegrations
                 {
                     content += item + "\n";
                 }
-                content += "\n";
-
-                foreach (var item in _assignmentSurgery)
-                {
-                    content += item + "\n";
-                }
+                // content += "\n";
+                
+                // foreach (var item in _assignmentSurgery)
+                // {
+                //     content += item + "\n";
+                // }
 
                 // Navigate to the project root directory safely
                 string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
-                for (int i = 0; i < 5; i++) // Navigate up 5 levels
+                for (int i = 0; i < 6; i++) // Navigate up 6 levels
                 {
                     var parent = Directory.GetParent(projectRootPath);
                     if (parent == null)
@@ -61,7 +61,7 @@ namespace DDDNetCore.PrologIntegrations
                     projectRootPath = parent.FullName;
                 }
                 
-                string directoryPath = Path.Combine(projectRootPath, "PlanningModule", "knowledge_base");
+                string directoryPath = Path.Combine(projectRootPath, "PlanningModule", "lapr5", "knowledge_base");
 
                 if (!Directory.Exists(directoryPath))
                 {

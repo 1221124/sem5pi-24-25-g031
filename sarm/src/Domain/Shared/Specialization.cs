@@ -50,5 +50,10 @@ namespace Domain.Shared
                 _ => throw new System.ArgumentException($"Invalid specialization: {specialization}")
             };
         }
+
+        public static bool IsCardiologyOrOrthopaedics(Specialization specialization)
+        {
+            return specialization == Specialization.CARDIOLOGY || specialization == Specialization.ORTHOPAEDICS;
+        }
     }
 }
