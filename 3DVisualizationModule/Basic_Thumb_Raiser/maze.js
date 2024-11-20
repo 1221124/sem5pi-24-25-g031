@@ -78,15 +78,29 @@ export default class Maze {
                         this.object.add(doorObject);
                     }            
                     if (description.map[j][i] == 5) {
+
+                        bedLoader.load('./models/gltf/bed.glb', (gltf) => {
+                            bedObject = gltf.scene;
+                            bedObject.position.set(
+                                i - description.size.width / 2.0 + 0.5,
+                                0.5,
+                                j - description.size.height / 2.0
+                            );
+                            bedObject.scale.set(1, 1, 1);
+                            this.object.add(bedObject);
+                        });
+
                         this.getSurgeries().then((response) => {
                             if(response.status === 200){
                                 const surgeryRooms = response.body.surgeryRooms;
-
+                                console.log('SurgeryRooms:' + surgeryRooms.surgeryRoomNumber);
                                 if (Array.isArray(surgeryRooms)) {
+                                    console.log('Depois de array.isArray');
                                     surgeryRooms.forEach((surgeryRoom) => {
+                                        console.log(surgeryRooms[0].currentStatus);
                                         if (surgeryRoom.CurrentStatus === 'OCUPIED') { // Verifica se está ocupada
                                             const roomNumber = surgeryRoom.SurgeryRoomNumber;
-
+                                            console.log('dentro do if se ocupied')
                                             switch (roomNumber) {
                                                 case 'OR1': {
                                                     if (description.map[2][2]) {
@@ -184,17 +198,6 @@ export default class Maze {
                                     });
                                 }
                             }
-                        });
-
-                        bedLoader.load('./models/gltf/bed.glb', (gltf) => {
-                            bedObject = gltf.scene;
-                            bedObject.position.set(
-                                i - description.size.width / 2.0 + 0.5,
-                                0.5,
-                                j - description.size.height / 2.0
-                            );
-                            bedObject.scale.set(1, 1, 1); // Ajuste de escala, se necessário
-                            this.object.add(bedObject);
                         });
                     }
                     if (description.map[j][i] == 6) {
@@ -342,7 +345,6 @@ export default class Maze {
     }
 
     async getSurgeries(){
-        let params = new URLSearchParams();
 
         const headers = {
             'Content-Type': 'application/json'
@@ -351,7 +353,8 @@ export default class Maze {
             method: 'GET',
             headers: headers
         };
-        const url = `http://localhost:5500/api/SurgeryRooms?${params.toString()}`;
+        const url = `http://localhost:5500/api/SurgeryRooms`;
+        console.log("Fetching surgery rooms from:", url);
 
         try {
             const response = await fetch(url, options);
@@ -359,6 +362,7 @@ export default class Maze {
             if (response.status === 200) {
 
                 const responseBody = await response.json();
+                console.log("Response Body:", responseBody);
 
                 if(responseBody && Array.isArray(responseBody.surgeries)){
                     const surgeryRoom = responseBody.surgeries.map((surgeryRoom) =>({
@@ -366,7 +370,7 @@ export default class Maze {
                         SurgeryRoomNumber: surgeryRoom.surgeryRommNumber,
                         RoomType: surgeryRoom.roomType,
                         RoomCapacity: surgeryRoom.roomCapacity.capacity,
-                        AssignedEquipment: surgeryRoom.assignEquipment,
+                        AssignedEquipment: surgeryRoom.assignedEquipment,
                         CurrentStatus: surgeryRoom.currentStatus,
                         MaintenanceSlots: surgeryRoom.maintenanceSlots.map(slot => ({
                             Start: slot.start,
