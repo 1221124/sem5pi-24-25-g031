@@ -261,6 +261,7 @@ export class AdminPatientsComponent implements OnInit {
     }
 
     this.patientService.post(this.firstName, this.lastName, this.dateOfBirth, this.email, this.phoneNumber, this.gender);
+    this.isCreateModalOpen = false;
     this.refreshPatients();
   }
 
@@ -341,9 +342,9 @@ export class AdminPatientsComponent implements OnInit {
       this.patientService.deletePatient(patient.id).subscribe(
         () => {
           this.isDeleteModalOpen = false;
-          this.refreshPatients();  // Refresh to show updated data
+          this.refreshPatients();
         },
-          (error: any) => console.error('Error updating patient:', error)
+          (error: any) => console.error('Error deleting patient:', error)
       );
     }
   }

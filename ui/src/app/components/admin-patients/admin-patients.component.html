@@ -86,7 +86,7 @@
           <td>{{ patient.dateOfBirth.birthDate | date }}</td>
           <td>{{ patient.contactInformation.email.value }}</td>
           <td>{{ patient.contactInformation.phoneNumber.value }}</td>
-          <td>{{ patient.gender === 0 ? 'Male' : 'Female' }}</td>
+          <td>{{ patient.gender}}</td>
           <td>{{ patient.medicalRecordNumber.value }}</td>
           <td>{{ patient.emergencyContact?.number?.value ? patient.emergencyContact.number.value : 'N/A' }}</td>
           <td>
