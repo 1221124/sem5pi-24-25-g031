@@ -1,8 +1,6 @@
 
 :- dynamic availability/3.%:- retractall(availability(_,_,_)).
 
-+
-
 agenda_staff(d001,20241028,[(720,840,m01),(1080,1200,c01)]).
 agenda_staff(d002,20241028,[(780,900,m02),(901,960,m02),(1080,1440,c02)]).
 agenda_staff(d003,20241028,[(720,840,m01),(900,960,m02)]).
@@ -90,4 +88,18 @@ intersect_availability((Ini,Fim),[(Ini1,Fim1)|LD],[(Imax,Fmin)|LI],LA):-
 
 min_max(I,I1,I,I1):- I<I1,!.
 min_max(I,I1,I1,I).
+
+find_and_intersect_agendas(StaffList, Date, IntersectedAgenda) :-
+    retractall(availability(_, _, _)),
+    findall(
+        _,
+        (
+            agenda_staff(Staff, Date, SlotAppointment),
+            free_agenda_staff0(SlotAppointment, SlotAvailability),
+            adapt_timetable(Staff, Date, SlotAvailability, AdaptedAvailability),
+            assertz(availability(Staff, Date, AdaptedAvailability))
+        ),
+        _
+    ),
+    intersect_all_agendas(StaffList, Date, IntersectedAgenda).
 
