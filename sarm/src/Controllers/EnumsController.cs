@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 
@@ -62,13 +60,6 @@ namespace DDDNetCore.Controllers
         {
             var specializations = _enumsService.GetSpecializations();
             return Task.FromResult<ActionResult<List<string>>>(Ok(specializations));
-        }
-
-        [HttpGet("phases")]
-        public Task<ActionResult<List<string>>> GetPhases()
-        {
-            var phases = _enumsService.GetPhases();
-            return Task.FromResult<ActionResult<List<string>>>(Ok(phases));
         }
 
         [HttpGet("backofficeRoles")]

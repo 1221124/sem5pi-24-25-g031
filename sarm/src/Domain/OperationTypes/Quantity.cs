@@ -8,6 +8,10 @@ namespace Domain.OperationTypes
 
         public Quantity(int value)
         {
+            if (value < 0)
+            {
+                throw new BusinessRuleValidationException("Quantity cannot be negative.");
+            }
             Value = value;
         }
 
@@ -37,6 +41,12 @@ namespace Domain.OperationTypes
         public static implicit operator int(Quantity quantity)
         {
             return quantity.Value;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Quantity quantity &&
+                   Value == quantity.Value;
         }
     }
 }

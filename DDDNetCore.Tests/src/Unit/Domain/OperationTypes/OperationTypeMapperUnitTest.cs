@@ -23,12 +23,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
                     new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, new Quantity(1)),
                     new RequiredStaff(Role.Nurse, Specialization.ANAESTHESIOLOGY, new Quantity(2))
                 },
-                new PhasesDuration(new Dictionary<Phase, Quantity>
-                {
-                    { Phase.Preparation, new Quantity(30) },
-                    { Phase.Surgery, new Quantity(60) },
-                    { Phase.Cleaning, new Quantity(20) }
-                }),
+                new PhasesDuration(30, 60, 20),
                 Status.Active
             );
 

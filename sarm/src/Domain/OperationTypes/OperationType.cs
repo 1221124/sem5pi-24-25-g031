@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
@@ -44,7 +42,7 @@ namespace Domain.OperationTypes
             Name = name;
             Specialization = SpecializationUtils.FromString(specialization);
             RequiredStaff = RequiredStaffUtils.FromStringList(requiredStaff);
-            PhasesDuration = PhaseUtils.FromStringList(phasesDuration);
+            PhasesDuration = PhasesDuration.FromString(phasesDuration);
             Status = Status.Active;
         }
     }

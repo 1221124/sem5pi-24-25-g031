@@ -180,3 +180,7 @@ button {
   font-weight: 500;
   border-radius: 5px;
 }
+
+.duration-field {
+  margin-top: 15px;
+}

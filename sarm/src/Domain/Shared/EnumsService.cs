@@ -1,6 +1,5 @@
 using Domain.DbLogs;
 using Domain.OperationRequests;
-using Domain.OperationTypes;
 using Domain.Patients;
 using Domain.Users;
 
@@ -36,11 +35,6 @@ namespace Domain.Shared
         public List<string> GetSpecializations()
         {
             return Enum.GetValues(typeof(Specialization)).Cast<Specialization>().Select(s => s.ToString()).ToList();
-        }
-
-        public List<string> GetPhases()
-        {
-            return Enum.GetValues(typeof(Phase)).Cast<Phase>().Select(p => p.ToString()).ToList();
         }
 
         public List<string> GetBackofficeRoles()

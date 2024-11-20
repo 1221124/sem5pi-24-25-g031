@@ -71,7 +71,7 @@ namespace Domain.OperationTypes
 
             if (string.IsNullOrWhiteSpace(operationType.Name)
             || operationType.RequiredStaff == null || operationType.RequiredStaff.Count == 0
-            || operationType.PhasesDuration == null || operationType.PhasesDuration.Phases == null || operationType.PhasesDuration.Phases.Count == 0)
+            || operationType.PhasesDuration == null)
                 return null;
 
             await this._repo.AddAsync(operationType);

@@ -109,14 +109,20 @@
         <p>Quantity: {{ staff.Quantity }}</p>
       </div>
 
-      <label for="preparationDuration">Preparation Duration (minutes):</label>
-      <input type="number" id="preparationDuration" name="preparationDuration" [(ngModel)]="operationType.PhasesDuration.Preparation" min="1" />
+      <div class="duration-field">
+        <label for="preparationDuration">Preparation Duration (minutes):</label>
+        <input type="number" [(ngModel)]="operationType.PhasesDuration.Preparation" name="preparationDuration" id="preparationDuration" min="1" />
+      </div>
 
-      <label for="surgeryDuration">Surgery Duration (minutes):</label>
-      <input type="number" id="surgeryDuration" name="surgeryDuration" [(ngModel)]="operationType.PhasesDuration.Surgery" min="1" />
+      <div class="duration-field">
+        <label for="surgeryDuration">Surgery Duration (minutes):</label>
+        <input type="number" [(ngModel)]="operationType.PhasesDuration.Surgery" name="surgeryDuration" id="surgeryDuration" min="1" />
+      </div>
 
-      <label for="cleaningDuration">Cleaning Duration (minutes):</label>
-      <input type="number" id="cleaningDuration" name="cleaningDuration" [(ngModel)]="operationType.PhasesDuration.Cleaning" min="1" />
+      <div class="duration-field">
+        <label for="cleaningDuration">Cleaning Duration (minutes):</label>
+        <input type="number" [(ngModel)]="operationType.PhasesDuration.Cleaning" name="cleaningDuration" id="cleaningDuration" min="1" />
+      </div>
 
       <button type="submit">{{ isEditMode ? 'Update' : 'Submit' }} Operation Type</button>
     </form>

@@ -44,22 +44,14 @@ export class OperationTypesService {
         }
       })),
       "PhasesDuration": {
-        "Phases": {
-          "Preparation": {
-            "Quantity": {
-              "Value": operationType.PhasesDuration.Preparation
-            }
-          },
-          "Surgery": {
-            "Quantity": {
-              "Value": operationType.PhasesDuration.Surgery
-            }
-          },
-          "Cleaning": {
-            "Quantity": {
-              "Value": operationType.PhasesDuration.Cleaning
-            }
-          }
+        "Preparation": {
+          "Value": operationType.PhasesDuration.Preparation
+        },
+        "Surgery": {
+          "Value": operationType.PhasesDuration.Surgery
+        },
+        "Cleaning": {
+          "Value": operationType.PhasesDuration.Cleaning
         }
       }
     };
@@ -90,25 +82,7 @@ export class OperationTypesService {
           "Value": staff.Quantity
         }
       })),
-      "PhasesDuration": {
-        "Phases": {
-          "Preparation": {
-            "Quantity": {
-              "Value": operationType.PhasesDuration.Preparation
-            }
-          },
-          "Surgery": {
-            "Quantity": {
-              "Value": operationType.PhasesDuration.Surgery
-            }
-          },
-          "Cleaning": {
-            "Quantity": {
-              "Value": operationType.PhasesDuration.Cleaning
-            }
-          }
-        }
-      },
+      "PhasesDuration": "PREPARATION: " + operationType.PhasesDuration.Preparation + ",SURGERY: " + operationType.PhasesDuration.Surgery + ",CLEANING: " + operationType.PhasesDuration.Cleaning,
       "Status": operationType.Status
     };
 
@@ -147,9 +121,9 @@ export class OperationTypesService {
               Quantity: staff.quantity.value
             })),
             PhasesDuration: {
-              Preparation: item.phasesDuration.phases.preparation.value,
-              Surgery: item.phasesDuration.phases.surgery.value,
-              Cleaning: item.phasesDuration.phases.cleaning.value
+              Preparation: item.phasesDuration.preparation.value,
+              Surgery: item.phasesDuration.surgery.value,
+              Cleaning: item.phasesDuration.cleaning.value
             },
             Status: item.status.toString()
           }));

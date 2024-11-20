@@ -49,6 +49,7 @@ namespace Controllers
 
         // GET: api/OperationTypes/{id}
         [HttpGet("{id}")]
+        // [Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
         {
             var operationType = await _service.GetByIdAsync(new OperationTypeId(id));
@@ -63,6 +64,7 @@ namespace Controllers
 
         // POST: api/OperationTypes
         [HttpPost]
+        // [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> Create([FromBody] CreatingOperationTypeDto dto)
         {
             if (dto == null)
@@ -87,6 +89,7 @@ namespace Controllers
         
         // PUT: api/OperationTypes/id
         [HttpPut("{id}")]
+        // [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> Update(Guid id, [FromBody] OperationTypeDto dto)
         {
             try
@@ -114,6 +117,7 @@ namespace Controllers
 
         // Inactivate: api/OperationTypes/5
         [HttpDelete("{id}")]
+        // [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
         {
             var operationType = await _service.InactivateAsync(new OperationTypeId(id));
@@ -136,6 +140,7 @@ namespace Controllers
         
         // DELETE: api/OperationTypes/5
         [HttpDelete("{id}/hard")]
+        // [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> HardDelete(Guid id)
         {
             try
@@ -148,11 +153,11 @@ namespace Controllers
                     return NotFound();
                 }
 
-                if (_service.CheckIfOperationTypeIsActive(operationType))
-                {
-                    _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error deleting operation type: operation type is active"));
-                    return BadRequest(new { Message = "It is not possible to delete an active operation type." });
-                }
+                // if (_service.CheckIfOperationTypeIsActive(operationType))
+                // {
+                //     _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error deleting operation type: operation type is active"));
+                //     return BadRequest(new { Message = "It is not possible to delete an active operation type." });
+                // }
 
                 _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Delete, new Message($"Delete {operationType.Id}"));
                 return Ok(operationType);

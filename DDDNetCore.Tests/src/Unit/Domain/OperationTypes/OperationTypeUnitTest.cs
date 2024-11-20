@@ -23,13 +23,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
                 new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, new Quantity(1)),
                 new RequiredStaff(Role.Nurse, Specialization.ANAESTHESIOLOGY, new Quantity(2))
             };
-            _phasesDuration = new PhasesDuration(new Dictionary<Phase, Quantity>
-            {
-                { Phase.Preparation, new Quantity(30) },
-                { Phase.Surgery, new Quantity(60) },
-                { Phase.Cleaning, new Quantity(20) }
-            }
-            );
+            _phasesDuration = new PhasesDuration(30, 60, 20);
             _status = Status.Active;
         }
 
@@ -64,7 +58,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         public void Constructor_WithStringParameters_ShouldInitializeCorrectly()
         {
             var requiredStaffStrings = new List<string> { "Doctor,Cardiology,1", "Nurse,General,2" };
-            var phasesDurationStrings = new List<string> { "30", "60", "20" };
+            var phasesDurationStrings = new List<string> { "PREPARATION:30", "SURGERY:60", "CLEANING:20" };
             var operationType = new OperationType("Example Operation", "Cardiology", requiredStaffStrings, phasesDurationStrings);
 
             Assert.NotEmpty(operationType.Id.Value);
@@ -74,9 +68,9 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
             Assert.Equal(1, operationType.RequiredStaff[0].Quantity.Value);
             Assert.Equal(Role.Doctor, operationType.RequiredStaff[0].Role);
             Assert.Equal(Specialization.CARDIOLOGY, operationType.RequiredStaff[0].Specialization);
-            Assert.Equal(30, operationType.PhasesDuration.Phases.GetValueOrDefault(Phase.Preparation).Value);
-            Assert.Equal(60, operationType.PhasesDuration.Phases.GetValueOrDefault(Phase.Surgery).Value);
-            Assert.Equal(20, operationType.PhasesDuration.Phases.GetValueOrDefault(Phase.Cleaning).Value);
+            Assert.Equal(30, operationType.PhasesDuration.Preparation.Value);
+            Assert.Equal(60, operationType.PhasesDuration.Surgery.Value);
+            Assert.Equal(20, operationType.PhasesDuration.Cleaning.Value);
         }
 
         [Fact]
@@ -117,12 +111,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
             {
                 new RequiredStaff(Role.Technician, Specialization.ORTHOPAEDICS, new Quantity(1))
             };
-            var newPhasesDuration = new PhasesDuration(new Dictionary<Phase, Quantity>
-            {
-                { Phase.Preparation, new Quantity(40) },
-                { Phase.Surgery, new Quantity(70) },
-                { Phase.Cleaning, new Quantity(30) }
-            });
+            var newPhasesDuration = new PhasesDuration(40, 70, 30);
             var newStatus = Status.Inactive;
 
             operationType.Name = newName;
