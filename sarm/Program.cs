@@ -50,8 +50,8 @@ builder.Services.AddDbContext<SARMDbContext>(options =>
 
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowFrontend", policy => {
-            policy.WithOrigins("http://localhost:4200")
+        options.AddPolicy("AllowFrontendBackendAnd3D", policy => {
+            policy.WithOrigins("http://localhost:4200", "http://localhost:5500", "http://localhost:63343")
                 .AllowCredentials()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
@@ -179,7 +179,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowFrontend");
+app.UseCors("AllowFrontendBackendAnd3D");
 
 // app.UseSession();
 
