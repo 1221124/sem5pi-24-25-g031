@@ -417,5 +417,31 @@ namespace Domain.Staffs
                 return null;
             }
         }
+
+        public async Task<StaffDto> AddUserId(Email email, Guid id)
+        {
+            if (email == null)
+            {
+                return null;
+            }
+
+            if (id == null)
+            {
+                return null;
+            }
+
+            var staff = await _repo.GetByEmailAsync(email);
+
+            if (staff == null)
+            {
+                return null;
+            }
+
+            staff.UserId = new UserId(id);
+
+            await _unitOfWork.CommitAsync();
+
+            return StaffMapper.ToDto(staff);
+        }
     }
 }

@@ -131,8 +131,10 @@ namespace Controllers
             {
                 var staff = await _staffService.GetByEmailAsync(dto.Email);
                 if (staff != null) {
-                    staff.UserId = new UserId(user.Id);
-                    await _staffService.UpdateAsync(dto.Email, StaffMapper.ToEntityFromUpdating(staff));
+                    staff = await _staffService.AddUserId(dto.Email, user.Id);
+                    if (staff == null) {
+                        return BadRequest(new { Message = $"Failed to add UserId to Staff with email {dto.Email.Value}." });
+                    }
                 }
 
                 (string subject, string body) = await _emailService.GenerateVerificationEmailContent(dto.Email);
