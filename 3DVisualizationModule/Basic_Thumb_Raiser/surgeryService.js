@@ -3,25 +3,48 @@ export default class SurgeryService {
         this.rooms = rooms; // Lista de salas 3D
     }
 
+    async fetchMap() {
+        try {
+            const response = await fetch("./Loquitas.json"); // Caminho relativo do arquivo
+            if (!response.ok) {
+                throw new Error("Erro ao carregar o mapa Loquitas.json");
+            }
+            const mapData = await response.json();
+            return mapData;
+        } catch (error) {
+            console.error("Erro ao buscar Loquitas.json:", error);
+            return null;
+        }
+    }
+
     async fetchAndUpdateRooms() {
         try {
-            const surgeries = await fetch("http://localhost:5000/api/Surgeries").then((res) => res.json());
-            this.updateRoomsBasedOnSurgeries(surgeries);
+            const surgeriesRooms = await fetch("http://localhost:5500/api/SurgeryRooms").then((res) => res.json());
+            await this.updateRoomsBasedOnSurgeries(surgeriesRooms);
         } catch (error) {
             console.error("Erro ao buscar cirurgias e atualizar salas:", error);
         }
     }
 
-    updateRoomsBasedOnSurgeries(surgeries) {
-        const currentTime = new Date();
-        surgeries.forEach((surgery) => {
-            const room = this.rooms.find((r) => r.number === surgery.surgeryRoom);
+    async updateRoomsBasedOnSurgeries(surgeriesRooms) {
+        try{
+            const mapData = await this.fetchMap();
+            if (!mapData) return;
 
-            if (room) {
-                const isOccupied = surgery.currentStatus === "AVAILABLE" && isTimeMatching(currentTime, surgery);
-                room.setOccupiedState(isOccupied);
-            }
-        });
+            surgeriesRooms.forEach((surgery) => {
+                const room = surgery.surgeryRoom;
+
+                if(room === 'OR1' && surgery.currentStatus === 'OCUPIED'){
+                    const map = mapData.map;
+                    const or1Coordinates = [2, 2];
+
+                    map[or1Coordinates[0]][or1Coordinates[1]] = 6; // Define o número "6"
+                    console.log(`Atualizado o mapa para OR1 nas coordenadas ${or1Coordinates}`);
+                }
+            });
+        } catch (error) {
+            console.error("Erro ao atualizar salas com base nas cirurgias:", error);
+        }
     }
 }
 
