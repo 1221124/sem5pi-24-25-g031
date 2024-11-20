@@ -26,6 +26,6 @@ export class AdminMenuComponent implements OnInit {
   }
 
   navigateTo3D(): void {
-    window.location.href = 'http://localhost:63343/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE';
+    window.location.href = 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE';
   }
 }
