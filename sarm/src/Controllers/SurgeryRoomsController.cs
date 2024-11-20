@@ -27,7 +27,7 @@ namespace DDDNetCore.Controllers{
                 if(surgeries == null || surgeries.Count == 0)
                     return NotFound();
 
-                return Ok(surgeries);
+                return Ok(new {surgery = surgeries});
             }
             catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);
