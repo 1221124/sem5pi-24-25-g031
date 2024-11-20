@@ -98,10 +98,17 @@ export class StaffsService {
       });
   }
 
+  async deleteStaff(id: string, accessToken: string) {
+    const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    if (!guidRegex.test(id)) {
+      throw new Error('Invalid ID format. Please provide a valid GUID.');
+    }
 
-  deleteStaff(staffEmail: any): Observable<any> {
-    console.log('Deleting staff 2:', staffEmail);
-    return this.http.delete(`${this.apiUrl}/${staffEmail}`, httpOptions);
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers };
+    return await firstValueFrom(this.http.delete(`${environment.staffs}/${id}`, options));
   }
 
 
@@ -155,14 +162,14 @@ export class StaffsService {
       })),
       "specialization": staff.specialization,
       "pendingPhoneNumber": {
-        "value": staff.ContactInformation.PhoneNumber
+        "value": staff.ContactInformation.PhoneNumber,
       },
       "pendingEmail": {
         "value": staff.ContactInformation.Email
       }
     };
 
-
+  console.log(staffDto);
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${accessToken}`
     });
