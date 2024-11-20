@@ -78,6 +78,12 @@ namespace Infrastructure.StaffRepository
             return await this._objs
                 .AsQueryable().Where(x => staffRole.Equals(x.StaffRole)).ToListAsync();
         }
+
+        public async Task<List<Staff>> GetWithUserIdNull()
+        {
+            return await this._objs
+                .AsQueryable().Where(x => x.UserId == null).ToListAsync();
+        }
     }
 
 }

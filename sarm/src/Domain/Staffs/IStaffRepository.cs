@@ -12,5 +12,6 @@ namespace Domain.Staffs
         Task<List<Staff>> GetBySpecializationAsync(Specialization specialization);
         Task<Staff> GetByLicenseNumber(LicenseNumber licenseNumber);
         Task<List<Staff>> GetByRoleAsync(StaffRole staffRole);
+        Task<List<Staff>> GetWithUserIdNull();
     }
 }

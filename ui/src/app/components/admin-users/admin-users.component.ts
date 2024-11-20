@@ -1,67 +1,159 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth/auth.service';
-import { OperationTypesService } from '../../services/operation-types/operation-types.service';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { AdminUsersService } from '../../services/admin-users/admin-users.service';
+import { Staff } from '../../models/staff.model';
+import { CommonModule, NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-users.component.html',
-  styleUrls: ['./admin-users.component.css']
+  styleUrls: ['./admin-users.component.css'],
+  imports: [CommonModule, NgIf, NgForOf]
 })
 export class AdminUsersComponent implements OnInit {
-  userForm: FormGroup;
-  roles : string[] = [];
-  emailPattern = /^[a-zA-Z0-9._%+-]+@isep\.ipp\.pt$/;
+  staff: Staff = {
+    Id: '',
+    FullName: {
+      FirstName: '',
+      LastName: ''
+    },
+    licenseNumber: '',
+    specialization: '',
+    staffRole: '',
+    ContactInformation: {
+      Email: '',
+      PhoneNumber: ''
+    },
+    status: '',
+    SlotAppointment: [
+      {
+        Start: '',
+        End: ''
+      }
+    ],
+    SlotAvailability: [
+      {
+        Start: '',
+        End: ''
+      }
+    ]
+  };
 
-  accessToken : string = '';
+  staffs: Staff[] = [];
+  accessToken: string = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private operationTypesService: OperationTypesService, private router: Router) {
-    this.userForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email, this.emailValidator.bind(this)]],
-      role: ['', Validators.required]
-    });
-  }
+  message: string = '';
+  isError: boolean = false;
+
+  filter = {
+    pageNumber: 1
+  };
+  totalItems: number = 0;
+  totalPages: number = 1;
+
+  constructor(private authService: AuthService, private userService: AdminUsersService, private router: Router) {}
 
   async ngOnInit() {
+    this.authService.message$.subscribe((newMessage) => {
+      this.message = newMessage;  
+    });
+    this.authService.isError$.subscribe((errorStatus) => {
+      this.isError = errorStatus;  
+    });
     if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateMessage(
+        'You are not authenticated or authorized! Redirecting to login...'
+      );
       this.authService.updateIsError(true);
       setTimeout(() => {
         this.router.navigate(['']);
       }, 3000);
       return;
     }
+
     this.accessToken = this.authService.getToken();
-    await this.operationTypesService.getStaffRoles().then((data) => {
-      this.roles = data;
+    this.fetchStaffs();
+  }
+
+  async fetchStaffs() {
+    await this.userService.getStaff(this.filter, this.accessToken)
+    .then(response => {
+      if (response.status === 200) {
+        if (response.body) {
+          this.staffs = response.body.staffs;
+          this.totalItems = response.body.totalItems || 0;
+          this.totalPages = Math.ceil(this.totalItems / 2);
+        } else {
+          this.staffs = [];
+          this.authService.updateMessage('Unexpected response body: ' + response.body);
+          this.authService.updateIsError(true);
+          this.totalItems = 0;
+          this.totalPages = 1;
+        }
+      } else {
+        this.staffs = [];
+        this.authService.updateMessage('Unexpected response status: ' + response.status);
+        this.authService.updateIsError(true);
+        this.totalItems = 0;
+        this.totalPages = 1;
+      }
+    }).catch(error => {
+      if (error.status === 404) {
+        this.staffs = [];
+        this.authService.updateMessage('No staff found!');
+        this.authService.updateIsError(true);
+        this.totalItems = 0;
+        this.totalPages = 1;
+      } else if (error.status === 401) {
+        this.authService.updateMessage('You are not authenticated or authorized! Redirecting to login...');
+        this.authService.updateIsError(true);
+        this.totalItems = 0;
+        this.totalPages = 1;
+        setTimeout(() => {
+          this.router.navigate(['']);
+        }, 3000);
+        return;
+      } else {
+        this.staffs = [];
+        this.authService.updateMessage('Unexpected error: ' + error);
+        this.authService.updateIsError(true);
+        this.totalItems = 0;
+        this.totalPages = 1;
+      }
     });
   }
 
-  emailValidator(control: any) {
-    var role = this.userForm?.get('role')?.value;
-    role = role?.toLowerCase();
-    if (role) {
-      const validEmailRegex = new RegExp(`^[a-zA-Z0-9._%+-]+@isep\.ipp\.pt$`);
-      return validEmailRegex.test(control.value) ? null : { invalidEmail: true };
-    }
-    return null;
-  }
-
-  async onSubmit() {
-    if (this.userForm.valid) {
-      const { email, role } = this.userForm.value;
-      const response = await this.authService.createUser(email, role, this.accessToken);
+  async createUser(staff: Staff) {
+    try {
+      const response = await this.authService.createUser(
+        staff.ContactInformation.Email,
+        staff.staffRole,
+        this.accessToken
+      );
       if (response?.status === 201) {
         this.authService.updateMessage('User created successfully');
         this.authService.updateIsError(false);
       } else {
-        this.authService.updateMessage('Unexpected response during user creation: ' + response?.status);
+        this.authService.updateMessage(
+          `Failed to create user. Status: ${response?.status}`
+        );
         this.authService.updateIsError(true);
       }
+    } catch (error) {
+      console.error('Error creating user:', error);
     }
+  }
+
+  async changePage(pageNumber: number) {
+    if (pageNumber > 0 && pageNumber <= this.totalPages) {
+      this.filter.pageNumber = pageNumber;
+      await this.fetchStaffs();
+    }
+  }
+
+  goToAdmin() {
+    this.router.navigate(['/admin']);
   }
 }

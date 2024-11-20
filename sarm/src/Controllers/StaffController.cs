@@ -168,6 +168,31 @@ namespace Controllers
             return Ok(new {message = licenseNumber.Value});
         }
 
+        //GET: api/Staff/userIdNull
+        [HttpGet("userIdNull")]
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetByUserIdNull([FromQuery] string? pageNumber)
+        {
+            var staff = await _service.GetWithUserIdNull();
+
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            var totalItems = staff.Count;
+            
+            if (pageNumber != null && int.TryParse(pageNumber, out int page))
+            {
+                var paginatedStaffs = staff
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                staff = paginatedStaffs;
+            }
+
+            return Ok(new { staff = staff, totalItems = totalItems });
+        }
+
         // POST: api/Staff
         [HttpPost]
         public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
