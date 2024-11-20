@@ -1,11 +1,11 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { environment, httpOptions } from '../../../environments/environment';
-import { PatientsService } from '../admin-patients/admin-patients.service';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {environment, httpOptions} from '../../../environments/environment';
+import {PatientsService} from '../admin-patients/admin-patients.service';
 
 import {firstValueFrom, throwError} from 'rxjs';
-import { OperationRequest } from '../../models/operation-request.model';
+import {OperationRequest} from '../../models/operation-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,29 +16,28 @@ export class OperationRequestsService {
   constructor(
     private http: HttpClient, private router: Router,
     private patientsService: PatientsService
-  ) {}
+  ) {
+  }
 
-  post(
+  async post(
+    accessToken: string,
     staffDto: string,
-    patientDto: string,
+    patientDto: any,
     operationTypeDto: string,
     deadlineDateDto: string,
     priorityDto: string
-  ){
+  ) {
 
-    try{
+    try {
       const deadlineDate = new Date(deadlineDateDto);
       console.log('Deadline Date:', deadlineDate);
-    }
-    catch(error){
+    } catch (error) {
       console.error('Error parsing date:', error);
       return throwError('Error parsing date');
     }
 
-    const dto ={ //creatingOperationRequestDto
-      "staff": {
-        "value": staffDto
-      },
+    const dto = { //creatingOperationRequestDto
+      "staff": staffDto,
       "patient": {
         "value": patientDto
       },
@@ -53,50 +52,71 @@ export class OperationRequestsService {
 
     console.log('Operation Request DTO:', dto);
 
-    return this.http.post(environment.operationRequests, dto, httpOptions)
-    .subscribe(
-      response =>{
-        console.log('Operation Request created successfully', response);
-      },
-      error => {
+    let params = new HttpParams();
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = {headers, observe: 'response' as const, params};
+
+    return await firstValueFrom(this.http.post(environment.operationRequests, dto, options))
+      .then(response => {
+        console.log(response);
+
+        if (response.status === 200 || response.status === 201) {
+          return {
+            status: response.status,
+            body: response.body
+          };
+        } else {
+          return {
+            status: response.status,
+            body: []
+          };
+        }
+      }).catch(error => {
         console.log('Operation Request:', dto);
-        console.error('Error creating request:', error)
-      }
-    )
+        console.error('Error creating Operation Request:', error);
+        return {
+          status: error.status,
+          body: []
+        };
+      });
   }
 
-  delete(id: string){
+  delete(id: string) {
     const deleteUrl = environment.operationRequests + '/' + id;
     console.log('ID:', id);
     console.log('Delete URL:', deleteUrl);
 
     return this.http.delete(deleteUrl, httpOptions)
-    .subscribe(
-      response => {
-        console.log('Operation Request deleted successfully', response);
-      },
-      error => {
-        console.error('Error deleting request:', error);
-      }
-    );
+      .subscribe(
+        response => {
+          console.log('Operation Request deleted successfully', response);
+        },
+        error => {
+          console.error('Error deleting request:', error);
+        }
+      );
   }
 
-  put(
+  async put(
+    accessToken: string,
     idDto: string,
     deadlineDateDto: string,
     priorityDto: string,
     statusDto: string
-  ){
+  ) {
 
     console.log('ID:', idDto);
 
-    try{
+    try {
       const deadlineDate = new Date(deadlineDateDto);
       console.log('Deadline Date:', deadlineDate);
-    }
-    catch(error){
+    } catch (error) {
       console.error('Error parsing date:', error);
-      return throwError('Error parsing date');
     }
 
     const dto = { //updatingOperationRequestDto
@@ -110,14 +130,37 @@ export class OperationRequestsService {
 
     console.log('Operation Request DTO:', dto);
 
-    return this.http.put(environment.operationRequests, dto, httpOptions)
-    .subscribe(
-      response => {
-        console.log('Operation Request updated successfully', response);
-      },
-      error => {
-        console.error('Error updating request:', error);
+    let httpParams = new HttpParams();
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
     });
+
+    const options = {headers, observe: 'response' as const, httpParams};
+
+    return await firstValueFrom(this.http.put(environment.operationRequests, dto, options))
+      .then(response => {
+        console.log(response);
+
+        if (response.status === 200) {
+          return {
+            status: response.status,
+            body: response.body
+          };
+        } else {
+          return {
+            status: response.status,
+            body: []
+          };
+        }
+      }).catch(error => {
+        console.error('Error updating Operation Request:', error);
+        return {
+          status: error.status,
+          body: []
+        };
+      });
   }
 
   async getAll(accessToken: string) {
@@ -128,7 +171,7 @@ export class OperationRequestsService {
       'Authorization': `Bearer ${accessToken}`
     });
 
-    const options = { headers, observe: 'response' as const, params };
+    const options = {headers, observe: 'response' as const, params};
 
     return await firstValueFrom(this.http.get<any[]>(`${environment.operationRequests}`, options))
       .then(response => {
@@ -167,7 +210,7 @@ export class OperationRequestsService {
     searchDeadlineDate: string,
     searchPriority: string,
     searchRequestStatus: string
-  ){
+  ) {
 
     let searchUrl = environment.operationRequests + '/filtered?';
     const params = [];
@@ -177,7 +220,7 @@ export class OperationRequestsService {
       params.push('searchId=' + encodeURIComponent(searchIdDto));
     }
 
-    if (searchLicenseNumber){
+    if (searchLicenseNumber) {
       console.log('License Number: ', searchLicenseNumber);
       params.push('searchLicenseNumber=' + encodeURIComponent(searchLicenseNumber))
     }
@@ -228,22 +271,39 @@ export class OperationRequestsService {
       'Authorization': `Bearer ${accessToken}`
     });
 
-    const options = { headers, observe: 'response' as const, httpParams };
+    const options = {headers, observe: 'response' as const, httpParams};
 
-    return await firstValueFrom(this.http.get<{ operationRequests: any[], totalItems: number }>(searchUrl, options))
+    return await firstValueFrom(this.http.get<any[]>(searchUrl, options))
       .then(response => {
         console.log(response);
 
-        if (response.status === 200 && response.body) {
-          return {
-            status: response.status,
-            body: response.body
-          };
+        if (response.status === 200 || response.status === 201) {
+          if (response.body) {
+            return {
+              status: response.status,
+              body: response.body.map(request => {
+                return {
+                  id: request.id,
+                  staff: request.staff.value,
+                  patient: request.patient.value,
+                  operationType: request.operationType.value,
+                  deadlineDate: request.deadlineDate.date,
+                  priority: request.priority,
+                  status: request.status
+                };
+              })
+            }
+          } else {
+            return {
+              status: response.status,
+              body: []
+            };
+          }
         } else {
           return {
             status: response.status,
             body: []
-          };
+          }
         }
       }).catch(error => {
         console.error('Error fetching Operation Request:', error);
@@ -254,7 +314,7 @@ export class OperationRequestsService {
       });
   }
 
-  async getRequestStatus(accessToken: string){
+  async getRequestStatus(accessToken: string) {
     let params = new HttpParams();
 
     const headers = new HttpHeaders({
@@ -262,18 +322,23 @@ export class OperationRequestsService {
       'Authorization': `Bearer ${accessToken}`
     });
 
-    const options = { headers, observe: 'response' as const, params };
+    const options = {headers, observe: 'response' as const, params};
 
-    return await firstValueFrom(this.http.get<any[]>(environment.enums + "/requestStatuses", options))
+    return await firstValueFrom(this.http.get<string[]>(environment.enums + "/requestStatuses", options))
       .then(response => {
         console.log(response);
 
         if (response.status === 200 && response.body) {
           return {
             status: response.status,
-            body: response.body
-          };
-        }else{
+            body: response.body.map(status => {
+              return {
+                value: status
+              }
+            })
+          }
+
+        } else {
           return {
             status: response.status,
             body: []
@@ -289,7 +354,7 @@ export class OperationRequestsService {
       });
   }
 
-  async getPriority(accessToken: string){
+  async getPriority(accessToken: string) {
     let params = new HttpParams();
 
     const headers = new HttpHeaders({
@@ -297,7 +362,7 @@ export class OperationRequestsService {
       'Authorization': `Bearer ${accessToken}`
     });
 
-    const options = { headers, observe: 'response' as const, params };
+    const options = {headers, observe: 'response' as const, params};
 
     return firstValueFrom(this.http.get<string[]>(environment.enums + "/priorities", options))
       .then(response => {
@@ -308,17 +373,18 @@ export class OperationRequestsService {
             status: response.status,
             body: response.body
           };
-        }else{
+        } else {
           return {
             status: response.status,
             body: []
           }
         }
-    }).catch(error => {
-    console.error('Error fetching Priorities:', error);
-    return {
-      status: error.status,
-      body: []
-    }});
+      }).catch(error => {
+        console.error('Error fetching Priorities:', error);
+        return {
+          status: error.status,
+          body: []
+        }
+      });
   }
 }

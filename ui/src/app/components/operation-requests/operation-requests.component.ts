@@ -23,14 +23,14 @@ import { Router } from '@angular/router';
 export class OperationRequestsComponent implements OnInit {
   requests: OperationRequest[] = [];
   staffs: Staff[] = [];
-  patients: Patient[] = [];
+  patients: any[] = [];
   operationTypes: OperationType[] = [];
   priorities: string[] = [];
   statuses: string[] = [];
 
   id: string = '';
   staff: string = '';
-  patient: string = '';
+  patient: any = '';
   operationType: string = '';
   deadlineDate: string = '';
   priority: string = '';
@@ -108,6 +108,8 @@ export class OperationRequestsComponent implements OnInit {
       return;
     }
     this.accessToken = this.authService.getToken();
+    console.log("access token: ", this.accessToken);
+
     console.log("loading op requests...");
     await this.loadOperationRequests();
     console.log("op requests: ", this.requests);
@@ -145,7 +147,7 @@ export class OperationRequestsComponent implements OnInit {
     await this.service.getRequestStatus(this.accessToken)
       .then(response => {
         if (response.status === 200 && response.body) {
-          this.statuses = response.body.map(status => status.name);
+          this.statuses = response.body.map(status => status.value);
           this.message = 'Request Status obtained!';
           this.success = true;
         } else {
@@ -266,7 +268,16 @@ export class OperationRequestsComponent implements OnInit {
       .then(response => {
         if(response.status === 200 || response.status === 201){
           if(response.body){
-            this.staffs = response.body.staffs;
+            this.staffs = response.body.staffs.map(
+              staff => {
+                return {
+                  ...staff,
+                  name: staff.FullName.FirstName.Value + ' ' + staff.FullName.LastName.Value,
+                  licenseNumber: staff.licenseNumber
+                };
+              }
+            )
+
             this.message = 'Staffs obtained!';
             this.success = true;
           }else{
@@ -299,45 +310,20 @@ export class OperationRequestsComponent implements OnInit {
       });
   }
 
-  async loadPatients() {
-    // await this.servicePatient.getPatients()
-    //   .then(response => {
-    //     if(response.status === 200 || response.status === 201){
-    //       if(response.body){
-    //         this.patients = response.body;
-    //         this.message = 'Patients obtained!';
-    //         this.success = true;
-    //       }else{
-    //         this.patients = [];
-    //         this.message = 'Response body is null: ' + response.body;
-    //         this.success = false;
-    //       }
-    //     }else{
-    //       this.patients = [];
-    //       this.message = 'Unexpected response status: ' + response.status;
-    //       this.success = false;
-    //     }
-    //   }).catch(error => {
-    //     if(error.status === 400){
-    //       this.operationTypes = [];
-    //       this.message = 'No Patients found!';
-    //       this.success = false;
-    //     } else if (error.status === 401){
-    //       this.operationTypes = [];
-    //       this.message = 'You are not authorized to view Patients! Please log in...';
-    //       this.success = false;
-    //       setTimeout(() => {
-    //         this.router.navigate(['']);
-    //       }, 3000);
-    //       return;
-    //     }else{
-    //       this.operationTypes = [];
-    //       this.message = 'There was an error fetching the Patients: ' + error;
-    //       this.success = false;
-    //     }
-    //   });
 
-    this.patients = [];
+  async loadPatients() {
+    try {
+      const data = await this.servicePatient.getPatients(/*this.filter, this.accessToken*/).toPromise();
+      console.log("data: ", data);
+      this.patients = data;
+      this.message = 'Patients obtained!';
+      this.success = true;
+    }catch (error) {
+      console.error('Error loading patients:', error);
+      this.patients = [];
+      this.message = 'There was an error fetching the Patients: ' + error;
+      this.success = false;
+    }
   }
 
   async loadOperationTypes(){
@@ -345,7 +331,15 @@ export class OperationRequestsComponent implements OnInit {
       .then(response =>{
         if(response.status === 200 || response.status === 201){
           if(response.body){
-            this.operationTypes = response.body.operationTypes;
+            this.operationTypes = response.body.operationTypes.map(operationType => {
+              return {
+                ...operationType,
+                name: operationType.Name.Value,
+                specialization: operationType.Specialization
+              }
+            });
+
+
             this.message = 'Operation Types obtained!';
             this.success = true;
           }else{
@@ -379,10 +373,10 @@ export class OperationRequestsComponent implements OnInit {
       });
   }
 
-  openCreateModal() {
+  async openCreateModal() {
     console.log('Open Create Modal clicked');
     this.isCreateModalOpen = true;
-    this.create();
+    await this.create();
   }
 
   closeCreateModal() {
@@ -390,10 +384,10 @@ export class OperationRequestsComponent implements OnInit {
     this.isCreateModalOpen = false;
   }
 
-  create() {
+  async create() {
     console.log('Create button clicked');
     if (!this.isFormValid()) return;
-    this.service.post(this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
+    await this.service.post(this.accessToken, this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
     this.closeCreateModal();
     // this.refresh();
     console.log('Operation Request submitted successfully!');
@@ -447,19 +441,39 @@ export class OperationRequestsComponent implements OnInit {
     this.isUpdateModalOpen = false;
   }
 
-  update() {
+  async update() {
     console.log('Update button clicked');
 
     console.log('Request:', this.request);
 
-    this.service.put(this.request.id, this.request.deadlineDate, this.request.priority, this.request.status);
+    await this.service.put(this.accessToken, this.request.id, this.request.deadlineDate, this.request.priority, this.request.status)
+      .then(response => {
+        if (response.status === 200) {
+          this.message = 'Operation Request successfully updated!';
+          this.success = true;
+        } else {
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+        }
+      }).catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to update Operation Requests! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']).then();
+          }, 3000);
+          return;
+        }
+        this.message = 'There was an error updating the Operation Request: ' + error;
+        this.success = false;
+      });
+
     this.closeUpdateModal();
-    // this.refresh();
     console.log('Operation Request updated successfully!');
     this.clearForm();
   }
 
-  confirmUpdate(update: OperationRequest) {
+  async confirmUpdate(update: OperationRequest) {
     if (this.request) {
       console.log("Request before update:", this.request);
 
@@ -476,7 +490,7 @@ export class OperationRequestsComponent implements OnInit {
         this.request.priority = update.priority;
       }
 
-      this.update();
+      await this.update();
 
       console.log('Update confirmed');
       console.log("Updated request:", this.request);
@@ -507,7 +521,35 @@ export class OperationRequestsComponent implements OnInit {
       this.filters.searchDeadlineDate,
       this.filters.searchPriority,
       this.filters.searchStatus
-    ).then
+    ).then(
+      (response) => {
+        console.log("response: ", response);
+
+        if (response.status === 200) {
+          this.requests = response.body.map(request =>
+            ({
+              id: request?.id,
+              staff: request?.staff,
+              patient: request?.patient,
+              operationType: request?.operationType,
+              deadlineDate: request?.deadlineDate,
+              priority: request.priority,
+              status: request.status
+            })
+          );
+
+          console.log('Filtered Operation Requests:', this.requests);
+          this.currentPage = 1;
+          this.totalPages = Math.ceil(this.requests.length / 2);
+        } else {
+          console.error('Unexpected response status:', response.status);
+        }
+      }
+    ).catch(
+      (error) => {
+        console.error('Error loading Operation Requests:', error);
+      }
+    )
     // ).subscribe(
     //   (data) => {
     //     this.requests = data.map(request =>

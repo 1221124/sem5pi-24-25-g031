@@ -13,46 +13,45 @@
         <form class="form-group">
           <!-- Staff Selection -->
           <div>
-            <label for="staff">Select Staff:</label>
             <select *ngIf="staffs?.length" id="staff" name="staff" [(ngModel)]="staff" (focus)="staffTouched = true">
+              <option value="" disabled selected>Select Staff</option>
               <option *ngFor="let staff of staffs" [value]="staff.licenseNumber">
-                {{ staff.licenseNumber }} - {{ staff.ContactInformation.Email }}
+                {{ staff.licenseNumber }} >>> {{ staff.ContactInformation.Email }}
               </option>
             </select>
           </div>
 
           <!-- Patient Selection -->
           <div>
-            <label for="patient">Select Patient:</label>
-            <select id="patient" name="patient" [(ngModel)]="patient" (focus)="patientTouched = true">
-              <option *ngFor="let patient of patients" [value]="patient.MedicalRecordNumber">
-                {{ patient.MedicalRecordNumber }} - {{ patient.ContactInformation.Email }}
+            <select *ngIf="patients?.length" id="patient" name="patient" [(ngModel)]="patient" (focus)="patientTouched = true">
+              <option value="" disabled selected>Select Patient</option>
+              <option *ngFor="let patient of patients" [value]="patient.medicalRecordNumber.value">
+                {{ patient.contactInformation.email.value }} >>> {{ patient.medicalRecordNumber.value }}
               </option>
             </select>
           </div>
 
           <!-- Operation Type Selection -->
           <div>
-            <label for="operationType">Select Operation Type:</label>
-            <select id="operationType" name="operationType" [(ngModel)]="operationType"
+            <select *ngIf="operationTypes?.length" id="operationType" name="operationType" [(ngModel)]="operationType"
               (focus)="operationTypeTouched = true">
+              <option value="" disabled selected>Select Operation Type</option>
               <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">
-                {{ operationType.Name }} - {{ operationType.Specialization }}
+                {{ operationType.Specialization }} >>> {{ operationType.Name }}
               </option>
             </select>
           </div>
 
           <!-- Date Selection -->
           <div>
-            <label for="deadlineDate">Select Date:</label>
             <input type="date" id="deadlineDate" name="deadlineDate" [(ngModel)]="deadlineDate"
               (focus)="deadlineDateTouched = true" />
           </div>
 
           <!-- Priority Selection -->
           <div>
-            <label for="priority">Select Priority:</label>
             <select id="priority" name="priority" [(ngModel)]="priority" (focus)="priorityTouched = true">
+              <option value="" disabled selected>Select Priority</option>
               <option *ngFor="let priority of priorities" [value]="priority">
                 {{ priority }}
               </option>
@@ -92,8 +91,10 @@
             <div class="filter-container">
               <select id="filters.searchOperationType" name="filters.searchOperationType"
                 [(ngModel)]="filters.searchOperationType">
-                <option *ngFor="let operationType of operationTypes" [value]="operationType">{{ operationType
-                  }}</option>
+                <option value="" disabled selected>Select Operation Type</option>
+                <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">
+                  [{{ operationType.Specialization }}] {{ operationType.Name }}
+                </option>
               </select>
             </div>
           </th>
@@ -105,6 +106,7 @@
           <th>Priority
             <div class="filter-container">
               <select id="filters.searchPriority" name="filters.searchPriority" [(ngModel)]="filters.searchPriority">
+                <option value="" disabled selected>Select Priority</option>
                 <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
               </select>
             </div>
@@ -112,6 +114,7 @@
           <th>Status
             <div class="filter-container">
               <select id="filters.searchStatus" name="filters.searchStatus" [(ngModel)]="filters.searchStatus">
+                <option value="" disabled selected>Select Status</option>
                 <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
               </select>
             </div>
