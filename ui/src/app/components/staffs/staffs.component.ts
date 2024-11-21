@@ -318,6 +318,17 @@ export class StaffsComponent implements OnInit {
     //this.isCreateModalOpen = false;
   }
 
+  startEditStaff(staff: Staff, isActivate: boolean): void {
+    this.staff = { ...staff };
+    if (isActivate) {
+      this.showCreateForm = false;
+      this.staff.status = 'Active';
+    } else {
+      this.showCreateForm = true;
+    }
+    this.isEditMode = true;
+  }
+
   async inactivate(staff: string) {
     await this.staffService.deleteStaff(staff, this.accessToken)
       .then(response => {
@@ -345,6 +356,7 @@ export class StaffsComponent implements OnInit {
   }
 
   async activate(staff: Staff) {
+    this.startEditStaff(staff, true);
     await this.update(staff.Id);
   }
 
