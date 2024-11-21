@@ -101,7 +101,6 @@ required_staff(knee_Replacement_Surgery,nurse,anaesthesiology,1).
 required_staff(knee_Replacement_Surgery,nurse,circulating,1).
 required_staff(knee_Replacement_Surgery,technician,medical_Action,1).
 
-%TODO: UPDATE OPERATION REQUEST ID to be GUID
 surgery_id(1,aCL_Reconstruction_Surgery).
 surgery_id(2,knee_Replacement_Surgery).
 surgery_id(3,knee_Replacement_Surgery).
@@ -169,7 +168,6 @@ intersect_availability((Ini,Fim),[(Ini1,Fim1)|LD],[(Imax,Fmin)|LI],LA):-
 min_max(I,I1,I,I1):- I<I1,!.
 min_max(I,I1,I1,I).
 
-%begin
 assign_doctors_to_surgeries:-
     retractall(assignment_surgery),
     findall(OpReqId,surgery_id(OpReqId,_),OpReqs),
@@ -192,14 +190,12 @@ assign_doctors_to_surgery1(NumDoctors,LDoctors,OpReqId):-
     assert(assignment_surgery(OpReqId,D)),
     NumDoctors1 is NumDoctors-1,
     assign_doctors_to_surgery1(NumDoctors1,LDoctors,OpReqId).
-%end
 
 
 schedule_all_surgeries(Room,Day):-
     retractall(agenda_staff1(_,_,_)),
     retractall(agenda_operation_room1(_,_,_)),
     retractall(availability(_,_,_)),
-    %assign_doctors_to_surgeries,
     findall(_,(agenda_staff(D,Day,Agenda),assertz(agenda_staff1(D,Day,Agenda))),_),
     agenda_operation_room(Or,Date,Agenda),assert(agenda_operation_room1(Or,Date,Agenda)),
     findall(_,(agenda_staff1(D,Date,L),free_agenda0(L,LFA),adapt_timetable(D,Date,LFA,LFA2),assertz(availability(D,Date,LFA2))),_),
@@ -273,7 +269,6 @@ obtain_better_sol1(Room,Day):-
     findall(_,(agenda_staff(D,Day,Agenda),assertz(agenda_staff1(D,Day,Agenda))),_),
     agenda_operation_room(Room,Day,Agenda),assert(agenda_operation_room1(Room,Day,Agenda)),
     findall(_,(agenda_staff1(D,Day,L),free_agenda0(L,LFA),adapt_timetable(D,Day,LFA,LFA2),assertz(availability(D,Day,LFA2))),_),
-    %assign_doctors_to_surgeries,
     availability_all_surgeries(LOpCode,Room,Day),
     agenda_operation_room1(Room,Day,AgendaR),
 		update_better_sol(Day,Room,AgendaR,LOpCode),
