@@ -49,5 +49,10 @@ namespace Domain.OperationRequests
         {
             return date1.Date.Equals(date2.Date);
         }
+
+        public int CompareTo(DeadlineDate deadlineDate)
+        {
+            return Date.CompareTo(deadlineDate.Date);
+        }
     }
 }

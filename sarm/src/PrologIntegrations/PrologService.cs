@@ -17,12 +17,6 @@ namespace DDDNetCore.PrologIntegrations
         private readonly OperationRequestService _operationRequestService;
         private readonly SurgeryRoomService _surgeryRoomService;
         private readonly PrologIntegrationService _prologIntegrationService;
-
-        // Knowledge Base
-        // private readonly Dictionary<string, List<string>> _staff; //remove comma and add ]).
-        // private readonly Dictionary<string, List<string>> _agendaStaff; //remove comma and add ]).
-        // private readonly Dictionary<string, string> _timetable; //already closed
-        // private readonly Dictionary<string, List<string>> _surgery; //remove comma and add ).
         private readonly List<string> _agendaStaff;
         private readonly List<string> _timetable;
         private readonly List<string> _staff;
@@ -122,6 +116,7 @@ namespace DDDNetCore.PrologIntegrations
                 var operationRequests = pendingOperationRequests.Concat(rejectedOperationRequests).ToList();
                 if (operationRequests == null || operationRequests.Count == 0)
                     return false;
+                operationRequests = operationRequests.OrderBy(x => x.DeadlineDate).ToList();
 
                 PopulateSurgeryId(operationRequests);
 
