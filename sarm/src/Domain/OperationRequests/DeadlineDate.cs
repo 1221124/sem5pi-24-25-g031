@@ -27,7 +27,7 @@ namespace Domain.OperationRequests
             Date = deadline;
         }
 
-        public DeadlineDate()
+        public DeadlineDate(DateTime date)
         {
         }
 

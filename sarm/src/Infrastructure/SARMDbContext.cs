@@ -14,6 +14,7 @@ using Domain.Staffs;
 using Infrastructure.Staffs;
 using Infrastructure.DbLogs;
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.SurgeryRooms;
 using DDDNetCore.Infrastructure.Appointments;
 using DDDNetCore.Infrastructure.SurgeryRooms;

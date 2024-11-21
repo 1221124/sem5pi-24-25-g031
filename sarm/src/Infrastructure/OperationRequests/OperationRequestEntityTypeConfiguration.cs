@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.OperationRequests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.OperationRequests;

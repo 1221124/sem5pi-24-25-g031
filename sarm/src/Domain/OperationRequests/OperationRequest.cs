@@ -1,11 +1,10 @@
-using DDDNetCore.Domain.OperationRequests;
+using Domain.OperationRequests;
 using Domain.Shared;
-using Domain.OperationTypes;
 using Domain.Patients;
 using Domain.Staffs;
 
 
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
     public class OperationRequest : Entity<OperationRequestId>, IAggregateRoot
     {
