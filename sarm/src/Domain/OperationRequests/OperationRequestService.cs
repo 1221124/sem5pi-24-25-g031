@@ -41,13 +41,21 @@ namespace DDDNetCore.Domain.OperationRequests
                 await this._repo.AddAsync(operationRequest);
                 await this._unitOfWork.CommitAsync();
                 
-                await _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, "Created {" + operationRequest.Id.Value + "}");
+                await _logService.LogAction(
+                    EntityType.OperationRequest, 
+                    DbLogType.Create,
+                    "Created {" + operationRequest.Id.Value + "}"
+                    );
                 
                 return OperationRequestMapper.ToDto(operationRequest);
             }
             catch (Exception e)
             {
-                await _logService.LogAction(EntityType.OperationRequest, DbLogType.Create, e.ToString());
+                await _logService.LogAction(
+                    EntityType.OperationRequest, 
+                    DbLogType.Create, 
+                    e.ToString()
+                    );
                 return null;
             }
         }

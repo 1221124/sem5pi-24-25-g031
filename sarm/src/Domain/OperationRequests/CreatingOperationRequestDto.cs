@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.OperationRequests;
 using Domain.Patients;
 using Domain.Shared;
 using Domain.Staffs;

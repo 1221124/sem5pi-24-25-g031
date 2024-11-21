@@ -1,4 +1,5 @@
 ﻿using System;
+using DDDNetCore.Domain.OperationRequests;
 using Domain.OperationRequests;
 using Xunit;
 

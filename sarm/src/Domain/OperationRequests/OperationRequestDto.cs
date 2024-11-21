@@ -1,4 +1,5 @@
 using System;
+using DDDNetCore.Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Patients;
 using Domain.Staffs;

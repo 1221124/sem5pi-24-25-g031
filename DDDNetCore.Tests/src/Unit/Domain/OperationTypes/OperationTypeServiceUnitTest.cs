@@ -1,12 +1,12 @@
-using Xunit;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.OperationTypes;
 using Domain.Shared;
+using Moq;
+using Xunit;
 
-namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
+namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
 {
     public class OperationTypeServiceUnitTest
     {

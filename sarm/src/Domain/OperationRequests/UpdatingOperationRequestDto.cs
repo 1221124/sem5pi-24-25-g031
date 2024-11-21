@@ -1,3 +1,5 @@
+using DDDNetCore.Domain.OperationRequests;
+
 namespace Domain.OperationRequests
 {
     public class UpdatingOperationRequestDto
