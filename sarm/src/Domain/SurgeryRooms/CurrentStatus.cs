@@ -3,8 +3,8 @@ namespace DDDNetCore.Domain.Surgeries
     public enum CurrentStatus
     {
         AVAILABLE,
-        OCUPIED,
-        UNDER_MAINTEINANCE
+        OCCUPIED,
+        UNDER_MAINTENANCE
     }
 
     public class CurrentStatusUtils
@@ -15,9 +15,9 @@ namespace DDDNetCore.Domain.Surgeries
             {
                 case CurrentStatus.AVAILABLE:
                     return "Available";
-                case CurrentStatus.OCUPIED:
-                    return "Ocupied";
-                case CurrentStatus.UNDER_MAINTEINANCE:
+                case CurrentStatus.OCCUPIED:
+                    return "Occupied";
+                case CurrentStatus.UNDER_MAINTENANCE:
                     return "Under Maintenance";
                 default:
                     return "Unknown";
@@ -26,14 +26,14 @@ namespace DDDNetCore.Domain.Surgeries
 
         public static CurrentStatus FromString(string status)
         {
-            switch (status)
+            switch (status.ToLower())
             {
-                case "Available":
+                case "available":
                     return CurrentStatus.AVAILABLE;
-                case "Ocupied":
-                    return CurrentStatus.OCUPIED;
-                case "Under Maintenance":
-                    return CurrentStatus.UNDER_MAINTEINANCE;
+                case "occupied":
+                    return CurrentStatus.OCCUPIED;
+                case "under maintenance":
+                    return CurrentStatus.UNDER_MAINTENANCE;
                 default:
                     return CurrentStatus.AVAILABLE;
             }
