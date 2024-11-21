@@ -4,10 +4,19 @@ actor User
 participant System
 participant AzureSQLDatabase
 
-User -> System : Request Update (include data)
-System -> System : Validate data
-System -> AzureSQLDatabase : Update data
-AzureSQLDatabase --> System : Return object
-System --> User : Return success/error message
-
+activate User
+    User -> System : Request Update (include data)
+    activate System
+        
+        System -> System : Validate data
+        
+        System -> AzureSQLDatabase : Update data
+        activate AzureSQLDatabase
+            
+            AzureSQLDatabase --> System : Return object
+        deactivate AzureSQLDatabase
+        
+        System --> User : Return success/error message    
+    deactivate System
+deactivate User
 @enduml
