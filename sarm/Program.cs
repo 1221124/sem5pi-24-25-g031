@@ -36,13 +36,14 @@ AppSettings.Initialize(builder.Configuration);
 
 builder.Services.AddMemoryCache();
 
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-    }).AddNewtonsoftJson(options =>
-    {
+        options.SerializerSettings.Converters.Add(new SpecializationConverter());
         options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
     });
+
 
 builder.Services.AddDbContext<SARMDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))

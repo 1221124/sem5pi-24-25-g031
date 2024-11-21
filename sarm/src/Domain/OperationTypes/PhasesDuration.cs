@@ -49,19 +49,22 @@ namespace Domain.OperationTypes
                 throw new ArgumentException("Input string must be in the format 'PREPARATION:int,SURGERY:int,CLEANING:int'.");
             }
 
-            if (!int.TryParse(parts[0].Split(':')[1], out int preparationValue) || preparationValue < 0)
+            string preparationString = parts[0].Split(':')[1];
+            if (!int.TryParse(preparationString, out int preparationValue) || preparationValue < 0)
             {
-                throw new ArgumentException($"Invalid Preparation value: {parts[0].Split(':')[1]}.");
+                throw new ArgumentException($"Invalid Preparation value: {preparationString}.");
             }
 
-            if (!int.TryParse(parts[1].Split(':')[1], out int surgeryValue) || surgeryValue < 0)
+            string surgeryString = parts[1].Split(':')[1];
+            if (!int.TryParse(surgeryString, out int surgeryValue) || surgeryValue < 0)
             {
-                throw new ArgumentException($"Invalid Surgery value: {parts[1].Split(':')[1]}.");
+                throw new ArgumentException($"Invalid Surgery value: {surgeryString}.");
             }
 
-            if (!int.TryParse(parts[2].Split(':')[1], out int cleaningValue) || cleaningValue < 0)
+            string cleaningString = parts[2].Split(':')[1];
+            if (!int.TryParse(cleaningString, out int cleaningValue) || cleaningValue < 0)
             {
-                throw new ArgumentException($"Invalid Cleaning value: {parts[2].Split(':')[1]}.");
+                throw new ArgumentException($"Invalid Cleaning value: {cleaningString}.");
             }
 
             return new PhasesDuration(preparationValue, surgeryValue, cleaningValue);

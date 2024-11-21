@@ -1,5 +1,8 @@
+using Newtonsoft.Json;
+
 namespace Domain.Shared
 {
+    [JsonConverter(typeof(SpecializationConverter ))]
     public enum Specialization
     {
         ANAESTHESIOLOGY = 0,

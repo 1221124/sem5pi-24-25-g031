@@ -43,7 +43,7 @@ export class OperationTypesService {
           "Value": staff.Quantity
         }
       })),
-      "PhasesDuration": "PREPARATION:" + operationType.PhasesDuration.Preparation + ",SURGERY:" + operationType.PhasesDuration.Surgery + ",CLEANING:" + operationType.PhasesDuration.Cleaning,
+      "PhasesDuration": "PREPARATION: " + operationType.PhasesDuration.Preparation + ",SURGERY: " + operationType.PhasesDuration.Surgery + ",CLEANING: " + operationType.PhasesDuration.Cleaning,
     };
 
     const headers = new HttpHeaders({

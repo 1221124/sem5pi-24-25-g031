@@ -201,9 +201,13 @@ export class OperationTypesComponent implements OnInit {
               this.router.navigate(['']);
             }, 3000);
             return;
+          } else if (error.status == 400) {
+            this.message = error.error;
+            this.success = false;
+          } else {
+            this.message = 'There was an error creating the Operation Type: ' + error;
+            this.success = false;
           }
-          this.message = 'There was an error creating the Operation Type: ' + error;
-          this.success = false;
       });
       await this.fetchOperationTypes();
     }
