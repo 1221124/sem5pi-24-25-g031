@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
+import { Visualization3DComponent } from './components/visualization3-d/visualization3-d.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { TechnicianMenuComponent } from './components/technician-menu/technician
     OperationRequestsComponent,
     OperationTypesComponent,
     StaffsComponent,
-    TechnicianMenuComponent
+    TechnicianMenuComponent,
+    Visualization3DComponent
   ],
   imports: [
     BrowserModule,
