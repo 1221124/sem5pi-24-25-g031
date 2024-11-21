@@ -228,5 +228,6 @@ remove_equals([],[]).
 remove_equals([X|L],L1):-member(X,L),!,remove_equals(L,L1).
 remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
 
-
-
+schedule_appointments(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
+    schedule_all_surgeries(Room,Day),
+    obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).

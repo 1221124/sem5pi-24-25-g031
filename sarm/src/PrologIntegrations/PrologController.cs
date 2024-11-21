@@ -22,9 +22,9 @@ namespace DDDNetCore.PrologIntegrations
             {
                 var value = await _prologIntegration.RunProlog(date);
 
-                if(!value) return BadRequest();
+                if(!value.done) return BadRequest(value.message);
 
-                return Ok();
+                return Ok(value.message);
 
             }
             catch (Exception)

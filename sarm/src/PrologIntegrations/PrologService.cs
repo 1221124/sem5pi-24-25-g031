@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Surgeries;
@@ -6,6 +7,7 @@ using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
 using Domain.Staffs;
+using Infrastructure;
 
 namespace DDDNetCore.PrologIntegrations
 {
@@ -51,13 +53,14 @@ namespace DDDNetCore.PrologIntegrations
             _agendaOperationRoom = [];
         }
 
-        public async Task<bool> RunProlog(string date)
+        public async Task<(bool done, string message)> RunProlog(string date)
         {
             try
             {
                 var dateFormat = DateTime.Parse(date);
 
-                if (await CreateKnowledgeBaseText(dateFormat))
+                var prologIntegration = await CreateKnowledgeBaseText(dateFormat);
+                if (prologIntegration.done)
                 {
                     if (await this._prologIntegrationService.CreateFile(
                         this._staff,
@@ -67,35 +70,37 @@ namespace DDDNetCore.PrologIntegrations
                         this._surgeryId,
                         dateFormat))
                     {
-                        return true;
+                        return (true, prologIntegration.message);
                     }
                 }
 
-                return false;
+                return (false, prologIntegration.message);
             }
             catch (Exception e)
             {
+                return (false, "Error: Prolog Integration failed - " + e.Message.ToString());
                 throw new ArgumentException("Error: Prolog Integration failed - " + e.Message.ToString());
             }
         }
 
         //create file
-        public async Task<bool> CreateKnowledgeBaseText(DateTime date)
+        public async Task<(bool done, string message)> CreateKnowledgeBaseText(DateTime date)
         {
             try
             {
                 //obtain data
                 var staffs = await _staffService.GetAllAsync();
                 if (staffs == null || staffs.Count == 0)
-                    return false;
+                    return (false, "No staff found.");
 
                 var operationTypes = await _operationTypeService.GetByStatusAsync(Status.Active);
                 if (operationTypes == null || operationTypes.Count == 0)
-                    return false;
+                    return (false, "No operation types found.");
 
                 await PopulateStaff(staffs, operationTypes);
 
                 var appointments = await _appointmentService.GetByDateAsync(date);
+                appointments = appointments.FindAll(a => a.SurgeryRoomNumber == SurgeryRoomNumber.OR1);
 
                 await PopulateAgendaStaff(appointments, staffs, date);
                 PopulateTimetable(staffs, date);
@@ -115,7 +120,11 @@ namespace DDDNetCore.PrologIntegrations
 
                 var operationRequests = pendingOperationRequests.Concat(rejectedOperationRequests).ToList();
                 if (operationRequests == null || operationRequests.Count == 0)
-                    return false;
+                    return (false, "No operation requests found.");
+                //only the first AppSettings.MaxOperations will be considered
+                operationRequests = operationRequests.Take(int.Parse(AppSettings.MaxOperations)).ToList();
+                
+                //order by date (closest first)
                 operationRequests = operationRequests.OrderBy(x => x.DeadlineDate).ToList();
 
                 PopulateSurgeryId(operationRequests);
@@ -124,41 +133,36 @@ namespace DDDNetCore.PrologIntegrations
 
                 var surgeryRooms = await _surgeryRoomService.GetAll();
                 if (surgeryRooms == null || surgeryRooms.Count == 0)
-                    return false;
+                    return (false, "No surgery rooms found.");
 
                 PopulateAgendaOperationRoom(surgeryRooms, appointments, date);
 
-                return true;
+                return (true, "Knowledge base text created successfully.");
             }
             catch (Exception)
             {
-                return false;
+                return (false, "Error creating knowledge base text.");
                 throw new Exception("Error creating knowledge base text.");
             }
         }
 
         private async Task PopulateStaff(List<StaffDto> staffs, List<OperationTypeDto> operationTypes)
         {
-            // staff(D20241,Doctor,'Orthopaedics',['ACL Reconstruction Surgery',...]).
-            //staff(license number, role, 'specialization', [op. types associated]).
+            // staff(D20241,Doctor,Orthopaedics,[ACL_Reconstruction_Surgery,...]).
+            //staff(license number, role, specialization, [op. types associated]).
 
             foreach (var staff in staffs) {
-                var value = "staff(" + staff.LicenseNumber.Value + "," + StaffRoleUtils.ToString(staff.StaffRole) + ",'" + SpecializationUtils.ToString(staff.Specialization) + "',[";
+                var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");;
+                var value = "staff(" + staff.LicenseNumber.Value + "," + StaffRoleUtils.ToString(staff.StaffRole) + "," + specialization + ",[";
 
                 if (SpecializationUtils.IsCardiologyOrOrthopaedics(staff.Specialization))
                 {
-                    var specializationOperationTypes = operationTypes.FindAll(o => o.Specialization == staff.Specialization);
-                    foreach (var operationType in specializationOperationTypes)
-                    {
-                        value += "'" + operationType.Name.Value + "',";
-                    }
-                } else {
-                    foreach (var operationType in operationTypes)
-                    {
-                        value += "'" + operationType.Name.Value + "',";
-                    }
+                    operationTypes = operationTypes.FindAll(o => o.Specialization == staff.Specialization);
                 }
-
+                foreach (var operationType in operationTypes) {
+                    var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
+                    value += name + ",";
+                }
                 if (value.EndsWith(",")) value = value[..^1];
                 value += "]).";
 
@@ -233,33 +237,35 @@ namespace DDDNetCore.PrologIntegrations
         }
 
         private void PopulateSurgery(List<OperationTypeDto> operationTypes) {
-            //surgery('ACL Reconstruction Surgery',45,60,45).
-            //surgery('OperationTypeName',TPreparation,TSurgery,TCleaning).
+            //surgery(ACL_Reconstruction_Surgery,45,60,45).
+            //surgery(OperationTypeName,TPreparation,TSurgery,TCleaning).
             foreach (var operationType in operationTypes) {
-                string value = "surgery('" + operationType.Name.Value + "'," + operationType.PhasesDuration.Preparation + "," + operationType.PhasesDuration.Surgery + "," + operationType.PhasesDuration.Cleaning + ").";
+                var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
+                string value = "surgery(" + name + "," + operationType.PhasesDuration.Preparation + "," + operationType.PhasesDuration.Surgery + "," + operationType.PhasesDuration.Cleaning + ").";
                 this._surgery.Add(value);
             }
         }
 
         private void PopulateSurgeryRequiredStaff(List<OperationTypeDto> operationTypes) {
-            //required_staff('ACL Reconstruction Surgery',[(Doctor,'Orthopaedics',3)]).
-            //required_staff('OperationTypeName',[(Role,'Specialization',Quantity)]).
+            //required_staff(ACL_Reconstruction_Surgery,Doctor,Orthopaedics,3).
+            //required_staff(OperationTypeName,Role,Specialization,Quantity).
             foreach (var operationType in operationTypes) {
-                string value = "required_staff(" + operationType.Name.Value + ",[";
+                var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
                 foreach (var staff in operationType.RequiredStaff) {
-                    value += "(" + RoleUtils.ToString(staff.Role) + ",'" + SpecializationUtils.ToString(staff.Specialization) + "'," + staff.Quantity.Value + "),";
+                    var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");
+                    string value = "required_staff(" + name + "," + RoleUtils.ToString(staff.Role) + "," + specialization + "," + staff.Quantity.Value + ").";
+                    this._surgeryRequiredStaff.Add(value);
                 }
-                if (value.EndsWith(",")) value = value[..^1];
-                value += "]).";
-                this._surgeryRequiredStaff.Add(value);
             }
         }
 
         private void PopulateSurgeryId(List<OperationRequestDto> operationRequests) {
-            //surgery_id(ad3d1623-292a-43e0-97c3-48fa8d847a46,'ACL Reconstruction Surgery').
-            //surgery_id('OperationReqId', 'OpTypeName').
+            //surgery_id(ad3d1623_292a_43e0_97c3_48fa8d847a46,ACL_Reconstruction_Surgery).
+            //surgery_id(OperationReqId, OpTypeName).
             foreach (var operationRequest in operationRequests) {
-                string value = "surgery_id(" + operationRequest.Id.ToString() + "," + operationRequest.OperationType + ").";
+                var id = operationRequest.Id.ToString().Replace("-", "_");
+                var operationType = operationRequest.OperationType.Value.Replace(" ", "_").Replace("-", "_");
+                string value = "surgery_id(" + id + "," + operationType + ").";
                 this._surgeryId.Add(value);
             }
         }

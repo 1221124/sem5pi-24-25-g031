@@ -1,7 +1,6 @@
-:-dynamic availability/3.
-:-dynamic assignment_surgery/2.
-:-dynamic agenda_staff/3.
-:-dynamic agenda_staff1/3.
+:- dynamic availability/3.
+:- dynamic agenda_staff/3.
+:- dynamic agenda_staff1/3.
 :-dynamic agenda_operation_room/3.
 :-dynamic agenda_operation_room1/3.
 :-dynamic better_sol/5.
@@ -9,14 +8,14 @@
 % TODO: Use provided date in format yyyyMMdd
 %:-consult('../knowledge_base/kb-{date}.pl').
 
-agenda_staff(D20241,20451202,[(400,480,ap1)]).
-agenda_staff(D20242,20451202,[(400,480,ap1)]).
-agenda_staff(D20243,20451202,[(400,480,ap1)]).
-agenda_staff(D20244,20451202,[]).
-agenda_staff(D20245,20451202,[]).
-agenda_staff(D20246,20451202,[]).
-agenda_staff(D20247,20451202,[(400,480,ap1)]).
-agenda_staff(D20248,20451202,[]).
+agenda_staff(d20241,20451202,[(400,480,ap1)]).
+agenda_staff(d20242,20451202,[(400,480,ap1)]).
+agenda_staff(d20243,20451202,[(400,480,ap1)]).
+agenda_staff(d20244,20451202,[]).
+agenda_staff(d20245,20451202,[]).
+agenda_staff(d20246,20451202,[]).
+agenda_staff(d20247,20451202,[(400,480,ap1)]).
+agenda_staff(d20248,20451202,[]).
 %agenda_staff(N20241,20451202,[]).
 %agenda_staff(N20242,20451202,[]).
 %agenda_staff(N20243,20451202,[]).
@@ -26,14 +25,14 @@ agenda_staff(D20248,20451202,[]).
 %agenda_staff(T20241,20451202,[]).
 %agenda_staff(T20242,20451202,[]).
 
-timetable(D20241,20451202,(420,1020)).
-timetable(D20242,20451202,(420,1020)).
-timetable(D20243,20451202,(540,1080)).
-timetable(D20244,20451202,(480,1020)).
-timetable(D20245,20451202,(420,1140)).
-timetable(D20246,20451202,(540,1080)).
-timetable(D20247,20451202,(600,1200)).
-timetable(D20248,20451202,(600,1200)).
+timetable(d20241,20451202,(0,1440)).
+timetable(d20242,20451202,(0,1440)).
+timetable(d20243,20451202,(0,1440)).
+timetable(d20244,20451202,(0,1440)).
+timetable(d20245,20451202,(0,1440)).
+timetable(d20246,20451202,(0,1440)).
+timetable(d20247,20451202,(0,1440)).
+timetable(d20248,20451202,(0,1440)).
 %timetable(N20241,20451202,(600,1200)).
 %timetable(N20242,20451202,(600,1200)).
 %timetable(N20243,20451202,(600,1200)).
@@ -43,37 +42,58 @@ timetable(D20248,20451202,(600,1200)).
 %timetable(T20241,20451202,(800,1440)).
 %timetable(T20242,20451202,(0,800)).
 
-staff(D20241,Doctor,'Orthopaedics',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-staff(D20242,Doctor,'Orthopaedics',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-staff(D20243,Doctor,'Orthopaedics',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-staff(D20244,Doctor,'Orthopaedics',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-staff(D20245,Doctor,'Orthopaedics',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-staff(D20246,Doctor,'Orthopaedics',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-staff(D20247,Doctor,'Anaesthesiology',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-staff(D20248,Doctor,'Anaesthesiology',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(N20241,Nurse,'Instrumenting',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(N20242,Nurse,'Instrumenting',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(N20243,Nurse,'Anaesthesiology',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(N20244,Nurse,'Anaesthesiology',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(N20245,Nurse,'Circulating',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(N20246,Nurse,'Circulating',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(T20241,Technician,'Medical Action',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
-%staff(T20242,Technician,'Medical Action',['ACL Reconstruction Surgery','Knee Replacement Surgery']).
+staff(d20241,doctor,orthopaedics,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+staff(d20242,doctor,orthopaedics,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+staff(d20243,doctor,orthopaedics,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+staff(d20244,doctor,orthopaedics,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+staff(d20245,doctor,orthopaedics,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+staff(d20246,doctor,orthopaedics,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+staff(d20247,doctor,anaesthesiology,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+staff(d20248,doctor,anaesthesiology,[aCL_Reconstruction_Surgery,knee_Replacement_Surgery]).
+%staff(N20241,Nurse,Instrumenting,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
+%staff(N20242,Nurse,Instrumenting,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
+%staff(N20243,Nurse,Anaesthesiology,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
+%staff(N20244,Nurse,Anaesthesiology,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
+%staff(N20245,Nurse,Circulating,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
+%staff(N20246,Nurse,Circulating,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
+%staff(T20241,Technician,Medical_Action,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
+%staff(T20242,Technician,Medical_Action,[ACL_Reconstruction_Surgery,Knee_Replacement_Surgery]).
 
-surgery('ACL Reconstruction Surgery',45,60,30).
-surgery('Knee Replacement Surgery',45,60,45).
+surgery(aCL_Reconstruction_Surgery,45,60,30).
+surgery(knee_Replacement_Surgery,45,60,45).
 
-%required_staff('ACL Reconstruction Surgery',[(Doctor,Orthopaedics,3),(Doctor,Anaesthesiology,1),(Nurse,Instrumenting,1),(Nurse,Anaesthesiology,1),(Nurse,Circulating,1),(Technician,Medical Action,1)]).
-%required_staff('Knee Replacement Surgery',[(Doctor,Orthopaedics,3),(Doctor,Anaesthesiology,1),(Nurse,Instrumenting,1),(Nurse,Anaesthesiology,1),(Nurse,Circulating,1),(Technician,Medical Action,1)]).
-required_staff('ACL Reconstruction Surgery',Doctor,'Orthopaedics',3).
-required_staff('ACL Reconstruction Surgery',Doctor,'Anaesthesiology',1).
-required_staff('Knee Replacement Surgery',Doctor,'Orthopaedics',3).
-required_staff('Knee Replacement Surgery',Doctor,'Anaesthesiology',1).
+%required_staff(ACL_Reconstruction_Surgery,Doctor,Orthopaedics,3).
+%required_staff(ACL Reconstruction Surgery,Doctor,Anaesthesiology,1).
+%required_staff(ACL_Reconstruction_Surgery,Nurse,Instrumenting,1).
+%required_staff(ACL_Reconstruction_Surgery,Nurse,Anaesthesiology,1).
+%required_staff(ACL_Reconstruction_Surgery,Nurse,Circulating,1).
+%required_staff(ACL_Reconstruction_Surgery,Technician,Medical_Action,1).
+%required_staff(Knee_Replacement_Surgery,Doctor,Orthopaedics,3).
+%required_staff(Knee_Replacement_Surgery,Doctor,Anaesthesiology,1).
+%required_staff(Knee_Replacement_Surgery,Nurse,Instrumenting,1).
+%required_staff(Knee_Replacement_Surgery,Nurse,Anaesthesiology,1).
+%required_staff(Knee_Replacement_Surgery,Nurse,Circulating,1).
+%required_staff(Knee_Replacement_Surgery,Technician,Medical_Action,1).
 
 %TODO: UPDATE OPERATION REQUEST ID
-surgery_id('1','ACL Reconstruction Surgery').
+surgery_id(1,aCL_Reconstruction_Surgery).
+surgery_id(2,knee_Replacement_Surgery).
+%surgery_id(3,Knee_Replacement_Surgery).
 
-agenda_operation_room(OR1,20451202,[(400,480,ap1)]).
+assignment_surgery(1,d20241).
+assignment_surgery(1,d20242).
+assignment_surgery(1,d20243).
+assignment_surgery(1,d20247).
+assignment_surgery(2,d20244).
+assignment_surgery(2,d20245).
+assignment_surgery(2,d20246).
+assignment_surgery(2,d20248).
+%assignment_surgery(3,D20241).
+%assignment_surgery(3,D20242).
+%assignment_surgery(3,D20244).
+%assignment_surgery(3,D20247).
+
+agenda_operation_room(or1,20451202,[]).
 
 free_agenda0([],[(0,1440)]).
 free_agenda0([(0,Tfin,_)|LT],LT1):-!,free_agenda1([(0,Tfin,_)|LT],LT1).
@@ -137,47 +157,7 @@ min_max(I,I1,I,I1):- I<I1,!.
 min_max(I,I1,I1,I).
 
 
-% generate assignment_surgery
 
-assign_staff_for_surgeries(Date) :-
-    % Itera sobre as cirurgias
-    surgery(SurgeryName, _, _, _),
-    required_staff(SurgeryName, DoctorRole, Specialty, Count),  % Corre��o aqui: o required_staff tem 4 par�metros
-
-    % Para cada cirurgi�o necess�rio, chama a fun��o de alocar m�dicos
-    assign_doctors_for_surgery(SurgeryName, (DoctorRole, Specialty, Count), Date).
-
-assign_doctors_for_surgery(_, _, [], _).
-assign_doctors_for_surgery(SurgeryName, (Role, Specialty, Count), Date) :-
-    % Encontra m�dicos dispon�veis para a especialidade e papel
-    find_available_doctors(Specialty, Count, Date, AvailableDoctors),
-
-    % Atribui os m�dicos � cirurgia
-    assign_doctors(SurgeryName, Role, AvailableDoctors),
-
-    % Chama recursivamente para o pr�ximo
-    assign_doctors_for_surgery(SurgeryName, Rest, Date).
-
-find_available_doctors(Specialty, Count, Date, AvailableDoctors) :-
-    findall(DoctorId,
-            (staff(DoctorId, Doctor, Specialty, _),
-             timetable(DoctorId, Date, (StartTime, EndTime)),
-             free_agenda0([(StartTime, EndTime, _)], FreeTime),
-             length(FreeTime, Len), Len > 0),  % Verifica se h� hor�rios livres
-            AvailableDoctors),
-    length(AvailableDoctors, Count).  % Garantir que temos m�dicos suficientes
-
-assign_doctors(SurgeryName, Role, AvailableDoctors) :-
-    assign_doctors_to_surgery(SurgeryName, Role, AvailableDoctors).
-
-assign_doctors_to_surgery(_, _, []).
-assign_doctors_to_surgery(SurgeryName, Role, [DoctorId | Rest]) :-
-    % Atribui o m�dico � cirurgia (considerando o papel e especialidade)
-    assertz(assignment_surgery(SurgeryName, DoctorId)),
-    assign_doctors_to_surgery(SurgeryName, Role, Rest).
-
-
-% end of generate assignment_surgery
 
 schedule_all_surgeries(Room,Day):-
     retractall(agenda_staff1(_,_,_)),
@@ -256,7 +236,6 @@ obtain_better_sol1(Room,Day):-
     findall(_,(agenda_staff(D,Day,Agenda),assertz(agenda_staff1(D,Day,Agenda))),_),
     agenda_operation_room(Room,Day,Agenda),assert(agenda_operation_room1(Room,Day,Agenda)),
     findall(_,(agenda_staff1(D,Day,L),free_agenda0(L,LFA),adapt_timetable(D,Day,LFA,LFA2),assertz(availability(D,Day,LFA2))),_),
-    assign_staff_for_surgeries(Day),
     availability_all_surgeries(LOpCode,Room,Day),
     agenda_operation_room1(Room,Day,AgendaR),
 		update_better_sol(Day,Room,AgendaR,LOpCode),
@@ -287,5 +266,6 @@ remove_equals([],[]).
 remove_equals([X|L],L1):-member(X,L),!,remove_equals(L,L1).
 remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
 
-
-
+schedule_appointments(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
+    schedule_all_surgeries(Room,Day),
+    obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).

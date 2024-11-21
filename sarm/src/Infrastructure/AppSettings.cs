@@ -23,6 +23,7 @@ namespace Infrastructure
         public static string RoleNurse { get; private set; }
         public static string RoleTechnician { get; private set; }
         public static string RolePatient { get; private set; }
+        public static string MaxOperations { get; private set; }
         public static void Initialize(IConfiguration configuration)
         {
             EmailDomain = configuration["EmailSettings:EmailDomain"];
@@ -46,6 +47,7 @@ namespace Infrastructure
             RoleNurse = configuration["RoleId:Nurse"];
             RoleTechnician = configuration["RoleId:Technician"];
             RolePatient = configuration["RoleId:Patient"];
+            MaxOperations = configuration["MaxOperations"];
         }
     }
 }
