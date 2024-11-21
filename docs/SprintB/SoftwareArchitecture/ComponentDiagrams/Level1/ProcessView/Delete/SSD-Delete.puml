@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor User
+participant System
+participant AzureSQLDatabase
+
+activate User
+    User -> System : Request Delete (include Object)
+    activate System
+    
+        System -> System : Validate Object
+        
+        System -> AzureSQLDatabase : Delete Object
+        activate AzureSQLDatabase
+            
+            AzureSQLDatabase --> System : Return object
+        deactivate AzureSQLDatabase
+        
+        System --> User: Return success/error message
+    deactivate System
+deactivate User
+@enduml
