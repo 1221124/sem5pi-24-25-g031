@@ -41,7 +41,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.Staffs
                 new PhoneNumber("123456789"),
                 new Email(email),
                 SpecializationUtils.FromString("CARDIOLOGY"),
-                new RoleFirstChar { Value = RoleFirstChar.FromRole(Role.Doctor) }
+                StaffRole.Doctor
             );
         }
 
@@ -54,13 +54,15 @@ namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.Staffs
                     new LicenseNumber("L123"),
                     new FullName("John", "Doe"),
                     new ContactInformation(new Email("test1@example.com"), new PhoneNumber("123456789")),
-                    Specialization.CARDIOLOGY
+                    Specialization.CARDIOLOGY,
+                    StaffRole.Doctor
                 ),
                 new Staff(
                     new LicenseNumber("L456"),
                     new FullName("Jane", "Doe"),
                     new ContactInformation(new Email("test2@example.com"), new PhoneNumber("987654321")),
-                    Specialization.CARDIOLOGY
+                    Specialization.CARDIOLOGY,
+                    StaffRole.Doctor
                 )
             };
 
@@ -82,8 +84,9 @@ namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.Staffs
             var contactInformation = new ContactInformation(new Email("test@example.com"), new PhoneNumber("123456789"));
             var specialization = Specialization.CARDIOLOGY;
             var status = Status.Active;
+            var staffRole = StaffRole.Doctor;
 
-            var staff = new Staff(staffId, userId, fullName, contactInformation, specialization, status);
+            var staff = new Staff(staffId, userId, fullName, contactInformation, specialization, staffRole, status);
 
             _staffRepositoryMock.Setup(repo => repo.GetByIdAsync(staffId)).ReturnsAsync(staff);
 
@@ -114,7 +117,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.Staffs
             var contactInformation = new ContactInformation(email, new PhoneNumber("123456789"));
             var specialization = Specialization.CARDIOLOGY;
 
-            var staff = new Staff(staffId, null, fullName, contactInformation, specialization, Status.Active);
+            var staff = new Staff(staffId, null, fullName, contactInformation, specialization, StaffRole.Doctor, Status.Active);
 
             _staffRepositoryMock.Setup(repo => repo.GetByEmailAsync(email)).ReturnsAsync(staff);
 
