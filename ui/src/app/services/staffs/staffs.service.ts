@@ -65,13 +65,13 @@ export class StaffsService {
               LastName: item.fullName.lastName.value
             },
             licenseNumber: item.licenseNumber.value,
-            specialization: item.specialization.toString(),
-            staffRole: item.staffRole.toString(),
+            specialization: item.specialization,
+            staffRole: item.staffRole,
             ContactInformation: {
               Email: item.contactInformation.email.value,
               PhoneNumber: item.contactInformation.phoneNumber.value
             },
-            status: item.status.toString(),
+            status: item.status,
             SlotAppointment: Array.isArray(item.slotAppointment) && item.slotAppointment !== null ?
               item.slotAppointment.map((appointment: { start: string, end: string }) => ({
                 Start: appointment.start,
@@ -165,8 +165,9 @@ export class StaffsService {
         "value": staff.ContactInformation.PhoneNumber,
       },
       "pendingEmail": {
-        "value": staff.ContactInformation.Email
-      }
+        "value": staff.ContactInformation.Email,
+      },
+      "status":staff.status
     };
 
   console.log(staffDto);
