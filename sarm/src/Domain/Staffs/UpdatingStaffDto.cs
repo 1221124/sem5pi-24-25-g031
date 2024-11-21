@@ -12,7 +12,7 @@ namespace Domain.Staffs
         public Specialization Specialization { get; set; }
         public PhoneNumber? PendingPhoneNumber { get; set; }
         public Email? PendingEmail { get; set; }
-
+        public Status Status { get; set; }
         public UpdatingStaffDto(Email email, PhoneNumber phoneNumber, List<Slot> availabilitySlots, Specialization specialization)
         {
             Email = email.Value;
