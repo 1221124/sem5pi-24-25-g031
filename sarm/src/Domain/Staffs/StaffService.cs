@@ -177,7 +177,11 @@ namespace Domain.Staffs
                 
                 if(dto.Specialization != null)
                     staff.ChangeSpecialization(dto.Specialization);
+
+                if (dto.Status != null)
+                    staff.ChangeStatus(dto.Status);
                 
+                await _unitOfWork.CommitAsync();
                 
                 if (dto.PhoneNumber != null && dto.PhoneNumber != staff.ContactInformation.PhoneNumber)
                 {
@@ -188,15 +192,16 @@ namespace Domain.Staffs
                         throw new Exception("Phone number already exists");
                     }
                 }
+
                 if (dto.Email != null && !dto.Email.Equals(staff.ContactInformation.Email))
                 {
                     var emailToCheck = dto.Email;
                     var byEmailAsync = await _repo.GetByEmailAsync(emailToCheck);
                     if (byEmailAsync != null)
                     {
-                        
+
                         throw new Exception("Email already exists");
-                    } 
+                    }
                 }
 
                 if (dto.PhoneNumber != null && staff.ContactInformation.PhoneNumber != dto.PhoneNumber)
@@ -207,8 +212,6 @@ namespace Domain.Staffs
                 {
                     staff.ChangeEmail(dto.Email);
                 }
-                
-                await _unitOfWork.CommitAsync();
                 
                 _dbLogService.LogAction(StaffEntityType, DbLogType.Update, "Updated {" + staff.Id.Value + "}");
                 return StaffMapper.ToDto(staff);

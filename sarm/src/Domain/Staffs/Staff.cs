@@ -92,6 +92,11 @@ namespace Domain.Staffs
             Specialization = specialization;
         }
 
+        public void ChangeStatus(Status status)
+        {
+            Status = status;
+        }
+
         public void ChangeSlotAvailability(List<Slot> slotAvailability)
         {
             SlotAvailability = slotAvailability;
