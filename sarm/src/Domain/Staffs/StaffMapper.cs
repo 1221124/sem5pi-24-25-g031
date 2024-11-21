@@ -38,6 +38,7 @@ namespace Domain.Staffs
 
         public static Staff ToEntityFromCreating(CreatingStaffDto dto)
         {
+            
             return new Staff(
                 dto.FullName,
                 new ContactInformation(dto.Email, dto.PhoneNumber),
@@ -58,12 +59,32 @@ namespace Domain.Staffs
 
         public static List<StaffDto> ToDtoList(List<Staff> staffs)
         {
-            return staffs.ConvertAll(staff => ToDto(staff));
+            if (staffs == null)
+            {
+                return null;
+            }else if (staffs.Count == 0)
+            {
+                return new List<StaffDto>();
+            }
+            else
+            {
+                return staffs.ConvertAll(staff => ToDto(staff));
+            }
         }
 
         public static List<Staff> ToEntityList(List<StaffDto> dtoList)
         {
-            return dtoList.ConvertAll(dto => ToEntity(dto));
+            if (dtoList == null)
+            {
+                return null;
+            }else if (dtoList.Count == 0)
+            {
+                return new List<Staff>();
+            }
+            else
+            {
+                return dtoList.ConvertAll(dto => ToEntity(dto));
+            }
         }
     }
 }
