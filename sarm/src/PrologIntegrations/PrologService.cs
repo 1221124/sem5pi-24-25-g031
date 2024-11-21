@@ -25,7 +25,6 @@ namespace DDDNetCore.PrologIntegrations
         private readonly List<string> _surgery;
         private readonly List<string> _surgeryRequiredStaff;
         private readonly List<string> _surgeryId;
-        // private readonly List<string> _assignmentSurgery;
         private readonly List<string> _agendaOperationRoom;
 
         public PrologService(
@@ -49,7 +48,6 @@ namespace DDDNetCore.PrologIntegrations
             _surgery = [];
             _surgeryRequiredStaff = [];
             _surgeryId = [];
-            // _assignmentSurgery = [];
             _agendaOperationRoom = [];
         }
 
@@ -148,12 +146,20 @@ namespace DDDNetCore.PrologIntegrations
 
         private async Task PopulateStaff(List<StaffDto> staffs, List<OperationTypeDto> operationTypes)
         {
-            // staff(D20241,Doctor,Orthopaedics,[ACL_Reconstruction_Surgery,...]).
+            // staff(d20241,doctor,orthopaedics,[aCL_Reconstruction_Surgery,...]).
             //staff(license number, role, specialization, [op. types associated]).
 
             foreach (var staff in staffs) {
-                var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");;
-                var value = "staff(" + staff.LicenseNumber.Value + "," + StaffRoleUtils.ToString(staff.StaffRole) + "," + specialization + ",[";
+                var licenseNumber = staff.LicenseNumber.Value;
+                licenseNumber = char.ToLower(licenseNumber[0]) + licenseNumber[1..];
+
+                var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");
+                specialization = char.ToLower(specialization[0]) + specialization[1..];
+
+                var staffRole = StaffRoleUtils.ToString(staff.StaffRole);
+                staffRole = char.ToLower(staffRole[0]) + staffRole[1..];
+
+                var value = "staff(" + licenseNumber + "," + staffRole + "," + specialization + ",[";
 
                 if (SpecializationUtils.IsCardiologyOrOrthopaedics(staff.Specialization))
                 {
@@ -161,6 +167,7 @@ namespace DDDNetCore.PrologIntegrations
                 }
                 foreach (var operationType in operationTypes) {
                     var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
+                    name = char.ToLower(name[0]) + name[1..];
                     value += name + ",";
                 }
                 if (value.EndsWith(",")) value = value[..^1];
@@ -172,12 +179,14 @@ namespace DDDNetCore.PrologIntegrations
 
         private async Task PopulateAgendaStaff(List<Appointment> appointments, List<StaffDto> staffs, DateTime date)
         {
-            //agenda_staff(D20241,20241028,[(720,840,ap01),(1080,1200,ap02)]).
+            //agenda_staff(d20241,20241028,[(720,840,ap01),(1080,1200,ap02)]).
             //agenda_staff(license number, date, [(start, end, appointment number)]).
             string dateFormat = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
             foreach(var staff in staffs)
             {
-                string value = "agenda_staff(" + staff.LicenseNumber.Value + "," + dateFormat + ",[";
+                var licenseNumber = staff.LicenseNumber.Value;
+                licenseNumber = char.ToLower(licenseNumber[0]) + licenseNumber[1..];
+                string value = "agenda_staff(" + licenseNumber + "," + dateFormat + ",[";
 
                 foreach (var slot in staff.SlotAppointement) {
                     if (slot.Start.Date != date.Date || slot.End.Date != date) continue;
@@ -210,12 +219,14 @@ namespace DDDNetCore.PrologIntegrations
         }
 
         private void PopulateTimetable(List<StaffDto> staffs, DateTime date) {
-            //timetable(D20241,20241028,(720,840)).
+            //timetable(d20241,20241028,(720,840)).
             //timetable(license number, date, (start, end)).
 
             string dateFormat = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
             foreach (var staff in staffs) {
-                string value = "timetable(" + staff.LicenseNumber.Value + "," + dateFormat + ",(";
+                var licenseNumber = staff.LicenseNumber.Value;
+                licenseNumber = char.ToLower(licenseNumber[0]) + licenseNumber[1..];
+                string value = "timetable(" + licenseNumber + "," + dateFormat + ",(";
 
                 int start = 1440;
                 int end = 0;
@@ -237,57 +248,55 @@ namespace DDDNetCore.PrologIntegrations
         }
 
         private void PopulateSurgery(List<OperationTypeDto> operationTypes) {
-            //surgery(ACL_Reconstruction_Surgery,45,60,45).
+            //surgery(aCL_Reconstruction_Surgery,45,60,45).
             //surgery(OperationTypeName,TPreparation,TSurgery,TCleaning).
             foreach (var operationType in operationTypes) {
                 var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
+                name = char.ToLower(name[0]) + name[1..];
                 string value = "surgery(" + name + "," + operationType.PhasesDuration.Preparation + "," + operationType.PhasesDuration.Surgery + "," + operationType.PhasesDuration.Cleaning + ").";
                 this._surgery.Add(value);
             }
         }
 
         private void PopulateSurgeryRequiredStaff(List<OperationTypeDto> operationTypes) {
-            //required_staff(ACL_Reconstruction_Surgery,Doctor,Orthopaedics,3).
+            //required_staff(aCL_Reconstruction_Surgery,doctor,orthopaedics,3).
             //required_staff(OperationTypeName,Role,Specialization,Quantity).
             foreach (var operationType in operationTypes) {
                 var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
+                name = char.ToLower(name[0]) + name[1..];
+
                 foreach (var staff in operationType.RequiredStaff) {
+                    var role = RoleUtils.ToString(staff.Role);
+                    role = char.ToLower(role[0]) + role[1..];
+
                     var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");
-                    string value = "required_staff(" + name + "," + RoleUtils.ToString(staff.Role) + "," + specialization + "," + staff.Quantity.Value + ").";
+                    specialization = char.ToLower(specialization[0]) + specialization[1..];
+                    
+                    string value = "required_staff(" + name + "," + role + "," + specialization + "," + staff.Quantity.Value + ").";
                     this._surgeryRequiredStaff.Add(value);
                 }
             }
         }
 
         private void PopulateSurgeryId(List<OperationRequestDto> operationRequests) {
-            //surgery_id(ad3d1623_292a_43e0_97c3_48fa8d847a46,ACL_Reconstruction_Surgery).
+            //surgery_id(ad3d1623_292a_43e0_97c3_48fa8d847a46,aCL_Reconstruction_Surgery).
             //surgery_id(OperationReqId, OpTypeName).
             foreach (var operationRequest in operationRequests) {
                 var id = operationRequest.Id.ToString().Replace("-", "_");
                 var operationType = operationRequest.OperationType.Value.Replace(" ", "_").Replace("-", "_");
+                operationType = char.ToLower(operationType[0]) + operationType[1..];
                 string value = "surgery_id(" + id + "," + operationType + ").";
                 this._surgeryId.Add(value);
             }
         }
 
-        // private void PopulateAssignmentSurgery(List<OperationRequestDto> operationRequests)
-        // {
-        //     //assignment_surgery(so100001,d001).
-        //     //assignment_surgery(OpRequestId, LicenseNumber).
-        //     foreach (var operationRequest in operationRequests)
-        //     {
-        //         string value = "assignment_surgery(" + operationRequest.Id + "," + operationRequest.Staff + ").";
-        //         this._assignmentSurgery.Add(value);
-        //     }
-        // }
-
         private void PopulateAgendaOperationRoom(List<SurgeryRoom> surgeryRooms, List<Appointment> appointments, DateTime date)
         {
-            //agenda_operation_room(OR1,20241028,[(720,840,ap2),(1080,1200,ap3)]).
+            //agenda_operation_room(or1,20241028,[(720,840,ap2),(1080,1200,ap3)]).
             string dateFormat = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
             foreach (var surgeryRoom in surgeryRooms)
             {
-                string value = "agenda_operation_room(" + SurgeryRoomNumberUtils.ToString(surgeryRoom.SurgeryRoomNumber) + "," + dateFormat + ",[";
+                string value = "agenda_operation_room(" + SurgeryRoomNumberUtils.ToString(surgeryRoom.SurgeryRoomNumber).ToLower() + "," + dateFormat + ",[";
                 foreach(var appointment in appointments)
                 {
                     if (appointment.SurgeryRoomNumber != surgeryRoom.SurgeryRoomNumber) continue;
