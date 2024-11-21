@@ -254,11 +254,35 @@ export class StaffsComponent implements OnInit {
 
 
   clearForm() {
-    this.firstNameTouched = false;
-    this.lastNameTouched = false;
-    this.emailTouched = false;
-    this.phoneNumberTouched = false;
-    this.specializationTouched = false;
+    this.staff = {
+      Id: '',
+      FullName: {
+        FirstName: '',
+        LastName: ''
+      },
+      licenseNumber: '',
+      specialization: '',
+      staffRole: '',
+      ContactInformation: {
+        Email: '',
+        PhoneNumber: ''
+      },
+      status: '',
+      SlotAppointment: [
+        {
+          Start: '',
+          End: ''
+        }
+      ],
+      SlotAvailability: [
+        {
+          Start: '',
+          End: ''
+        }
+      ]
+    };
+    this.isEditMode = false;
+    this.message = '';
 
   }
 
