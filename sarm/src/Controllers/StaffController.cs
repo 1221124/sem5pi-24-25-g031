@@ -170,9 +170,9 @@ namespace Controllers
 
         //GET: api/Staff/userIdNull
         [HttpGet("userIdNull")]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetByUserIdNull([FromQuery] string? pageNumber)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetActiveByUserIdNull([FromQuery] string? pageNumber)
         {
-            var staff = await _service.GetWithUserIdNull();
+            var staff = await _service.GetActiveWithUserIdNull();
 
             if (staff == null)
             {

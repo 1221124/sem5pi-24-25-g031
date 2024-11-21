@@ -79,10 +79,10 @@ namespace Infrastructure.StaffRepository
                 .AsQueryable().Where(x => staffRole.Equals(x.StaffRole)).ToListAsync();
         }
 
-        public async Task<List<Staff>> GetWithUserIdNull()
+        public async Task<List<Staff>> GetActiveWithUserIdNull()
         {
             return await this._objs
-                .AsQueryable().Where(x => x.UserId == null).ToListAsync();
+                .AsQueryable().Where(x => x.UserId == null && x.Status == Status.Active).ToListAsync();
         }
     }
 

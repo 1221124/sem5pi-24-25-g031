@@ -23,16 +23,16 @@ namespace Domain.Shared
                     return Specialization.CARDIOLOGY;
                 case "CIRCULATING":
                     return Specialization.CIRCULATING;
-                case "INSTRUMENTAL":
+                case "INSTRUMENTING":
                     return Specialization.INSTRUMENTAL;
-                case "MEDICAL_ACTION":
+                case "MEDICAL ACTION":
                     return Specialization.MEDICAL_ACTION;
                 case "ORTHOPAEDICS":
                     return Specialization.ORTHOPAEDICS;
-                case "X_RAY":
+                case "X-RAY":
                     return Specialization.X_RAY;
                 default:
-                    throw new System.ArgumentException($"Invalid specialization: {specialization}");
+                    throw new ArgumentException($"Invalid specialization: {specialization}");
             }
         }
 
@@ -40,14 +40,14 @@ namespace Domain.Shared
         {
             return specialization switch
             {
-                Specialization.ANAESTHESIOLOGY => "ANAESTHESIOLOGY",
-                Specialization.CARDIOLOGY => "CARDIOLOGY",
-                Specialization.CIRCULATING => "CIRCULATING",
-                Specialization.INSTRUMENTAL => "INSTRUMENTAL",
-                Specialization.MEDICAL_ACTION => "MEDICAL_ACTION",
-                Specialization.ORTHOPAEDICS => "ORTHOPAEDICS",
-                Specialization.X_RAY => "X_RAY",
-                _ => throw new System.ArgumentException($"Invalid specialization: {specialization}")
+                Specialization.ANAESTHESIOLOGY => "Anaesthesiology",
+                Specialization.CARDIOLOGY => "Cardiology",
+                Specialization.CIRCULATING => "Circulating",
+                Specialization.INSTRUMENTAL => "Instrumenting",
+                Specialization.MEDICAL_ACTION => "Medical Action",
+                Specialization.ORTHOPAEDICS => "Orthopaedics",
+                Specialization.X_RAY => "X-Ray",
+                _ => throw new ArgumentException($"Invalid specialization: {specialization}")
             };
         }
 

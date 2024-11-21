@@ -1,6 +1,7 @@
 using Domain.DbLogs;
 using Domain.OperationRequests;
 using Domain.Patients;
+using Domain.Staffs;
 using Domain.Users;
 
 namespace Domain.Shared
@@ -9,17 +10,17 @@ namespace Domain.Shared
 
         public List<string> GetRoles()
         {
-            return Enum.GetValues(typeof(Role)).Cast<Role>().Select(r => r.ToString()).ToList();
+            return Enum.GetValues(typeof(Role)).Cast<Role>().Select(r => RoleUtils.ToString(r)).ToList();
         }
 
         public List<string> GetStatuses()
         {
-            return Enum.GetValues(typeof(Status)).Cast<Status>().Select(s => s.ToString()).ToList();
+            return Enum.GetValues(typeof(Status)).Cast<Status>().Select(s => StatusUtils.ToString(s)).ToList();
         }
 
         public List<string> GetRequestStatuses()
         {
-            return Enum.GetValues(typeof(RequestStatus)).Cast<RequestStatus>().Select(r => r.ToString()).ToList();
+            return Enum.GetValues(typeof(RequestStatus)).Cast<RequestStatus>().Select(r => RequestStatusUtils.ToString(r)).ToList();
         }
 
         public List<string> GetRPriorities()
@@ -29,12 +30,13 @@ namespace Domain.Shared
 
         public List<string> GetGenders()
         {
-            return Enum.GetValues(typeof(Gender)).Cast<Gender>().Select(g => g.ToString()).ToList();
+            List<string?> list = Enum.GetValues(typeof(Gender)).Cast<Gender>().Select(g => GenderUtils.ToString(g)).ToList();
+            return list.Select(g => g!).ToList();
         }
 
         public List<string> GetSpecializations()
         {
-            return Enum.GetValues(typeof(Specialization)).Cast<Specialization>().Select(s => s.ToString()).ToList();
+            return Enum.GetValues(typeof(Specialization)).Cast<Specialization>().Select(s => SpecializationUtils.ToString(s)).ToList();
         }
 
         public List<string> GetBackofficeRoles()
@@ -52,21 +54,12 @@ namespace Domain.Shared
         }
 
         public List<string> GetStaffRoles() {
-            var roles = Enum.GetValues(typeof(Role)).Cast<Role>().Select(r => r.ToString()).ToList();
-            for (int i = 0; i < roles.Count; i++)
-            {
-                if (!RoleUtils.IsStaff(RoleUtils.FromString(roles[i])))
-                {
-                    roles.RemoveAt(i);
-                    i--;
-                }
-            }
-            return roles;
+            return Enum.GetValues(typeof(StaffRole)).Cast<StaffRole>().Select(r => StaffRoleUtils.ToString(r)).ToList();
         }
 
         public List<string> GetUserStatuses()
         {
-            return Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>().Select(u => u.ToString()).ToList();
+            return Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>().Select(u => UserStatusUtils.ToString(u)).ToList();
         }
 
         public List<string> GetDBLogTypes()

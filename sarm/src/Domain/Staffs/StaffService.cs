@@ -348,9 +348,9 @@ namespace Domain.Staffs
             
         }
 
-        public async Task<List<StaffDto>> GetWithUserIdNull()
+        public async Task<List<StaffDto>> GetActiveWithUserIdNull()
         {
-            List<Staff> staff = await this._repo.GetWithUserIdNull();
+            List<Staff> staff = await this._repo.GetActiveWithUserIdNull();
 
             if (staff == null || staff.Count == 0)
             {

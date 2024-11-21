@@ -135,6 +135,9 @@ export class AdminUsersComponent implements OnInit {
       if (response?.status === 201) {
         this.authService.updateMessage('User created successfully');
         this.authService.updateIsError(false);
+        setTimeout(() => {
+          this.fetchStaffs();
+        }, 2000);
       } else {
         this.authService.updateMessage(
           `Failed to create user. Status: ${response?.status}`
