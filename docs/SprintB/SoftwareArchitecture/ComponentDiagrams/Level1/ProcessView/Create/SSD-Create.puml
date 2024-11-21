@@ -4,10 +4,21 @@ actor User
 participant System
 participant AzureSQLDatabase
 
-User -> System : Request Create (include object)
-System -> System : Validate object
-System -> AzureSQLDatabase : Create object
-AzureSQLDatabase --> System : Return success/error message
-System --> User : Return success/error message
+activate User
+    User -> System : Request Create (include object)
+    activate System
+        
+        System -> System : Validate object
+        
+        System -> AzureSQLDatabase : Create object
+        activate AzureSQLDatabase
+            
+            AzureSQLDatabase --> System : Return success/error message
+        deactivate AzureSQLDatabase
+        
+        System --> User : Return success/error message
+    deactivate System
+deactivate User
+        
 
 @enduml
