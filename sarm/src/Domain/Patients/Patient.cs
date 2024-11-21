@@ -45,6 +45,34 @@ namespace DDDNetCore.Domain.Patients
       AppointmentHistory = new List<Slot>();
       UserId = userId;
     }
+    
+    public Patient(Guid guid ,FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, List<Slot> appointmentHistory, UserId userId)
+    {
+      Id = new PatientId(guid);
+      FullName = fullName;
+      DateOfBirth = dateOfBirth; 
+      Gender = gender;
+      MedicalRecordNumber = medicalRecordNumber;
+      ContactInformation = contactInformation;
+      MedicalConditions = medicalConditions;
+      EmergencyContact = emergencyContact;
+      AppointmentHistory = appointmentHistory;
+      UserId = userId;
+    }
+    
+    public Patient(FullName fullName, DateOfBirth dateOfBirth, Gender? gender,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact, List<Slot> appointmentHistory, UserId userId)
+    {
+      Id = new PatientId(Guid.NewGuid());
+      FullName = fullName;
+      DateOfBirth = dateOfBirth; 
+      Gender = gender;
+      MedicalRecordNumber = medicalRecordNumber;
+      ContactInformation = contactInformation;
+      MedicalConditions = medicalConditions;
+      EmergencyContact = emergencyContact;
+      AppointmentHistory = appointmentHistory;
+      UserId = userId;
+    }
         
     public Patient (FullName fullName, DateOfBirth dateOfBirth,MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation)
     {

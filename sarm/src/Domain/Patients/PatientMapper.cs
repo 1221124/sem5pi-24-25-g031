@@ -34,6 +34,14 @@ namespace Domain.Patients
         }
         public static List<PatientDto> ToDtoList(List<Patient> patients)
         {
+            if (patients == null)
+            {
+                return null;
+            } else if(patients.Count == 0)
+            {
+                return new List<PatientDto>();
+            }
+
             return patients.ConvertAll(patient=> ToDto(patient));
         }
 
