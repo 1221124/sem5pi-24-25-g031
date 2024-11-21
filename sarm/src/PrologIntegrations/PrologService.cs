@@ -95,7 +95,7 @@ namespace DDDNetCore.PrologIntegrations
                 if (operationTypes == null || operationTypes.Count == 0)
                     return (false, "No operation types found.");
 
-                await PopulateStaff(staffs, operationTypes);
+                PopulateStaff(staffs, operationTypes);
 
                 var appointments = await _appointmentService.GetByDateAsync(date);
                 appointments = appointments.FindAll(a => a.SurgeryRoomNumber == SurgeryRoomNumber.OR1);
@@ -144,7 +144,7 @@ namespace DDDNetCore.PrologIntegrations
             }
         }
 
-        private async Task PopulateStaff(List<StaffDto> staffs, List<OperationTypeDto> operationTypes)
+        private void PopulateStaff(List<StaffDto> staffs, List<OperationTypeDto> operationTypes)
         {
             // staff(d20241,doctor,orthopaedics,[aCL_Reconstruction_Surgery,...]).
             //staff(license number, role, specialization, [op. types associated]).

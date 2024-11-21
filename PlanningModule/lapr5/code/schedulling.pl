@@ -47,7 +47,6 @@ timetable(d202410,20451202,(0,1440)).
 timetable(d202411,20451202,(0,1440)).
 timetable(d202412,20451202,(0,1440)).
 timetable(n20241,20451202,(0,1440)).
-timetable(n20241,20451202,(0,1440)).
 timetable(n20242,20451202,(0,1440)).
 timetable(n20243,20451202,(0,1440)).
 timetable(n20244,20451202,(0,1440)).
@@ -205,9 +204,10 @@ schedule_all_surgeries(Room,Day):-
 
 availability_all_surgeries([],_,_).
 availability_all_surgeries([OpCode|LOpCode],Room,Day):-
-    surgery_id(OpCode,OpType),surgery(OpType,_,TSurgery,_),
+    surgery_id(OpCode,OpType),surgery(OpType,TPreparation,TSurgery,TCleaning),
+    TotalTime is TPreparation+TSurgery+TCleaning,
     availability_operation(OpCode,Room,Day,LPossibilities,LDoctors),
-    schedule_first_interval(TSurgery,LPossibilities,(TinS,TfinS)),
+    schedule_first_interval(TotalTime,LPossibilities,(TinS,TfinS)),
     retract(agenda_operation_room1(Room,Day,Agenda)),
     insert_agenda((TinS,TfinS,OpCode),Agenda,Agenda1),
     assertz(agenda_operation_room1(Room,Day,Agenda1)),
@@ -216,36 +216,55 @@ availability_all_surgeries([OpCode|LOpCode],Room,Day):-
 
 
 
-availability_operation(OpCode,Room,Day,LPossibilities,LDoctors):-surgery_id(OpCode,OpType),surgery(OpType,_,TSurgery,_),
+availability_operation(OpCode,Room,Day,LPossibilities,LDoctors):-surgery_id(OpCode,OpType),surgery(OpType,TPreparation,TSurgery,TCleaning),
+    TotalTime is TPreparation+TSurgery+TCleaning,
     findall(Doctor,assignment_surgery(OpCode,Doctor),LDoctors),
     intersect_all_agendas(LDoctors,Day,LA),
     agenda_operation_room1(Room,Day,LAgenda),
     free_agenda0(LAgenda,LFAgRoom),
     intersect_2_agendas(LA,LFAgRoom,LIntAgDoctorsRoom),
-    remove_unf_intervals(TSurgery,LIntAgDoctorsRoom,LPossibilities).
+    remove_unf_intervals(TotalTime,LIntAgDoctorsRoom,LPossibilities).
 
 
 remove_unf_intervals(_,[],[]).
-remove_unf_intervals(TSurgery,[(Tin,Tfin)|LA],[(Tin,Tfin)|LA1]):-DT is Tfin-Tin+1,TSurgery=<DT,!,
-    remove_unf_intervals(TSurgery,LA,LA1).
-remove_unf_intervals(TSurgery,[_|LA],LA1):- remove_unf_intervals(TSurgery,LA,LA1).
+remove_unf_intervals(TotalTime,[(Tin,Tfin)|LA],[(Tin,Tfin)|LA1]):-DT is Tfin-Tin+1,TotalTime=<DT,!,
+    remove_unf_intervals(TotalTime,LA,LA1).
+remove_unf_intervals(TotalTime,[_|LA],LA1):- remove_unf_intervals(TotalTime,LA,LA1).
 
 
-schedule_first_interval(TSurgery,[(Tin,_)|_],(Tin,TfinS)):-
-    TfinS is Tin + TSurgery - 1.
+schedule_first_interval(TotalTime,[(Tin,_)|_],(Tin,TfinS)):-
+    TfinS is Tin + TotalTime - 1.
 
 insert_agenda((TinS,TfinS,OpCode),[],[(TinS,TfinS,OpCode)]).
 insert_agenda((TinS,TfinS,OpCode),[(Tin,Tfin,OpCode1)|LA],[(TinS,TfinS,OpCode),(Tin,Tfin,OpCode1)|LA]):-TfinS<Tin,!.
 insert_agenda((TinS,TfinS,OpCode),[(Tin,Tfin,OpCode1)|LA],[(Tin,Tfin,OpCode1)|LA1]):-insert_agenda((TinS,TfinS,OpCode),LA,LA1).
 
+%insert_agenda_doctors(_,_,[]).
+%insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
+%    retract(agenda_staff1(Doctor,Day,Agenda)),
+%    insert_agenda((TinS,TfinS,OpCode),Agenda,Agenda1),
+%    assert(agenda_staff1(Doctor,Day,Agenda1)),
+%    insert_agenda_doctors((TinS,TfinS,OpCode),Day,LDoctors).
+
 insert_agenda_doctors(_,_,[]).
 insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
-    retract(agenda_staff1(Doctor,Day,Agenda)),
-    insert_agenda((TinS,TfinS,OpCode),Agenda,Agenda1),
-    assert(agenda_staff1(Doctor,Day,Agenda1)),
-    insert_agenda_doctors((TinS,TfinS,OpCode),Day,LDoctors).
-
-
+    surgery_id(OpCode, OpType),
+    surgery(OpType, TPreparation, TSurgery, _),
+    staff(Doctor, _, Specialization, _),
+    (   Specialization = anaesthesiology
+    ->  NewTinS is TinS,
+        NewTfinS is TinS + TPreparation + TSurgery
+    ;   Specialization = medical_Action
+    ->  NewTinS is TinS + TPreparation + TSurgery,
+        NewTfinS is TfinS
+    ;   Specialization \= anaesthesiology, Specialization \= medical_Action
+    ->  NewTinS is TinS + TPreparation,
+        NewTfinS is TinS + TPreparation + TSurgery
+    ),
+    retract(agenda_staff1(Doctor, Day, Agenda)),
+    insert_agenda((NewTinS, NewTfinS, OpCode), Agenda, Agenda1),
+    assert(agenda_staff1(Doctor, Day, Agenda1)),
+    insert_agenda_doctors((TinS, TfinS, OpCode), Day, LDoctors).
 
 obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
 		get_time(Ti),
