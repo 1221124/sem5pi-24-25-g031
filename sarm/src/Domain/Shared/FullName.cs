@@ -20,11 +20,17 @@ namespace Domain.Shared
             if (names != null)
                 _ = new FullName(names[0], names[1]);
         }
-
+        
+        public override string ToString()
+        {
+            return $"{FirstName.Value} {LastName.Value}";
+        }
+        
         public static implicit operator string(FullName fullName)
         {
-            return $"{fullName.FirstName} {fullName.LastName}";
+            return $"{fullName.FirstName.Value} {fullName.LastName.Value}";
         }
+        
         public override bool Equals(object obj)
         {
             if (obj is FullName other)
