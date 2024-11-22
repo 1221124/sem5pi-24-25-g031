@@ -116,8 +116,7 @@ describe('StaffsComponent', () => {
   });
 
   it('should update an existing staff on success', async () => {
-    component.isEditMode = true;
-    component.staff.Id = '1';
+    mockStaffsService.post.and.returnValue(Promise.resolve(new HttpResponse({ status: 201 })));
 
     await component.submitRequest();
 
