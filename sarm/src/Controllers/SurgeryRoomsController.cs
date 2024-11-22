@@ -22,12 +22,12 @@ namespace DDDNetCore.Controllers{
         public async Task<ActionResult<List<SurgeryRoom>>> GetAll()
         {
             try{
-                var surgeries = await _surgeryRoomService.GetAll();
+                var rooms = await _surgeryRoomService.GetAll();
 
-                if(surgeries == null || surgeries.Count == 0)
+                if(rooms == null || rooms.Count == 0)
                     return NotFound();
 
-                return Ok(new {surgeries = surgeries});
+                return Ok(new {rooms = rooms});
             }
             catch(Exception ex){
                 return BadRequest("Error: " + ex.Message);

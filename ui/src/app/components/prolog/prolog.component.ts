@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import {Router, RouterModule} from '@angular/router';
 import {PrologService} from '../../services/prolog/prolog.service';
-import {Staff} from '../../models/staff.model';
 import {FormsModule} from '@angular/forms';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
+
 @Component({
   standalone: true,
   imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf],
@@ -29,8 +29,8 @@ export class PrologComponent implements OnInit {
       }, 3000);
       return;
     }
-    await this.prologService.getSurgeryRooms().then((data) => {
-      this.surgeryRooms = data;
+    await this.prologService.getSurgeryRooms().then((response) => {
+      this.surgeryRooms = response.body.rooms.map((room: { SurgeryRoomNumber: any; }) => room.SurgeryRoomNumber);
     });
 
   }

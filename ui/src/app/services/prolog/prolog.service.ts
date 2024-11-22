@@ -11,8 +11,24 @@ export class PrologService {
   constructor(private http: HttpClient) { }
 
   async getSurgeryRooms() {
-    const url = `${environment.enums}/surgeryRooms`;
-    return await firstValueFrom(this.http.get<string[]>(url));
+    const url = environment.surgeryRooms;
+    return await firstValueFrom(this.http.get<{rooms: any[]}>(url, httpOptions))
+    .then(response => {
+      if (response.status === 200 && response.body) {
+        const rooms = response.body.rooms.map(room => ({
+          SurgeryRoomNumber: room.SurgeryRoomNumber
+        }));
+
+        return {
+          status: response.status,
+          body: {
+            rooms
+          }
+        };
+      } else {
+        throw new Error('Unexpected response structure or status: ' + response.status);
+      }
+    });
   }
 
   async runProlog(surgeryRoom: string, date: string) {

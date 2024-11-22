@@ -9,6 +9,7 @@ export const environment = {
   enums: 'http://localhost:5500/api/Enums',
   staffs: 'http://localhost:5500/api/Staff',
   patients: 'http://localhost:5500/api/Patient',
+  surgeryRooms: 'http://localhost:5500/api/SurgeryRooms',
   prolog: 'http://localhost:5500/api/Prolog',
   three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE',
   authConfig: {
