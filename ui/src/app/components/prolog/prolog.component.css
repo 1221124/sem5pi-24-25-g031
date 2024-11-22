@@ -1,0 +1,87 @@
+/* Centraliza o formulário na página */
+.surgery-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4; /* Cor de fundo da página */
+  color: #333; /* Cor do texto */
+}
+
+.surgery-form h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #0056b3; /* Cor do título */
+}
+
+/* Estilização da seção do formulário */
+.surgery-form section {
+  background-color: #ffffff; /* Cor de fundo do formulário */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  padding: 30px;
+  width: 100%;
+  max-width: 400px; /* Largura máxima do formulário */
+}
+
+/* Margens e espaçamento dos grupos */
+.surgery-form .form-group {
+  margin-bottom: 20px;
+}
+
+/* Labels */
+.surgery-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #444;
+}
+
+/* Inputs e selects */
+.surgery-form select,
+.surgery-form input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Botões */
+.surgery-form .button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.surgery-form .submit-button,
+.surgery-form .clear-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.surgery-form .submit-button {
+  background-color: #28a745; /* Verde */
+  color: #ffffff;
+}
+
+.surgery-form .submit-button:hover {
+  background-color: #218838; /* Verde mais escuro */
+}
+
+.surgery-form .clear-button {
+  background-color: #dc3545; /* Vermelho */
+  color: #ffffff;
+}
+
+.surgery-form .clear-button:hover {
+  background-color: #c82333; /* Vermelho mais escuro */
+}

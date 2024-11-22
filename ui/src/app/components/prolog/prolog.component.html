@@ -1,0 +1,26 @@
+<div class="surgery-form">
+  <h2>Generate Appointments</h2>
+
+  <section>
+    <form>
+      <div class="form-group">
+        <label for="surgeryRoom">Select Room:</label>
+        <select id="surgeryRoom" name="surgeryRoom">
+          <option *ngFor="let room of surgeryRooms" [value]="surgeryRooms">
+            {{ room }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="surgeryDate">Select Date:</label>
+        <input type="date" id="surgeryDate" name="surgeryDate">
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="submit-button" (click)="submitRequest()">Submit</button>
+        <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+      </div>
+    </form>
+  </section>
+</div>
