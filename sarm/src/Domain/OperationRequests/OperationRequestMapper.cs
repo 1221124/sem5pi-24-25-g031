@@ -1,6 +1,4 @@
-using DDDNetCore.Domain.OperationRequests;
-
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
     public class OperationRequestMapper {
         public static OperationRequestDto ToDto(OperationRequest operationRequest)
@@ -13,7 +11,8 @@ namespace Domain.OperationRequests
                 OperationType = operationRequest.OperationType,
                 DeadlineDate = operationRequest.DeadlineDate,
                 Priority = operationRequest.Priority,
-                Status = operationRequest.Status
+                Status = operationRequest.Status,
+                RequestCode = operationRequest.RequestCode
             };
         }
 
@@ -34,7 +33,19 @@ namespace Domain.OperationRequests
                 dto.OperationType,
                 dto.DeadlineDate,
                 dto.Priority,
-                dto.Status
+                dto.Status,
+                dto.RequestCode
+            );
+        }
+
+        public static OperationRequest ToEntityFromCreating(CreatingOperationRequestDto dto, RequestCode requestCode) {
+            return new OperationRequest(
+                dto.Staff,
+                dto.Patient,
+                dto.OperationType,
+                dto.DeadlineDate,
+                dto.Priority,
+                requestCode
             );
         }
 
@@ -44,7 +55,8 @@ namespace Domain.OperationRequests
                 dto.Patient,
                 dto.OperationType,
                 dto.DeadlineDate,
-                dto.Priority
+                dto.Priority,
+                new RequestCode("req0")
             );
         }
 
@@ -57,7 +69,8 @@ namespace Domain.OperationRequests
                 operation.OperationType,
                 dto.DeadlineDate,
                 dto.Priority,
-                dto.RequestStatus
+                dto.RequestStatus,
+                operation.RequestCode
             );
 
         }

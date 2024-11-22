@@ -6,7 +6,6 @@ using Infrastructure.OperationRequests;
 using Infrastructure.Users;
 using Infrastructure.StaffRepository;
 using Domain.OperationTypes;
-using Domain.OperationRequests;
 using Domain.Users;
 using Domain.Patients;
 using Domain.Staffs;

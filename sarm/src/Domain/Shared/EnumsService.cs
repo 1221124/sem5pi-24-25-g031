@@ -1,7 +1,6 @@
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
-using Domain.OperationRequests;
 using Domain.Patients;
 using Domain.Staffs;
 using Domain.Users;

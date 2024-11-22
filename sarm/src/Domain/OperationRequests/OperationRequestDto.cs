@@ -5,7 +5,7 @@ using Domain.Patients;
 using Domain.Staffs;
 using Domain.Shared;
 
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
     public class OperationRequestDto
     {
@@ -16,8 +16,9 @@ namespace Domain.OperationRequests
         public DeadlineDate DeadlineDate { get; set; }
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
+        public RequestCode RequestCode { get; set; }
         
-        public OperationRequestDto(Guid id, LicenseNumber staff, MedicalRecordNumber patient, Name operationType, DeadlineDate deadlineDate, Priority priority, RequestStatus status)
+        public OperationRequestDto(Guid id, LicenseNumber staff, MedicalRecordNumber patient, Name operationType, DeadlineDate deadlineDate, Priority priority, RequestStatus status, RequestCode requestCode)
         {
             Id = id;
             Staff = staff;
@@ -26,6 +27,7 @@ namespace Domain.OperationRequests
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
+            RequestCode = requestCode;
         }
 
         public OperationRequestDto(Guid id)

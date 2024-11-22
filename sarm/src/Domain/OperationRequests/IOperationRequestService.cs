@@ -1,5 +1,4 @@
-﻿using Domain.OperationRequests;
-using Domain.OperationTypes;
+﻿using Domain.OperationTypes;
 using Domain.Shared;
 
 namespace DDDNetCore.Domain.OperationRequests

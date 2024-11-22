@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
-using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
 using DDDNetCore.Domain.OperationRequests;
@@ -103,7 +102,9 @@ namespace DDDNetCore.Controllers
                     return BadRequest("Creating Operation Type DTO cannot be null");
                 }
 
-                var operationRequest = await _operationRequestService.AddAsync(dto);
+                var code = await _operationRequestService.AssignCodeAsync();
+
+                var operationRequest = await _operationRequestService.AddAsync(dto, code);
 
                 if (operationRequest == null)
                 {

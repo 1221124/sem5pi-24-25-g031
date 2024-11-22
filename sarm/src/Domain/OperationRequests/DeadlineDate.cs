@@ -1,7 +1,7 @@
 
 using Date = System.DateOnly;
 
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
     public class DeadlineDate
     {
@@ -29,6 +29,14 @@ namespace Domain.OperationRequests
 
         public DeadlineDate(DateTime date)
         {
+        }
+
+        public static implicit operator DeadlineDate(string date) {
+            return new DeadlineDate(date);
+        }
+
+        public static implicit operator string(DeadlineDate date) {
+            return date.ToString();
         }
 
         public override string ToString()

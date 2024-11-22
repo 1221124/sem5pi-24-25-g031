@@ -8,4 +8,5 @@ export interface OperationRequest {
     deadlineDate: string;
     priority: string; // 0 = Elective, 1 = Urgent, 2 = Emergency
     status: string;   // 0 = Pending, 1 = Accepted, 2 = Rejected
+    requestCode: string;
   }

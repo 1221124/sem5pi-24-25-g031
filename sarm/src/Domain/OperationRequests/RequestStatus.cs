@@ -1,4 +1,4 @@
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
     public enum RequestStatus
     {

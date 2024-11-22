@@ -3,7 +3,6 @@ using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using DDDNetCore.PrologIntegrations;
 using Domain.DbLogs;
-using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
 

@@ -4,7 +4,7 @@ using Domain.Shared;
 using Domain.Staffs;
 
 
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
     public class CreatingOperationRequestDto
     {

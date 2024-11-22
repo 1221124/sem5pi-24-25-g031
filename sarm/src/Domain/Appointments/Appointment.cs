@@ -1,5 +1,5 @@
-﻿using DDDNetCore.Domain.SurgeryRooms;
-using Domain.OperationRequests;
+﻿using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Shared;
 
 namespace DDDNetCore.Domain.Appointments;

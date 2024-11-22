@@ -2,7 +2,6 @@ using Domain.Patients;
 using Domain.DbLogs;
 using Domain.Shared;
 using Domain.OperationTypes;
-using Domain.OperationRequests;
 using Domain.Staffs;
 using DDDNetCore.Domain.Patients;
 using System.Linq;
@@ -32,11 +31,11 @@ namespace DDDNetCore.Domain.OperationRequests
             _staffService = staffService;
         }        
 
-        public async Task<OperationRequestDto?> AddAsync(CreatingOperationRequestDto requestDto)
+        public async Task<OperationRequestDto?> AddAsync(CreatingOperationRequestDto requestDto, RequestCode requestCode)
         {
             try
             {
-                var operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto);
+                var operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto, requestCode);
 
                 await this._repo.AddAsync(operationRequest);
                 await this._unitOfWork.CommitAsync();
@@ -261,6 +260,16 @@ namespace DDDNetCore.Domain.OperationRequests
             {
                 return null;
             }
+        }
+
+        public async Task<RequestCode> AssignCodeAsync()
+        {
+            var requests = await _repo.GetAllAsync();
+
+            if(requests == null || requests.Count == 0)
+                return new RequestCode("req1");
+
+            return new RequestCode("req" + requests.Count + 1);
         }
     }
 }

@@ -1,7 +1,6 @@
 using DDDNetCore.Domain.OperationRequests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.OperationRequests;
 using Domain.Shared;
 using Domain.Patients;
 using Domain.Staffs;
@@ -13,6 +12,14 @@ namespace DDDNetCore.Infrastructure.OperationRequests
         public void Configure(EntityTypeBuilder<OperationRequest> builder)
         {
             builder.HasKey(o => o.Id);
+
+            builder.Property(o => o.RequestCode)
+                .IsRequired()
+                .HasColumnName("RequestCode")
+                .HasConversion(
+                    v => v.Value,
+                    v => new RequestCode(v)
+                );
             
             builder.Property(o => o.Staff)
                 .IsRequired()

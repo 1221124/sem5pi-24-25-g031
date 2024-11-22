@@ -45,10 +45,10 @@ export class OperationRequestsComponent implements OnInit {
     operationType: '',
     deadlineDate: '',
     priority: '',
-    status: ''
+    status: '',
+    requestCode: ''
   };
 
-  staffTouched: boolean = false;
   patientTouched: boolean = false;
   operationTypeTouched: boolean = false;
   deadlineDateTouched: boolean = false;
@@ -67,6 +67,13 @@ export class OperationRequestsComponent implements OnInit {
     name: '',
     specialization: '',
     status: ''
+  }
+
+  staffFilter = {
+    pageNumber: 1,
+    name: '',
+    email: '',
+    specialization: ''
   }
 
   filters = {
@@ -108,6 +115,23 @@ export class OperationRequestsComponent implements OnInit {
     }
     this.accessToken = this.authService.getToken();
     console.log("access token: ", this.accessToken);
+
+    this.staffFilter.email = this.authService.extractEmailFromAccessToken(this.accessToken) as string;
+    if (!this.staffFilter.email) {
+      throw new Error('Error extracting email from access token');
+    }
+    this.serviceStaff.getStaff(this.staffFilter, this.accessToken).then(response => {
+      if (response.status === 200) {
+        this.staff = response.body.staffs[0].licenseNumber;
+        return response;
+      } else {
+        console.error('Unexpected response status:', response.status);
+        return response;
+      }
+    }).catch(error => {
+      console.error('Error loading staff:', error);
+      return error;
+    });
 
     console.log("loading op requests...");
     await this.loadOperationRequests();
@@ -214,7 +238,8 @@ export class OperationRequestsComponent implements OnInit {
               operationType: request.operationType,
               deadlineDate: request.deadlineDate,
               priority: request.priority,
-              status: request.status
+              status: request.status,
+              requestCode: request.requestCode
             }));
             console.log('Operation Requests obtained:', this.requests);
 
@@ -532,7 +557,8 @@ export class OperationRequestsComponent implements OnInit {
               operationType: request?.operationType,
               deadlineDate: request?.deadlineDate,
               priority: request.priority,
-              status: request.status
+              status: request.status,
+              requestCode: request.requestCode
             })
           );
 
@@ -572,7 +598,7 @@ export class OperationRequestsComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    if (!this.staff || !this.patient || !this.operationType || !this.priority || !this.deadlineDate) {
+    if (!this.patient || !this.operationType || !this.priority || !this.deadlineDate) {
       console.log('Please fill in all required fields.');
       return false;
     }
@@ -592,14 +618,12 @@ export class OperationRequestsComponent implements OnInit {
   }
 
   clearForm() {
-    this.staff = '';
     this.patient = '';
     this.operationType = '';
     this.priority = '';
     this.deadlineDate = '';
     this.status = '';
 
-    this.staffTouched = false;
     this.patientTouched = false;
     this.operationTypeTouched = false;
     this.deadlineDateTouched = false;

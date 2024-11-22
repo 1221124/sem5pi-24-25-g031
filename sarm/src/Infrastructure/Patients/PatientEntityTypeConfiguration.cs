@@ -5,7 +5,6 @@ using Domain.Shared;
 using Google.Type;
 using System;
 using DDDNetCore.Domain.Patients;
-using Domain.OperationRequests;
 using Domain.Users;
 using DateTime = System.DateTime;
 using PhoneNumber = Domain.Shared.PhoneNumber;

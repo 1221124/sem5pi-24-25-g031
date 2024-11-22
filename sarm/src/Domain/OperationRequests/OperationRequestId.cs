@@ -2,7 +2,7 @@ using System;
 using Domain.Shared;
 using Newtonsoft.Json;
 
-namespace Domain.OperationRequests
+namespace DDDNetCore.Domain.OperationRequests
 {
     public class OperationRequestId : EntityId
     {

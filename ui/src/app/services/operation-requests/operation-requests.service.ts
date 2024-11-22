@@ -40,9 +40,7 @@ export class OperationRequestsService {
       "operationType": {
         "value": operationTypeDto
       },
-      "deadlineDate": {
-        "date": deadlineDateDto
-      },
+      "deadlineDate": deadlineDateDto,
       "priority": priorityDto
     };
 
@@ -184,7 +182,8 @@ export class OperationRequestsService {
                 operationType: request.operationType.value,
                 deadlineDate: request.deadlineDate.date,
                 priority: request.priority,
-                status: request.status
+                status: request.status,
+                requestCode: request.requestCode
               };
             })
           };
@@ -285,7 +284,8 @@ export class OperationRequestsService {
                   operationType: request.operationType.value,
                   deadlineDate: request.deadlineDate.date,
                   priority: request.priority,
-                  status: request.status
+                  status: request.status,
+                  requestCode: request.requestCode
                 };
               })
             }

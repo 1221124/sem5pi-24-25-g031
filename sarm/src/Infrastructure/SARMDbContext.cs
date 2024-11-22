@@ -4,7 +4,6 @@ using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;
 
 using Domain.OperationTypes;
-using Domain.OperationRequests;
 
 using Infrastructure.OperationTypes;
 using Infrastructure.Users;

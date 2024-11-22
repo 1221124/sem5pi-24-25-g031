@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DDDNetCore.Domain.OperationRequests;
-using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Shared;
 using Infrastructure.Shared;
@@ -30,6 +29,12 @@ namespace Infrastructure.OperationRequests
         {
             return await _objs
                 .AsQueryable().Where(x => x.Status.Equals(status)).ToListAsync();
+        }
+
+        public async Task<OperationRequest> GetByCode(RequestCode code)
+        {
+            return await _objs
+                .AsQueryable().FirstOrDefaultAsync(x => x.RequestCode.Equals(code));
         }
 
         public async Task<List<OperationRequest>> GetByPriority(Priority priority)
