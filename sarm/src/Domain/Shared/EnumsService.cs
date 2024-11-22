@@ -1,4 +1,5 @@
 using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
 using Domain.OperationRequests;
 using Domain.Patients;
@@ -76,6 +77,11 @@ namespace Domain.Shared
         public List<string> GetUpdateTypes()
         {
             return Enum.GetValues(typeof(UpdateType)).Cast<UpdateType>().Select(u => u.ToString()).ToList();
+        }
+        
+        public List<string> GetSurgeryRooms()
+        {
+            return Enum.GetValues(typeof(SurgeryRoomNumber)).Cast<SurgeryRoomNumber>().Select(r => SurgeryRoomNumberUtils.ToString(r)).ToList();
         }
 
     }
