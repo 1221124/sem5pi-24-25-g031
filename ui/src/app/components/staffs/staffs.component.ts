@@ -14,8 +14,7 @@ import {OperationType} from '../../models/operation-type.model';
   standalone: true,
   imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf],
   templateUrl: './staffs.component.html',
-  styleUrl: './staffs.component.css',
-  providers: [StaffsService]
+  styleUrl: './staffs.component.css'
 })
 export class StaffsComponent implements OnInit {
 
