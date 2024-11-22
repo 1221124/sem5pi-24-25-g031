@@ -32,7 +32,7 @@ namespace DDDNetCore.PrologIntegrations
             {
                 var surgeryRoomNumber = SurgeryRoomNumberUtils.FromString(surgeryRoom);
 
-                DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTime);
+                var dateTime = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 var value = await _service.CreateKB(surgeryRoomNumber, dateTime);
                 if(!value.done) return BadRequest(new {message = value.message});

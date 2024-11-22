@@ -23,31 +23,6 @@ agenda_staff(d202410,20260810,[]).
 agenda_staff(n20243,20260810,[]).
 agenda_staff(d20243,20260810,[]).
 
-staff(n20245,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20242,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20242,nurse,instrumenting,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20248,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(t20244,technician,x_Ray,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(t20241,technician,medical_Action,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20244,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n202410,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20244,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(t20243,technician,medical_Action,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20249,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20241,nurse,instrumenting,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20249,doctor,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20246,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20241,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(t20242,technician,medical_Action,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20248,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20247,nurse,circulating,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20247,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20245,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20246,nurse,circulating,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d202410,doctor,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(n20243,nurse,instrumenting,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-staff(d20243,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
-
 timetable(n20245,20260810,(480,960)).
 timetable(d20242,20260810,(480,960)).
 timetable(n20242,20260810,(600,1080)).
@@ -73,6 +48,31 @@ timetable(d202410,20260810,(600,1080)).
 timetable(n20243,20260810,(840,1320)).
 timetable(d20243,20260810,(840,1320)).
 
+staff(n20245,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20242,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20242,nurse,instrumenting,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20248,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(t20244,technician,x_Ray,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(t20241,technician,medical_Action,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20244,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n202410,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20244,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(t20243,technician,medical_Action,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20249,nurse,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20241,nurse,instrumenting,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20249,doctor,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20246,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20241,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(t20242,technician,medical_Action,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20248,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20247,nurse,circulating,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20247,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20245,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20246,nurse,circulating,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d202410,doctor,anaesthesiology,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(n20243,nurse,instrumenting,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+staff(d20243,doctor,orthopaedics,[aCL_Reconstrution_Surgery,knee_Replacement_Surgery]).
+
 surgery(aCL_Reconstrution_Surgery,45,60,30).
 surgery(knee_Replacement_Surgery,45,60,45).
 
@@ -89,13 +89,8 @@ required_staff(knee_Replacement_Surgery,nurse,anaesthesiology,1).
 required_staff(knee_Replacement_Surgery,nurse,circulating,1).
 required_staff(knee_Replacement_Surgery,technician,medical_Action,1).
 
-surgery_id(025bfb01_941f_456d_b57a_45dab51a5d87,aCL_Reconstrution_Surgery).
-surgery_id(7eb6b2a7_5c10_434a_8492_60d299f7282f,aCL_Reconstrution_Surgery).
-surgery_id(a7c47be1_5b4d_4fee_8c9f_b138793ac86b,aCL_Reconstrution_Surgery).
+surgery_id(req2,aCL_Reconstrution_Surgery).
+surgery_id(req3,aCL_Reconstrution_Surgery).
+surgery_id(req1,aCL_Reconstrution_Surgery).
 
 agenda_operation_room(or1,20260810,[]).
-agenda_operation_room(or5,20260810,[]).
-agenda_operation_room(or4,20260810,[]).
-agenda_operation_room(or2,20260810,[]).
-agenda_operation_room(or3,20260810,[]).
-agenda_operation_room(or6,20260810,[]).

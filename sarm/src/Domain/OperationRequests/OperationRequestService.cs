@@ -269,7 +269,8 @@ namespace DDDNetCore.Domain.OperationRequests
             if(requests == null || requests.Count == 0)
                 return new RequestCode("req1");
 
-            return new RequestCode("req" + requests.Count + 1);
+            int count = requests.Count + 1;
+            return new RequestCode("req" + count);
         }
     }
 }

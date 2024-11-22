@@ -14,7 +14,7 @@ namespace DDDNetCore.PrologIntegrations
             List<string> _surgery,
             List<string> _surgeryId,
             List<string> _surgeryRequiredStaff,
-            List<string> _agendaOperationRoom,
+            string _agendaOperationRoom,
             DateTime date)
         {
             try{
@@ -56,10 +56,7 @@ namespace DDDNetCore.PrologIntegrations
                 }
                 content += "\n";
 
-                foreach (var item in _agendaOperationRoom)
-                {
-                    content += item + "\n";
-                }
+                content += _agendaOperationRoom + "\n";
 
                 // Navigate to the project root directory safely
                 string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -109,25 +106,63 @@ namespace DDDNetCore.PrologIntegrations
 
         }
 
-        public string PreparePrologCommand(SurgeryRoomNumber surgeryRoomNumber, DateTime date) {
+        public (string command1, string command2, string command3, string command4) PreparePrologCommand(SurgeryRoomNumber surgeryRoomNumber, DateTime date) {
             string surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber).ToLower();
+            Console.WriteLine($"Surgery Room: {surgeryRoom}");
+            Console.WriteLine($"Date: {date}");
             string dateStr = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
+            Console.WriteLine($"DateStr: {dateStr}");
 
-            string prologCommand = $@"
-            consult('{AppSettings.PrologPathLAPR5}knowledge_base/kb-{dateStr}.pl'),
-            consult('{AppSettings.PrologPathLAPR5}code/{AppSettings.PrologFile}'),
-            schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).
-            ";
+            string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
+            for (int i = 0; i < 5; i++) // Navigate up 5 levels
+            {
+                var parent = Directory.GetParent(projectRootPath);
+                if (parent == null)
+                {
+                    throw new InvalidOperationException("Could not determine the project root directory.");
+                }
+                projectRootPath = parent.FullName;
+            }            
+            string absolutePrologPath = Path.Combine(projectRootPath, AppSettings.PrologPathLAPR5);
+            
+            Console.WriteLine("Current Directory: " + Directory.GetCurrentDirectory());
+            Console.WriteLine("Resolved Prolog Path: " + absolutePrologPath);
 
-            return prologCommand;
+            string kbFilePath = Path.Combine(absolutePrologPath, "knowledge_base", $"kb-{dateStr}.pl");
+            string codeFilePath = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFile);
+
+            if (!File.Exists(kbFilePath) || !File.Exists(codeFilePath)) 
+            {
+                throw new FileNotFoundException("Prolog file(s) not found.");
+            }
+
+            string command1 = $@"cd('{absolutePrologPath}').";
+            string command2 = $@"consult('knowledge_base/kb-{dateStr}.pl').";
+            string command3 = $@"consult('code/{AppSettings.PrologFile}').";
+            string command4 = $@"schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
+
+            // string prologCommand = $@"
+            // cd('{absolutePrologPath}'),
+            // consult('knowledge_base/kb-{dateStr}.pl'),
+            // consult('code/{AppSettings.PrologFile}'),
+            // schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).
+            // ";
+
+            Console.WriteLine("Prolog Command 1: " + command1);
+            Console.WriteLine("Prolog Command 2: " + command2);
+            Console.WriteLine("Prolog Command 3: " + command3);
+            Console.WriteLine("Prolog Command 4: " + command4);
+
+            return (command1, command2, command3, command4);
         }
 
-        public string RunPrologEngine(string command)
+        public string RunPrologEngine((string command1, string command2, string command3, string command4) command)
         {
+            Console.WriteLine("Running Prolog Engine...");
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = "swipl", //needs to have swipl/bin in the PATH
-                Arguments = "-q -t halt",
+                FileName = "swipl", 
+                // Arguments = "-q -t halt",
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -144,7 +179,11 @@ namespace DDDNetCore.PrologIntegrations
                 {
                     if (writer.BaseStream.CanWrite)
                     {
-                        writer.WriteLine(command);
+                        writer.WriteLine(command.command1);
+                        writer.WriteLine(command.command2);
+                        writer.WriteLine(command.command3);
+                        writer.WriteLine(command.command4);
+                        writer.WriteLine("halt.");
                     }
                 }
 
@@ -154,12 +193,66 @@ namespace DDDNetCore.PrologIntegrations
 
                 if (!string.IsNullOrEmpty(errors))
                 {
+                    Console.WriteLine("Prolog Errors: " + errors);
                     throw new Exception($"Error executing Prolog: {errors}");
                 }
 
+                Console.WriteLine("Prolog Output: " + result);
                 return result;
             }
         }
+
+        // public string RunPrologEngine(string absolutePrologPath, string command)
+        // {
+        //     Console.WriteLine("Running Prolog Engine...");
+        //     ProcessStartInfo psi = new ProcessStartInfo
+        //     {
+        //         FileName = "swipl", //needs to have swipl/bin in the PATH
+        //         Arguments = "-q -t halt",
+        //         RedirectStandardInput = true,
+        //         RedirectStandardOutput = true,
+        //         RedirectStandardError = true,
+        //         UseShellExecute = false,
+        //         CreateNoWindow = true,
+        //         WorkingDirectory = absolutePrologPath
+        //     };
+
+        //     using (Process process = new Process())
+        //     {
+        //         try {
+        //             process.StartInfo = psi;
+        //             process.Start();
+
+        //             using (var writer = process.StandardInput)
+        //             {
+        //                 if (writer.BaseStream.CanWrite)
+        //                 {
+        //                     writer.WriteLine(command);
+        //                 }
+        //             }
+
+        //             string result = process.StandardOutput.ReadToEnd();
+        //             string errors = process.StandardError.ReadToEnd();
+        //             process.WaitForExit();
+
+        //             if (!string.IsNullOrEmpty(errors))
+        //             {
+        //                 throw new Exception($"Error executing Prolog: {errors}");
+        //             }
+
+        //             Console.WriteLine("Prolog Output: " + result);
+        //             return result;
+        //         } catch (Exception e) {
+        //             if (process != null && !process.HasExited)
+        //             {
+        //                 process.Kill();
+        //             }
+        //             Console.WriteLine($"Error: {e.Message}");
+        //             Console.WriteLine($"Stack Trace: {e.StackTrace}");
+        //             throw new Exception("Error running Prolog engine", e);
+        //         }
+        //     }
+        // }
 
         public PrologResponse ParsePrologResponse(string prologOutput)
         {
