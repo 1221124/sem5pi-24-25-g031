@@ -11,10 +11,11 @@ import { StaffsComponent } from './components/staffs/staffs.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
+import { PrologComponent } from './components/prolog/prolog.component';
 
 
 @NgModule({
@@ -29,13 +30,15 @@ import { TechnicianMenuComponent } from './components/technician-menu/technician
     OperationRequestsComponent,
     OperationTypesComponent,
     StaffsComponent,
-    TechnicianMenuComponent
+    TechnicianMenuComponent,
+    PrologComponent
   ],
   imports: [
     BrowserModule,
     CommonModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

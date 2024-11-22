@@ -9,6 +9,7 @@ export const environment = {
   enums: 'http://localhost:5500/api/Enums',
   staffs: 'http://localhost:5500/api/Staff',
   patients: 'http://localhost:5500/api/Patient',
+  prolog: 'http://localhost:5500/api/Prolog',
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
     clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
