@@ -36,7 +36,6 @@ timetable(d202410,20451202,(0,1440)).
 timetable(d202411,20451202,(0,1440)).
 timetable(d202412,20451202,(0,1440)).
 timetable(n20241,20451202,(0,1440)).
-timetable(n20241,20451202,(0,1440)).
 timetable(n20242,20451202,(0,1440)).
 timetable(n20243,20451202,(0,1440)).
 timetable(n20244,20451202,(0,1440)).
@@ -89,3 +88,9 @@ required_staff(knee_Replacement_Surgery,nurse,instrumenting,1).
 required_staff(knee_Replacement_Surgery,nurse,anaesthesiology,1).
 required_staff(knee_Replacement_Surgery,nurse,circulating,1).
 required_staff(knee_Replacement_Surgery,technician,medical_Action,1).
+
+surgery_id(1,aCL_Reconstruction_Surgery).
+surgery_id(2,knee_Replacement_Surgery).
+surgery_id(3,knee_Replacement_Surgery).
+
+agenda_operation_room(or1,20451202,[]).
