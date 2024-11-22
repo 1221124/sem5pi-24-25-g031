@@ -46,11 +46,7 @@ export default class Maze {
              const bedLoader = new GLTFLoader();
 
              this.doors = []; // Lista de todas as portas no labirinto
-            this.otherDoors = [
-            { position: { x: 0 }, rotation: { y: 0 } }, // Exemplo de porta 1
-            { position: { x: 1 }, rotation: { y: 0 } } // Exemplo de porta 2
 
-        ]; // Lista de portas especiais (que se movem na direção oposta)
 
             // Build the maze
             let wallObject, bedObject, doorObject;
@@ -80,6 +76,8 @@ export default class Maze {
                     if (description.map[j][i] === 4) {
                         doorObject = this.door.object.clone();
                         doorObject.position.set(i - description.size.width / 2.0 + 0.5, 0.5, j - description.size.height / 2.0);
+                        this.doors.push(doorObject);
+
                         this.object.add(doorObject);
                     }            
                     if (description.map[j][i] == 5) {
@@ -100,11 +98,8 @@ export default class Maze {
 
                                 const surgeryRoomsWrapper = response.body.surgeryRooms;
                                 if (Array.isArray(surgeryRoomsWrapper) && surgeryRoomsWrapper.length > 0) {
-                                    const surgeryRooms = surgeryRoomsWrapper[0];
 
-                                    if (Array.isArray(surgeryRooms)) {
-
-                                        surgeryRooms.forEach((surgeryRoom) => {
+                                        surgeryRoomsWrapper.forEach((surgeryRoom) => {
                                             if (surgeryRoom.CurrentStatus === 'OCCUPIED') {
                                                 const roomNumber = surgeryRoom.SurgeryRoomNumber;
                                                 switch (roomNumber) {
@@ -211,7 +206,7 @@ export default class Maze {
                                                 }
                                             }
                                         });
-                                    }
+
                                 }
                             }
                         });
@@ -365,23 +360,24 @@ export default class Maze {
 
                 const responseBody = await response.json();
 
-                if(responseBody && Array.isArray(responseBody.surgeries)){
-                    const surgeryRoom = responseBody.surgeries.map((surgeryRoom) =>({
-                        Id: surgeryRoom.id,
-                        SurgeryRoomNumber: surgeryRoom.surgeryRoomNumber,
-                        RoomType: surgeryRoom.roomType,
-                        RoomCapacity: surgeryRoom.roomCapacity.capacity,
-                        AssignedEquipment: surgeryRoom.assignedEquipment,
-                        CurrentStatus: surgeryRoom.currentStatus,
-                        MaintenanceSlots: surgeryRoom.maintenanceSlots.map(slot => ({
-                            Start: slot.start,
-                            End: slot.end
-                        }))
+                if(responseBody && Array.isArray(responseBody.rooms)){
+                    const surgeryRooms = responseBody.rooms.map((room) => ({
+                        SurgeryRoomNumber: room.surgeryRoomNumber,
+                        RoomType: room.roomType,
+                        RoomCapacity: room.roomCapacity.capacity,
+                        AssignedEquipment: room.assignedEquipment.equipment, // Extrair o valor do equipamento
+                        CurrentStatus: room.currentStatus,
+                        MaintenanceSlots: room.maintenanceSlots.map(slot => ({
+                            Start: slot.start || null, // Prevenção caso os valores estejam ausentes
+                            End: slot.end || null
+                        })),
+                        Id: room.id.objValue // Acessar diretamente `objValue`
                     }));
+
                     return {
                         status: response.status,
                         body: {
-                            surgeryRooms: [surgeryRoom]
+                            surgeryRooms: surgeryRooms // Use o array completo mapeado
                         }
                     };
                 } else {
@@ -405,9 +401,7 @@ export default class Maze {
 
             let startTime = null; // Track the start time for each animation
 
-            // Determine the direction based on whether the door is in the otherDoors array
-            const isInOtherDoors = this.otherDoors.includes(door); // Check if the door is in the otherDoors array
-            const directionMultiplier = isInOtherDoors ? -1 : 1; // Set direction based on the array
+            const directionMultiplier =  1; // Set direction based on the array
 
             function animate(timestamp) {
                 if (!startTime) startTime = timestamp; // Initialize start time on first frame
@@ -438,9 +432,8 @@ export default class Maze {
             const duration = 2.5; // Duration in seconds for closing animation
             let startTime = null; // Track the start time for each animation
 
-            // Determine the direction based on whether the door is in the otherDoors array
-            const isInOtherDoors = this.otherDoors.includes(door); // Check if the door is in the otherDoors array
-            const directionMultiplier = isInOtherDoors ? 1 : -1; // Set direction for closing (move to the right if in otherDoors)
+
+            const directionMultiplier = -1; // Set direction for closing (move to the right if in otherDoors)
 
             function animate(timestamp) {
                 if (!startTime) startTime = timestamp; // Initialize start time on first frame
