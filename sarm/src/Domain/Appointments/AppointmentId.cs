@@ -1,28 +1,33 @@
 ﻿using Domain.Shared;
 using Newtonsoft.Json;
 
-namespace DDDNetCore.Domain.Appointments;
-
-public class AppointmentId : EntityId
+namespace DDDNetCore.Domain.Appointments
 {
-    [JsonConstructor]
-    public AppointmentId(Guid value) : base(value)
+    public class AppointmentId : EntityId
     {
-    }
-    
-    public AppointmentId(string value) : base(value)
-    {
-    }
-    
-    public override object createFromString(string text)
-    {
-        //new Guid(text);
-        return new Guid(text);
-    }
+        [JsonConstructor]
+        public AppointmentId(Guid value) : base(value)
+        {
+        }
 
-    public override string AsString()
-    {
- 
-        return ObjValue.ToString()!;
+        public AppointmentId(String value) : base(value)
+        {
+        }
+
+        override
+        public  Object createFromString(String text){
+            return new Guid(text);
+        }
+
+        override
+        public String AsString(){
+            Guid obj = (Guid) base.ObjValue;
+            return obj.ToString();
+        }
+        
+       
+        public Guid AsGuid(){
+            return (Guid) base.ObjValue;
+        }
     }
 }

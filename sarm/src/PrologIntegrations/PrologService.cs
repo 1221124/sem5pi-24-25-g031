@@ -51,13 +51,11 @@ namespace DDDNetCore.PrologIntegrations
             _agendaOperationRoom = [];
         }
 
-        public async Task<(bool done, string message)> RunProlog(string date)
+        public async Task<(bool done, string message)> CreateKB(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
         {
             try
             {
-                var dateFormat = DateTime.Parse(date);
-
-                var prologIntegration = await CreateKnowledgeBaseText(dateFormat);
+                var prologIntegration = await CreateKnowledgeBaseText(surgeryRoomNumber, date);
                 if (prologIntegration.done)
                 {
                     if (await this._prologIntegrationService.CreateFile(
@@ -66,7 +64,7 @@ namespace DDDNetCore.PrologIntegrations
                         this._timetable,
                         this._surgery,
                         this._surgeryId,
-                        dateFormat))
+                        date))
                     {
                         return (true, prologIntegration.message);
                     }
@@ -82,7 +80,7 @@ namespace DDDNetCore.PrologIntegrations
         }
 
         //create file
-        public async Task<(bool done, string message)> CreateKnowledgeBaseText(DateTime date)
+        public async Task<(bool done, string message)> CreateKnowledgeBaseText(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
         {
             try
             {
@@ -97,8 +95,7 @@ namespace DDDNetCore.PrologIntegrations
 
                 PopulateStaff(staffs, operationTypes);
 
-                var appointments = await _appointmentService.GetByDateAsync(date);
-                appointments = appointments.FindAll(a => a.SurgeryRoomNumber == SurgeryRoomNumber.OR1);
+                var appointments = await _appointmentService.GetByRoomAndDateAsync(surgeryRoomNumber, date);
 
                 await PopulateAgendaStaff(appointments, staffs, date);
                 PopulateTimetable(staffs, date);
@@ -110,30 +107,35 @@ namespace DDDNetCore.PrologIntegrations
                 var dateStr = date.Year.ToString() + "-" + date.Month.ToString("D2") + "-" + date.Day.ToString("D2");
 
                 var pendingOperationRequests = await _operationRequestService.GetFilteredAsync(
-                    null, null, null, null, dateStr, null, RequestStatusUtils.ToString(RequestStatus.PENDING)
+                    null, null, null, null, null, null, RequestStatusUtils.ToString(RequestStatus.PENDING)
                 );
                 var rejectedOperationRequests = await _operationRequestService.GetFilteredAsync(
-                    null, null, null, null, dateStr, null, RequestStatusUtils.ToString(RequestStatus.REJECTED)
+                    null, null, null, null, null, null, RequestStatusUtils.ToString(RequestStatus.REJECTED)
                 );
 
                 var operationRequests = pendingOperationRequests.Concat(rejectedOperationRequests).ToList();
                 if (operationRequests == null || operationRequests.Count == 0)
                     return (false, "No operation requests found.");
+                
                 //only the first AppSettings.MaxOperations will be considered
-                operationRequests = operationRequests.Take(int.Parse(AppSettings.MaxOperations)).ToList();
+                int appointmentsCount = appointments.Count;
+
+                if (appointmentsCount >= int.Parse(AppSettings.MaxOperations))
+                    return (false, "Max number of operations reached.");
+
+                operationRequests = operationRequests.Take(int.Parse(AppSettings.MaxOperations) - appointmentsCount).ToList();
                 
                 //order by date (closest first)
                 operationRequests = operationRequests.OrderBy(x => x.DeadlineDate).ToList();
 
                 PopulateSurgeryId(operationRequests);
 
-                // PopulateAssignmentSurgery(operationRequests);
-
                 var surgeryRooms = await _surgeryRoomService.GetAll();
                 if (surgeryRooms == null || surgeryRooms.Count == 0)
                     return (false, "No surgery rooms found.");
 
-                PopulateAgendaOperationRoom(surgeryRooms, appointments, date);
+                dateStr = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
+                PopulateAgendaOperationRoom(surgeryRooms, appointments, dateStr);
 
                 return (true, "Knowledge base text created successfully.");
             }
@@ -290,13 +292,12 @@ namespace DDDNetCore.PrologIntegrations
             }
         }
 
-        private void PopulateAgendaOperationRoom(List<SurgeryRoom> surgeryRooms, List<Appointment> appointments, DateTime date)
+        private void PopulateAgendaOperationRoom(List<SurgeryRoom> surgeryRooms, List<Appointment> appointments, string date)
         {
             //agenda_operation_room(or1,20241028,[(720,840,ap2),(1080,1200,ap3)]).
-            string dateFormat = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
             foreach (var surgeryRoom in surgeryRooms)
             {
-                string value = "agenda_operation_room(" + SurgeryRoomNumberUtils.ToString(surgeryRoom.SurgeryRoomNumber).ToLower() + "," + dateFormat + ",[";
+                string value = "agenda_operation_room(" + SurgeryRoomNumberUtils.ToString(surgeryRoom.SurgeryRoomNumber).ToLower() + "," + date + ",[";
                 foreach(var appointment in appointments)
                 {
                     if (appointment.SurgeryRoomNumber != surgeryRoom.SurgeryRoomNumber) continue;
@@ -311,6 +312,13 @@ namespace DDDNetCore.PrologIntegrations
 
                 this._agendaOperationRoom.Add(value);
             }
+        }
+
+        public PrologResponse RunPrologEngine(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
+        {
+            var command = _prologIntegrationService.PreparePrologCommand(surgeryRoomNumber, date);
+            var response = _prologIntegrationService.RunPrologEngine(command);
+            return _prologIntegrationService.ParsePrologResponse(response);
         }
     }
 }

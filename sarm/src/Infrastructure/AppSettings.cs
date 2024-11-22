@@ -24,6 +24,8 @@ namespace Infrastructure
         public static string RoleTechnician { get; private set; }
         public static string RolePatient { get; private set; }
         public static string MaxOperations { get; private set; }
+        public static string PrologPathLAPR5 { get; private set; }
+        public static string PrologFile { get; private set; }
         public static void Initialize(IConfiguration configuration)
         {
             EmailDomain = configuration["EmailSettings:EmailDomain"];
@@ -48,6 +50,8 @@ namespace Infrastructure
             RoleTechnician = configuration["RoleId:Technician"];
             RolePatient = configuration["RoleId:Patient"];
             MaxOperations = configuration["MaxOperations"];
+            PrologPathLAPR5 = configuration["Prolog:PathToPrologLAPR5"];
+            PrologFile = configuration["Prolog:File"];
         }
     }
 }

@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
-using DDDNetCore.Domain.Appointments;
+using System.Text.RegularExpressions;
+using DDDNetCore.PrologIntegrations;
 using Domain.DbLogs;
-using Domain.OperationTypes;
 using Domain.Shared;
 using Domain.Users;
-using Infrastructure.Staffs;
-
 
 namespace Domain.Staffs
 {
@@ -459,6 +453,92 @@ namespace Domain.Staffs
             await _unitOfWork.CommitAsync();
 
             return StaffMapper.ToDto(staff);
+        }
+
+        public async Task<bool> CreateSlotAppointments(DateTime date, PrologResponse response)
+        {
+            try {
+                var staffAgenda = response.StaffAgendaGenerated;
+
+                var staffs = ParseStaffAgenda(staffAgenda);
+
+                foreach (var staff in staffs) {
+                    var licenseNumber = staff.Split(',')[0].Split(':')[1].Trim().ToUpper();
+                    var operations = staff.Split(',')[1].Substring(10).Trim();
+
+                    var staffEntity = await _repo.GetByLicenseNumber(new LicenseNumber(licenseNumber));
+
+                    if (staffEntity == null) {
+                        throw new Exception("Staff not found.");
+                    }
+
+                    var operationsList = operations.TrimStart('[').TrimEnd(']').Split("),");
+                    foreach (var operation in operationsList) {
+                        var cleanedOperation = operation.Trim('(', ')').Trim();
+                        var parts = cleanedOperation.Split(',');
+
+                        string startTimeStr = parts[0].Trim();
+                        string endTimeStr = parts[1].Trim();
+
+                        DateTime startInHHMM = DateTime.ParseExact(startTimeStr, "HH:mm", null);
+                        DateTime endInHHMM = DateTime.ParseExact(endTimeStr, "HH:mm", null);
+
+                        var start = date.Date.Add(startInHHMM.TimeOfDay);
+                        var end = date.Date.Add(endInHHMM.TimeOfDay);
+
+                        var slotEntity = new Slot(start, end);
+
+                        staffEntity.AddAppointmentSlot(slotEntity);
+                    }
+
+                    await _unitOfWork.CommitAsync();
+                } 
+                
+                return true;
+                
+            } catch (Exception) {
+                return false;
+                throw new Exception("Error assigning slot appointments to staff.");
+            }
+        }
+
+        private static string[] ParseStaffAgenda(string staffAgenda)
+        {
+            var result = new List<string>();
+
+            string pattern = @"\(([^,]+), \[\(([^)]+)\)\]\)";
+            MatchCollection matches = Regex.Matches(staffAgenda, pattern);
+
+            foreach (Match match in matches)
+            {
+                string licenseNumber = match.Groups[1].Value;
+                string operationsRaw = match.Groups[2].Value;
+
+                var operations = new List<string>();
+                foreach (string operation in operationsRaw.Split(new[] { "), (" }, StringSplitOptions.None))
+                {
+                    string[] parts = operation.Replace("(", "").Replace(")", "").Split(',');
+                    int slotStart = int.Parse(parts[0].Trim());
+                    int slotEnd = int.Parse(parts[1].Trim());
+                    int operationId = int.Parse(parts[2].Trim());
+
+                    string startFormatted = ConvertMinutesToTime(slotStart);
+                    string endFormatted = ConvertMinutesToTime(slotEnd);
+
+                    operations.Add($"({startFormatted} - {endFormatted}, OpId: {operationId})");
+                }
+
+                result.Add($"License: {licenseNumber}, Operations: [{string.Join(", ", operations)}]");
+            }
+
+            return result.ToArray();
+        }
+
+        private static string ConvertMinutesToTime(int minutes)
+        {
+            int hours = minutes / 60;
+            int mins = minutes % 60;
+            return $"{hours:D2}:{mins:D2}";
         }
     }
 }

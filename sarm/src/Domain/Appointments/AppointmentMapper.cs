@@ -7,23 +7,34 @@ namespace DDDNetCore.Domain.Appointments
 {
     public class AppointmentMapper
     {
-        public static CreatingAppointment ToCreating(
-        string operationRequestId, string surgeryNumber, string startDate, string endDate
+        public static CreatingAppointmentDto ToCreating(
+        string operationRequestId, string surgeryRoomNumber, string startDate, string endDate
         ){
-            return new CreatingAppointment(
+            return new CreatingAppointmentDto(
                 new OperationRequestId(operationRequestId),
-                SurgeryRoomNumberUtils.FromString(surgeryNumber),
+                SurgeryRoomNumberUtils.FromString(surgeryRoomNumber),
                 new Slot(startDate, endDate)
             );
         }
         
-        public static Appointment ToEntity(CreatingAppointment creatingAppointment, int count)
+        public static Appointment ToEntity(CreatingAppointmentDto creatingAppointment, int count)
         {
             return new Appointment(
                 creatingAppointment.OperationRequestId,
                 creatingAppointment.SurgeryRoomNumber,
                 new AppointmentNumber("ap" +  count),
                 creatingAppointment.AppointmentDate
+            );
+        }
+
+        public static AppointmentDto ToDto(Appointment appointment)
+        {
+            return new AppointmentDto(
+                appointment.Id.AsGuid(),
+                appointment.OperationRequestId,
+                appointment.SurgeryRoomNumber,
+                appointment.AppointmentNumber,
+                appointment.AppointmentDate
             );
         }
     }
