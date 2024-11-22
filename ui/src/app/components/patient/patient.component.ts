@@ -17,7 +17,6 @@ import {Patient} from '../../models/patient.model';
   ],
   templateUrl: './patient.component.html',
   styleUrl: './patient.component.css',
-  providers: [AuthService, PatientService]
 })
 export class PatientComponent {
 
@@ -66,8 +65,7 @@ export class PatientComponent {
   tempPhoneNumber: string = '';
 
   oldEmail: string = '';
-
-  ngOnInit(): void {
+  async ngOnInit() {
     if (!this.authorizationService.isAuthenticated()) {
       this.authorizationService.updateMessage('You are not authenticated or are not a patient! Please login...');
       this.authorizationService.updateIsError(true);
@@ -76,8 +74,8 @@ export class PatientComponent {
       }, 3000);
       return;
     }
-    this.accessToken = this.authorizationService.getToken();
-    this.getPatient();
+    this.accessToken = this.authorizationService.getToken() as string;
+    await this.getPatient();
   }
 
   openEditModal(field: string) {
@@ -154,12 +152,12 @@ export class PatientComponent {
       });
   }
 
-  getPatient() {
+  async getPatient() {
     this.accessToken = this.authorizationService.getToken();
     this.patientEmail = this.authorizationService.extractEmailFromAccessToken(this.accessToken);
 
     if (this.patientEmail) {
-      this.getPatientByEmail(this.patientEmail);
+      await this.getPatientByEmail(this.patientEmail);
     } else {
       console.error("Email could not be extracted.");
     }
