@@ -1,4 +1,5 @@
 
+using System.Globalization;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Staffs;
@@ -19,17 +20,19 @@ namespace DDDNetCore.PrologIntegrations
             _appointmentService = appointmentService;
             _staffService = staffService;
          }
-
+        
+        //api/Prolog?surgeryRoom=OR1&date=2045-12-02
         [HttpGet]
         public async Task<IActionResult> RunProlog([FromQuery] string surgeryRoom, [FromQuery] string date)
         {
             try
             {
                 var surgeryRoomNumber = SurgeryRoomNumberUtils.FromString(surgeryRoom);
-                var dateTime = DateTime.Parse(date); 
+
+                DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTime);
 
                 var value = await _service.CreateKB(surgeryRoomNumber, dateTime);
-                if(!value.done) return BadRequest(value.message);
+                if(!value.done) return BadRequest(new {message = value.message});
 
                 var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime);
 
@@ -38,13 +41,13 @@ namespace DDDNetCore.PrologIntegrations
                 var staffAgenda = await _staffService.CreateSlotAppointments(dateTime, response);
                 
                 if (appointments)
-                    return Ok();
+                    return Ok(new {message = "Appointments created successfully!"});
 
-                return BadRequest("Error creating appointments...");
+                return BadRequest(new {message = "Error creating appointments..."});
             }
             catch (Exception)
             {
-                return BadRequest("Error running prolog to create appointments...");
+                return BadRequest(new {message = "Error running prolog to create appointments..."});
             }
         }
     }

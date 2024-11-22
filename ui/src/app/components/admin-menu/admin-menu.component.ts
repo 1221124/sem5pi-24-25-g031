@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-menu',
@@ -26,6 +27,6 @@ export class AdminMenuComponent implements OnInit {
   }
 
   navigateTo3D(): void {
-    window.location.href = 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE';
+    window.location.href = environment.three_d_module;
   }
 }

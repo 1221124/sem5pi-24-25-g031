@@ -35,13 +35,24 @@ export class PrologComponent implements OnInit {
 
   }
 
-  submitRequest() {
+  async runProlog() {
     if (!this.selectedRoom || !this.selectedDate) {
       alert('Please select a room and a date before submitting.');
       return;
     }
-    console.log('Room:', this.selectedRoom, 'Date:', this.selectedDate);
-    alert(`Appointment created for room ${this.selectedRoom} on ${this.selectedDate}`);
+    await this.prologService.runProlog(this.selectedRoom, this.selectedDate).then((response) => {
+      if (response.status === 200) {
+        alert(`Appointments created for room ${this.selectedRoom} on ${this.selectedDate}!`);
+      } else {
+        alert('Unexpected response status: ' + response.status);
+      }
+    }).catch((error) => {
+      if (error.status == 400) {
+        alert('Bad request while creating appointments: ' + error.error);
+      }
+      alert('Error creating appointments: ' + error);
+    });
+    this.clearForm();
   }
 
   clearForm() {
