@@ -110,4 +110,5 @@ export default class Door {
         face.receiveShadow = true;
         this.object.add(face);
     }
+
 }

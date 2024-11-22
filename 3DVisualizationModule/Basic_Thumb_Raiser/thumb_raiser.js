@@ -725,9 +725,11 @@ export default class ThumbRaiser {
                     }
                     else if (this.player.keyStates.yes) {
                         this.animations.fadeToAction("Yes", 0.2);
+                        this.maze.OpenAllDoors();
                     }
                     else if (this.player.keyStates.no) {
                         this.animations.fadeToAction("No", 0.2);
+                        this.maze.CloseAllDoors();
                     }
                     else if (this.player.keyStates.wave) {
                         this.animations.fadeToAction("Wave", 0.2);

@@ -40,12 +40,17 @@ export default class Maze {
             this.doorMaterial.transparent = true;
             this.doorMaterial.opacity = 0.5;
 
-            this.door = new Door({ textureUrl: description.doorTextureUrl });
-            
+            this.door = new Wall({ textureUrl: description.doorTextureUrl });
+
              // Load hospital bed model
              const bedLoader = new GLTFLoader();
 
              this.doors = []; // Lista de todas as portas no labirinto
+            this.otherDoors = [
+            { position: { x: 0 }, rotation: { y: 0 } }, // Exemplo de porta 1
+            { position: { x: 1 }, rotation: { y: 0 } } // Exemplo de porta 2
+
+        ]; // Lista de portas especiais (que se movem na direção oposta)
 
             // Build the maze
             let wallObject, bedObject, doorObject;
@@ -100,10 +105,8 @@ export default class Maze {
                                     if (Array.isArray(surgeryRooms)) {
 
                                         surgeryRooms.forEach((surgeryRoom) => {
-
-                                            if (surgeryRoom.CurrentStatus === 'OCUPIED') {
+                                            if (surgeryRoom.CurrentStatus === 'OCCUPIED') {
                                                 const roomNumber = surgeryRoom.SurgeryRoomNumber;
-                                                console.log('ROOM NUMBER:'+roomNumber);
                                                 switch (roomNumber) {
                                                     case 'OR1': {
                                                         if (i === 2 && j === 2) {
@@ -391,5 +394,72 @@ export default class Maze {
             console.error('Error fetching surgery room by number:', error);
             throw error;
         }
+    }
+
+    OpenAllDoors() {
+        this.doors.forEach(door => {
+            // Store the initial X position of each door
+            const initialPositionX = door.position.x;
+            const targetOffset = 1; // Adjust this value to control how far the door slides
+            const duration = 2.5; // Shorter duration in seconds (you can change this to your preferred value)
+
+            let startTime = null; // Track the start time for each animation
+
+            // Determine the direction based on whether the door is in the otherDoors array
+            const isInOtherDoors = this.otherDoors.includes(door); // Check if the door is in the otherDoors array
+            const directionMultiplier = isInOtherDoors ? -1 : 1; // Set direction based on the array
+
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp; // Initialize start time on first frame
+                const elapsed = (timestamp - startTime) / 1000; // Convert timestamp to seconds
+
+                // If the animation has run for the duration, stop the animation
+                if (elapsed > duration) return;
+
+                // Calculate the progress as a linear movement from 0 to 1
+                const progress = elapsed / duration; // Progress from 0 to 1 over the duration
+
+                // Move door in the correct direction
+                door.position.x = initialPositionX + directionMultiplier * progress * targetOffset; // Move left or right
+
+                // Request the next frame of the animation
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate); // Start the animation loop
+        });
+    }
+
+    CloseAllDoors() {
+        this.doors.forEach(door => {
+            // Store the initial X position of each door
+            const initialPositionX = door.position.x;
+            const targetOffset = 1; // Adjust this value to control how far the door slides
+            const duration = 2.5; // Duration in seconds for closing animation
+            let startTime = null; // Track the start time for each animation
+
+            // Determine the direction based on whether the door is in the otherDoors array
+            const isInOtherDoors = this.otherDoors.includes(door); // Check if the door is in the otherDoors array
+            const directionMultiplier = isInOtherDoors ? 1 : -1; // Set direction for closing (move to the right if in otherDoors)
+
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp; // Initialize start time on first frame
+                const elapsed = (timestamp - startTime) / 1000; // Convert timestamp to seconds
+
+                // If the animation has run for the duration, stop the animation
+                if (elapsed > duration) return;
+
+                // Calculate the progress as a linear movement from 0 to 1
+                const progress = elapsed / duration; // Progress from 0 to 1 over the duration
+
+                // Move door in the correct direction
+                door.position.x = initialPositionX + directionMultiplier * progress * targetOffset; // Move left or right
+
+                // Request the next frame of the animation
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate); // Start the animation loop
+        });
     }
 }
