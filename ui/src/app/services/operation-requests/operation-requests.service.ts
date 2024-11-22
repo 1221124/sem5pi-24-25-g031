@@ -1,6 +1,6 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {environment, httpOptions} from '../../../environments/environment';
+import {environment } from '../../../environments/environment';
 
 import {firstValueFrom, throwError} from 'rxjs';
 
@@ -29,7 +29,6 @@ export class OperationRequestsService {
       console.log('Deadline Date:', deadlineDate);
     } catch (error) {
       console.error('Error parsing date:', error);
-      return throwError('Error parsing date');
     }
 
     const dto = { //creatingOperationRequestDto
@@ -80,20 +79,55 @@ export class OperationRequestsService {
       });
   }
 
-  delete(id: string) {
+  async delete(accessToken: string, id: string) {
     const deleteUrl = environment.operationRequests + '/' + id;
     console.log('ID:', id);
     console.log('Delete URL:', deleteUrl);
 
-    return this.http.delete(deleteUrl, httpOptions)
-      .subscribe(
+    let params = new HttpParams();
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = {headers, observe: 'response' as const, params};
+
+    return await firstValueFrom(this.http.delete(deleteUrl, options))
+      .then(
         response => {
-          console.log('Operation Request deleted successfully', response);
-        },
-        error => {
-          console.error('Error deleting request:', error);
+          console.log(response);
+
+          if (response.status == 200) {
+            return {
+              status: response.status,
+              body: response.body
+            };
+          } else {
+            return {
+              status: response.status,
+              body: []
+            };
+          }
         }
-      );
+      ).catch(
+        error => {
+          console.error('Error deleting Operation Request:', error);
+          return {
+            status: error.status,
+            body: []
+          }
+        });
+
+    // return this.http.delete(deleteUrl, httpOptions)
+    //   .subscribe(
+    //     response => {
+    //       console.log('Operation Request deleted successfully', response);
+    //     },
+    //     error => {
+    //       console.error('Error deleting request:', error);
+    //     }
+    //   );
   }
 
   async put(

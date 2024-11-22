@@ -431,9 +431,9 @@ export class OperationRequestsComponent implements OnInit {
     this.id = '';
   }
 
-  delete(request: string) {
+  async delete(request: string) {
     console.log('Delete button clicked');
-    this.service.delete(request);
+    await this.service.delete(this.accessToken, request);
     console.log('Operation Request deleted successfully!');
     this.clearForm();
     // this.refresh();

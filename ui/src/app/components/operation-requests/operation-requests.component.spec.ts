@@ -1,299 +1,315 @@
-      import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-      import { FormsModule } from '@angular/forms';
-      import { CommonModule } from '@angular/common';
-      import { Router } from '@angular/router';
-      import { from } from 'rxjs';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {HttpResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
-      import { OperationRequestsComponent } from './operation-requests.component';
-      import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
-      import { StaffsService } from '../../services/staffs/staffs.service';
-      import { PatientsService } from '../../services/admin-patients/admin-patients.service';
-      import { OperationTypesService } from '../../services/operation-types/operation-types.service';
-      import { AuthService } from '../../services/auth/auth.service';
+import { OperationRequestsComponent } from './operation-requests.component';
+import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
+import { StaffsService } from '../../services/staffs/staffs.service';
+import { PatientsService } from '../../services/admin-patients/admin-patients.service';
+import { OperationTypesService } from '../../services/operation-types/operation-types.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { from } from 'rxjs';
 
-      describe('OperationRequestsComponent', () => {
-        let component: OperationRequestsComponent;
-        let fixture: ComponentFixture<OperationRequestsComponent>;
+describe('OperationRequestsComponent', () => {
+  let component: OperationRequestsComponent;
+  let fixture: ComponentFixture<OperationRequestsComponent>;
 
-        let mockOperationRequestsService: jasmine.SpyObj<OperationRequestsService>;
-        let mockStaffsService: jasmine.SpyObj<StaffsService>;
-        let mockPatientsService: jasmine.SpyObj<PatientsService>;
-        let mockOperationTypesService: jasmine.SpyObj<OperationTypesService>;
-        let mockAuthService: jasmine.SpyObj<AuthService>;
-        let mockRouter: jasmine.SpyObj<Router>;
+  let mockOperationRequestsService: jasmine.SpyObj<OperationRequestsService>;
+  let mockStaffsService: jasmine.SpyObj<StaffsService>;
+  let mockPatientsService: jasmine.SpyObj<PatientsService>;
+  let mockOperationTypesService: jasmine.SpyObj<OperationTypesService>;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
+  let mockRouter: jasmine.SpyObj<Router>;
 
-        beforeEach(() => {
-          mockOperationRequestsService = jasmine.createSpyObj('OperationRequestsService', [
-            'getAll',
-            'getRequestStatus',
-            'getPriority',
-            'post',
-            'put',
-            'delete'
-          ]);
+  beforeEach(async () => {
+    mockOperationRequestsService = jasmine.createSpyObj('OperationRequestsService', [
+      'getAll',
+      'getRequestStatus',
+      'getPriority',
+      'post',
+      'put',
+      'delete'
+    ]);
 
-          mockStaffsService.getStaff.and.returnValue(Promise.resolve({ status: 200, body: { staffs: [], totalItems: 0 } }));
-          mockPatientsService.getPatients.and.returnValue(from(Promise.resolve({ status: 200, body: { patients: [], totalItems: 0 } })));
-          mockOperationTypesService.getOperationTypes.and.returnValue(Promise.resolve({ status: 200, body: { operationTypes: [], totalItems: 0 } }));
-          mockAuthService.isAuthenticated.and.returnValue(true);
-          mockAuthService.getToken.and.returnValue('mock-token');
+    mockStaffsService = jasmine.createSpyObj('StaffsService', ['getStaff']);
 
-          mockStaffsService = jasmine.createSpyObj('StaffsService', ['getStaff']);
-          mockPatientsService = jasmine.createSpyObj('PatientsService', ['getPatients']);
-          mockOperationTypesService = jasmine.createSpyObj('OperationTypesService', ['getOperationTypes']);
-          mockAuthService = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'getToken', 'updateMessage', 'updateIsError']);
-          mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    mockPatientsService = jasmine.createSpyObj('PatientsService', ['getPatients']);
 
-          TestBed.configureTestingModule({
-            imports: [
-              FormsModule,
-              CommonModule,
-              OperationRequestsComponent
-            ],
-            providers: [
-              { provide: OperationRequestsService, useValue: mockOperationRequestsService },
-              { provide: StaffsService, useValue: mockStaffsService },
-              { provide: PatientsService, useValue: mockPatientsService },
-              { provide: OperationTypesService, useValue: mockOperationTypesService },
-              { provide: AuthService, useValue: mockAuthService },
-              { provide: Router, useValue: mockRouter }
-            ]
-          }).compileComponents();
-        });
+    mockOperationTypesService = jasmine.createSpyObj('OperationTypesService', ['getOperationTypes']);
 
-        fixture = TestBed.createComponent(OperationRequestsComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    mockAuthService = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'getToken']);
 
-        it('should create', () => {
-          expect(component).toBeTruthy();
-        });
+    mockStaffsService.getStaff.and.returnValue(Promise.resolve(new HttpResponse({ status: 200, body: { staffs: [], totalItems: 0 } as any })));
+    mockPatientsService.getPatients.and.returnValue(from(Promise.resolve(new HttpResponse({ status: 200, body: { patients: [], totalItems: 0 } }))));
+    mockOperationTypesService.getOperationTypes.and.returnValue(Promise.resolve(new HttpResponse({ status: 200, body: { operationTypes: [], totalItems: 0 } as any })));
 
-        it('should initialize data on ngOnInit', fakeAsync(() => {
-          fixture.detectChanges();
+    mockOperationRequestsService.getAll.and.returnValue(Promise.resolve({ status: 200, body: [] }));
+    mockOperationRequestsService.getPriority.and.returnValue(Promise.resolve({ status: 200, body: [] }));
+    mockOperationRequestsService.getRequestStatus.and.returnValue(Promise.resolve({ status: 200, body: [] }));
 
-          tick();
+    mockAuthService.isAuthenticated.and.returnValue(true);
+    mockAuthService.getToken.and.returnValue('mock-token');
 
-          expect(mockAuthService.isAuthenticated).toHaveBeenCalled();
-          expect(mockAuthService.getToken).toHaveBeenCalled();
-          expect(mockOperationRequestsService.getAll).toHaveBeenCalledWith('mock-token');
-          expect(mockStaffsService.getStaff).toHaveBeenCalledWith(component.filter, 'mock-token');
-          expect(mockPatientsService.getPatients).toHaveBeenCalled();
-          expect(mockOperationTypesService.getOperationTypes).toHaveBeenCalledWith(component.filter, 'mock-token');
-        }));
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    mockRouter.navigate.and.stub();
 
-        /*it('should redirect to login if not authenticated', fakeAsync(() => {
-          mockAuthService.isAuthenticated.and.returnValue(false);
+    await TestBed.configureTestingModule({
+      imports: [FormsModule, CommonModule, OperationRequestsComponent],
+      providers: [
+        { provide: OperationRequestsService, useValue: mockOperationRequestsService },
+        { provide: StaffsService, useValue: mockStaffsService },
+        { provide: PatientsService, useValue: mockPatientsService },
+        { provide: OperationTypesService, useValue: mockOperationTypesService },
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: Router, useValue: mockRouter }
+      ]
+    }).compileComponents();
 
-          fixture.detectChanges();
-          tick(3000);
+    fixture = TestBed.createComponent(OperationRequestsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-          expect(mockAuthService.updateMessage).toHaveBeenCalledWith('You are not authenticated or are not a doctor! Please login...');
-          expect(mockAuthService.updateIsError).toHaveBeenCalledWith(true);
-          expect(mockRouter.navigate).toHaveBeenCalledWith(['']);
-        }));*/
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-        /*it('should load operation requests', fakeAsync(() => {
-          const mockRequests = [
-            { id: '1', staff: 'Staff 1', patient: 'Patient 1', operationType: 'Type 1', deadlineDate: '2024-01-01', priority: 'High', status: 'Pending' }
-          ];
+  it('should initialize data on ngOnInit', (async () => {
 
-          mockOperationRequestsService.getAll.and.returnValue(Promise.resolve({ status: 200, body: mockRequests }));
+    expect(mockAuthService.isAuthenticated).toHaveBeenCalled();
+    expect(mockAuthService.getToken).toHaveBeenCalled();
+    expect(mockOperationRequestsService.getAll).toHaveBeenCalledWith('mock-token');
+    expect(mockStaffsService.getStaff).toHaveBeenCalledWith(component.filter, 'mock-token');
+    expect(mockPatientsService.getPatients).toHaveBeenCalled();
+    expect(mockOperationTypesService.getOperationTypes).toHaveBeenCalledWith(component.filter, 'mock-token');
+  }));
 
-          component.loadOperationRequests();
+  it('should redirect to login if not authenticated', (async () => {
+    mockAuthService.isAuthenticated.and.returnValue(false);
 
-          tick();
-          fixture.detectChanges();
+    await component.ngOnInit();
 
-          expect(component.requests).toEqual(mockRequests);
-          expect(component.message).toBe('Operation Requests obtained!');
-        }));*/
+    expect(mockAuthService.updateMessage).toHaveBeenCalledWith('You are not authenticated or are not a doctor! Please login...');
+    expect(mockAuthService.updateIsError).toHaveBeenCalledWith(true);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['']);
+  }));
 
+  it('should load operation requests', (async () => {
+    const mockRequests = [{
+      id: '1',
+      staff: 'Staff 1',
+      patient: 'Patient 1',
+      operationType: 'Type 1',
+      deadlineDate: '2024-01-01',
+      priority: 'High',
+      status: 'Pending',
+      requestCode: 'REQ1'
+    }];
 
-        /*it('should handle errors when loading operation requests', fakeAsync(() => {
-          mockOperationRequestsService.getAll.and.returnValue(Promise.reject({ status: 404 }));
+    mockOperationRequestsService.getAll.and.returnValue(
+      Promise.resolve({ status: 200, body: mockRequests })
+    );
 
-          component.loadOperationRequests();
-          tick();
+    await component.loadOperationRequests();
 
-          expect(component.requests).toEqual([]);
-          expect(component.message).toBe('No Operation Requests found!');
-        }));*/
+    expect(component.requests).toEqual(mockRequests);
+    expect(component.message).toBe('Operation Requests obtained!');
+  }));
 
-        /*it('should load priorities successfully', async () => {
-          const mockResponse = {
-            status: 200,
-            body: ['High', 'Medium', 'Low']
-          };
+  it('should handle errors when loading operation requests', (async () => {
+    mockOperationRequestsService.getAll.and.returnValue(
+      Promise.reject({ status: 404 })
+    );
 
-          mockOperationRequestsService.getPriority.and.returnValue(Promise.resolve(mockResponse));
+    await component.loadOperationRequests();
 
-          await component.loadPriority();
-          fixture.detectChanges();
+    expect(component.requests).toEqual([]);
+    expect(component.message).toBe('No Operation Requests found!');
+  }));
 
-          expect(component.priorities).toEqual(['High', 'Medium', 'Low']);
-          expect(component.message).toBe('Priorities obtained!');
-          expect(component.success).toBeTrue();
-        });*/
+  it('should load priorities successfully', (async () => {
+    const mockResponse = {
+      status: 200,
+      body: ['High', 'Medium', 'Low']
+    };
 
+    mockOperationRequestsService.getPriority.and.returnValue(
+      Promise.resolve(mockResponse)
+    );
 
-        /*it('should load statuses successfully', async () => {
-          const mockResponse = {
-            status: 200,
-            body: [{ value: 'Pending' }, { value: 'Approved' }, { value: 'Rejected' }]
-          };
+    await component.loadPriority();
 
-          mockOperationRequestsService.getRequestStatus.and.returnValue(Promise.resolve(mockResponse));
+    expect(component.priorities).toEqual(['High', 'Medium', 'Low']);
+    expect(component.message).toBe('Priorities obtained!');
+    expect(component.success).toBeTrue();
+  }));
 
-          await component.loadRequestStatus();
-          fixture.detectChanges();
+  it('should load statuses successfully', (async () => {
+    const mockResponse = {
+      status: 200,
+      body: [{ value: 'Pending' }, { value: 'Approved' }, { value: 'Rejected' }]
+    };
 
-          expect(component.statuses).toEqual(['Pending', 'Approved', 'Rejected']);
-          expect(component.message).toBe('Statuses obtained!');
-          expect(component.success).toBeTrue();
-        });*/
+    mockOperationRequestsService.getRequestStatus.and.returnValue(
+      Promise.resolve(mockResponse)
+    );
 
-        /*it('should filter operation requests', fakeAsync(() => {
-          const filteredRequests = [
-            { id: '2', staff: 'Staff 2', patient: 'Patient 2', operationType: 'Type 2', deadlineDate: '2024-02-01', priority: 'Medium', status: 'Approved' }
-          ];
+    await component.loadRequestStatus();
 
-          mockOperationRequestsService.get.and.returnValue(Promise.resolve({ status: 200, body: filteredRequests }));
+    expect(component.statuses).toEqual(['Pending', 'Approved', 'Rejected']);
+    expect(component.message).toBe('Statuses obtained!');
+    expect(component.success).toBeTrue();
+  }));
 
-          component.applyFilter();
-          tick();
+  it('should filter operation requests', (async () => {
+    const filteredRequests = [{
+      id: '2',
+      staff: 'Staff 2',
+      patient: 'Patient 2',
+      operationType: 'Type 2',
+      deadlineDate: '2024-02-01',
+      priority: 'Medium',
+      status: 'Approved',
+      requestCode: 'REQ1'
+    }];
 
-          expect(component.requests).toEqual(filteredRequests);
-          expect(component.message).toBe('');
-        }));*/
+    mockOperationRequestsService.get.and.returnValue(
+      Promise.resolve({ status: 200, body: filteredRequests })
+    );
 
-        /*it('should load staff successfully', async () => {
-          const mockResponse = {
-            status: 200,
-            body: {
-              staffs: [{
-                Id: '',
-                FullName: {
-                  FirstName: 'John',
-                  LastName: 'Doe'
-                },
-                licenseNumber: '123',
-                specialization: '',
-                staffRole: '',
-                ContactInformation: {
-                  Email: '',
-                  PhoneNumber: ''
-                },
-                SlotAppointment: [{}],
-                SlotAvailability: [{}],
-                status: 200
-              }],
-              totalItems: 1
-            }
-          };
+    await component.applyFilter();
 
-          mockStaffsService.getStaff.and.returnValue(Promise.resolve(mockResponse));
+    expect(component.requests).toEqual(filteredRequests);
+    expect(component.message).toBe('');
+  }));
 
-          await component.loadStaffs();
-          fixture.detectChanges();
+  it('should load staff successfully', (async () => {
+    const mockResponse = {
+      status: 200,
+      body: {
+        staffs: [{
+          Id: '',
+          FullName: { FirstName: 'John', LastName: 'Doe' },
+          licenseNumber: '123',
+          specialization: '',
+          staffRole: '',
+          ContactInformation: { Email: '', PhoneNumber: '' },
+          SlotAppointment: [{}],
+          SlotAvailability: [{}],
+          status: ''
+        }],
+        totalItems: 1
+      }
+    };
 
-          expect(component.staffs).toEqual([
-            { fullName: `${mockResponse.body.staffs[0].FullName.FirstName} ${mockResponse.body.staffs[0].FullName.LastName}`, licenseNumber: '123' } as any
-          ]);
-          expect(component.message).toBe('Staffs obtained!');
-          expect(component.success).toBeTrue();
-        });*/
+    mockStaffsService.getStaff.and.returnValue(
+      Promise.resolve(mockResponse)
+    );
 
-        /*it('should load patients successfully', async () => {
-          const mockResponse = {
-            status: 200,
-            body: {
-              patients: [{
-                Id: '1',
-                FullName: {
-                  FirstName: 'Jane',
-                  LastName: 'Smith'
-                },
-                medicalRecordNumber: 'MRN123',
-                contactInformation: {
-                  Email: 'jane.smith@example.com',
-                  PhoneNumber: '123-456-7890'
-                }
-              }],
-              totalItems: 1
-            }
-          };
+    await component.loadStaffs();
 
-          mockPatientsService.getPatients.and.returnValue(from(Promise.resolve(mockResponse)));
+    expect(component.staffs).toEqual([{
+      Id: component.staffs[0].Id,
+      FullName: {
+        FirstName: component.staffs[0].FullName.FirstName,
+        LastName: component.staffs[0].FullName.LastName
+      },
+      licenseNumber: component.staffs[0].licenseNumber,
+      specialization: '',
+      staffRole: '',
+      ContactInformation: {
+        Email: '',
+        PhoneNumber: ''
+      },
+      SlotAppointment: [],
+      SlotAvailability: [],
+      status: ''
+    }]);
+    expect(component.message).toBe('Staffs obtained!');
+    expect(component.success).toBeTrue();
+  }));
 
-          await component.loadPatients();
-          fixture.detectChanges();
+  it('should load patients successfully', (async () => {
+    const mockResponse = {
+      status: 200,
+      body: {
+        patients: [{
+          Id: '1',
+          FullName: { FirstName: 'Jane', LastName: 'Smith' },
+          medicalRecordNumber: 'MRN123',
+          contactInformation: { Email: 'jane.smith@example.com', PhoneNumber: '123-456-7890' }
+        }],
+        totalItems: 1
+      }
+    };
 
-          expect(component.patients).toEqual([{
-            Id: '1',
-            FullName: 'Jane Smith',
-            medicalRecordNumber: 'MRN123',
-            contactInformation: {
-              Email: 'jane.smith@example.com',
-              PhoneNumber: '123-456-7890'
-            }
-          }]);
-          expect(component.message).toBe('Patients obtained!');
-          expect(component.success).toBeTrue();
-        });*/
+    mockPatientsService.getPatients.and.returnValue(
+      from(Promise.resolve(mockResponse))
+    );
 
-        /*it('should load operation types successfully', async () => {
-          const mockResponse = {
-            status: 200,
-            body: {
-              operationTypes: [{
-                Id: '1',
-                Name: {
-                  Value: 'Surgery'
-                },
-                Specialization: 'Cardiology',
-                RequiredStaff: [{
-                  Role: '',
-                  Specialization: '',
-                  Quantity: {
-                    Value: 0
-                  }
-                }],
-                PhasesDuration: {
-                  Preparation: 0,
-                  Surgery: 0,
-                  Cleaning: 0
-                },
-                Status: ''
-              }],
-              totalItems: 1
-            }
-          };
+    await component.loadPatients();
 
-          mockOperationTypesService.getOperationTypes.and.returnValue(Promise.resolve(mockResponse));
+    expect(component.patients).toEqual([{
+      Id: '1',
+      FullName: 'Jane Smith',
+      medicalRecordNumber: 'MRN123',
+      contactInformation: {
+        Email: 'jane.smith@example.com',
+        PhoneNumber: '123-456-7890'
+      }
+    }]);
+    expect(component.message).toBe('Patients obtained!');
+    expect(component.success).toBeTrue();
+  }));
 
-          await component.loadOperationTypes();
-          fixture.detectChanges();
+  it('should load operation types successfully', (async () => {
+    const mockResponse = {
+      status: 200,
+      body: {
+        operationTypes: [{
+          Id: '1',
+          Name: {Value: 'Surgery'},
+          Specialization: 'Cardiology',
+          RequiredStaff: [{
+            Role: '',
+            Specialization: '',
+            Quantity: 1
+          }],
+          PhasesDuration: {
+            Preparation: 0,
+            Surgery: 0,
+            Cleaning: 0
+          },
+          Status: ''
+        }],
+        totalItems: 1
+      }
+    };
 
-          expect(component.operationTypes).toEqual([{
-            Id: '1',
-            Name: 'Surgery',
-            Specialization: 'Cardiology',
-            RequiredStaff: [{
-              Role: '',
-              Specialization: '',
-              Quantity: 0
-            }],
-            PhasesDuration: {
-              Preparation: 0,
-              Surgery: 0,
-              Cleaning: 0
-            },
-            Status: ''
-          }]);
-          expect(component.message).toBe('Operation Types obtained!');
-          expect(component.success).toBeTrue();
-        });*/
+    mockOperationTypesService.getOperationTypes.and.returnValue(Promise.resolve(mockResponse));
+
+    await component.loadOperationTypes();
+
+    expect(component.operationTypes).toEqual([{
+      Id: '1',
+      Name: 'Surgery',
+      Specialization: 'Cardiology',
+      RequiredStaff: [{
+        Role: '',
+        Specialization: '',
+        Quantity: 1
+      }],
+      PhasesDuration: {
+        Preparation: 0,
+        Surgery: 0,
+        Cleaning: 0
+      },
+      Status: ''
+    }]);
+
+    expect(component.message).toBe('Operation Types obtained!');
+    expect(component.success).toBeTrue();
+  }));
 });
-
-
