@@ -103,5 +103,12 @@ namespace DDDNetCore.Controllers
             var updateTypes = _enumsService.GetUpdateTypes();
             return Task.FromResult<ActionResult<List<string>>>(Ok(updateTypes));
         }
+        
+        [HttpGet("surgeryRooms")]
+        public Task<ActionResult<List<string>>> GetSurgeryRooms()
+        {
+            var surgeryRooms = _enumsService.GetSurgeryRooms();
+            return Task.FromResult<ActionResult<List<string>>>(Ok(surgeryRooms));
+        }
     }
 }
