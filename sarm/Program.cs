@@ -119,9 +119,8 @@ builder.Services.AddTransient<AppointmentService>();
 builder.Services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
 builder.Services.AddTransient<SurgeryRoomService>();
 
-builder.Services.AddScoped<PrologService>();
-builder.Services.AddScoped<PrologIntegrationService>();
-builder.Services.AddScoped<PrologService>();
+builder.Services.AddTransient<PrologService>();
+builder.Services.AddTransient<PrologIntegrationService>();
 
 builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.com", "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"));
 

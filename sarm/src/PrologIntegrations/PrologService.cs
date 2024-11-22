@@ -63,6 +63,8 @@ namespace DDDNetCore.PrologIntegrations
                         this._timetable,
                         this._surgery,
                         this._surgeryId,
+                        this._surgeryRequiredStaff,
+                        this._agendaOperationRoom,
                         date))
                     {
                         return (true, prologIntegration.message);
@@ -105,14 +107,14 @@ namespace DDDNetCore.PrologIntegrations
 
                 var dateStr = date.Year.ToString() + "-" + date.Month.ToString("D2") + "-" + date.Day.ToString("D2");
 
-                var pendingOperationRequests = await _operationRequestService.GetFilteredAsync(
+                var operationRequests = await _operationRequestService.GetFilteredAsync(
                     null, null, null, null, null, null, RequestStatusUtils.ToString(RequestStatus.PENDING)
                 );
-                var rejectedOperationRequests = await _operationRequestService.GetFilteredAsync(
-                    null, null, null, null, null, null, RequestStatusUtils.ToString(RequestStatus.REJECTED)
-                );
+                // var rejectedOperationRequests = await _operationRequestService.GetFilteredAsync(
+                //     null, null, null, null, null, null, RequestStatusUtils.ToString(RequestStatus.REJECTED)
+                // );
 
-                var operationRequests = pendingOperationRequests.Concat(rejectedOperationRequests).ToList();
+                // var operationRequests = pendingOperationRequests.Concat(rejectedOperationRequests).ToList();
                 if (operationRequests == null || operationRequests.Count == 0)
                     return (false, "No operation requests found.");
                 
@@ -125,7 +127,7 @@ namespace DDDNetCore.PrologIntegrations
                 operationRequests = operationRequests.Take(int.Parse(AppSettings.MaxOperations) - appointmentsCount).ToList();
                 
                 //order by date (closest first)
-                operationRequests = operationRequests.OrderBy(x => x.DeadlineDate).ToList();
+                operationRequests = operationRequests.OrderBy(x => x.DeadlineDate.Date).ToList();
 
                 PopulateSurgeryId(operationRequests);
 
@@ -138,10 +140,10 @@ namespace DDDNetCore.PrologIntegrations
 
                 return (true, "Knowledge base text created successfully.");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return (false, "Error creating knowledge base text.");
-                throw new Exception("Error creating knowledge base text.");
+                return (false, "Error: Knowledge base text creation failed - " + e.Message.ToString());
+                throw new Exception(e.Message);
             }
         }
 
@@ -151,6 +153,7 @@ namespace DDDNetCore.PrologIntegrations
             //staff(license number, role, specialization, [op. types associated]).
 
             foreach (var staff in staffs) {
+                List<OperationTypeDto> copyOperationTypes = new List<OperationTypeDto>(operationTypes);
                 var licenseNumber = staff.LicenseNumber.Value;
                 licenseNumber = char.ToLower(licenseNumber[0]) + licenseNumber[1..];
 
@@ -164,9 +167,9 @@ namespace DDDNetCore.PrologIntegrations
 
                 if (SpecializationUtils.IsCardiologyOrOrthopaedics(staff.Specialization))
                 {
-                    operationTypes = operationTypes.FindAll(o => o.Specialization == staff.Specialization);
+                    copyOperationTypes = operationTypes.FindAll(o => o.Specialization == staff.Specialization);
                 }
-                foreach (var operationType in operationTypes) {
+                foreach (var operationType in copyOperationTypes) {
                     var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
                     name = char.ToLower(name[0]) + name[1..];
                     value += name + ",";
@@ -190,7 +193,7 @@ namespace DDDNetCore.PrologIntegrations
                 string value = "agenda_staff(" + licenseNumber + "," + dateFormat + ",[";
 
                 foreach (var slot in staff.SlotAppointement) {
-                    if (slot.Start.Date != date.Date || slot.End.Date != date) continue;
+                    if (slot.Start.Date.Date != date.Date.Date || slot.End.Date.Date != date.Date.Date) continue;
 
                     var startToMinutes = slot.Start.Hour * 60 + slot.Start.Minute;
                     var endToMinutes = slot.End.Hour * 60 + slot.End.Minute;
@@ -214,8 +217,10 @@ namespace DDDNetCore.PrologIntegrations
                     }
                 }
 
-                if (value.EndsWith(",")) value = value[..^1];
+                if (value.EndsWith(",")) value = value.Substring(0, value.Length - 1);
                 value += "]).";
+
+                this._agendaStaff.Add(value);
             }
         }
 

@@ -60,7 +60,11 @@ namespace DDDNetCore.Domain.OperationRequests
 
         public int CompareTo(DeadlineDate deadlineDate)
         {
-            return Date.CompareTo(deadlineDate.Date);
+            return Date.Year.CompareTo(deadlineDate.Date.Year) == 0
+                ? Date.Month.CompareTo(deadlineDate.Date.Month) == 0
+                    ? Date.Day.CompareTo(deadlineDate.Date.Day)
+                    : Date.Month.CompareTo(deadlineDate.Date.Month)
+                : Date.Year.CompareTo(deadlineDate.Date.Year);
         }
     }
 }

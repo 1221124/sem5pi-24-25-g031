@@ -71,10 +71,12 @@ namespace DDDNetCore.Domain.Appointments
             
         }
 
-        public async Task<bool> CreateAppointmentsAutomatically(SurgeryRoomNumber surgeryRoomNumber, DateTime dateTime, PrologResponse response)
+        public async Task<List<string>> CreateAppointmentsAutomatically(SurgeryRoomNumber surgeryRoomNumber, DateTime dateTime, PrologResponse response)
         {
             try
-            {
+            {  
+                var opRequestsIds = new List<string>();
+
                 var surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber);
 
                 //appointmentsGenerated = [(slotBegginingInMinutes, slotEndInHours, operationRequestId), (..., ..., ...), ...],
@@ -111,17 +113,24 @@ namespace DDDNetCore.Domain.Appointments
 
                     var slot = new Slot(start, end);
 
-                    var newAppointment = new CreatingAppointmentDto(operationRequestId, surgeryRoomNumber, slot);
+                    var creatingAppointment = new CreatingAppointmentDto(operationRequestId, surgeryRoomNumber, slot);
 
-                    await AddAsync(newAppointment);
+                    var all = await _appointmentRepository.GetAllAsync();
+                    var newAppointment = AppointmentMapper.ToEntity(creatingAppointment, all.Count + 1);
+
+                    await _appointmentRepository.AddAsync(newAppointment);
+
+                    opRequestsIds.Add(id);
                 }
 
-                return true;
+                await _unitOfWork.CommitAsync();
+
+                return opRequestsIds;
 
             }
             catch (Exception)
             {
-                return false;
+                return new List<string>();
                 throw new Exception("Error creating appointments automatically");
             }   
         }

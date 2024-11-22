@@ -32,12 +32,12 @@ namespace DDDNetCore.Domain.Surgeries{
         }
 
         //GetAll
-        public async Task<List<SurgeryRoom>> GetAll(){
+        public async Task<List<SurgeryRoom>> GetAll() {
             try{
                 return await _repo.GetAllAsync();
             }
-            catch(Exception){
-                return new List<SurgeryRoom>();
+            catch(Exception) {
+                return null;
             }
         }
 

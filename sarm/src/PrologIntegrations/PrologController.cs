@@ -1,6 +1,7 @@
 
 using System.Globalization;
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Staffs;
 using Microsoft.AspNetCore.Mvc;
@@ -13,17 +14,19 @@ namespace DDDNetCore.PrologIntegrations
         private readonly PrologService _service;
         private readonly AppointmentService _appointmentService;
         private readonly StaffService _staffService;
+        private readonly OperationRequestService _operationRequestService;
 
-         public PrologController(PrologService service, AppointmentService appointmentService, StaffService staffService)
-         {
+        public PrologController(PrologService service, AppointmentService appointmentService, StaffService staffService, OperationRequestService operationRequestService)
+        {
             _service = service;
             _appointmentService = appointmentService;
             _staffService = staffService;
-         }
+            _operationRequestService = operationRequestService;
+        }
         
-        //api/Prolog?surgeryRoom=OR1&date=2045-12-02
+        //api/Prolog?surgeryRoom=or1&date=2045-12-02
         [HttpGet]
-        public async Task<IActionResult> RunProlog([FromQuery] string surgeryRoom, [FromQuery] string date)
+        public async Task<ActionResult> RunProlog([FromQuery] string surgeryRoom, [FromQuery] string date)
         {
             try
             {
@@ -36,18 +39,22 @@ namespace DDDNetCore.PrologIntegrations
 
                 var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime);
 
-                var appointments = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);
+                var opRequestsIds = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);
+
+                foreach (var id in opRequestsIds) {
+                    var opRequest = await _operationRequestService.GetFilteredAsync(id, null, null, null, null, null, null);
+                    if (opRequest == null || opRequest.Count != 1) return BadRequest(new {message = "Error getting operation request..."});
+
+                    var activatedOpRequest = await _operationRequestService.UpdateAsync(OperationRequestMapper.ToUpdatingFromEntity(opRequest[0], RequestStatus.ACCEPTED));
+                }
 
                 var staffAgenda = await _staffService.CreateSlotAppointments(dateTime, response);
                 
-                if (appointments)
-                    return Ok(new {message = "Appointments created successfully!"});
-
-                return BadRequest(new {message = "Error creating appointments..."});
+                return Ok(new {message = "Appointments created successfully!"});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest(new {message = "Error running prolog to create appointments..."});
+                return BadRequest(new {message = e.Message});
             }
         }
     }

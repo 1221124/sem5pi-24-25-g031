@@ -1,3 +1,4 @@
+
 namespace DDDNetCore.Domain.OperationRequests
 {
     public class OperationRequestMapper {
@@ -83,6 +84,17 @@ namespace DDDNetCore.Domain.OperationRequests
         public static List<OperationRequest> ToEntityList(List<OperationRequestDto> dtoList)
         {
             return dtoList.ConvertAll(dto => ToEntity(dto));
+        }
+
+        public static UpdatingOperationRequestDto ToUpdatingFromEntity(OperationRequestDto operationRequestDto, RequestStatus requestStatus)
+        {
+            return new UpdatingOperationRequestDto
+            {
+                Id = operationRequestDto.Id,
+                DeadlineDate = operationRequestDto.DeadlineDate,
+                Priority = operationRequestDto.Priority,
+                RequestStatus = requestStatus
+            };
         }
     }
 }
