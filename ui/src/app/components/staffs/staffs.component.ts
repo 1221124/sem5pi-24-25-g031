@@ -115,7 +115,7 @@ export class StaffsComponent implements OnInit {
       this.specializations = data;
     });
 
-    this.accessToken = this.authService.getToken();
+    this.accessToken = this.authService.getToken() as string;
     await this.fetchStaffs();
   }
 

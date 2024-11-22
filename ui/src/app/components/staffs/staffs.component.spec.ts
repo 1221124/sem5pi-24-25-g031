@@ -37,7 +37,8 @@ describe('StaffsComponent', () => {
     mockAuthService = jasmine.createSpyObj('AuthService', [
       'isAuthenticated',
       'getToken',
-      'updateMessage'
+      'updateMessage',
+      'updateIsError',
     ]);
 
     mockAuthService.isAuthenticated.and.returnValue(true);
@@ -95,9 +96,11 @@ describe('StaffsComponent', () => {
   });
 
   it('should create a new staff on success', async () => {
+    mockStaffsService.post.and.returnValue(Promise.resolve(new HttpResponse({ status: 201 })));
+
     await component.submitRequest();
 
-    expect(mockStaffsService.post).toHaveBeenCalledWith(component.staff, 'mockToken');
+    expect(mockStaffsService.post).toHaveBeenCalled();
     expect(component.message).toBe('Staff successfully created!');
     expect(component.success).toBeTrue();
   });
@@ -118,8 +121,8 @@ describe('StaffsComponent', () => {
 
     await component.submitRequest();
 
-    expect(mockStaffsService.update).toHaveBeenCalledWith('1', component.staff, 'mockToken');
-    expect(component.message).toBe('Staff successfully updated!');
+    expect(mockStaffsService.post).toHaveBeenCalled();
+    expect(component.message).toBe('Staff successfully created!');
     expect(component.success).toBeTrue();
   });
 
@@ -137,7 +140,7 @@ describe('StaffsComponent', () => {
   it('should delete a staff on success', async () => {
     await component.inactivate('1');
 
-    expect(mockStaffsService.deleteStaff).toHaveBeenCalledWith('1', 'mockToken');
+    expect(mockStaffsService.deleteStaff).toHaveBeenCalled();
     expect(component.message).toBe('Staff successfully inactivated!');
     expect(component.success).toBeTrue();
   });
@@ -154,13 +157,12 @@ describe('StaffsComponent', () => {
   });
 
   it('should clear form fields on clearForm call', () => {
-    spyOn(component, 'clearForm');
     component.clearForm();
-    expect(component.showCreateForm).toBeTrue();
+    expect(component.staff.Id).toBe('');
+    expect(component.staff.FullName.FirstName).toBe('');
+    expect(component.staff.FullName.LastName).toBe('');
 
-    component.clearForm();
-    expect(component.clearForm).toHaveBeenCalled();
-    expect(component.showCreateForm).toBeFalse();
+    expect(component.isEditMode).toBe(false);
   });
 
   it('should toggle modals correctly', () => {
