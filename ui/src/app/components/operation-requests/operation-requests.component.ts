@@ -7,7 +7,6 @@ import { StaffsService } from '../../services/staffs/staffs.service';
 import { PatientsService } from '../../services/admin-patients/admin-patients.service';
 import { OperationTypesService } from '../../services/operation-types/operation-types.service';
 import { Staff } from '../../models/staff.model';
-import { Patient } from '../../models/patient.model';
 import { OperationType } from '../../models/operation-type.model';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
@@ -309,7 +308,6 @@ export class OperationRequestsComponent implements OnInit {
         }
       });
   }
-
 
   async loadPatients() {
     try {

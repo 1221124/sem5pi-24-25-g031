@@ -1,11 +1,8 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Router} from '@angular/router';
 import {environment, httpOptions} from '../../../environments/environment';
-import {PatientsService} from '../admin-patients/admin-patients.service';
 
 import {firstValueFrom, throwError} from 'rxjs';
-import {OperationRequest} from '../../models/operation-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +11,7 @@ export class OperationRequestsService {
   message: string = '';
 
   constructor(
-    private http: HttpClient, private router: Router,
-    private patientsService: PatientsService
+    private http: HttpClient
   ) {
   }
 
