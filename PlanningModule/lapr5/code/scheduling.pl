@@ -166,12 +166,23 @@ insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
     assert(agenda_staff1(Doctor, Day, Agenda1)),
     insert_agenda_doctors((TinS, TfinS, OpCode), Day, LDoctors).
 
+print_agenda([]).
+print_agenda([Elem]) :-
+    write(Elem).
+print_agenda([Elem|Rest]) :-
+    write(Elem),
+    write(', '),
+    print_agenda(Rest).
+
 obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
 		get_time(Ti),
 		(obtain_better_sol1(Room,Day);true),
 		retract(better_sol(Day,Room,AgOpRoomBetter,LAgDoctorsBetter,TFinOp)),
             write('Final Result: AgOpRoomBetter='),write(AgOpRoomBetter),nl,
-            write('LAgDoctorsBetter='),write(LAgDoctorsBetter),nl,
+            %write('LAgDoctorsBetter='),write(LAgDoctorsBetter),nl,
+            write('LAgDoctorsBetter=['),
+            print_agenda(LAgDoctorsBetter),
+            write(']'), nl,
             write('TFinOp='),write(TFinOp),nl,
 		get_time(Tf),
 		T is Tf-Ti,
@@ -221,5 +232,4 @@ remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
 schedule_appointments(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
     assign_doctors_to_surgeries,
     schedule_all_surgeries(Room,Day),
-    obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp),
-    halt.
+    obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).

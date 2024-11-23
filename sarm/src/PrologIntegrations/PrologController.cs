@@ -38,6 +38,7 @@ namespace DDDNetCore.PrologIntegrations
                 if(!value.done) return BadRequest(new {message = value.message});
 
                 var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime);
+                if (response == null) return BadRequest(new {message = "Appointments couldn't be created due to staff's incompatibility.\nPlease, try again later."});
 
                 Console.WriteLine("Got response!");
                 var opRequestsIds = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);

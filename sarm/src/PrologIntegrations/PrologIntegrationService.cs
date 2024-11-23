@@ -184,120 +184,75 @@ namespace DDDNetCore.PrologIntegrations
             using (Process process = new Process())
             {
                 process.StartInfo = psi;
-                // try {
-                    process.Start();
-                    
-                    using (var writer = process.StandardInput)
-                    {
-                        if (writer.BaseStream.CanWrite)
-                        {
-                            writer.WriteLine(command.command1);
-                            writer.WriteLine(command.command2);
-                            writer.WriteLine(command.command3);
-                            // writer.WriteLine("halt.");
-                        }
-                    }
+                process.Start();
                 
-                    string result = process.StandardOutput.ReadToEnd();
-                    // string errors = process.StandardError.ReadToEnd();
-                    process.StandardInput.Close();
+                using (var writer = process.StandardInput)
+                {
+                    if (writer.BaseStream.CanWrite)
+                    {
+                        writer.WriteLine("set_prolog_flag(answer_write_options,[max_depth(0)]).");
+                        writer.WriteLine(command.command1);
+                        writer.WriteLine(command.command2);
+                        writer.WriteLine(command.command3);
+                        writer.WriteLine("halt.");
+                    }
+                }
+            
+                string result = process.StandardOutput.ReadToEnd();
+                process.StandardInput.Close();
 
-                    // process.WaitForExit();
-                    // if (!process.HasExited)
-                    // {
-                    //     process.Kill();
-                    // }
+                process.WaitForExit();
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                }
 
-                    Console.WriteLine("Prolog Output: ");
-                    Console.WriteLine(result);
-                    // Console.WriteLine("Prolog Errors: ");
-                    // Console.WriteLine(errors);
+                Console.WriteLine("Prolog Output: ");
+                Console.WriteLine(result);
 
-                    // if (!string.IsNullOrEmpty(errors))
-                    // {
-                    //     // Console.WriteLine("Prolog Errors: " + errors);
-                    //     throw new Exception($"Error executing Prolog: {errors}");
-                    // }
-
-                    // Console.WriteLine("Prolog Output: " + result);
-                    return result;
-                // } catch (Exception e) {
-                //     if (process != null && !process.HasExited)
-                //     {
-                //         process.Kill();
-                //     }
-                //     Console.WriteLine($"Error: {e.Message}");
-                //     Console.WriteLine($"Stack Trace: {e.StackTrace}");
-                //     throw new Exception("Error running Prolog engine", e);
-                // }
+                return result;
             }
         }
 
-        // public string RunPrologEngine(string absolutePrologPath, string command)
-        // {
-        //     Console.WriteLine("Running Prolog Engine...");
-        //     ProcessStartInfo psi = new ProcessStartInfo
-        //     {
-        //         FileName = "swipl", //needs to have swipl/bin in the PATH
-        //         Arguments = "-q -t halt",
-        //         RedirectStandardInput = true,
-        //         RedirectStandardOutput = true,
-        //         RedirectStandardError = true,
-        //         UseShellExecute = false,
-        //         CreateNoWindow = true,
-        //         WorkingDirectory = absolutePrologPath
-        //     };
-
-        //     using (Process process = new Process())
-        //     {
-        //         try {
-        //             process.StartInfo = psi;
-        //             process.Start();
-
-        //             using (var writer = process.StandardInput)
-        //             {
-        //                 if (writer.BaseStream.CanWrite)
-        //                 {
-        //                     writer.WriteLine(command);
-        //                 }
-        //             }
-
-        //             string result = process.StandardOutput.ReadToEnd();
-        //             string errors = process.StandardError.ReadToEnd();
-        //             process.WaitForExit();
-
-        //             if (!string.IsNullOrEmpty(errors))
-        //             {
-        //                 throw new Exception($"Error executing Prolog: {errors}");
-        //             }
-
-        //             Console.WriteLine("Prolog Output: " + result);
-        //             return result;
-        //         } catch (Exception e) {
-        //             if (process != null && !process.HasExited)
-        //             {
-        //                 process.Kill();
-        //             }
-        //             Console.WriteLine($"Error: {e.Message}");
-        //             Console.WriteLine($"Stack Trace: {e.StackTrace}");
-        //             throw new Exception("Error running Prolog engine", e);
-        //         }
-        //     }
-        // }
-
-        public PrologResponse ParsePrologResponse(string prologOutput)
+        public PrologResponse? ParsePrologResponse(string prologOutput)
         {
-            var appointmentsPattern = @"AppointmentsGenerated\s*=\s*(\[.*?\])";
-            var staffAgendaPattern = @"StaffAgendaGenerated\s*=\s*(\[.*?\])";
-            var finishingTimePattern = @"BestFinishingTime\s*=\s*(\d+)";
+            string[] lines = prologOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            //skip to the line starting with "Final Result"
+            int i = 0;
+            while (i < lines.Length && !lines[i].StartsWith("Final Result"))
+            {
+                if (lines[i].StartsWith("false"))
+                {
+                    return null;
+                }
+                i++;
+            }
 
-            var appointmentsMatch = Regex.Match(prologOutput, appointmentsPattern);
-            var staffAgendaMatch = Regex.Match(prologOutput, staffAgendaPattern);
-            var finishingTimeMatch = Regex.Match(prologOutput, finishingTimePattern);
+            //Final Result: AgOpRoomBetter=[(0,134,req2),(135,269,req3),(270,404,req1)]
+            //LAgDoctorsBetter=[(d20246,[(45,105,req2),(45,105,req2)]),(d20245,[(180,240,req3),(180,240,req3)]),(d20244,[(45,105,req2),(180,240,req3),(315,375,req1)]),(d20248,[(315,375,req1)]),(d20247,[(315,375,req1)])]
+            //TFinOp=404
+            //Tempo de geracao da solucao:0.0009179115295410156
 
-            var appointmentsGenerated = appointmentsMatch.Success ? appointmentsMatch.Groups[1].Value : null;
-            var staffAgendaGenerated = staffAgendaMatch.Success ? staffAgendaMatch.Groups[1].Value : null;
-            var bestFinishingTime = finishingTimeMatch.Success ? finishingTimeMatch.Groups[1].Value : null;
+            //parse AgOpRoomBetter
+            string appointmentsGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
+            Console.WriteLine(appointmentsGenerated);
+
+            //parse LAgDoctorsBetter
+            i++;
+            string trimmedStaffAgendaGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
+
+            //string is now: (d20246,[(45,105,req2),(45,105,req2)]),(d20245,[(180,240,req3),(180,240,req3)]),(d20244,[(45,105,req2),(180,240,req3),(315,375,req1)]),(d20248,[(315,375,req1)]),(d20247,[(315,375,req1)])
+            //get each doctor's agenda, but can't split by '),(' because each doctor's agenda also has ),( between the appointments
+            //so, we need to split by '),(d' or '),(n' or '),(t' to get each doctor's agenda and then add the corresponding letter (d, n or t) back and the parenthesis back
+
+            string[] elements = Regex.Split(trimmedStaffAgendaGenerated, ", ");
+            string staffAgendaGenerated = string.Join(" ; ", elements);
+            Console.WriteLine(staffAgendaGenerated);
+
+            //parse TFinOp
+            i++;
+            string bestFinishingTime = lines[i].Substring(lines[i].IndexOf('=') + 1);
+            Console.WriteLine(bestFinishingTime);           
             
             return new PrologResponse(appointmentsGenerated, staffAgendaGenerated, bestFinishingTime);
         }
