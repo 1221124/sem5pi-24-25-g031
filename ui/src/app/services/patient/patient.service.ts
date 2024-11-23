@@ -10,7 +10,7 @@ import {Patient} from '../../models/patient.model';
 export class PatientService {
 
   private apiUrlEmail = environment.patients + '/email';
-  private apiUrl = environment.patients;
+  apiUrl = environment.patients;
 
   constructor(private http: HttpClient) {
   }
@@ -91,4 +91,6 @@ export class PatientService {
     const options = { ...httpOptions, headers};
     return await firstValueFrom(this.http.delete(`${environment.patients}/patient/${id}`, options));
   }
+
+
 }

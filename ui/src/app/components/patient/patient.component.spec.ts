@@ -43,7 +43,6 @@ describe('PatientComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PatientComponent, CommonModule, FormsModule],
       providers: [
-        provideHttpClient(withFetch()),
         { provide: PatientService, useValue: mockPatientService },
         { provide: AuthService, useValue: mockAuthService },
         { provide: Router, useValue: mockRouter }
