@@ -67,28 +67,39 @@ intersect_availability((Ini,Fim),[(Ini1,Fim1)|LD],[(Imax,Fmin)|LI],LA):-
 min_max(I,I1,I,I1):- I<I1,!.
 min_max(I,I1,I1,I).
 
-assign_doctors_to_surgeries:-
-    retractall(assignment_surgery),
-    findall(OpReqId,surgery_id(OpReqId,_),OpReqs),
-    assign_doctors_to_surgery(OpReqs).
+assign_staff_to_surgeries :-
+    retractall(assignment_surgery(_, _)),
+    findall(OpReqId, surgery_id(OpReqId, _), OpReqs),
+    assign_staff_to_surgery(OpReqs).
 
-assign_doctors_to_surgery([]):-!.
+assign_staff_to_surgery([]) :- !.
 
-assign_doctors_to_surgery([OpReqId|LOpReqId]):-
-    surgery_id(OpReqId,OpType),
-    required_staff(OpType,doctor,Speciality,NumDoctors),
-    findall(D,staff(D,doctor,Speciality,_),LDoctors),
-    assign_doctors_to_surgery1(NumDoctors,LDoctors,OpReqId),
-    assign_doctors_to_surgery(LOpReqId).
+assign_staff_to_surgery([OpReqId | LOpReqId]) :-
+    surgery_id(OpReqId, OpType),
+    % Iterar sobre todos os tipos de pessoal
+    forall(
+        required_staff(OpType, Role, Speciality, NumStaff),
+        assign_staff_to_surgery_role(NumStaff, Role, Speciality, OpReqId)
+    ),
+    assign_staff_to_surgery(LOpReqId).
 
-assign_doctors_to_surgery1(0,_,_):-!.
-assign_doctors_to_surgery1(_,[],_):-!,fail.
+assign_staff_to_surgery_role(0, _, _, _) :- !.
+assign_staff_to_surgery_role(_, _, _, _) :- fail. % Falha caso não haja pessoal suficiente
 
-assign_doctors_to_surgery1(NumDoctors,LDoctors,OpReqId):-
-    random_member(D,LDoctors),
-    assert(assignment_surgery(OpReqId,D)),
-    NumDoctors1 is NumDoctors-1,
-    assign_doctors_to_surgery1(NumDoctors1,LDoctors,OpReqId).
+assign_staff_to_surgery_role(NumStaff, Role, Speciality, OpReqId) :-
+    findall(Staff, staff(Staff, Role, Speciality, _), LStaff),
+    assign_staff_to_surgery_role1(NumStaff, LStaff, OpReqId).
+
+assign_staff_to_surgery_role1(0, _, _) :- !.
+assign_staff_to_surgery_role1(_, [], _) :- !, fail.
+
+assign_staff_to_surgery_role1(NumStaff, LStaff, OpReqId) :-
+    random_member(Staff, LStaff),
+    assert(assignment_surgery(OpReqId, Staff)),
+    % Remover o staff já atribuído da lista
+    select(Staff, LStaff, LStaffUpdated),
+    NumStaff1 is NumStaff - 1,
+    assign_staff_to_surgery_role1(NumStaff1, LStaffUpdated, OpReqId).
 
 
 schedule_all_surgeries(Room,Day):-
@@ -114,8 +125,6 @@ availability_all_surgeries([OpCode|LOpCode],Room,Day):-
     insert_agenda_doctors((TinS,TfinS,OpCode),Day,LDoctors),
     availability_all_surgeries(LOpCode,Room,Day).
 
-
-
 availability_operation(OpCode,Room,Day,LPossibilities,LDoctors):-surgery_id(OpCode,OpType),surgery(OpType,TPreparation,TSurgery,TCleaning),
     TotalTime is TPreparation+TSurgery+TCleaning,
     findall(Doctor,assignment_surgery(OpCode,Doctor),LDoctors),
@@ -138,13 +147,6 @@ schedule_first_interval(TotalTime,[(Tin,_)|_],(Tin,TfinS)):-
 insert_agenda((TinS,TfinS,OpCode),[],[(TinS,TfinS,OpCode)]).
 insert_agenda((TinS,TfinS,OpCode),[(Tin,Tfin,OpCode1)|LA],[(TinS,TfinS,OpCode),(Tin,Tfin,OpCode1)|LA]):-TfinS<Tin,!.
 insert_agenda((TinS,TfinS,OpCode),[(Tin,Tfin,OpCode1)|LA],[(Tin,Tfin,OpCode1)|LA1]):-insert_agenda((TinS,TfinS,OpCode),LA,LA1).
-
-%insert_agenda_doctors(_,_,[]).
-%insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
-%    retract(agenda_staff1(Doctor,Day,Agenda)),
-%    insert_agenda((TinS,TfinS,OpCode),Agenda,Agenda1),
-%    assert(agenda_staff1(Doctor,Day,Agenda1)),
-%    insert_agenda_doctors((TinS,TfinS,OpCode),Day,LDoctors).
 
 insert_agenda_doctors(_,_,[]).
 insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
@@ -232,6 +234,6 @@ remove_equals([X|L],L1):-member(X,L),!,remove_equals(L,L1).
 remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
 
 schedule_appointments(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
-    assign_doctors_to_surgeries,
+    assign_staff_to_surgeries,
     schedule_all_surgeries(Room,Day),
     obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).
