@@ -1,7 +1,6 @@
 ﻿using Xunit;
 using Moq;
 using DDDNetCore.Tests.src.Infrastructure;
-using Domain.OperationRequests;
 using Domain.Shared;
 using DDDNetCore.Domain.Patients;
 using DDDNetCore.Domain.OperationRequests;

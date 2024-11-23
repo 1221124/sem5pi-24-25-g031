@@ -19,5 +19,10 @@ namespace Infrastructure.Appointments
         {
             return await _objs.Where(x => x.SurgeryRoomNumber == surgeryRoomNumber && x.AppointmentDate.Start.Date == date.Date).ToListAsync();
         }
+
+        public async Task<Appointment> GetByNumberAsync(AppointmentNumber appointmentNumber)
+        {
+            return await _objs.Where(x => x.AppointmentNumber == appointmentNumber).FirstOrDefaultAsync();
+        }
     }
 }

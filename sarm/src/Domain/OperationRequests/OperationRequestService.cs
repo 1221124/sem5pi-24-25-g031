@@ -262,6 +262,22 @@ namespace DDDNetCore.Domain.OperationRequests
             }
         }
 
+        public async Task<OperationRequestDto?> GetByCodeAsync(RequestCode code)
+        {
+            try
+            {
+                var request = await _repo.GetByCode(code);
+
+                if(request == null) return null;
+
+                return OperationRequestMapper.ToDto(request);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public async Task<RequestCode> AssignCodeAsync()
         {
             var requests = await _repo.GetAllAsync();

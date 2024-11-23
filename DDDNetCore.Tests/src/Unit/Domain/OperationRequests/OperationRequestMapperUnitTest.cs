@@ -1,5 +1,4 @@
-﻿using Domain.OperationRequests;
-using Domain.Patients;
+﻿using Domain.Patients;
 using Domain.Shared;
 using Domain.Staffs;
 
@@ -25,7 +24,8 @@ public class OperationRequestMapperTests
             new Name("operation1"),
             new DeadlineDate("2024-12-01"),
             Priority.URGENT,
-            RequestStatus.PENDING
+            RequestStatus.PENDING,
+            new RequestCode("req1")
         );
 
         // Act
@@ -52,7 +52,8 @@ public class OperationRequestMapperTests
             new Name("operation1"),
             new DeadlineDate("2024-12-01"),
             Priority.URGENT,
-            RequestStatus.PENDING
+            RequestStatus.PENDING,
+            new RequestCode("req1")
         );
 
         // Act
@@ -105,7 +106,8 @@ public class OperationRequestMapperTests
                 new Name("operation1"),
                 new DeadlineDate("2024-12-01"),
                 Priority.URGENT,
-                RequestStatus.PENDING
+                RequestStatus.PENDING,
+            new RequestCode("req1")
             ),
             new OperationRequest(
                 new Guid("22222222-2222-2222-2222-222222222222"),
@@ -114,7 +116,8 @@ public class OperationRequestMapperTests
                 new Name("operation2"),
                 new DeadlineDate("2024-12-15"),
                 Priority.EMERGENCY,
-                RequestStatus.ACCEPTED
+                RequestStatus.ACCEPTED,
+            new RequestCode("req1")
             )
         };
 

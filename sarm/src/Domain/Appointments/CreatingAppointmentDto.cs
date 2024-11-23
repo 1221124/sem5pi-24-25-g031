@@ -5,18 +5,20 @@ using Domain.Shared;
 namespace DDDNetCore.Domain.Appointments;
 
 public class CreatingAppointmentDto {
-    public OperationRequestId OperationRequestId { get; set; }
+    public RequestCode RequestCode { get; set; }
     public SurgeryRoomNumber SurgeryRoomNumber { get; set; }
+    public AppointmentNumber AppointmentNumber { get; set; }
     public Slot AppointmentDate { get; set; }
 
     public CreatingAppointmentDto ()
     {
     }
 
-    public CreatingAppointmentDto(OperationRequestId operationRequestId, SurgeryRoomNumber surgeryRoomNumber, Slot appointmentDate)
+    public CreatingAppointmentDto(RequestCode requestCode, SurgeryRoomNumber surgeryRoomNumber, AppointmentNumber appointmentNumber, Slot appointmentDate)
     {
-        OperationRequestId = operationRequestId;
+        RequestCode = requestCode;
         SurgeryRoomNumber = surgeryRoomNumber;
+        AppointmentNumber = appointmentNumber;
         AppointmentDate = appointmentDate;
     }
 }

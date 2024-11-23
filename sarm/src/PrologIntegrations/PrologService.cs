@@ -7,6 +7,7 @@ using Domain.OperationTypes;
 using Domain.Shared;
 using Domain.Staffs;
 using Infrastructure;
+using Org.BouncyCastle.Ocsp;
 
 namespace DDDNetCore.PrologIntegrations
 {
@@ -99,7 +100,7 @@ namespace DDDNetCore.PrologIntegrations
 
                 var appointments = await _appointmentService.GetByRoomAndDateAsync(surgeryRoomNumber, date);
 
-                await PopulateAgendaStaff(appointments, staffs, date);
+                PopulateAgendaStaff(appointments, staffs, date);
                 PopulateTimetable(staffs, date);
 
                 PopulateSurgery(operationTypes);
@@ -178,7 +179,7 @@ namespace DDDNetCore.PrologIntegrations
             }
         }
 
-        private async Task PopulateAgendaStaff(List<Appointment> appointments, List<StaffDto> staffs, DateTime date)
+        private void PopulateAgendaStaff(List<Appointment> appointments, List<StaffDto> staffs, DateTime date)
         {
             //agenda_staff(d20241,20241028,[(720,840,ap01),(1080,1200,ap02)]).
             //agenda_staff(license number, date, [(start, end, appointment number)]).
@@ -189,29 +190,13 @@ namespace DDDNetCore.PrologIntegrations
                 licenseNumber = char.ToLower(licenseNumber[0]) + licenseNumber[1..];
                 string value = "agenda_staff(" + licenseNumber + "," + dateFormat + ",[";
 
-                foreach (var slot in staff.SlotAppointement) {
-                    if (slot.Start.Date.Date != date.Date.Date || slot.End.Date.Date != date.Date.Date) continue;
+                foreach (var appointment in appointments)
+                {
+                    if (!appointment.AssignedStaff.Contains(staff.LicenseNumber)) continue;
 
-                    var startToMinutes = slot.Start.Hour * 60 + slot.Start.Minute;
-                    var endToMinutes = slot.End.Hour * 60 + slot.End.Minute;
-
-                    foreach (var appointment in appointments) {
-                        var appointmentSlot = new Slot(appointment.AppointmentDate.Start, appointment.AppointmentDate.End);
-                        if (!appointmentSlot.Equals(slot)) continue;
-
-                        var operationRequests = await _operationRequestService.GetFilteredAsync(
-                            appointment.OperationRequestId.AsString(), null, null, null, null, null, RequestStatusUtils.ToString(RequestStatus.ACCEPTED)
-                        );
-
-                        if (operationRequests.Count != 1) throw new ArgumentException("Operation Request not found; Fix the appointment");
-
-                        var operationRequest = operationRequests[0];
-                        if (operationRequest.Staff.Value != staff.LicenseNumber.Value) continue;
-                        else {
-                            value += "(" + startToMinutes + "," + endToMinutes + "," + appointment.AppointmentNumber + "),";
-                            break;
-                        }
-                    }
+                    var startToMinutes = appointment.AppointmentDate.Start.Hour * 60 + appointment.AppointmentDate.Start.Minute;
+                    var endToMinutes = appointment.AppointmentDate.End.Hour * 60 + appointment.AppointmentDate.End.Minute;
+                    value += "(" + startToMinutes + "," + endToMinutes + "," + appointment.AppointmentNumber + "),";
                 }
 
                 if (value.EndsWith(",")) value = value.Substring(0, value.Length - 1);

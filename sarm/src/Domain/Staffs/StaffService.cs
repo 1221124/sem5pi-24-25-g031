@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using DDDNetCore.Domain.Appointments;
 using DDDNetCore.PrologIntegrations;
 using Domain.DbLogs;
 using Domain.Shared;
@@ -455,30 +456,44 @@ namespace Domain.Staffs
             return StaffMapper.ToDto(staff);
         }
 
-        public async Task<bool> CreateSlotAppointments(DateTime date, PrologResponse response)
+        public async Task<Dictionary<StaffDto, List<AppointmentNumber>>> CreateSlotAppointments(DateTime date, PrologResponse response)
         {
             try {
-                var staffAgenda = response.StaffAgendaGenerated;
+                //staffAgendaGenerated = licenseNumber,[(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
+                var staffs = response.StaffAgendaGenerated.Split(" ; ");
 
-                var staffs = ParseStaffAgenda(staffAgenda);
+                Dictionary<StaffDto, List<AppointmentNumber>> staffAppointments = new Dictionary<StaffDto, List<AppointmentNumber>>();
 
                 foreach (var staff in staffs) {
-                    var licenseNumber = staff.Split(',')[0].Split(':')[1].Trim().ToUpper();
-                    var operations = staff.Split(',')[1].Substring(10).Trim();
+                    var splitStaff = staff.Split(',');
+                    var licenseNumber = splitStaff[0].Trim();
 
-                    var staffEntity = await _repo.GetByLicenseNumber(new LicenseNumber(licenseNumber));
+                    var operationsStr = splitStaff[1].Trim();
+                    var operations = operationsStr.Split(",");
+
+                    var staffEntity = await GetByLicenseNumber(new LicenseNumber(licenseNumber));
+                    if (staffEntity == null) {
+                        return new Dictionary<StaffDto, List<AppointmentNumber>>();
+                        throw new Exception($"Staff with license number {licenseNumber} not found.");
+                    }
+
+                    List<AppointmentNumber> appointments = new List<AppointmentNumber>();
 
                     if (staffEntity == null) {
                         throw new Exception("Staff not found.");
                     }
 
-                    var operationsList = operations.TrimStart('[').TrimEnd(']').Split("),");
-                    foreach (var operation in operationsList) {
-                        var cleanedOperation = operation.Trim('(', ')').Trim();
+                    foreach (var operation in operations) {
+                        var cleanedOperation = operation.Substring(1, operation.Length - 2);
                         var parts = cleanedOperation.Split(',');
 
-                        string startTimeStr = parts[0].Trim();
-                        string endTimeStr = parts[1].Trim();
+                        var opRequestCode = parts[2].Trim();
+                        var appointmentNumber = new AppointmentNumber("ap" + int.Parse(opRequestCode.Substring(3)));
+
+                        appointments.Add(appointmentNumber);
+
+                        string startTimeStr = ConvertMinutesToTime(int.Parse(parts[0].Trim()));
+                        string endTimeStr = ConvertMinutesToTime(int.Parse(parts[1].Trim()));
 
                         DateTime startInHHMM = DateTime.ParseExact(startTimeStr, "HH:mm", null);
                         DateTime endInHHMM = DateTime.ParseExact(endTimeStr, "HH:mm", null);
@@ -488,50 +503,18 @@ namespace Domain.Staffs
 
                         var slotEntity = new Slot(start, end);
 
-                        staffEntity.AddAppointmentSlot(slotEntity);
+                        await AddSlotAppointment(staffEntity, slotEntity);
                     }
 
-                    await _unitOfWork.CommitAsync();
+                    staffAppointments.Add(staffEntity, appointments);
                 } 
                 
-                return true;
+                return staffAppointments;
                 
-            } catch (Exception) {
-                return false;
-                throw new Exception("Error assigning slot appointments to staff.");
+            } catch (Exception e) {
+                return new Dictionary<StaffDto, List<AppointmentNumber>>();
+                throw new Exception("Error assigning slot appointments to staff: " + e.Message);
             }
-        }
-
-        private static string[] ParseStaffAgenda(string staffAgenda)
-        {
-            var result = new List<string>();
-
-            string pattern = @"\(([^,]+), \[\(([^)]+)\)\]\)";
-            MatchCollection matches = Regex.Matches(staffAgenda, pattern);
-
-            foreach (Match match in matches)
-            {
-                string licenseNumber = match.Groups[1].Value;
-                string operationsRaw = match.Groups[2].Value;
-
-                var operations = new List<string>();
-                foreach (string operation in operationsRaw.Split(new[] { "), (" }, StringSplitOptions.None))
-                {
-                    string[] parts = operation.Replace("(", "").Replace(")", "").Split(',');
-                    int slotStart = int.Parse(parts[0].Trim());
-                    int slotEnd = int.Parse(parts[1].Trim());
-                    int operationId = int.Parse(parts[2].Trim());
-
-                    string startFormatted = ConvertMinutesToTime(slotStart);
-                    string endFormatted = ConvertMinutesToTime(slotEnd);
-
-                    operations.Add($"({startFormatted} - {endFormatted}, OpId: {operationId})");
-                }
-
-                result.Add($"License: {licenseNumber}, Operations: [{string.Join(", ", operations)}]");
-            }
-
-            return result.ToArray();
         }
 
         private static string ConvertMinutesToTime(int minutes)

@@ -228,31 +228,27 @@ namespace DDDNetCore.PrologIntegrations
                 i++;
             }
 
-            //Final Result: AgOpRoomBetter=[(0,134,req2),(135,269,req3),(270,404,req1)]
+            //Final Result: AgOpRoomBetter=[0,134,req2, 135,269,req3, 270,404,req1]
             //LAgDoctorsBetter=[(d20246,[(45,105,req2),(45,105,req2)]),(d20245,[(180,240,req3),(180,240,req3)]),(d20244,[(45,105,req2),(180,240,req3),(315,375,req1)]),(d20248,[(315,375,req1)]),(d20247,[(315,375,req1)])]
             //TFinOp=404
             //Tempo de geracao da solucao:0.0009179115295410156
 
             //parse AgOpRoomBetter
             string appointmentsGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
-            Console.WriteLine(appointmentsGenerated);
+            Console.WriteLine(appointmentsGenerated + "\n");
 
             //parse LAgDoctorsBetter
             i++;
             string trimmedStaffAgendaGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
 
-            //string is now: (d20246,[(45,105,req2),(45,105,req2)]),(d20245,[(180,240,req3),(180,240,req3)]),(d20244,[(45,105,req2),(180,240,req3),(315,375,req1)]),(d20248,[(315,375,req1)]),(d20247,[(315,375,req1)])
-            //get each doctor's agenda, but can't split by '),(' because each doctor's agenda also has ),( between the appointments
-            //so, we need to split by '),(d' or '),(n' or '),(t' to get each doctor's agenda and then add the corresponding letter (d, n or t) back and the parenthesis back
-
             string[] elements = Regex.Split(trimmedStaffAgendaGenerated, ", ");
             string staffAgendaGenerated = string.Join(" ; ", elements);
-            Console.WriteLine(staffAgendaGenerated);
+            Console.WriteLine(staffAgendaGenerated + "\n");
 
             //parse TFinOp
             i++;
             string bestFinishingTime = lines[i].Substring(lines[i].IndexOf('=') + 1);
-            Console.WriteLine(bestFinishingTime);           
+            Console.WriteLine(bestFinishingTime + "\n");  
             
             return new PrologResponse(appointmentsGenerated, staffAgendaGenerated, bestFinishingTime);
         }

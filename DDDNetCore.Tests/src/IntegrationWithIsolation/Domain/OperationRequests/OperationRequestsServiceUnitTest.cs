@@ -1,6 +1,5 @@
 ﻿using Xunit;
 using Moq;
-using Domain.OperationRequests;
 using Domain.Shared;
 using DDDNetCore.Domain.Patients;
 using DDDNetCore.Domain.OperationRequests;

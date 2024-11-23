@@ -3,6 +3,7 @@ using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Shared;
+using Domain.Staffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,12 +19,12 @@ namespace DDDNetCore.Infrastructure.Appointments{
             builder.Property(x => x.Id)
                 .HasColumnName("Id");
 
-            builder.Property(x => x.OperationRequestId)
+            builder.Property(x => x.RequestCode)
                 .IsRequired()
-                .HasColumnName("OperationRequestId")
+                .HasColumnName("RequestCode")
                 .HasConversion(
                     v => v.Value,
-                    v => new OperationRequestId(v)
+                    v => new RequestCode(v)
                 );
             
             builder.Property(x => x.SurgeryRoomNumber)
@@ -57,6 +58,13 @@ namespace DDDNetCore.Infrastructure.Appointments{
                         v => v.ToString("yyyy-MM-dd HH:mm"),
                         v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
                     );
+            });
+
+            builder.OwnsMany(a => a.AssignedStaff, staff =>
+            {
+                staff.Property(s => s.Value)
+                    .HasColumnName("LicenseNumber")
+                    .IsRequired();
             });
 
         }

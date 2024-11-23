@@ -6,6 +6,10 @@ namespace DDDNetCore.Domain.OperationRequests
     {
         public string Value { get; }
 
+        public RequestCode()
+        {
+        }
+
         public RequestCode(string value)
         {
             if (string.IsNullOrWhiteSpace(value))

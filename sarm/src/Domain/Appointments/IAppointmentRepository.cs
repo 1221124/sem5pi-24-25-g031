@@ -9,5 +9,6 @@ namespace DDDNetCore.Domain.Appointments
     public interface IAppointmentRepository : IRepository<Appointment, AppointmentId>
     {
         Task<List<Appointment>> GetByRoomAndDateAsync(SurgeryRoomNumber surgeryRoomNumber, DateTime date);
+        Task<Appointment> GetByNumberAsync(AppointmentNumber appointmentNumber);
     }
 }

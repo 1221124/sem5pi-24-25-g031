@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using Domain.Emails;
-using Domain.OperationRequests;
 using Domain.OperationTypes;
 using Domain.Patients;
 using Domain.Shared;
@@ -117,7 +116,7 @@ public class OperationRequestServiceUnitTest
             .ReturnsAsync(1);
 
         // Act
-        var result = await _service.AddAsync(creatingDto);
+        var result = await _service.AddAsync(creatingDto, new RequestCode("req1"));
 
         // Assert
         Assert.NotNull(result);
@@ -148,7 +147,8 @@ public class OperationRequestServiceUnitTest
                 new Name("Surgery"),
                 new DeadlineDate("2024-11-21"),
                 Priority.EMERGENCY,
-                RequestStatus.ACCEPTED
+                RequestStatus.ACCEPTED,
+                new RequestCode("req1")
             )
         };
 
@@ -176,7 +176,8 @@ public class OperationRequestServiceUnitTest
             new Name("Surgery"),
             new DeadlineDate("2024-11-21"),
             Priority.EMERGENCY,
-            RequestStatus.REJECTED
+            RequestStatus.REJECTED,
+            new RequestCode("req1")
         );
 
         _repoMock.Setup(r => r.GetByIdAsync(It.IsAny<OperationRequestId>()))

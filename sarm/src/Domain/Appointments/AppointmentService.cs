@@ -1,10 +1,8 @@
 using DDDNetCore.Domain.OperationRequests;
-using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using DDDNetCore.PrologIntegrations;
-using Domain.DbLogs;
-using Domain.OperationTypes;
 using Domain.Shared;
+using Domain.Staffs;
 
 namespace DDDNetCore.Domain.Appointments
 {
@@ -37,7 +35,7 @@ namespace DDDNetCore.Domain.Appointments
                     throw new ArgumentNullException(nameof(appointment));
 
                 var all = await _appointmentRepository.GetAllAsync();
-                var newAppointment = AppointmentMapper.ToEntity(appointment, all.Count + 1);
+                var newAppointment = AppointmentMapper.ToEntity(appointment);
 
                 await _appointmentRepository.AddAsync(newAppointment);
                 await _unitOfWork.CommitAsync();
@@ -71,68 +69,113 @@ namespace DDDNetCore.Domain.Appointments
             
         }
 
-        public async Task<List<string>> CreateAppointmentsAutomatically(SurgeryRoomNumber surgeryRoomNumber, DateTime dateTime, PrologResponse response)
+        public async Task<(List<RequestCode> requestCodes, List<AppointmentNumber> appointmentNumbers)> CreateAppointmentsAutomatically(SurgeryRoomNumber surgeryRoomNumber, DateTime dateTime, PrologResponse response)
         {
             try
-            {  
-                var opRequestsIds = new List<string>();
+            {
+                var requestCodes = new List<RequestCode>();
+                var appointmentNumbers = new List<AppointmentNumber>();
 
                 var surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber);
 
-                //appointmentsGenerated = [(slotBegginingInMinutes, slotEndInHours, operationRequestId), (..., ..., ...), ...],
-                var appointmentsGenerated = response.AppointmentsGenerated;
-                var appointments = appointmentsGenerated.Split("), (");
-                appointments[0] = appointments[0].Substring(2);
-                appointments[appointments.Length - 1] = appointments[appointments.Length - 1].Substring(0, appointments[appointments.Length - 1].Length - 3);
+                var appointments = response.AppointmentsGenerated.Split(", ");
 
                 foreach (var appointment in appointments)
                 {
-                    var appointmentData = appointment.Split(", ");
+                    // var modifiedAppointment = appointment.Substring(1, appointment.Length - 2);
+                    var appointmentData = appointment.Split(",");
 
                     var startInMinutes = appointmentData[0];
-                    var endDateInMinutes = appointmentData[1];
-                    var id = appointmentData[2];
+                    var endInMinutes = appointmentData[1];
+                    var code = appointmentData[2];
 
-                    if (id.StartsWith("ap")) continue;
+                    var opRequestCode = new RequestCode();
+                    var appointmentNumber = new AppointmentNumber();
+                    if (code.ToLower().StartsWith("ap")) continue;
+                    else if (code.ToLower().StartsWith("req")) {
+                        opRequestCode = new RequestCode(code);
+                        var number = code.Substring(3);
+                        appointmentNumber = new AppointmentNumber("ap" + number);
 
-                    var operationRequestId = new OperationRequestId(id);
+                        requestCodes.Add(opRequestCode);
+                        appointmentNumbers.Add(appointmentNumber);
+                    } else {
+                        throw new Exception("Invalid code: " + code);
+                    }
 
                     int hours = int.Parse(startInMinutes) / 60;
                     int minutes = int.Parse(startInMinutes) % 60;
                     var startInHours = hours.ToString("D2") + ":" + minutes.ToString("D2");
 
-                    hours = int.Parse(endDateInMinutes) / 60;
-                    minutes = int.Parse(endDateInMinutes) % 60;
-                    var endDateInHours = hours.ToString("D2") + ":" + minutes.ToString("D2");
+                    hours = int.Parse(endInMinutes) / 60;
+                    minutes = int.Parse(endInMinutes) % 60;
+                    var endInHours = hours.ToString("D2") + ":" + minutes.ToString("D2");
 
                     var startTime = DateTime.ParseExact(startInHours, "HH:mm", null);
-                    var endTime = DateTime.ParseExact(endDateInHours, "HH:mm", null);
+                    var endTime = DateTime.ParseExact(endInHours, "HH:mm", null);
 
                     var start = dateTime.Date.Add(startTime.TimeOfDay);
                     var end = dateTime.Date.Add(endTime.TimeOfDay);
 
                     var slot = new Slot(start, end);
+                    
+                    var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot);
 
-                    var creatingAppointment = new CreatingAppointmentDto(operationRequestId, surgeryRoomNumber, slot);
-
-                    var all = await _appointmentRepository.GetAllAsync();
-                    var newAppointment = AppointmentMapper.ToEntity(creatingAppointment, all.Count + 1);
-
-                    await _appointmentRepository.AddAsync(newAppointment);
-
-                    opRequestsIds.Add(id);
+                    // await _appointmentRepository.AddAsync(newAppointment);
+                    var addedAppointment = await AddAsync(creatingAppointment);
                 }
 
+                // await _unitOfWork.CommitAsync();
+
+                return (requestCodes, appointmentNumbers);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error creating appointments automatically: " + e.Message);
+            }
+        }
+
+        public async Task<AppointmentDto> AssignStaff(AppointmentDto appointmentDto, StaffDto staffDto)
+        {
+            try
+            {
+                if (appointmentDto == null)
+                    throw new ArgumentNullException(nameof(appointmentDto));
+
+                if (staffDto == null)
+                    throw new ArgumentNullException(nameof(staffDto));
+
+                var appointment = await _appointmentRepository.GetByNumberAsync(appointmentDto.AppointmentNumber);
+
+                appointment.AssignStaff(staffDto.LicenseNumber);
                 await _unitOfWork.CommitAsync();
 
-                return opRequestsIds;
-
+                return AppointmentMapper.ToDto(appointment);
             }
             catch (Exception)
             {
-                return new List<string>();
-                throw new Exception("Error creating appointments automatically");
-            }   
+                return null;
+            }
+        }
+
+        public async Task<AppointmentDto> GetByAppointmentNumberAsync(AppointmentNumber appointmentNumber)
+        {
+            try
+            {
+                if (appointmentNumber == null)
+                    throw new ArgumentNullException(nameof(appointmentNumber));
+
+                var appointment = await _appointmentRepository.GetByNumberAsync(appointmentNumber);
+
+                if (appointment == null)
+                    return null;
+
+                return AppointmentMapper.ToDto(appointment);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         // public async Task<Appointment> DeleteAsync(AppointmentId id)

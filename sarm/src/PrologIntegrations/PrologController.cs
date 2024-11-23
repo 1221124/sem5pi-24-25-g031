@@ -40,18 +40,27 @@ namespace DDDNetCore.PrologIntegrations
                 var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime);
                 if (response == null) return BadRequest(new {message = "Appointments couldn't be created due to staff's incompatibility.\nPlease, try again later."});
 
-                Console.WriteLine("Got response!");
-                var opRequestsIds = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);
+                var codesAndAppointments = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);
 
-                foreach (var id in opRequestsIds) {
-                    var opRequest = await _operationRequestService.GetFilteredAsync(id, null, null, null, null, null, null);
-                    if (opRequest == null || opRequest.Count != 1) return BadRequest(new {message = "Error getting operation request..."});
+                foreach (var code in codesAndAppointments.requestCodes) {
+                    var opRequest = await _operationRequestService.GetByCodeAsync(code);
+                    if (opRequest == null) return BadRequest(new {message = $"Operation request with code {code} not found!"});
 
-                    var activatedOpRequest = await _operationRequestService.UpdateAsync(OperationRequestMapper.ToUpdatingFromEntity(opRequest[0], RequestStatus.ACCEPTED));
+                    var activatedOpRequest = await _operationRequestService.UpdateAsync(OperationRequestMapper.ToUpdatingFromEntity(opRequest, RequestStatus.ACCEPTED));
                 }
 
                 var staffAgenda = await _staffService.CreateSlotAppointments(dateTime, response);
-                
+
+                foreach (var staff in staffAgenda.Keys) {
+                    var staffAppointments = staffAgenda[staff];
+
+                    foreach (var appointmentNumber in staffAppointments) {
+                        var appointment = await _appointmentService.GetByAppointmentNumberAsync(appointmentNumber);
+                        if (appointment == null) return BadRequest(new {message = "Appointment couldn't be created!"});
+                        await _appointmentService.AssignStaff(appointment, staff);
+                    }
+                }
+
                 return Ok(new {message = "Appointments created successfully!"});
             }
             catch (Exception e)

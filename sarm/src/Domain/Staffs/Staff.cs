@@ -121,5 +121,14 @@ namespace Domain.Staffs
         {
             Status = Status.Inactive;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            return LicenseNumber == ((Staff)obj).LicenseNumber;
+        }
     }
 }

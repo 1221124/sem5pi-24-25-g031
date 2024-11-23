@@ -1,6 +1,5 @@
 ﻿using System;
 using DDDNetCore.Domain.OperationRequests;
-using Domain.OperationRequests;
 using Xunit;
 
 namespace DDDNetCore.Tests.Unit.Domain.OperationRequests

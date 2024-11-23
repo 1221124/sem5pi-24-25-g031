@@ -166,22 +166,24 @@ insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
     assert(agenda_staff1(Doctor, Day, Agenda1)),
     insert_agenda_doctors((TinS, TfinS, OpCode), Day, LDoctors).
 
-print_agenda([]).
-print_agenda([Elem]) :-
+print_with_comma_separation([]).
+print_with_comma_separation([Elem]) :-
     write(Elem).
-print_agenda([Elem|Rest]) :-
+print_with_comma_separation([Elem|Rest]) :-
     write(Elem),
     write(', '),
-    print_agenda(Rest).
+    print_with_comma_separation(Rest).
 
 obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
 		get_time(Ti),
 		(obtain_better_sol1(Room,Day);true),
 		retract(better_sol(Day,Room,AgOpRoomBetter,LAgDoctorsBetter,TFinOp)),
-            write('Final Result: AgOpRoomBetter='),write(AgOpRoomBetter),nl,
+            write('Final Result: AgOpRoomBetter=['),
+            print_with_comma_separation(AgOpRoomBetter),
+            write(']'), nl,
             %write('LAgDoctorsBetter='),write(LAgDoctorsBetter),nl,
             write('LAgDoctorsBetter=['),
-            print_agenda(LAgDoctorsBetter),
+            print_with_comma_separation(LAgDoctorsBetter),
             write(']'), nl,
             write('TFinOp='),write(TFinOp),nl,
 		get_time(Tf),

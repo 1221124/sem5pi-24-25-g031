@@ -1,7 +1,6 @@
 ﻿using System;
 using DDDNetCore.Domain.OperationRequests;
 using Xunit;
-using Domain.OperationRequests;
 using Domain.Staffs;
 using Domain.Patients;
 using Domain.Shared;
@@ -18,9 +17,10 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             var operationType = new Name("Surgery");
             var deadlineDate = new DeadlineDate(DateTime.UtcNow.AddDays(7));
             var priority = Priority.ELECTIVE;
+            var requestCode = new RequestCode("req1");
 
             // Act
-            var operationRequest = new OperationRequest(staff, patient, operationType, deadlineDate, priority);
+            var operationRequest = new OperationRequest(staff, patient, operationType, deadlineDate, priority, requestCode);
 
             // Assert
             operationRequest.Staff.Should().Be(staff);
@@ -39,6 +39,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             var patient = new MedicalRecordNumber("P456");
             var operationType = new Name("Surgery");
             Priority? priority = new Priority();
+            var requestCode = new RequestCode("req1");
 
             // Act
             Action act = () => new OperationRequest(
@@ -48,7 +49,8 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
                 operationType,
                 null,
                 priority,
-                RequestStatus.PENDING);
+                RequestStatus.PENDING,
+                requestCode);
 
             // Assert
             act.Should().Throw<ArgumentNullException>().WithMessage("*deadlineDate*");
@@ -63,8 +65,9 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             var operationType = new Name("Surgery");
             var deadlineDate = new DeadlineDate(DateTime.UtcNow.AddDays(7));
             var priority = Priority.URGENT;
+            var requestCode = new RequestCode("req1");
 
-            var operationRequest = new OperationRequest(staff, patient, operationType, deadlineDate, priority);
+            var operationRequest = new OperationRequest(staff, patient, operationType, deadlineDate, priority, requestCode);
             var newDeadlineDate = new DeadlineDate(DateTime.UtcNow.AddDays(14));
             var newPriority = Priority.EMERGENCY;
             var nemRequestStatus = RequestStatus.REJECTED;
@@ -96,9 +99,10 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             var deadlineDate = new DeadlineDate(DateTime.UtcNow.AddDays(7));
             var priority = Priority.URGENT;
             var status = RequestStatus.REJECTED;
+            var requestCode = new RequestCode("req1");
 
             // Act
-            var operationRequest = new OperationRequest(id, staff, patient, operationType, deadlineDate, priority, status);
+            var operationRequest = new OperationRequest(id, staff, patient, operationType, deadlineDate, priority, status, requestCode);
 
             // Assert
             operationRequest.Id.Value.Should().Be(id.ToString());
