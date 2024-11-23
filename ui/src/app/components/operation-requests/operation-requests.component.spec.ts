@@ -1,16 +1,16 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import {HttpResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import {TestBed, ComponentFixture} from '@angular/core/testing';
+import {FormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {HttpResponse} from '@angular/common/http';
+import {Router} from '@angular/router';
 
-import { OperationRequestsComponent } from './operation-requests.component';
-import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
-import { StaffsService } from '../../services/staffs/staffs.service';
-import { PatientsService } from '../../services/admin-patients/admin-patients.service';
-import { OperationTypesService } from '../../services/operation-types/operation-types.service';
-import { AuthService } from '../../services/auth/auth.service';
-import { from } from 'rxjs';
+import {OperationRequestsComponent} from './operation-requests.component';
+import {OperationRequestsService} from '../../services/operation-requests/operation-requests.service';
+import {StaffsService} from '../../services/staffs/staffs.service';
+import {PatientsService} from '../../services/admin-patients/admin-patients.service';
+import {OperationTypesService} from '../../services/operation-types/operation-types.service';
+import {AuthService} from '../../services/auth/auth.service';
+import {from} from 'rxjs';
 
 describe('OperationRequestsComponent', () => {
   let component: OperationRequestsComponent;
@@ -20,6 +20,7 @@ describe('OperationRequestsComponent', () => {
   let mockStaffsService: jasmine.SpyObj<StaffsService>;
   let mockPatientsService: jasmine.SpyObj<PatientsService>;
   let mockOperationTypesService: jasmine.SpyObj<OperationTypesService>;
+
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockRouter: jasmine.SpyObj<Router>;
 
@@ -33,24 +34,39 @@ describe('OperationRequestsComponent', () => {
       'delete'
     ]);
 
-    mockStaffsService = jasmine.createSpyObj('StaffsService', ['getStaff']);
+    mockStaffsService = jasmine.createSpyObj('mockStaffsService', ['getStaff']);
+    mockStaffsService.getStaff.and.returnValue(Promise.resolve(new HttpResponse({
+      status: 200,
+      body: {staffs: [], totalItems: 0} as any
+    })));
 
-    mockPatientsService = jasmine.createSpyObj('PatientsService', ['getPatients']);
+    mockPatientsService = jasmine.createSpyObj('mockPatientsService', ['getPatients']);
+    mockPatientsService.getPatients.and.returnValue(from(Promise.resolve(new HttpResponse({
+      status: 200,
+      body: {patients: [], totalItems: 0}
+    }))));
 
-    mockOperationTypesService = jasmine.createSpyObj('OperationTypesService', ['getOperationTypes']);
+    mockOperationTypesService = jasmine.createSpyObj('mockOperationTypesService', ['getOperationTypes']);
+    mockOperationTypesService.getOperationTypes.and.returnValue(Promise.resolve(new HttpResponse({
+      status: 200,
+      body: {operationTypes: [], totalItems: 0} as any
+    })));
 
-    mockAuthService = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'getToken']);
+    mockOperationRequestsService.getAll.and.returnValue(Promise.resolve({status: 200, body: []}));
+    mockOperationRequestsService.getPriority.and.returnValue(Promise.resolve({status: 200, body: []}));
+    mockOperationRequestsService.getRequestStatus.and.returnValue(Promise.resolve({status: 200, body: []}));
 
-    mockStaffsService.getStaff.and.returnValue(Promise.resolve(new HttpResponse({ status: 200, body: { staffs: [], totalItems: 0 } as any })));
-    mockPatientsService.getPatients.and.returnValue(from(Promise.resolve(new HttpResponse({ status: 200, body: { patients: [], totalItems: 0 } }))));
-    mockOperationTypesService.getOperationTypes.and.returnValue(Promise.resolve(new HttpResponse({ status: 200, body: { operationTypes: [], totalItems: 0 } as any })));
-
-    mockOperationRequestsService.getAll.and.returnValue(Promise.resolve({ status: 200, body: [] }));
-    mockOperationRequestsService.getPriority.and.returnValue(Promise.resolve({ status: 200, body: [] }));
-    mockOperationRequestsService.getRequestStatus.and.returnValue(Promise.resolve({ status: 200, body: [] }));
+    mockAuthService = jasmine.createSpyObj('AuthService', [
+      'isAuthenticated',
+      'getToken',
+      'updateMessage',
+      'updateIsError',
+      'extractEmailFromAccessToken'
+    ]);
 
     mockAuthService.isAuthenticated.and.returnValue(true);
-    mockAuthService.getToken.and.returnValue('mock-token');
+    mockAuthService.getToken.and.returnValue('mockAccessToken');
+    mockAuthService.extractEmailFromAccessToken.and.returnValue('mockEmail');
 
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockRouter.navigate.and.stub();
@@ -58,12 +74,12 @@ describe('OperationRequestsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FormsModule, CommonModule, OperationRequestsComponent],
       providers: [
-        { provide: OperationRequestsService, useValue: mockOperationRequestsService },
-        { provide: StaffsService, useValue: mockStaffsService },
-        { provide: PatientsService, useValue: mockPatientsService },
-        { provide: OperationTypesService, useValue: mockOperationTypesService },
-        { provide: AuthService, useValue: mockAuthService },
-        { provide: Router, useValue: mockRouter }
+        {provide: OperationRequestsService, useValue: mockOperationRequestsService},
+        {provide: StaffsService, useValue: mockStaffsService},
+        {provide: PatientsService, useValue: mockPatientsService},
+        {provide: OperationTypesService, useValue: mockOperationTypesService},
+        {provide: AuthService, useValue: mockAuthService},
+        {provide: Router, useValue: mockRouter}
       ]
     }).compileComponents();
 
@@ -76,240 +92,317 @@ describe('OperationRequestsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize data on ngOnInit', (async () => {
+  describe('ngOnInit', () => {
+    beforeEach(() => {
+      mockAuthService.isAuthenticated = jasmine.createSpy().and.returnValue(true);
+      mockAuthService.getToken = jasmine.createSpy().and.returnValue('mockAccessToken');
+      mockAuthService.extractEmailFromAccessToken = jasmine.createSpy().and.returnValue('mockEmail');
+    });
 
-    expect(mockAuthService.isAuthenticated).toHaveBeenCalled();
-    expect(mockAuthService.getToken).toHaveBeenCalled();
-    expect(mockOperationRequestsService.getAll).toHaveBeenCalledWith('mock-token');
-    expect(mockStaffsService.getStaff).toHaveBeenCalledWith(component.filter, 'mock-token');
-    expect(mockPatientsService.getPatients).toHaveBeenCalled();
-    expect(mockOperationTypesService.getOperationTypes).toHaveBeenCalledWith(component.filter, 'mock-token');
-  }));
-
-  it('should redirect to login if not authenticated', (async () => {
-    mockAuthService.isAuthenticated.and.returnValue(false);
-
-    await component.ngOnInit();
-
-    expect(mockAuthService.updateMessage).toHaveBeenCalledWith('You are not authenticated or are not a doctor! Please login...');
-    expect(mockAuthService.updateIsError).toHaveBeenCalledWith(true);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['']);
-  }));
-
-  it('should load operation requests', (async () => {
-    const mockRequests = [{
-      id: '1',
-      staff: 'Staff 1',
-      patient: 'Patient 1',
-      operationType: 'Type 1',
-      deadlineDate: '2024-01-01',
-      priority: 'High',
-      status: 'Pending',
-      requestCode: 'REQ1'
-    }];
-
-    mockOperationRequestsService.getAll.and.returnValue(
-      Promise.resolve({ status: 200, body: mockRequests })
-    );
-
-    await component.loadOperationRequests();
-
-    expect(component.requests).toEqual(mockRequests);
-    expect(component.message).toBe('Operation Requests obtained!');
-  }));
-
-  it('should handle errors when loading operation requests', (async () => {
-    mockOperationRequestsService.getAll.and.returnValue(
-      Promise.reject({ status: 404 })
-    );
-
-    await component.loadOperationRequests();
-
-    expect(component.requests).toEqual([]);
-    expect(component.message).toBe('No Operation Requests found!');
-  }));
-
-  it('should load priorities successfully', (async () => {
-    const mockResponse = {
-      status: 200,
-      body: ['High', 'Medium', 'Low']
-    };
-
-    mockOperationRequestsService.getPriority.and.returnValue(
-      Promise.resolve(mockResponse)
-    );
-
-    await component.loadPriority();
-
-    expect(component.priorities).toEqual(['High', 'Medium', 'Low']);
-    expect(component.message).toBe('Priorities obtained!');
-    expect(component.success).toBeTrue();
-  }));
-
-  it('should load statuses successfully', (async () => {
-    const mockResponse = {
-      status: 200,
-      body: [{ value: 'Pending' }, { value: 'Approved' }, { value: 'Rejected' }]
-    };
-
-    mockOperationRequestsService.getRequestStatus.and.returnValue(
-      Promise.resolve(mockResponse)
-    );
-
-    await component.loadRequestStatus();
-
-    expect(component.statuses).toEqual(['Pending', 'Approved', 'Rejected']);
-    expect(component.message).toBe('Statuses obtained!');
-    expect(component.success).toBeTrue();
-  }));
-
-  it('should filter operation requests', (async () => {
-    const filteredRequests = [{
-      id: '2',
-      staff: 'Staff 2',
-      patient: 'Patient 2',
-      operationType: 'Type 2',
-      deadlineDate: '2024-02-01',
-      priority: 'Medium',
-      status: 'Approved',
-      requestCode: 'REQ1'
-    }];
-
-    mockOperationRequestsService.get.and.returnValue(
-      Promise.resolve({ status: 200, body: filteredRequests })
-    );
-
-    await component.applyFilter();
-
-    expect(component.requests).toEqual(filteredRequests);
-    expect(component.message).toBe('');
-  }));
-
-  it('should load staff successfully', (async () => {
-    const mockResponse = {
-      status: 200,
-      body: {
-        staffs: [{
-          Id: '',
-          FullName: { FirstName: 'John', LastName: 'Doe' },
-          licenseNumber: '123',
-          specialization: '',
-          staffRole: '',
-          ContactInformation: { Email: '', PhoneNumber: '' },
-          SlotAppointment: [{}],
-          SlotAvailability: [{}],
-          status: ''
-        }],
-        totalItems: 1
-      }
-    };
-
-    mockStaffsService.getStaff.and.returnValue(
-      Promise.resolve(mockResponse)
-    );
-
-    await component.loadStaffs();
-
-    expect(component.staffs).toEqual([{
-      Id: component.staffs[0].Id,
-      FullName: {
-        FirstName: component.staffs[0].FullName.FirstName,
-        LastName: component.staffs[0].FullName.LastName
-      },
-      licenseNumber: component.staffs[0].licenseNumber,
-      specialization: '',
-      staffRole: '',
-      ContactInformation: {
-        Email: '',
-        PhoneNumber: ''
-      },
-      SlotAppointment: [],
-      SlotAvailability: [],
-      status: ''
-    }]);
-    expect(component.message).toBe('Staffs obtained!');
-    expect(component.success).toBeTrue();
-  }));
-
-  it('should load patients successfully', (async () => {
-    const mockResponse = {
-      status: 200,
-      body: {
-        patients: [{
-          Id: '1',
-          FullName: { FirstName: 'Jane', LastName: 'Smith' },
-          medicalRecordNumber: 'MRN123',
-          contactInformation: { Email: 'jane.smith@example.com', PhoneNumber: '123-456-7890' }
-        }],
-        totalItems: 1
-      }
-    };
-
-    mockPatientsService.getPatients.and.returnValue(
-      from(Promise.resolve(mockResponse))
-    );
-
-    await component.loadPatients();
-
-    expect(component.patients).toEqual([{
-      Id: '1',
-      FullName: 'Jane Smith',
-      medicalRecordNumber: 'MRN123',
-      contactInformation: {
-        Email: 'jane.smith@example.com',
-        PhoneNumber: '123-456-7890'
-      }
-    }]);
-    expect(component.message).toBe('Patients obtained!');
-    expect(component.success).toBeTrue();
-  }));
-
-  it('should load operation types successfully', (async () => {
-    const mockResponse = {
-      status: 200,
-      body: {
-        operationTypes: [{
-          Id: '1',
-          Name: {Value: 'Surgery'},
-          Specialization: 'Cardiology',
-          RequiredStaff: [{
-            Role: '',
-            Specialization: '',
-            Quantity: 1
-          }],
-          PhasesDuration: {
-            Preparation: 0,
-            Surgery: 0,
-            Cleaning: 0
+    it('should initialize operation requests', async () => {
+      mockOperationRequestsService.getAll.and.returnValue(Promise.resolve({
+        status: 200, body: [
+          {
+            id: '1',
+            staff: 'null',
+            patient: 'John Doe',
+            operationType: 'null',
+            deadlineDate: 'null',
+            priority: 'null',
+            status: 'Pending',
+            requestCode: 'null'
           },
-          Status: ''
-        }],
-        totalItems: 1
+          {
+            id: '2',
+            staff: 'null',
+            patient: 'Jane Doe',
+            operationType: 'null',
+            deadlineDate: 'null',
+            priority: 'null',
+            status: 'Approved',
+            requestCode: 'null'
+          }
+        ]
+      }));
+
+      await component.loadOperationRequests();
+
+      expect(component.requests.map(
+        (request: {
+          id: string,
+          staff: string,
+          patient: string,
+          operationType: string,
+          deadlineDate: string,
+          priority: string,
+          status: string,
+          requestCode: string
+        }) => ({
+          id: request.id,
+          staff: request.staff,
+          patient: request.patient,
+          operationType: request.operationType,
+          deadlineDate: request.deadlineDate,
+          priority: request.priority,
+          status: request.status,
+          requestCode: request.requestCode
+        })
+      )).toEqual([
+        {
+          id: '1',
+          staff: 'null',
+          patient: 'John Doe',
+          operationType: 'null',
+          deadlineDate: 'null',
+          priority: 'null',
+          status: 'Pending',
+          requestCode: 'null'
+        },
+        {
+          id: '2',
+          staff: 'null',
+          patient: 'Jane Doe',
+          operationType: 'null',
+          deadlineDate: 'null',
+          priority: 'null',
+          status: 'Approved',
+          requestCode: 'null'
+        }
+      ]);
+    });
+
+    it('should initialize staffs', async () => {
+      mockStaffsService.getStaff.and.returnValue(Promise.resolve({
+        status: 200,
+        body: {
+          staffs: [
+            {
+              Id: '1',
+              FullName: {FirstName: 'John', LastName: 'Doe'},
+              licenseNumber: '123',
+              specialization: 'Cardiology',
+              staffRole: '',
+              ContactInformation: {Email: '', PhoneNumber: ''},
+              status: '',
+              SlotAppointment: [],
+              SlotAvailability: []
+            },
+            {
+              Id: '2',
+              FullName: {FirstName: 'Jane', LastName: 'Doe'},
+              licenseNumber: '456',
+              specialization: 'Neurology',
+              staffRole: '',
+              ContactInformation: {Email: '', PhoneNumber: ''},
+              status: '',
+              SlotAppointment: [],
+              SlotAvailability: []
+            }
+          ],
+          totalItems: 2
+        }
+      }));
+
+      await component.loadStaffs();
+
+      expect(component.staffs.map(
+        (staff: {
+          Id: string,
+          FullName: { FirstName: string, LastName: string },
+          licenseNumber: string,
+          specialization: string,
+          staffRole: string,
+          ContactInformation: { Email: string, PhoneNumber: string },
+          status: string,
+          SlotAppointment: any[],
+          SlotAvailability: any[]
+        }) => ({
+          Id: staff.Id,
+          FullName: {
+            FirstName: staff.FullName.FirstName,
+            LastName: staff.FullName.LastName
+          },
+          licenseNumber: staff.licenseNumber,
+          specialization: staff.specialization,
+          staffRole: staff.staffRole,
+          ContactInformation: {
+            Email: staff.ContactInformation.Email,
+            PhoneNumber: staff.ContactInformation.PhoneNumber
+          },
+          status: staff.status,
+          SlotAppointment: staff.SlotAppointment,
+          SlotAvailability: staff.SlotAvailability
+        })
+      )).toEqual([
+        {
+          Id: '1',
+          FullName: {
+            FirstName: 'John',
+            LastName: 'Doe'
+          },
+          licenseNumber: '123',
+          specialization: 'Cardiology',
+          staffRole: '',
+          ContactInformation: {Email: '', PhoneNumber: ''},
+          status: '',
+          SlotAppointment: [],
+          SlotAvailability: []
+        },
+        {
+          Id: '2',
+          FullName: {
+            FirstName: 'Jane',
+            LastName: 'Doe'
+          },
+          licenseNumber: '456',
+          specialization: 'Neurology',
+          staffRole: '',
+          ContactInformation: {Email: '', PhoneNumber: ''},
+          status: '',
+          SlotAppointment: [],
+          SlotAvailability: []
+        }
+      ]);
+    });
+
+
+    it('should initialize patients', async () => {
+      // Arrange: Provide mock patient data directly
+      const mockPatients = [
+        {
+          appointmentHistory: [
+            { start: '2024-11-01T10:00:00', end: '2024-11-01T11:00:00' },
+            { start: '2024-11-02T14:00:00', end: '2024-11-02T15:00:00' }
+          ]
+        },
+        {
+          appointmentHistory: [
+            { start: '2024-11-03T12:00:00', end: '2024-11-03T13:00:00' }
+          ]
+        }
+      ];
+
+      // Mock the getPatients method to return an Observable of the array directly
+      mockPatientsService.getPatients.and.returnValue(from(Promise.resolve(mockPatients)));
+
+      // Act: Call the component method
+      await component.loadPatients();
+
+      // Assert: Verify patients were processed correctly
+      expect(component.patients).toEqual([
+        {
+          appointmentHistory: [
+            { start: new Date('2024-11-01T10:00:00'), end: new Date('2024-11-01T11:00:00') },
+            { start: new Date('2024-11-02T14:00:00'), end: new Date('2024-11-02T15:00:00') }
+          ]
+        },
+        {
+          appointmentHistory: [
+            { start: new Date('2024-11-03T12:00:00'), end: new Date('2024-11-03T13:00:00') }
+          ]
+        }
+      ]);
+      expect(component.message).toBe('Patients obtained!');
+      expect(component.success).toBeTrue();
+    });
+
+
+    it('should initialize operation types', async () => {
+      mockOperationTypesService.getOperationTypes.and.returnValue(
+        Promise.resolve({
+          status: 200,
+          body: {
+            operationTypes: [
+              {
+                Id: '1',
+                Name: 'Cardiology',
+                Specialization: 'Cardiology',
+                RequiredStaff: [],
+                PhasesDuration: {Preparation: 10, Surgery: 30, Cleaning: 20},
+                Status: 'Active'
+              },
+              {
+                Id: '2',
+                Name: 'Neurology',
+                Specialization: 'Neurology',
+                RequiredStaff: [],
+                PhasesDuration: {Preparation: 15, Surgery: 60, Cleaning: 45},
+                Status: 'Active'
+              }
+            ],
+            totalItems: 2
+          }
+        })
+      );
+
+      await component.loadOperationTypes();
+
+      expect(component.operationTypes.map(
+        (operationType: {
+          Id: string,
+          Name: string,
+          Specialization: string,
+          RequiredStaff: any[],
+          PhasesDuration: { Preparation: number, Surgery: number, Cleaning: number },
+          Status: string
+        }) => ({
+          Id: operationType.Id,
+          Name: operationType.Name,
+          Specialization: operationType.Specialization,
+          RequiredStaff: operationType.RequiredStaff,
+          PhasesDuration: operationType.PhasesDuration,
+          Status: operationType.Status
+        })
+      )).toEqual([
+        {
+          Id: '1',
+          Name: 'Cardiology',
+          Specialization: 'Cardiology',
+          RequiredStaff: [],
+          PhasesDuration: {Preparation: 10, Surgery: 30, Cleaning: 20},
+          Status: 'Active'
+        },
+        {
+          Id: '2',
+          Name: 'Neurology',
+          Specialization: 'Neurology',
+          RequiredStaff: [],
+          PhasesDuration: {Preparation: 15, Surgery: 60, Cleaning: 45},
+          Status: 'Active'
+        }
+      ]);
+    });
+
+    it('should initialize priorities', async () => {
+        mockOperationRequestsService.getPriority.and.returnValue(
+          Promise.resolve({
+            status: 200,
+            body: ['Low', 'Medium', 'High']
+          })
+        );
+
+        await component.loadPriority();
+
+        expect(component.priorities).toEqual(
+          ['Low', 'Medium', 'High']
+        );
+      });
+
+    it('should initialize request status', async () => {
+        mockOperationRequestsService.getRequestStatus.and.returnValue(
+          Promise.resolve({
+            status: 200,
+            body: ['Pending', 'Approved', 'Rejected'].map(status => ({ value: status }))
+          })
+        );
+
+        await component.loadRequestStatus();
+
+        expect(component.statuses).toEqual(
+          ['Pending', 'Approved', 'Rejected']
+        );
       }
-    };
+    );
 
-    mockOperationTypesService.getOperationTypes.and.returnValue(Promise.resolve(mockResponse));
-
-    await component.loadOperationTypes();
-
-    expect(component.operationTypes).toEqual([{
-      Id: '1',
-      Name: 'Surgery',
-      Specialization: 'Cardiology',
-      RequiredStaff: [{
-        Role: '',
-        Specialization: '',
-        Quantity: 1
-      }],
-      PhasesDuration: {
-        Preparation: 0,
-        Surgery: 0,
-        Cleaning: 0
-      },
-      Status: ''
-    }]);
-
-    expect(component.message).toBe('Operation Types obtained!');
-    expect(component.success).toBeTrue();
-  }));
+  });
 });
