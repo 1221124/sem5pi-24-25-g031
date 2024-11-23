@@ -77,7 +77,7 @@ export class PatientsService {
     const params: any = {};
 
     if(filter.pageNumber > 0){
-      params.pageNumber = filter.pageNumber;
+      params.pageNumber = String(filter.pageNumber);
       if (filter.fullName) params.fullName = filter.fullName;
       if (filter.email) params.email = filter.email;
       if (filter.phoneNumber) params.phoneNumber = filter.phoneNumber;
