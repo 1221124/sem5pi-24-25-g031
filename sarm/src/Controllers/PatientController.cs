@@ -237,7 +237,7 @@ namespace DDDNetCore.Controllers
             }
         }
 
-        // PUT: api/Patient/patientouUser
+        // PUT: api/Patient/
         [HttpPut]
         //[Authorize(Roles = "Admin,Patient")]
         public async Task<ActionResult<PatientDto>> AdminUpdate(UpdatingPatientDto dto)
