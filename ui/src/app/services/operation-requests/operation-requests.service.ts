@@ -210,14 +210,14 @@ export class OperationRequestsService {
             status: response.status,
             body: response.body.map(request => {
               return {
-                id: request.id,
-                staff: request.staff.value,
-                patient: request.patient.value,
-                operationType: request.operationType.value,
-                deadlineDate: request.deadlineDate.date,
-                priority: request.priority,
-                status: request.status,
-                requestCode: request.requestCode
+                  id: request.id,
+                  staff: request.staff.value,
+                  patient: request.patient.value,
+                  operationType: request.operationType.value,
+                  deadlineDate: request.deadlineDate.date,
+                  priority: request.priority,
+                  status: request.status,
+                  requestCode: request.requestCode
               };
             })
           };

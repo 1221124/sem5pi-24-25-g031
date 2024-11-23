@@ -10,6 +10,7 @@ import { Staff } from '../../models/staff.model';
 import { OperationType } from '../../models/operation-type.model';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
+import {Patient} from '../../models/patient.model';
 
 @Component({
   selector: 'app-operation-requests',
@@ -17,7 +18,6 @@ import { Router } from '@angular/router';
   imports: [FormsModule, CommonModule],
   templateUrl: './operation-requests.component.html',
   styleUrls: ['./operation-requests.component.css'],
-  providers: [OperationRequestsService, StaffsService, PatientsService, OperationTypesService]
 })
 export class OperationRequestsComponent implements OnInit {
   requests: OperationRequest[] = [];
@@ -338,7 +338,13 @@ export class OperationRequestsComponent implements OnInit {
     try {
       const data = await this.servicePatient.getPatients(/*this.filter, this.accessToken*/).toPromise();
       console.log("data: ", data);
-      this.patients = data;
+      this.patients = data.map((patient: { appointmentHistory: any[] }) => ({
+        ...patient,
+        appointmentHistory: patient.appointmentHistory.map(slot => ({
+          start: new Date(slot.start),
+          end: new Date(slot.end)
+        }))
+      }));
       this.message = 'Patients obtained!';
       this.success = true;
     }catch (error) {
