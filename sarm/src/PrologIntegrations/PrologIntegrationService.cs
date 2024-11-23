@@ -235,7 +235,7 @@ namespace DDDNetCore.PrologIntegrations
 
             //parse AgOpRoomBetter
             string appointmentsGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
-            Console.WriteLine(appointmentsGenerated + "\n");
+            Console.WriteLine("AppointmentsGenerated RESULT: " + appointmentsGenerated + "\n");
 
             //parse LAgDoctorsBetter
             i++;
@@ -243,12 +243,11 @@ namespace DDDNetCore.PrologIntegrations
 
             string[] elements = Regex.Split(trimmedStaffAgendaGenerated, ", ");
             string staffAgendaGenerated = string.Join(" ; ", elements);
-            Console.WriteLine(staffAgendaGenerated + "\n");
+            Console.WriteLine("StaffAgendaGenerated RESULT: " + staffAgendaGenerated + "\n");
 
             //parse TFinOp
             i++;
             string bestFinishingTime = lines[i].Substring(lines[i].IndexOf('=') + 1);
-            Console.WriteLine(bestFinishingTime + "\n");  
             
             return new PrologResponse(appointmentsGenerated, staffAgendaGenerated, bestFinishingTime);
         }

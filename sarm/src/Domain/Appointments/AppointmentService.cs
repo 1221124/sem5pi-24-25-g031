@@ -135,26 +135,28 @@ namespace DDDNetCore.Domain.Appointments
             }
         }
 
-        public async Task<AppointmentDto> AssignStaff(AppointmentDto appointmentDto, StaffDto staffDto)
+        public async Task<bool> AssignStaff(Dictionary<LicenseNumber, List<AppointmentNumber>> staffAgenda)
         {
             try
             {
-                if (appointmentDto == null)
-                    throw new ArgumentNullException(nameof(appointmentDto));
+                foreach (var staff in staffAgenda)
+                {
+                    foreach (var appointmentNumber in staff.Value)
+                    {
+                        var appointment = await _appointmentRepository.GetByNumberAsync(appointmentNumber);
+                        if (appointment == null) return false;
 
-                if (staffDto == null)
-                    throw new ArgumentNullException(nameof(staffDto));
+                        appointment.AssignStaff(staff.Key);
+                    }
+                }
 
-                var appointment = await _appointmentRepository.GetByNumberAsync(appointmentDto.AppointmentNumber);
-
-                appointment.AssignStaff(staffDto.LicenseNumber);
                 await _unitOfWork.CommitAsync();
 
-                return AppointmentMapper.ToDto(appointment);
+                return true;
             }
             catch (Exception)
             {
-                return null;
+                return false;
             }
         }
 

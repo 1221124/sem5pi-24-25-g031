@@ -1,13 +1,10 @@
-using System.Text.RegularExpressions;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
-using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.OperationTypes;
 using Domain.Shared;
 using Domain.Staffs;
 using Infrastructure;
-using Org.BouncyCastle.Ocsp;
 
 namespace DDDNetCore.PrologIntegrations
 {

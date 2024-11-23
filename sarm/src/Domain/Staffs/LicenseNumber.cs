@@ -33,10 +33,19 @@ namespace Domain.Staffs
         {
             return Value;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LicenseNumber other)
+            {
+                return Value.Trim().ToLower().Equals(other.Value.Trim().ToLower());
+            }
+            return false;
+        }
         
         public bool Equals(LicenseNumber a, LicenseNumber b)
         {
-            return a.ToString().Trim().ToLower().Equals(b.ToString().Trim().ToLower());
+            return a.Value.Trim().ToLower().Equals(b.Value.Trim().ToLower());
         }
 
     }

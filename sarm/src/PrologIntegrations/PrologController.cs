@@ -51,15 +51,7 @@ namespace DDDNetCore.PrologIntegrations
 
                 var staffAgenda = await _staffService.CreateSlotAppointments(dateTime, response);
 
-                foreach (var staff in staffAgenda.Keys) {
-                    var staffAppointments = staffAgenda[staff];
-
-                    foreach (var appointmentNumber in staffAppointments) {
-                        var appointment = await _appointmentService.GetByAppointmentNumberAsync(appointmentNumber);
-                        if (appointment == null) return BadRequest(new {message = "Appointment couldn't be created!"});
-                        await _appointmentService.AssignStaff(appointment, staff);
-                    }
-                }
+                if (!await _appointmentService.AssignStaff(staffAgenda)) return BadRequest(new {message = "Staff couldn't be assigned to appointments.\nPlease, try again later."});
 
                 return Ok(new {message = "Appointments created successfully!"});
             }
