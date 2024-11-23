@@ -1,19 +1,18 @@
 import { Component, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PatientsService } from '../../services/admin-patients/admin-patients.service';
 import {Router, RouterModule, RouterOutlet} from '@angular/router';
 import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth/auth.service';
+import { PatientsService} from '../../services/admin-patients/admin-patients.service';
 
 
 @Component({
   selector: 'app-admin-patients',
   standalone: true,
-  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf, NgOptimizedImage],
+  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf],
   templateUrl: './admin-patients.component.html',
   styleUrls: ['./admin-patients.component.css'],
-  providers: [PatientsService]
 })
 
 export class AdminPatientsComponent implements OnInit {
@@ -105,7 +104,6 @@ export class AdminPatientsComponent implements OnInit {
     }
   }
 
-  // This method is triggered when the user clicks the "edit" button
   editPatient(patient: any) {
     this.selectedPatient = {
       emailId: patient.contactInformation.email,
