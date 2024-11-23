@@ -87,6 +87,7 @@ namespace DDDNetCore.Domain.Appointments
 
                 foreach (var appointment in appointments)
                 {
+                    Console.WriteLine(appointment);
                     var appointmentData = appointment.Split(", ");
 
                     var startInMinutes = appointmentData[0];

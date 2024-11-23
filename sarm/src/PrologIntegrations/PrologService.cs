@@ -87,9 +87,13 @@ namespace DDDNetCore.PrologIntegrations
                 if (staffs == null || staffs.Count == 0)
                     return (false, "No staff found.");
 
+                staffs.OrderBy(x => x.LicenseNumber.Value);
+
                 var operationTypes = await _operationTypeService.GetByStatusAsync(Status.Active);
                 if (operationTypes == null || operationTypes.Count == 0)
                     return (false, "No operation types found.");
+
+                operationTypes.OrderBy(x => x.Name.Value);
 
                 PopulateStaff(staffs, operationTypes);
 

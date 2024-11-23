@@ -39,6 +39,7 @@ namespace DDDNetCore.PrologIntegrations
 
                 var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime);
 
+                Console.WriteLine("Got response!");
                 var opRequestsIds = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);
 
                 foreach (var id in opRequestsIds) {

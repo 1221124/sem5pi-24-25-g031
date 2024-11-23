@@ -221,4 +221,5 @@ remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
 schedule_appointments(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
     assign_doctors_to_surgeries,
     schedule_all_surgeries(Room,Day),
-    obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).
+    obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp),
+    halt.
