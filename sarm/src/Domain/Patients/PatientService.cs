@@ -9,6 +9,8 @@ using Sendinblue.Api.Business;
 using DateTime = System.DateTime;
 using Date = System.DateOnly;
 using PhoneNumber = Domain.Shared.PhoneNumber;
+using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.OperationRequests;
 
 namespace DDDNetCore.Domain.Patients
 {
@@ -446,6 +448,21 @@ namespace DDDNetCore.Domain.Patients
             
         }
 
+        public async Task<bool> AddAppointmentHistory(Dictionary<AppointmentDto, OperationRequestDto> appointmentRequests)
+        {
+            try {
+                foreach (var appointment in appointmentRequests.Keys)
+                {
+                    var patient = await _repo.GetByMedicalRecordNumberAsync(appointmentRequests[appointment].Patient);
+                    if (patient == null) return false;
+                    patient.AddAppointmentHistory(appointment.AppointmentDate);
+                }
+                return true;
+            } catch (Exception e) {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
     }
     
 }

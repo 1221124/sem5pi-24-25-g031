@@ -1,7 +1,7 @@
-
 using System.Globalization;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Domain.Patients;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Staffs;
 using Microsoft.AspNetCore.Mvc;
@@ -15,16 +15,18 @@ namespace DDDNetCore.PrologIntegrations
         private readonly AppointmentService _appointmentService;
         private readonly StaffService _staffService;
         private readonly OperationRequestService _operationRequestService;
+        private readonly PatientService _patientService;
 
-        public PrologController(PrologService service, AppointmentService appointmentService, StaffService staffService, OperationRequestService operationRequestService)
+        public PrologController(PrologService service, AppointmentService appointmentService, StaffService staffService, OperationRequestService operationRequestService, PatientService patientService)
         {
             _service = service;
             _appointmentService = appointmentService;
             _staffService = staffService;
             _operationRequestService = operationRequestService;
+            _patientService = patientService;
         }
         
-        //api/Prolog?surgeryRoom=or1&date=2045-12-02
+        //api/Prolog?surgeryRoom={surgeryRoom}&date={date}
         [HttpGet]
         public async Task<ActionResult> RunProlog([FromQuery] string surgeryRoom, [FromQuery] string date)
         {
@@ -53,6 +55,18 @@ namespace DDDNetCore.PrologIntegrations
 
                 if (!await _appointmentService.AssignStaff(staffAgenda)) return BadRequest(new {message = "Staff couldn't be assigned to appointments.\nPlease, try again later."});
 
+                Dictionary<AppointmentDto, OperationRequestDto> appointmentsRequests = new Dictionary<AppointmentDto, OperationRequestDto>();
+                foreach (var number in codesAndAppointments.appointmentNumbers) {
+                    var appointment = await _appointmentService.GetByAppointmentNumberAsync(number);
+                    if (appointment == null) return BadRequest(new {message = $"Appointment with number {number} not found!"});
+
+                    var operationRequest = await _operationRequestService.GetByCodeAsync(appointment.RequestCode);
+                    if (operationRequest == null) return BadRequest(new {message = $"Operation request with code {appointment.RequestCode} not found!"});
+
+                    appointmentsRequests.Add(appointment, operationRequest);
+                }
+
+                var patientHistory = await _patientService.AddAppointmentHistory(appointmentsRequests);
                 return Ok(new {message = "Appointments created successfully!"});
             }
             catch (Exception e)

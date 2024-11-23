@@ -121,11 +121,8 @@ namespace DDDNetCore.Domain.Appointments
                     
                     var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot);
 
-                    // await _appointmentRepository.AddAsync(newAppointment);
                     var addedAppointment = await AddAsync(creatingAppointment);
                 }
-
-                // await _unitOfWork.CommitAsync();
 
                 return (requestCodes, appointmentNumbers);
             }

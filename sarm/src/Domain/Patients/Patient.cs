@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Appointments;
 using Domain.Patients;
 using Domain.Shared;
 using Domain.Users;
@@ -241,6 +242,20 @@ namespace DDDNetCore.Domain.Patients
         this.UserId = p.UserId;
       }
     }
-    
-  }
+
+        public void AddAppointmentHistory(Slot appointment)
+        {
+            if (appointment == null)
+            {
+                throw new ArgumentNullException("Appointment is null.");
+            }
+
+            if (AppointmentHistory == null)
+            {
+                AppointmentHistory = new List<Slot>();
+            }
+
+            AppointmentHistory.Add(appointment);
+        }
+    }
 }
