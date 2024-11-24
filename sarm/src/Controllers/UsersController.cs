@@ -37,7 +37,7 @@ namespace Controllers
 
         // GET: api/Users?pageNumber={pageNumber}
         [HttpGet]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAll([FromQuery] string? pageNumber)
         {
             var users = await _service.GetAllAsync();
@@ -61,7 +61,7 @@ namespace Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDto>> GetById(Guid id)
         {
             var User = await _service.GetByIdAsync(new UserId(id));
@@ -117,7 +117,7 @@ namespace Controllers
 
         // POST: api/Users
         [HttpPost()]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto)
         {
             var user = await _service.GetByEmailAsync(dto.Email);
@@ -196,7 +196,7 @@ namespace Controllers
 
         // PUT: api/Users/id
         [HttpPut("{id}")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDto>> Update(Guid id, UserDto dto)
         {
             try
@@ -240,7 +240,7 @@ namespace Controllers
 
         // Inactivate: api/Users/5
         [HttpDelete("{id}")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDto>> SoftDelete(Guid id)
         {
             try {
@@ -259,7 +259,7 @@ namespace Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}/hard")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDto>> HardDelete(Guid id)
         {
             try

@@ -4,6 +4,7 @@ using Domain.Staffs;
 using Domain.DbLogs;
 using Domain.Emails;
 using Domain.Patients;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
@@ -35,6 +36,7 @@ namespace Controllers
 
         // GET: api/Staff/?pageNumber=1
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<StaffDto>>> Get([FromQuery] string? pageNumber,[FromQuery] string? name, [FromQuery] string? email, [FromQuery] string? specialization)
         {
             var staff = await _service.GetAsync(name, email, specialization);
@@ -60,6 +62,7 @@ namespace Controllers
 
         //GET: api/Staff/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<StaffDto>> GetById(Guid id)
         {
             var staff = await _service.GetByIdAsync(new StaffId(id));
@@ -74,6 +77,7 @@ namespace Controllers
 
         //GET: api/Staff/search/name?name=Beatriz-Silva/?pageNumber=1
         [HttpGet("search/name")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySearchCriteriaName([FromQuery] String fullName, int pageNumber)
         {
             var names = fullName.Split('-');
@@ -103,6 +107,7 @@ namespace Controllers
 
 
         [HttpGet("search/{email}")]
+        [Authorize]
         public async Task<ActionResult<StaffDto>> GetBySearchCriteriaEmail(String email)
         {
             var staffList = await _service.SearchByEmailAsync(new Email(email));
@@ -116,6 +121,7 @@ namespace Controllers
 
         //GET: api/Staff/search/specialization?specialization=CARDIOLOGY/?pageNumber=1
         [HttpGet("search/specialization")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySpecializationAsync([FromQuery] String specialization, int pageNumber)
         {
             var staffList = await _service.SearchBySpecializationAsync(SpecializationUtils.FromString(specialization));
@@ -135,6 +141,7 @@ namespace Controllers
 
         //GET: api/Staff/search/role?role=Doctor/?pageNumber=1
         [HttpGet("search/role")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetByRoleAsync([FromQuery] String role, int pageNumber)
         {
             var staffList = await _service.SearchByRoleAsync(StaffRoleUtils.FromString(role));
@@ -154,6 +161,7 @@ namespace Controllers
 
         //GET: api/Staff/licenseNumber?role=role
         [HttpGet("licenseNumber")]
+        [Authorize]
         public async Task<ActionResult<LicenseNumber>> AssignLicenseNumberAsync([FromQuery] string role)
         {
             var staffRole = StaffRoleUtils.FromString(role);
@@ -170,6 +178,7 @@ namespace Controllers
 
         //GET: api/Staff/userIdNull
         [HttpGet("userIdNull")]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetActiveByUserIdNull([FromQuery] string? pageNumber)
         {
             var staff = await _service.GetActiveWithUserIdNull();
@@ -195,6 +204,7 @@ namespace Controllers
 
         // POST: api/Staff
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDto>> Create([FromBody] CreatingStaffDto staffDto)
         //public IActionResult Create([FromBody] CreatingStaffDto staffDto)
         {
@@ -222,6 +232,7 @@ namespace Controllers
 
         // PUT: api/Staff/5
         [HttpPut("updateSlotAvailability/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDto>> UpdateSlotAvailability(Guid id, [FromBody] Slot slot)
         {
             try
@@ -250,6 +261,7 @@ namespace Controllers
 
         // PUT: api/Staff/5
         [HttpPut("updateSlotAppointment/{id}")]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<StaffDto>> UpdateSlotAppointment(Guid id, [FromBody] Slot slot)
         {
             try
@@ -278,6 +290,7 @@ namespace Controllers
 
         // PUT: api/Staff/5
         [HttpPut("update/{oldEmail}")]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<StaffDto>> Update(string oldEmail, [FromBody] UpdatingStaffDto dto)
         {
             try
@@ -343,6 +356,7 @@ namespace Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<StaffId>> SoftDelete(Guid id)
         {
             try

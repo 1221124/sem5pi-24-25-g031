@@ -1,6 +1,7 @@
 using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDNetCore.Controllers {
@@ -19,6 +20,7 @@ namespace DDDNetCore.Controllers {
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<SurgeryRoomNumber>>> GetAll()
         {
             try{
@@ -37,6 +39,7 @@ namespace DDDNetCore.Controllers {
         }
 
         [HttpPost]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<SurgeryRoom>> Create(
             [FromQuery] string surgeryRoomNumber,
             [FromQuery] string roomType, 

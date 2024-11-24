@@ -65,6 +65,7 @@ export class PatientComponent {
   tempPhoneNumber: string = '';
 
   oldEmail: string = '';
+  
   async ngOnInit() {
     if (!this.authorizationService.isAuthenticated()) {
       this.authorizationService.updateMessage('You are not authenticated or are not a patient! Please login...');
@@ -75,6 +76,19 @@ export class PatientComponent {
       return;
     }
     this.accessToken = this.authorizationService.getToken() as string;
+
+    if (!this.authorizationService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('patient')) {
+      this.authorizationService.updateMessage(
+        'You are not authenticated or are not a patient! Redirecting to login...'
+      );
+      this.authorizationService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+
+      return;
+    }
+
     await this.getPatient();
   }
 

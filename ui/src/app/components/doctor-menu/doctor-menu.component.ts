@@ -8,6 +8,9 @@ import { AuthService } from '../../services/auth/auth.service';
   styleUrls: ['./doctor-menu.component.css']
 })
 export class DoctorMenuComponent implements OnInit {
+
+  accessToken: string = '';
+
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
@@ -17,6 +20,20 @@ export class DoctorMenuComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(['']);
       }, 3000);
+
+      return;
+    }
+
+    this.accessToken = this.authService.getToken();
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
+      this.authService.updateMessage(
+        'You are not authenticated or authorized! Redirecting to login...'
+      );
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+
       return;
     }
   }

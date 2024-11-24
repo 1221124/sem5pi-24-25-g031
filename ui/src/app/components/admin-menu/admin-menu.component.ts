@@ -9,6 +9,9 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./admin-menu.component.css']
 })
 export class AdminMenuComponent implements OnInit {
+
+  accessToken: string = '';
+
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
@@ -18,6 +21,16 @@ export class AdminMenuComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(['']);
       }, 3000);
+
+      return;
+    }
+
+    this.accessToken = this.authService.getToken();
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateIsError(true);
+      this.router.navigate(['']);
+
       return;
     }
   }

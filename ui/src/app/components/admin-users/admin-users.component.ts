@@ -74,6 +74,17 @@ export class AdminUsersComponent implements OnInit {
     }
 
     this.accessToken = this.authService.getToken();
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+      this.authService.updateMessage(
+        'You are not authenticated or authorized! Redirecting to login...'
+      );
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      return;
+    }
+    
     this.fetchStaffs();
   }
 

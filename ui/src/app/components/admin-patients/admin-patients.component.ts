@@ -75,9 +75,21 @@ export class AdminPatientsComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(['']);
       }, 3000);
+
       return;
     }
+
     this.accessToken = this.authService.getToken();
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+      
+      return;
+    }
+
     this.fetchPatients();
     if (this.selectedPatient.appointmentHistory) {
       this.selectedPatient.appointmentHistory.forEach((slot: { formattedStart: string; start: string | number | Date; }, i: any) => {

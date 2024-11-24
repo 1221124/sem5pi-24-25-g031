@@ -19,17 +19,33 @@ export class PrologComponent implements OnInit {
   surgeryRoom: string = '';
   surgeryDate: string = '';
 
+  accessToken: string = '';
+
   constructor(private authService: AuthService, private prologService: PrologService, private router: Router) { }
 
   async ngOnInit() {
     if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not a prolog! Please login...');
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
       this.authService.updateIsError(true);
       setTimeout(() => {
         this.router.navigate(['']);
       }, 3000);
+
       return;
     }
+
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+      this.authService.updateMessage(
+        'You are not authenticated or are not an admin! Redirecting to login...'
+      );
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+
+      return;
+    }
+        
     await this.fetchSurgeryRooms();
 
   }

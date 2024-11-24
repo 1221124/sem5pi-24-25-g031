@@ -33,7 +33,7 @@ namespace DDDNetCore.Controllers
 
         // GET: api/Patient/?pageNumber=1
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll([FromQuery] string? pageNumber)
         {
             var patients = await _service.GetAllAsync();
@@ -58,7 +58,7 @@ namespace DDDNetCore.Controllers
         
         //GET: api/Patient/5
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PatientDto>> GetGetById(Guid id)
         {
             var patient = await _service.GetByIdAsync(new PatientId(id));
@@ -104,7 +104,7 @@ namespace DDDNetCore.Controllers
          */
         // GET: api/Patient/email/?email={email}
         [HttpGet("email")]
-        //[Authorize(Roles = "Admin,Patient")]
+        [Authorize(Roles = "Admin,Patient")]
         public async Task<ActionResult<PatientDto>> GetByEmail([FromQuery] string? email)
         {
             if (email != null)
@@ -191,7 +191,7 @@ namespace DDDNetCore.Controllers
         
         //GET: api/Patient/filter/?fullName={fullName}&email={email}&phoneNumber={phoneNumber}&medicalRecordNumber={medicalRecorsNumber}&dateOfBirth={dateOfBirth}&gender={gender}&pageNumber={pageNumber}
         [HttpGet("filter")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<PatientDto>>> SearchByFilter([FromQuery] string? fullName,
                                                                                 [FromQuery] string? email, 
                                                                                 [FromQuery] string? phoneNumber, 
@@ -218,7 +218,7 @@ namespace DDDNetCore.Controllers
 
         // POST: api/Patient/{ "fullname", "dateOfBirth", "contactInformation" } 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PatientDto>> Create([FromBody] CreatingPatientDto dto)
         {
             if (dto == null)
@@ -239,8 +239,8 @@ namespace DDDNetCore.Controllers
 
         // PUT: api/Patient/
         [HttpPut]
-        //[Authorize(Roles = "Admin,Patient")]
-        public async Task<ActionResult<PatientDto>> AdminUpdate(UpdatingPatientDto dto)
+        [Authorize(Roles = "Admin,Patient")]
+        public async Task<ActionResult<PatientDto>> Update(UpdatingPatientDto dto)
         {
             try
             {
@@ -299,7 +299,7 @@ namespace DDDNetCore.Controllers
         
         // DELETE: api/Patient/patient/5
         [HttpDelete("patient/{id}")]
-        //[Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult> PatientDelete(Guid id)
         {
             try
@@ -340,6 +340,7 @@ namespace DDDNetCore.Controllers
         // DELETE: api/Patient/admin/5
         //[Authorize(Roles = "Admin")]
         [HttpDelete("admin/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> AdminDelete(Guid id)
         {
             try

@@ -69,6 +69,19 @@ export class OperationTypesComponent implements OnInit {
       }, 3000);
       return;
     }
+
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+      this.authService.updateMessage(
+        'You are not authenticated or are not an admin! Redirecting to login...'
+      );
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+
+      return;
+    }
+
     await this.operationTypesService.getStaffRoles().then((data) => {
       this.roles = data;
     });

@@ -23,7 +23,7 @@ namespace Controllers
 
         // GET: api/OperationTypes?pageNumber={pageNumber}&?name={name}&?specialization={specialization}&?status={status}
         [HttpGet]
-        // [Authorize(Roles = "Admin,Doctor")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> Get([FromQuery] string? pageNumber, [FromQuery] string? name, [FromQuery] string? specialization, [FromQuery] string? status)
         {
             var operationTypes = await _service.GetAsync(name, specialization, status);
@@ -49,7 +49,7 @@ namespace Controllers
 
         // GET: api/OperationTypes/{id}
         [HttpGet("{id}")]
-        // [Authorize(Roles = "Admin,Doctor")]
+        [Authorize]
         public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
         {
             var operationType = await _service.GetByIdAsync(new OperationTypeId(id));
@@ -64,7 +64,7 @@ namespace Controllers
 
         // POST: api/OperationTypes
         [HttpPost]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> Create([FromBody] CreatingOperationTypeDto dto)
         {
             if (dto == null)
@@ -89,7 +89,7 @@ namespace Controllers
         
         // PUT: api/OperationTypes/id
         [HttpPut("{id}")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> Update(Guid id, [FromBody] OperationTypeDto dto)
         {
             try
@@ -117,7 +117,7 @@ namespace Controllers
 
         // Inactivate: api/OperationTypes/5
         [HttpDelete("{id}")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
         {
             var operationType = await _service.InactivateAsync(new OperationTypeId(id));
@@ -140,7 +140,7 @@ namespace Controllers
         
         // DELETE: api/OperationTypes/5
         [HttpDelete("{id}/hard")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> HardDelete(Guid id)
         {
             try

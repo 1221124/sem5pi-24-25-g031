@@ -7,6 +7,7 @@ using Domain.OperationTypes;
 using Domain.Shared;
 using DDDNetCore.Domain.OperationRequests;
 using Date = System.DateOnly;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DDDNetCore.Controllers
 {
@@ -26,6 +27,7 @@ namespace DDDNetCore.Controllers
 
         // GET api/operationrequest
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<OperationRequestDto>>> Get([FromQuery] string? pageNumber)
         {
             try
@@ -55,6 +57,7 @@ namespace DDDNetCore.Controllers
 
         // GET api/operationrequest/filtered
         [HttpGet("filtered")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetFiltered(
             [FromQuery] string? searchId,
             [FromQuery] string? searchLicenseNumber,
@@ -88,6 +91,7 @@ namespace DDDNetCore.Controllers
 
         // POST: api/operationRequests
         [HttpPost]
+        [Authorize(Roles = "Doctor")]
         // [Route("operationRequests")]
         public async Task<ActionResult<OperationRequestDto>>Create([FromBody] CreatingOperationRequestDto dto)
         {
@@ -127,6 +131,7 @@ namespace DDDNetCore.Controllers
 
         //PUT api/operationrequest
         [HttpPut]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<OperationRequestDto>> Update([FromBody] UpdatingOperationRequestDto dto)
         {
             try{
@@ -150,6 +155,7 @@ namespace DDDNetCore.Controllers
 
         // DELETE api/operationrequest/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<OperationRequestDto>> Delete(string id)
         {
             try

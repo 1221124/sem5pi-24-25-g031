@@ -8,6 +8,8 @@ import { AuthService } from '../../services/auth/auth.service';
   styleUrls: ['./technician-menu.component.css']
 })
 export class TechnicianMenuComponent implements OnInit {
+  accessToken: string = '';
+
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
@@ -17,6 +19,18 @@ export class TechnicianMenuComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(['']);
       }, 3000);
+      return;
+    }
+    
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('technician')) {
+      this.authService.updateMessage(
+        'You are not authenticated or are not a technician! Redirecting to login...'
+      );
+      this.authService.updateIsError(true);
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 3000);
+
       return;
     }
   }
