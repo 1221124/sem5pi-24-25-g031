@@ -64,6 +64,8 @@ describe('AdminPatientsComponent', () => {
   it('should fetch patients if authenticated', async () => {
     mockAuthService.isAuthenticated.and.returnValue(true);
     mockAuthService.getToken.and.returnValue('mockToken');
+    mockAuthService.extractRoleFromAccessToken = jasmine.createSpy().and.returnValue('admin');
+
     const mockPatients = [
       { id: '1', fullName: { firstName: 'John', lastName: 'Doe' }, appointmentHistory: [] },
       { id: '2', fullName: { firstName: 'Jane', lastName: 'Smith' }, appointmentHistory: [] }
@@ -74,6 +76,7 @@ describe('AdminPatientsComponent', () => {
 
     expect(component.patients).toEqual(mockPatients);
     expect(mockPatientService.getPatients).toHaveBeenCalledTimes(1);
+    expect(mockAuthService.extractRoleFromAccessToken).toHaveBeenCalledWith('mockToken');
   });
 
   it('should fetch patients from the service', async () => {
