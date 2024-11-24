@@ -1,0 +1,37 @@
+@startuml SD-Delete
+
+actor User as u
+participant "file.html" as Html
+participant "file.component.ts" as Component
+participant "file-model.ts" as Model
+participant "file.service.ts" as Service
+participant "Backend Module" as Backend
+
+u -> Html: Request for delete form
+activate Html
+    Html -> Component: Delete form
+    activate Component
+        Component -> Service: Send data
+        activate Service
+        
+        note right of Service
+            The service receives the ID
+        end note
+        
+            Service --> Backend: http.delete(data)
+                Backend --> Service: Data Deleted
+            Service -> Service: data.map()
+                activate Service
+                Service --> Model: Map Data 
+                    activate Model
+                    Model --> Service: Mapped Data Deleted
+                deactivate Model
+            deactivate Service
+            Service --> Component: Mapped Data Deleted
+            deactivate Service
+        Component --> Html: Form deleted
+        deactivate Component
+    Html --> u: Form deleted
+    deactivate Html
+
+@enduml
