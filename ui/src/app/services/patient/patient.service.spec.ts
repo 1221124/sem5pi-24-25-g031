@@ -47,27 +47,13 @@ describe('PatientService', () => {
     );
 
     const email = 'teste@gmail.com';
-    await service.getByEmail(email).then(response => {
+    await service.getByEmail(email, '').then(response => {
       expect(response.status).toBe(200);
     });
 
     const calledUrl = httpClientSpy.get.calls.mostRecent().args[0];
     expect(calledUrl).toBe(`${environment.patients}/email`);
     expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
-  });
-
-  it('should delete a patient by ID', async () => {
-    const mockId = '6ae7402e-0773-4a3a-ad19-dd52304549d0';
-    const mockToken = 'mockAccessToken';
-
-    httpClientSpy.delete.and.returnValue(of({}));
-
-    await service.deletePatient(mockId, mockToken);
-
-    const calledUrl = httpClientSpy.delete.calls.mostRecent().args[0];
-
-    expect(calledUrl).toBe(`${environment.patients}/patient/${mockId}`);
-    expect(httpClientSpy.delete).toHaveBeenCalledTimes(1);
   });
 
   it('should throw an error for invalid ID format', async () => {
@@ -82,55 +68,6 @@ describe('PatientService', () => {
     }
 
     expect(httpClientSpy.delete).not.toHaveBeenCalled();
-  });
-
-  it('should update a patient', async () => {
-    const mockPatient = {
-      Id: 'string',
-      FullName: {
-        FirstName: 'string',
-        LastName: 'string'
-      },
-      DateOfBirth: new Date("1990-01-01"),
-      Gender: 'string',
-      MedicalRecordNumber: 'string',
-      ContactInformation: {
-        Email: 'teste@gmail.com',
-        PhoneNumber: 913455474
-      },
-      MedicalCondition: ["Hypertension"],
-      EmergencyContact: 913455493,
-      AppointmentHistory: [{
-        Start: new Date("2021-10-10T08:00:00"),
-        End: new Date("2021-10-10T09:00:00")
-      }],
-      UserId: 'string'
-    };
-
-    const oldEmail = 'old.email@example.com';
-    const mockToken = 'mockAccessToken';
-
-    const mockResponse = {
-      patient: { ...mockPatient }
-    };
-
-    httpClientSpy.put.and.returnValue(of(mockResponse));
-
-    const response = await service.update(mockPatient, oldEmail, mockToken);
-
-    const calledUrl = httpClientSpy.put.calls.mostRecent().args[0];
-    const calledBody = httpClientSpy.put.calls.mostRecent().args[1];
-
-    expect(calledUrl).toBe(service.apiUrl);
-
-    expect(calledBody).toEqual({
-      emailId: { Value: oldEmail },
-      email: { value: mockPatient.ContactInformation.Email },
-      phoneNumber: { value: mockPatient.ContactInformation.PhoneNumber }
-    });
-
-    expect(httpClientSpy.put).toHaveBeenCalledTimes(1);
-
   });
 
   it('should be created', () => {

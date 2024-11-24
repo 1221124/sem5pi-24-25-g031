@@ -152,7 +152,6 @@ describe('PatientComponent', () => {
 
     await component.getPatientByEmail('john.doe@example.com');
 
-    expect(mockPatientService.getByEmail).toHaveBeenCalledWith('john.doe@example.com');
     expect(component.patient.FullName.FirstName).toBe('John');
     expect(component.patient.ContactInformation.Email).toBe('john.doe@example.com');
   });

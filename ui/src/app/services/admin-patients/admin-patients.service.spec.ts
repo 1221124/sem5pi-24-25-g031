@@ -50,7 +50,8 @@ describe('PatientsService', () => {
       mockPatient.dateOfBirth,
       mockPatient.email,
       mockPatient.phoneNumber,
-      mockPatient.gender
+      mockPatient.gender,
+      ''
     );
 
 
@@ -92,7 +93,7 @@ describe('PatientsService', () => {
 
     httpClientSpy.get.and.returnValue(of(mockResponse)); // Simula a resposta
 
-    service.getFilterPatients(mockFilter).subscribe((patients) => {
+    service.getFilterPatients(mockFilter, '').subscribe((patients) => {
       expect(patients).toEqual(mockResponse);
     });
 
@@ -129,7 +130,7 @@ describe('PatientsService', () => {
     // Simula a resposta do PUT
     httpClientSpy.put.and.returnValue(of(mockResponse));
 
-    service.updatePatient(mockPatient).subscribe((response) => {
+    service.updatePatient(mockPatient,'').subscribe((response) => {
       expect(response).toEqual(mockResponse); // Verifica se a resposta é a esperada
     });
 
@@ -150,7 +151,7 @@ describe('PatientsService', () => {
     // Simula a resposta da requisição GET
     httpClientSpy.get.and.returnValue(of(mockResponse));
 
-    service.getPatients().subscribe((patients) => {
+    service.getPatients('').subscribe((patients) => {
       expect(patients).toEqual(mockResponse); // Verifica se a resposta é a esperada
     });
 
@@ -171,7 +172,7 @@ describe('PatientsService', () => {
 
     httpClientSpy.delete.and.returnValue(of(mockResponse));
 
-    service.deletePatient(patientId).subscribe((response) => {
+    service.deletePatient(patientId, '').subscribe((response) => {
       expect(response).toBeNull();
     });
 

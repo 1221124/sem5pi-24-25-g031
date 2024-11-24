@@ -102,7 +102,7 @@ describe('AdminPatientsComponent', () => {
     await component.applyFilter();
 
     expect(component.patients).toEqual(mockFilteredPatients);
-    expect(mockPatientService.getFilterPatients).toHaveBeenCalledWith(component.filter);
+    expect(mockPatientService.getFilterPatients).toHaveBeenCalledWith(component.filter, '');
   });
 
   it('should delete a patient and refresh the list', async () => {
@@ -112,7 +112,7 @@ describe('AdminPatientsComponent', () => {
 
     component.deletePatient(mockPatient);
 
-    expect(mockPatientService.deletePatient).toHaveBeenCalledWith(mockPatient.id);
+    expect(mockPatientService.deletePatient).toHaveBeenCalledWith(mockPatient.id, '');
     expect(component.refreshPatients).toHaveBeenCalled();
   });
 
@@ -135,7 +135,8 @@ describe('AdminPatientsComponent', () => {
       new Date('1990-01-01'),
       'john.doe@example.com',
       '123456789',
-      'Male'
+      'Male',
+      ''
     );
     expect(component.refreshPatients).toHaveBeenCalled();
   });
