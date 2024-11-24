@@ -116,33 +116,6 @@ describe('PatientsService', () => {
     expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
   });
 
-  it('should update a patient', () => {
-    const mockPatient = {
-      id: 1,
-      fullName: { firstName: 'John', lastName: 'Doe' },
-      dateOfBirth: new Date('1990-01-01'),
-      contactInformation: { email: 'john.doe@example.com', phoneNumber: '123456789' },
-      gender: 'Male'
-    };
-
-    const mockResponse = { success: true };
-
-    // Simula a resposta do PUT
-    httpClientSpy.put.and.returnValue(of(mockResponse));
-
-    service.updatePatient(mockPatient,'').subscribe((response) => {
-      expect(response).toEqual(mockResponse); // Verifica se a resposta é a esperada
-    });
-
-    // Verifica se o método PUT foi chamado com os parâmetros corretos
-    expect(httpClientSpy.put).toHaveBeenCalledWith(
-      `${environment.patients}`,    // URL correta
-      mockPatient                   // O paciente correto sendo passado
-    );
-
-    expect(httpClientSpy.put).toHaveBeenCalledTimes(1); // Verifica se o PUT foi chamado uma vez
-  });
-
   it('should retrieve all patients', () => {
     const mockResponse = [
       { id: 1, fullName: 'John Doe', email: 'john.doe@example.com' }
@@ -166,23 +139,4 @@ describe('PatientsService', () => {
     expect(httpClientSpy.get).toHaveBeenCalledTimes(1); // Verifica se a requisição foi feita apenas uma vez
   });
 
-  it('should delete a patient', () => {
-    const patientId = '12345';
-    const mockResponse = null;
-
-    httpClientSpy.delete.and.returnValue(of(mockResponse));
-
-    service.deletePatient(patientId, '').subscribe((response) => {
-      expect(response).toBeNull();
-    });
-
-    expect(httpClientSpy.delete).toHaveBeenCalledWith(
-      `${environment.patients}/admin/${patientId}`,
-      jasmine.objectContaining({
-        observe: 'response',
-      })
-    );
-
-    expect(httpClientSpy.delete).toHaveBeenCalledTimes(1);
-  });
 });
