@@ -1,0 +1,36 @@
+@startuml SD-Update
+
+actor User as u
+participant "file.html" as Html
+participant "file.component.ts" as Component
+participant "file-model.ts" as Model
+participant "file.service.ts" as Service
+participant "Backend Module" as Backend
+
+u -> Html: Request for update form
+activate Html
+    Html -> Component: Update form
+    activate Component
+        Component -> Model: Update form data
+        activate Model
+            Model --> Component: Retrieve data
+            deactivate Model
+        Component -> Service: Send data
+        activate Service
+            Service --> Backend: http.put(data)
+                Backend --> Service: Data Updated
+            Service -> Service: data.map()
+                activate Service
+                Service --> Model: Map Data 
+                    activate Model
+                    Model --> Service: Mapped Data Updated
+                deactivate Model
+            deactivate Service
+            Service --> Component: Mapped Data Update
+            deactivate Service
+        Component --> Html: Form updated
+        deactivate Component
+    Html --> u: Form updated
+    deactivate Html
+
+@enduml

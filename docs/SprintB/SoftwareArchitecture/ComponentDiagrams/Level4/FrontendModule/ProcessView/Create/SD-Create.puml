@@ -1,0 +1,36 @@
+@startuml SD-Create
+
+actor User as u
+participant "file.html" as Html
+participant "file.component.ts" as Component
+participant "file-model.ts" as Model
+participant "file.service.ts" as Service
+participant "Backend Module" as Backend
+
+u -> Html: Request for create form
+activate Html
+    Html -> Component: Create form
+    activate Component
+        Component -> Model: Create form data
+        activate Model
+            Model --> Component: Retrieve data
+            deactivate Model
+        Component -> Service: Send data
+        activate Service
+            Service --> Backend: http.post(data)
+                Backend --> Service: Data Retrieved
+            Service -> Service: data.map()
+                activate Service
+                Service --> Model: Map Data 
+                    activate Model
+                    Model --> Service: Mapped Data Retrieved
+                deactivate Model
+            deactivate Service
+            Service --> Component: Mapped Data Retrieved
+            deactivate Service
+        Component --> Html: Form created
+        deactivate Component
+    Html --> u: Form created
+    deactivate Html
+
+@enduml
