@@ -30,12 +30,13 @@ export class PatientService {
     return await firstValueFrom(this.http.put(this.apiUrl, UpdatingDto, options));
   }
 
-  async getByEmail(email: any){
+  async getByEmail(email: any, accessToken: string) {
     let params = new HttpParams();
 
     if (email) params = params.set('email', email);
     const headers = new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
     });
 
     const options = { headers, observe: 'response' as const, params };
