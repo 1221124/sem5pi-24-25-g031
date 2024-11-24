@@ -33,7 +33,7 @@ namespace DDDNetCore.Controllers
 
         // GET: api/Patient/?pageNumber=1
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll([FromQuery] string? pageNumber)
         {
             var patients = await _service.GetAllAsync();
@@ -58,7 +58,7 @@ namespace DDDNetCore.Controllers
         
         //GET: api/Patient/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<PatientDto>> GetGetById(Guid id)
         {
             var patient = await _service.GetByIdAsync(new PatientId(id));
@@ -104,7 +104,7 @@ namespace DDDNetCore.Controllers
          */
         // GET: api/Patient/email/?email={email}
         [HttpGet("email")]
-        [Authorize(Roles = "Admin,Patient")]
+        [Authorize(Roles = "Admin,Doctor,Patient")]
         public async Task<ActionResult<PatientDto>> GetByEmail([FromQuery] string? email)
         {
             if (email != null)
@@ -191,7 +191,7 @@ namespace DDDNetCore.Controllers
         
         //GET: api/Patient/filter/?fullName={fullName}&email={email}&phoneNumber={phoneNumber}&medicalRecordNumber={medicalRecorsNumber}&dateOfBirth={dateOfBirth}&gender={gender}&pageNumber={pageNumber}
         [HttpGet("filter")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<IEnumerable<PatientDto>>> SearchByFilter([FromQuery] string? fullName,
                                                                                 [FromQuery] string? email, 
                                                                                 [FromQuery] string? phoneNumber, 
