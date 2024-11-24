@@ -3,7 +3,7 @@ using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DDDNetCore.Controllers{
+namespace DDDNetCore.Controllers {
     
     [ApiController]
     [Route("api/[controller]")]
@@ -19,18 +19,20 @@ namespace DDDNetCore.Controllers{
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<SurgeryRoom>>> GetAll()
+        public async Task<ActionResult<List<SurgeryRoomNumber>>> GetAll()
         {
             try{
                 var rooms = await _surgeryRoomService.GetAll();
-
+                
                 if(rooms == null || rooms.Count == 0)
                     return NotFound();
 
-                return Ok(new {rooms = rooms});
+                var roomNumbers = rooms.Select(room => SurgeryRoomNumberUtils.ToString(room.SurgeryRoomNumber)).ToList();
+
+                return Ok(new { roomNumbers });
             }
             catch(Exception ex){
-                return BadRequest("Error: " + ex.Message);
+                return BadRequest(new { error = "Error fetching surgery room numbers", details = ex.Message });
             }
         }
 

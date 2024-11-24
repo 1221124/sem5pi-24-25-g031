@@ -23,4 +23,9 @@ public class SurgeryRoom: Entity<SurgeryRoomId>, IAggregateRoot
         CurrentStatus = CurrentStatus.AVAILABLE;
         MaintenanceSlots = new List<Slot>();
     }
+
+    public void UpdateStatus(CurrentStatus status)
+    {
+        CurrentStatus = status;
+    }
 }

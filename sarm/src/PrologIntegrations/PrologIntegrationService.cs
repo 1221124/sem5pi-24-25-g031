@@ -251,5 +251,41 @@ namespace DDDNetCore.PrologIntegrations
             
             return new PrologResponse(appointmentsGenerated, staffAgendaGenerated, bestFinishingTime);
         }
+
+        public bool DestroyFile(DateTime dateTime)
+        {
+            try {
+                string dateStr = dateTime.Year.ToString() + dateTime.Month.ToString("D2") + dateTime.Day.ToString("D2");
+
+                string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
+                for (int i = 0; i < 5; i++) // Navigate up 5 levels
+                {
+                    var parent = Directory.GetParent(projectRootPath);
+                    if (parent == null)
+                    {
+                        throw new InvalidOperationException("Could not determine the project root directory.");
+                    }
+                    projectRootPath = parent.FullName;
+                }            
+                string absolutePrologPath = Path.Combine(projectRootPath, AppSettings.PrologPathLAPR5);
+                absolutePrologPath = absolutePrologPath.Replace(@"\\", "/");
+                
+                string directoryPath = Path.Combine(absolutePrologPath, "knowledge_base");
+                string filePath = Path.Combine(directoryPath, $"kb-{dateStr}.pl");
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+                Console.WriteLine($"Stack Trace: {e.StackTrace}");
+                throw new Exception("Error destroying file content", e);
+            }
+        }
     }
 }

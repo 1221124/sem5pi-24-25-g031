@@ -12,23 +12,15 @@ export class PrologService {
 
   async getSurgeryRooms() {
     const url = environment.surgeryRooms;
-    return await firstValueFrom(this.http.get<{rooms: any[]}>(url, httpOptions))
-    .then(response => {
-      if (response.status === 200 && response.body) {
-        const rooms = response.body.rooms.map(room => ({
-          SurgeryRoomNumber: room.SurgeryRoomNumber
-        }));
-
-        return {
-          status: response.status,
-          body: {
-            rooms
-          }
-        };
-      } else {
-        throw new Error('Unexpected response structure or status: ' + response.status);
+    try {
+      const response = await firstValueFrom(this.http.get<{ roomNumbers: string[] }>(url, httpOptions));
+      if (response === null || response.body === null) {
+        throw new Error('Unexpected response body: ' + response);
       }
-    });
+      return response.body.roomNumbers;
+    } catch (error) {
+      throw new Error('Error fetching surgery room numbers: ' + error);
+    }
   }
 
   async runProlog(surgeryRoom: string, date: string) {

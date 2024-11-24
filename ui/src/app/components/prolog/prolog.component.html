@@ -5,16 +5,16 @@
     <form>
       <div class="form-group">
         <label for="surgeryRoom">Select Room:</label>
-        <select id="surgeryRoom" name="surgeryRoom">
-          <option *ngFor="let room of surgeryRooms" [value]="surgeryRooms">
-            {{ room }}
+        <select id="surgeryRoom" name="surgeryRoom" [(ngModel)]="surgeryRoom">
+          <option *ngFor="let roomNumber of surgeryRooms" [value]="roomNumber">
+            {{ roomNumber }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
         <label for="surgeryDate">Select Date:</label>
-        <input type="date" id="surgeryDate" name="surgeryDate">
+        <input type="date" id="surgeryDate" name="surgeryDate" [(ngModel)]="surgeryDate">
       </div>
 
       <div class="button-group">

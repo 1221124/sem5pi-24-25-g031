@@ -67,6 +67,10 @@ namespace DDDNetCore.PrologIntegrations
                 }
 
                 var patientHistory = await _patientService.AddAppointmentHistory(appointmentsRequests);
+
+                value = _service.DestroyKB(dateTime);
+                if(!value.done) return BadRequest(new {message = value.message});
+                
                 return Ok(new {message = "Appointments created successfully!"});
             }
             catch (Exception e)

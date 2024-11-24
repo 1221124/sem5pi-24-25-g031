@@ -300,5 +300,22 @@ namespace DDDNetCore.PrologIntegrations
             var response = _prologIntegrationService.RunPrologEngine(command);
             return _prologIntegrationService.ParsePrologResponse(response);
         }
+
+        public (bool done, string message) DestroyKB(DateTime dateTime)
+        {
+            try
+            {
+                if (_prologIntegrationService.DestroyFile(dateTime))
+                {
+                    return (true, "Knowledge base text destroyed successfully.");
+                }
+                return (false, "Knowledge base text couldn't be destroyed.");
+            }
+            catch (Exception e)
+            {
+                return (false, "Error: Knowledge base text destruction failed - " + e.Message.ToString());
+                throw new ArgumentException("Error: Knowledge base text destruction failed - " + e.Message.ToString());
+            }
+        }
     }
 }

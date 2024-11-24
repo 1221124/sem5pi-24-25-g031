@@ -4,13 +4,15 @@ using Domain.DbLogs;
 using Domain.Shared;
 
 namespace DDDNetCore.Domain.Surgeries{
-    public class SurgeryRoomService{
+    public class SurgeryRoomService {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISurgeryRoomRepository _repo;
+        private readonly IAppointmentRepository _appointmentRepository;
         private readonly DbLogService _logService;
-        public SurgeryRoomService(IUnitOfWork unitOfWork, ISurgeryRoomRepository surgeryRoomRepository, DbLogService logService){
+        public SurgeryRoomService(IUnitOfWork unitOfWork, ISurgeryRoomRepository surgeryRoomRepository, IAppointmentRepository appointmentRepository, DbLogService logService){
             _unitOfWork = unitOfWork;
             _repo = surgeryRoomRepository;
+            _appointmentRepository = appointmentRepository;
             _logService = logService;
         }
 
@@ -54,6 +56,37 @@ namespace DDDNetCore.Domain.Surgeries{
             catch(Exception){
                 return null;
             }   
+        }
+
+        public async Task UpdateRoomStatusesAsync()
+        {
+            var surgeryRooms = await _repo.GetAllAsync();
+
+            foreach (var room in surgeryRooms)
+            {
+                var currentTime = DateTime.Now;
+                var appointments = _appointmentRepository.GetByRoomAndDateAsync(room.SurgeryRoomNumber, currentTime.Date).Result;
+                if (appointments == null || !appointments.Any())
+                {
+                    if (room.CurrentStatus == CurrentStatus.OCCUPIED)
+                    {
+                        room.UpdateStatus(CurrentStatus.AVAILABLE);
+                        await _unitOfWork.CommitAsync();
+                    }
+                }
+                else
+                {
+                    if (room.CurrentStatus == CurrentStatus.AVAILABLE)
+                    {
+                        if (appointments.Any(a => a.AppointmentDate.Start.Hour <= currentTime.Hour && a.AppointmentDate.End.Hour >= currentTime.Hour &&
+                                                   a.AppointmentDate.Start.Minute <= currentTime.Minute && a.AppointmentDate.End.Minute >= currentTime.Minute))
+                        {
+                            room.UpdateStatus(CurrentStatus.OCCUPIED);
+                            await _unitOfWork.CommitAsync();
+                        }
+                    }
+                }
+            }
         }
     }
 }

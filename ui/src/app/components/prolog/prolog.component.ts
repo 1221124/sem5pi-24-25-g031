@@ -15,8 +15,9 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
 export class PrologComponent implements OnInit {
 
   surgeryRooms: string[] = [];
-  selectedRoom: string = '';
-  selectedDate: string = '';
+
+  surgeryRoom: string = '';
+  surgeryDate: string = '';
 
   constructor(private authService: AuthService, private prologService: PrologService, private router: Router) { }
 
@@ -29,20 +30,26 @@ export class PrologComponent implements OnInit {
       }, 3000);
       return;
     }
-    await this.prologService.getSurgeryRooms().then((response) => {
-      this.surgeryRooms = response.body.rooms.map((room: { SurgeryRoomNumber: any; }) => room.SurgeryRoomNumber);
-    });
+    await this.fetchSurgeryRooms();
 
   }
 
+  async fetchSurgeryRooms() {
+    try {
+      this.surgeryRooms = await this.prologService.getSurgeryRooms();
+    } catch (error) {
+      alert('Error fetching surgery room numbers: ' + error);
+    }
+  }
+
   async runProlog() {
-    if (!this.selectedRoom || !this.selectedDate) {
+    if (!this.surgeryRoom || !this.surgeryDate) {
       alert('Please select a room and a date before submitting.');
       return;
     }
-    await this.prologService.runProlog(this.selectedRoom, this.selectedDate).then((response) => {
+    await this.prologService.runProlog(this.surgeryRoom, this.surgeryDate).then((response) => {
       if (response.status === 200) {
-        alert(`Appointments created for room ${this.selectedRoom} on ${this.selectedDate}!`);
+        alert(`Appointments created for room ${this.surgeryRoom} on ${this.surgeryDate}! Check the appointments page for more details.`);
       } else {
         alert('Unexpected response status: ' + response.status);
       }
@@ -56,8 +63,8 @@ export class PrologComponent implements OnInit {
   }
 
   clearForm() {
-    this.selectedRoom = '';
-    this.selectedDate = '';
+    this.surgeryRoom = '';
+    this.surgeryDate = '';
   }
 
 }

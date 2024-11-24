@@ -76,7 +76,6 @@ assign_staff_to_surgery([]) :- !.
 
 assign_staff_to_surgery([OpReqId | LOpReqId]) :-
     surgery_id(OpReqId, OpType),
-    % Iterar sobre todos os tipos de pessoal
     forall(
         required_staff(OpType, Role, Speciality, NumStaff),
         assign_staff_to_surgery_role(NumStaff, Role, Speciality, OpReqId)
@@ -84,7 +83,7 @@ assign_staff_to_surgery([OpReqId | LOpReqId]) :-
     assign_staff_to_surgery(LOpReqId).
 
 assign_staff_to_surgery_role(0, _, _, _) :- !.
-assign_staff_to_surgery_role(_, _, _, _) :- fail. % Falha caso não haja pessoal suficiente
+assign_staff_to_surgery_role(_, _, _, _) :- fail.
 
 assign_staff_to_surgery_role(NumStaff, Role, Speciality, OpReqId) :-
     findall(Staff, staff(Staff, Role, Speciality, _), LStaff),
@@ -96,7 +95,6 @@ assign_staff_to_surgery_role1(_, [], _) :- !, fail.
 assign_staff_to_surgery_role1(NumStaff, LStaff, OpReqId) :-
     random_member(Staff, LStaff),
     assert(assignment_surgery(OpReqId, Staff)),
-    % Remover o staff já atribuído da lista
     select(Staff, LStaff, LStaffUpdated),
     NumStaff1 is NumStaff - 1,
     assign_staff_to_surgery_role1(NumStaff1, LStaffUpdated, OpReqId).
