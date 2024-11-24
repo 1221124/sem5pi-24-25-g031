@@ -347,7 +347,7 @@ export class OperationRequestsComponent implements OnInit {
 
   async loadPatients() {
     try {
-      const data = await this.servicePatient.getFilterPatients(this.filter, this.accessToken).toPromise();
+      const data = await this.servicePatient.getPatients(this.accessToken).toPromise();
       console.log("data: ", data);
       this.patients = data.map((patient: { appointmentHistory: any[] }) => ({
         ...patient,
