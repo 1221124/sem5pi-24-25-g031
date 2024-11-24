@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-doctor-menu',
@@ -40,5 +41,9 @@ export class DoctorMenuComponent implements OnInit {
 
   navigateTo(path: string) {
     this.router.navigateByUrl('/doctor/' + path), { replaceUrl: true };
+  }
+
+  navigateTo3D(): void {
+    window.location.href = environment.three_d_module;
   }
 }

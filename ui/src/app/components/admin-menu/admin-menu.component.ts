@@ -38,8 +38,4 @@ export class AdminMenuComponent implements OnInit {
   navigateTo(path: string) {
     this.router.navigateByUrl('/admin/' + path), { replaceUrl: true };
   }
-
-  navigateTo3D(): void {
-    window.location.href = environment.three_d_module;
-  }
 }
