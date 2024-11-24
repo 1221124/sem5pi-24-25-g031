@@ -20,7 +20,8 @@ export class PatientsService {
     dateOfBirth: Date,
     email: string,
     phoneNumber: string,
-    gender: string
+    gender: string,
+    accessToken: string
   ) {
 
     const contactInformation = {
@@ -58,7 +59,8 @@ export class PatientsService {
 
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
       })
     };
 
@@ -73,7 +75,7 @@ export class PatientsService {
     )
   }
 
-  getFilterPatients(filter: any): Observable<any> {
+  getFilterPatients(filter: any, accessToken: string): Observable<any> {
     const params: any = {};
 
     if(filter.pageNumber > 0){
@@ -86,25 +88,41 @@ export class PatientsService {
       if (filter.gender) params.gender = filter.gender;
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/filter`, { params });
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const httpOptions = { headers, params };
+
+    return this.http.get<any[]>(`${this.apiUrl}/filter`, httpOptions);
   }
 
-  getPatients(): Observable<any> {
+  getPatients(accessToken: string): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
       })
     };
 
     return this.http.get(this.apiUrl, httpOptions);
   }
 
-  updatePatient(patient: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}`, patient);
+  updatePatient(patient: any, accessToken: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const httpOptions = { headers };
+
+    return this.http.put(`${this.apiUrl}`, patient, httpOptions);
   }
 
-  deletePatient(patientId: any): Observable<any>{
+  deletePatient(patientId: any, accessToken: string): Observable<any>{
     console.log("Deletion Patient ID:", patientId);
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${ accessToken}`
+    });
+    const httpOptions = { headers };
+
     return this.http.delete(`${this.apiUrl}/admin/${patientId}`, httpOptions);
   }
 
