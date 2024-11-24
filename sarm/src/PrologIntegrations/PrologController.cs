@@ -26,9 +26,9 @@ namespace DDDNetCore.PrologIntegrations
             _patientService = patientService;
         }
         
-        //api/Prolog?surgeryRoom={surgeryRoom}&date={date}
+        //api/Prolog?option={option}&surgeryRoom={surgeryRoom}&date={date}
         [HttpGet]
-        public async Task<ActionResult> RunProlog([FromQuery] string surgeryRoom, [FromQuery] string date)
+        public async Task<ActionResult> RunProlog([FromQuery] string option, [FromQuery] string surgeryRoom, [FromQuery] string date)
         {
             try
             {
@@ -39,7 +39,10 @@ namespace DDDNetCore.PrologIntegrations
                 var value = await _service.CreateKB(surgeryRoomNumber, dateTime);
                 if(!value.done) return BadRequest(new {message = value.message});
 
-                var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime);
+                var optionAsInt = int.Parse(option);
+                if (optionAsInt != 0 && optionAsInt != 1) return BadRequest(new {message = "Invalid option."});
+
+                var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime, optionAsInt);
                 if (response == null) return BadRequest(new {message = "Appointments couldn't be created due to staff's incompatibility.\nPlease, try again later."});
 
                 var codesAndAppointments = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);

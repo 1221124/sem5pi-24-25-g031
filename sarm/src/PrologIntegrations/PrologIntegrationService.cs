@@ -108,7 +108,7 @@ namespace DDDNetCore.PrologIntegrations
 
         }
 
-        public (string absolutePrologPath, string command1, string command2, string command3) PreparePrologCommand(SurgeryRoomNumber surgeryRoomNumber, DateTime date) {
+        public (string absolutePrologPath, string command1, string command2, string command3) PreparePrologCommand(SurgeryRoomNumber surgeryRoomNumber, DateTime date, int option) {
             string surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber).ToLower();
             Console.WriteLine($"Surgery Room: {surgeryRoom}");
             Console.WriteLine($"Date: {date}");
@@ -133,30 +133,26 @@ namespace DDDNetCore.PrologIntegrations
 
             string kbFilePath = Path.Combine(absolutePrologPath, "knowledge_base", $"kb-{dateStr}.pl");
             kbFilePath = kbFilePath.Replace(@"\\", "/");
-            string codeFilePath = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFile);
+            string codeFilePath = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFileScheduling);
             codeFilePath = codeFilePath.Replace(@"\\", "/");
+            string codeFilePathFirstHeuristic = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFileFirstHeuristic);
+            codeFilePathFirstHeuristic = codeFilePathFirstHeuristic.Replace(@"\\", "/");
 
-            if (!File.Exists(kbFilePath) || !File.Exists(codeFilePath)) 
+            if (!File.Exists(kbFilePath) || !File.Exists(codeFilePath) || !File.Exists(codeFilePathFirstHeuristic))
             {
                 throw new FileNotFoundException("Prolog file(s) not found.");
             }
 
-            // string command1 = $@"cd('{absolutePrologPath}').";
-            // string command2 = $@"consult('knowledge_base/kb-{dateStr}.pl').";
-            // string command3 = $@"consult('code/{AppSettings.PrologFile}').";
-            // string command4 = $@"schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
-            // string command1 = $@"cd(""{absolutePrologPath.Replace(@"\", "/")}"").";
-            // string command1 = $@"consult('knowledge_base/kb-{dateStr}.pl').";
             string command1 = $@"consult('knowledge_base/kb-{dateStr}.pl').";
-            string command2 = $@"consult('code/{AppSettings.PrologFile}').";
+            string command2;
+            if (option == 0) {
+                command2 = $@"consult('code/{AppSettings.PrologFileScheduling}').";
+            } else if (option == 1) {
+                command2 = $@"consult('code/{AppSettings.PrologFileFirstHeuristic}').";
+            } else {
+                throw new Exception("Invalid option.");
+            }
             string command3 = $@"schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
-
-            // string prologCommand = $@"
-            // cd('{absolutePrologPath}'),
-            // consult('knowledge_base/kb-{dateStr}.pl'),
-            // consult('code/{AppSettings.PrologFile}'),
-            // schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).
-            // ";
 
             Console.WriteLine("Absolute Prolog Path: " + absolutePrologPath);
             Console.WriteLine("Prolog Command 1: " + command1);
@@ -164,7 +160,6 @@ namespace DDDNetCore.PrologIntegrations
             Console.WriteLine("Prolog Command 3: " + command3);
 
             return (absolutePrologPath, command1, command2, command3);
-            // return (command2, command3, command4);
         }
 
         public string RunPrologEngine((string absolutePrologPath, string command1, string command2, string command3) command)

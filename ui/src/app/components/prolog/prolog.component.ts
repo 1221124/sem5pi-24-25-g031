@@ -34,6 +34,7 @@ export class PrologComponent implements OnInit {
       return;
     }
 
+    this.accessToken = this.authService.getToken();
     if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
       this.authService.updateMessage(
         'You are not authenticated or are not an admin! Redirecting to login...'
@@ -52,7 +53,7 @@ export class PrologComponent implements OnInit {
 
   async fetchSurgeryRooms() {
     try {
-      this.surgeryRooms = await this.prologService.getSurgeryRooms();
+      this.surgeryRooms = await this.prologService.getSurgeryRooms(this.accessToken);
     } catch (error) {
       alert('Error fetching surgery room numbers: ' + error);
     }
@@ -63,7 +64,7 @@ export class PrologComponent implements OnInit {
       alert('Please select a room and a date before submitting.');
       return;
     }
-    await this.prologService.runProlog(option, this.surgeryRoom, this.surgeryDate).then((response) => {
+    await this.prologService.runProlog(option, this.surgeryRoom, this.surgeryDate, this.accessToken).then((response) => {
       if (response.status === 200) {
         alert(`Appointments created for room ${this.surgeryRoom} on ${this.surgeryDate}! Check the appointments page for more details.`);
       } else {

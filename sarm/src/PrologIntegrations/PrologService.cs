@@ -294,9 +294,9 @@ namespace DDDNetCore.PrologIntegrations
             this._agendaOperationRoom = value;
         }
 
-        public PrologResponse? RunPrologEngine(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
+        public PrologResponse? RunPrologEngine(SurgeryRoomNumber surgeryRoomNumber, DateTime date, int option)
         {
-            var command = _prologIntegrationService.PreparePrologCommand(surgeryRoomNumber, date);
+            var command = _prologIntegrationService.PreparePrologCommand(surgeryRoomNumber, date, option);
             var response = _prologIntegrationService.RunPrologEngine(command);
             return _prologIntegrationService.ParsePrologResponse(response);
         }
