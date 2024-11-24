@@ -65,7 +65,7 @@ export class PatientComponent {
   tempPhoneNumber: string = '';
 
   oldEmail: string = '';
-  
+
   async ngOnInit() {
     if (!this.authorizationService.isAuthenticated()) {
       this.authorizationService.updateMessage('You are not authenticated or are not a patient! Please login...');
@@ -178,7 +178,7 @@ export class PatientComponent {
   }
 
   async getPatientByEmail(email: string) {
-    await this.patientService.getByEmail(email)
+    await this.patientService.getByEmail(email, this.accessToken)
       .then(response => {
         if(response.status === 200) {
           if(response.body) {
