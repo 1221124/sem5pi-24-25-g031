@@ -18,7 +18,8 @@
       </div>
 
       <div class="button-group">
-        <button type="submit" class="submit-button" (click)="runProlog()">Schedule Appointments</button>
+        <button type="submit" class="submit-button" (click)="runProlog(0)">Normal Scheduling</button>
+        <button type="submit" class="submit-button" (click)="runProlog(1)">Heuristic Scheduling</button>
         <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
       </div>
     </form>

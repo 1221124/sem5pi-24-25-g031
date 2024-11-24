@@ -45,7 +45,7 @@ export class PrologComponent implements OnInit {
 
       return;
     }
-        
+
     await this.fetchSurgeryRooms();
 
   }
@@ -58,12 +58,12 @@ export class PrologComponent implements OnInit {
     }
   }
 
-  async runProlog() {
+  async runProlog(option:any) {
     if (!this.surgeryRoom || !this.surgeryDate) {
       alert('Please select a room and a date before submitting.');
       return;
     }
-    await this.prologService.runProlog(this.surgeryRoom, this.surgeryDate).then((response) => {
+    await this.prologService.runProlog(option, this.surgeryRoom, this.surgeryDate).then((response) => {
       if (response.status === 200) {
         alert(`Appointments created for room ${this.surgeryRoom} on ${this.surgeryDate}! Check the appointments page for more details.`);
       } else {
