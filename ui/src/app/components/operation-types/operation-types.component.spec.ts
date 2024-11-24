@@ -39,6 +39,7 @@ describe('OperationTypesComponent', () => {
       'getToken',
       'updateMessage',
       'updateIsError',
+      'extractRoleFromAccessToken'
     ]);
 
     mockAuthService.isAuthenticated.and.returnValue(true);
@@ -67,15 +68,16 @@ describe('OperationTypesComponent', () => {
 
   it('should redirect to home if not authenticated', async () => {
     mockAuthService.isAuthenticated.and.returnValue(false);
-  
+
     await component.ngOnInit();
-  
+
     expect(mockAuthService.updateMessage).toHaveBeenCalledWith(
       'You are not authenticated or are not an admin! Please login...'
     );
-  });  
+  });
 
   it('should initialize roles, specializations, and statuses on success', async () => {
+    mockAuthService.extractRoleFromAccessToken.and.returnValue('admin');
     mockAuthService.isAuthenticated.and.returnValue(true);
     mockAuthService.getToken.and.returnValue('mockToken');
     mockOperationTypesService.getStaffRoles.and.returnValue(Promise.resolve(['Role1', 'Role2']));
@@ -119,9 +121,9 @@ describe('OperationTypesComponent', () => {
     mockOperationTypesService.deleteOperationType.and.returnValue(
       Promise.reject({ status: 401, error: { message: 'Unauthorized' } })
     );
-  
+
     await component.inactivate('1');
-  
+
     expect(component.message).toBe('You are not authorized to delete Operation Types! Please log in...');
     expect(component.success).toBeFalse();
   });
@@ -166,11 +168,11 @@ describe('OperationTypesComponent', () => {
     mockOperationTypesService.post.and.returnValue(
       Promise.reject({ status: 401, error: { message: 'Unauthorized' } })
     );
-  
+
     await component.submitOperationType();
-  
+
     expect(component.message).toBe('You are not authorized to create Operation Types! Please log in...');
     expect(component.success).toBeFalse();
   });
-  
+
 });

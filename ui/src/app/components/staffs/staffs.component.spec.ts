@@ -34,16 +34,17 @@ describe('StaffsComponent', () => {
     mockStaffsService.update.and.returnValue(Promise.resolve(new HttpResponse({ status: 201 })));
     mockStaffsService.deleteStaff.and.returnValue(Promise.resolve(new HttpResponse({ status: 200 })));
 
+
     mockAuthService = jasmine.createSpyObj('AuthService', [
       'isAuthenticated',
       'getToken',
       'updateMessage',
       'updateIsError',
+      'extractRoleFromAccessToken'
     ]);
 
     mockAuthService.isAuthenticated.and.returnValue(true);
     mockAuthService.getToken.and.returnValue('mockToken');
-
 
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockRouter.navigate.and.stub();
@@ -73,11 +74,12 @@ describe('StaffsComponent', () => {
     await component.ngOnInit();
 
     expect(mockAuthService.updateMessage).toHaveBeenCalledWith(
-      'You are not authenticated or are not a staff! Please login...'
+      'You are not authenticated or are not an admin! Please login...'
     );
   });
 
   it('should fetch roles and specializations on init', async () => {
+    mockAuthService.extractRoleFromAccessToken.and.returnValue('admin');
     await component.ngOnInit();
     expect(mockStaffsService.getStaffRoles).toHaveBeenCalled();
     expect(mockStaffsService.getSpecializations).toHaveBeenCalled();
