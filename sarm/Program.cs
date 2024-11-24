@@ -119,6 +119,8 @@ builder.Services.AddTransient<AppointmentService>();
 builder.Services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
 builder.Services.AddTransient<SurgeryRoomService>();
 
+builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
+
 builder.Services.AddTransient<PrologService>();
 builder.Services.AddTransient<PrologIntegrationService>();
 

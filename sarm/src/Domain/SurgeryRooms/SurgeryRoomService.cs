@@ -8,12 +8,10 @@ namespace DDDNetCore.Domain.Surgeries{
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISurgeryRoomRepository _repo;
         private readonly IAppointmentRepository _appointmentRepository;
-        private readonly DbLogService _logService;
-        public SurgeryRoomService(IUnitOfWork unitOfWork, ISurgeryRoomRepository surgeryRoomRepository, IAppointmentRepository appointmentRepository, DbLogService logService){
+        public SurgeryRoomService(IUnitOfWork unitOfWork, ISurgeryRoomRepository surgeryRoomRepository, IAppointmentRepository appointmentRepository) {
             _unitOfWork = unitOfWork;
             _repo = surgeryRoomRepository;
             _appointmentRepository = appointmentRepository;
-            _logService = logService;
         }
 
         //AddAsync
@@ -60,6 +58,7 @@ namespace DDDNetCore.Domain.Surgeries{
 
         public async Task UpdateRoomStatusesAsync()
         {
+            Console.WriteLine("Updating room statuses...");
             var surgeryRooms = await _repo.GetAllAsync();
 
             foreach (var room in surgeryRooms)
