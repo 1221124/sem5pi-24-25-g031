@@ -86,7 +86,7 @@ export class AdminPatientsComponent implements OnInit {
       setTimeout(() => {
         this.router.navigate(['']);
       }, 3000);
-      
+
       return;
     }
 
@@ -194,7 +194,7 @@ export class AdminPatientsComponent implements OnInit {
     }));
 
     // Call the service to save the patient data
-    this.patientService.updatePatient(this.selectedPatient).subscribe(
+    this.patientService.updatePatient(this.selectedPatient, this.accessToken).subscribe(
       () => {
         this.isEditModalOpen = false;
         this.refreshPatients();  // Refresh to show updated data
@@ -206,7 +206,7 @@ export class AdminPatientsComponent implements OnInit {
   // Method to refresh the list of patients
   async refreshPatients(){
     try {
-      this.patients = await this.patientService.getFilterPatients(this.filter).toPromise();
+      this.patients = await this.patientService.getFilterPatients(this.filter, this.accessToken).toPromise();
     } catch (error) {
       const httpError = error as HttpErrorResponse;
       if (httpError.status === 404 || httpError.status === 400) {
@@ -221,7 +221,7 @@ export class AdminPatientsComponent implements OnInit {
   // Fetch all patients initially or apply the filter
   async fetchPatients(): Promise<void> {
     try {
-      const data = await this.patientService.getPatients().toPromise();
+      const data = await this.patientService.getPatients(this.accessToken).toPromise();
       this.patients = data.map((patient: { appointmentHistory: any[] }) => ({
         ...patient,
         appointmentHistory: patient.appointmentHistory.map(slot => ({
@@ -270,7 +270,7 @@ export class AdminPatientsComponent implements OnInit {
       this.message = 'Invalid phone number format. Please provide a valid phine number.'
     }
 
-    this.patientService.post(this.firstName, this.lastName, this.dateOfBirth, this.email, this.phoneNumber, this.gender);
+    this.patientService.post(this.firstName, this.lastName, this.dateOfBirth, this.email, this.phoneNumber, this.gender, this.accessToken);
     this.isCreateModalOpen = false;
     this.refreshPatients();
   }
@@ -349,7 +349,7 @@ export class AdminPatientsComponent implements OnInit {
 
   deletePatient(patient: any) {
     if(this.selectedPatient){
-      this.patientService.deletePatient(patient.id).subscribe(
+      this.patientService.deletePatient(patient.id, this.accessToken).subscribe(
         () => {
           this.isDeleteModalOpen = false;
           this.refreshPatients();
