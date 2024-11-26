@@ -22,7 +22,8 @@ export class TechnicianMenuComponent implements OnInit {
       }, 3000);
       return;
     }
-    
+
+    this.accessToken = this.authService.getToken() as string;
     if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('technician')) {
       this.authService.updateMessage(
         'You are not authenticated or are not a technician! Redirecting to login...'

@@ -109,6 +109,7 @@ export class StaffsComponent implements OnInit {
       return;
     }
 
+    this.accessToken = this.authService.getToken() as string;
     if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
       this.authService.updateMessage(
         'You are not authenticated or are not an admin! Redirecting to login...'
