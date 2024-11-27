@@ -11,16 +11,6 @@
 
       <section>
         <form class="form-group">
-          <!-- Staff Selection -->
-          <!-- <div>
-            <select *ngIf="staffs?.length" id="staff" name="staff" [(ngModel)]="staff" (focus)="staffTouched = true">
-              <option value="" disabled selected>Select Staff</option>
-              <option *ngFor="let staff of staffs" [value]="staff.licenseNumber">
-                {{ staff.licenseNumber }} >>> {{ staff.ContactInformation.Email }}
-              </option>
-            </select>
-          </div> -->
-
           <!-- Patient Selection -->
           <div>
             <select *ngIf="patients?.length" id="patient" name="patient" [(ngModel)]="patient" (focus)="patientTouched = true">
@@ -155,9 +145,9 @@
   </div>
 
   <div class="pagination">
-    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage <= 1">Previous</button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages">Next</button>
+    <button (click)="changePage(filter.pageNumber - 1)" [disabled]="filter.pageNumber <= 1">Previous</button>
+    <span>Page {{ filter.pageNumber }} of {{ totalPages }}</span>
+    <button (click)="changePage(filter.pageNumber + 1)" [disabled]="filter.pageNumber >= totalPages">Next</button>
   </div>
 
 

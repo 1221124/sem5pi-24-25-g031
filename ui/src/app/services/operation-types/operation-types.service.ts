@@ -86,10 +86,12 @@ export class OperationTypesService {
   async getOperationTypes(filter: any, accessToken: string) {
     let params = new HttpParams();
 
-    if (filter.pageNumber > 0) params = params.set('pageNumber', filter.pageNumber.toString());
-    if (filter.name !== '') params = params.set('name', filter.name);
-    if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
-    if (filter.status !== '') params = params.set('status', filter.status);
+    if (filter.pageNumber > 0){
+      params = params.set('pageNumber', filter.pageNumber.toString());
+      if (filter.name !== '') params = params.set('name', filter.name);
+      if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
+      if (filter.status !== '') params = params.set('status', filter.status);
+    }
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

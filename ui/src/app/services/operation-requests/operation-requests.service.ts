@@ -191,8 +191,12 @@ export class OperationRequestsService {
       });
   }
 
-  async getAll(accessToken: string) {
-    let params = new HttpParams();
+  async getAll(
+    pageFilter: any,
+    accessToken: string
+  ) {
+    let params = new HttpParams()
+      .set('pageNumber', pageFilter.pageNumber.toString());
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

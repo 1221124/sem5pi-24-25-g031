@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OperationRequestsService } from '../../services/operation-requests/operation-requests.service';
@@ -10,7 +10,7 @@ import { Staff } from '../../models/staff.model';
 import { OperationType } from '../../models/operation-type.model';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
-import {Patient} from '../../models/patient.model';
+import {start} from 'node:repl';
 
 @Component({
   selector: 'app-operation-requests',
@@ -63,10 +63,11 @@ export class OperationRequestsComponent implements OnInit {
   isDeleteModalOpen: boolean = false;
 
   filter = {
-    pageNumber: 0,
-    name: '',
-    specialization: '',
-    status: ''
+    pageNumber: 1
+  }
+
+  emptyFilter = {
+    pageNumber: 0
   }
 
   staffFilter = {
@@ -99,7 +100,8 @@ export class OperationRequestsComponent implements OnInit {
     private servicePatient: PatientsService,
     private serviceOperationType: OperationTypesService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   async ngOnInit() {
@@ -165,9 +167,12 @@ export class OperationRequestsComponent implements OnInit {
     console.log("done loading...");
   }
 
-  changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
+  async changePage(pageNumber: number) {
+    console.log("pageNumber = ", pageNumber);
+    if (pageNumber > 0 && pageNumber <= this.totalPages) {
+      this.filter.pageNumber = pageNumber;
+      console.log("this.filter.pageNumber = ", this.filter.pageNumber);
+      await this.loadOperationRequests();
     }
   }
 
@@ -236,7 +241,14 @@ export class OperationRequestsComponent implements OnInit {
   }
 
   async loadOperationRequests() {
-    await this.service.getAll(this.accessToken)
+    const itemsPerPage = 4;
+
+    const pageFilter = {
+      pageNumber: this.filter.pageNumber,
+      pageSize: itemsPerPage
+    };
+
+    await this.service.getAll(pageFilter, this.accessToken)
       .then(response  => {
         if(response.status === 200 || response.status === 201){
           console.log("response.body: ", response.body);
@@ -299,7 +311,7 @@ export class OperationRequestsComponent implements OnInit {
   }
 
   async loadStaffs() {
-    await this.serviceStaff.getStaff(this.filter, this.accessToken)
+    await this.serviceStaff.getStaff(this.emptyFilter, this.accessToken)
       .then(response => {
         if(response.status === 200 || response.status === 201){
           if(response.body){
@@ -367,7 +379,7 @@ export class OperationRequestsComponent implements OnInit {
   }
 
   async loadOperationTypes(){
-    await this.serviceOperationType.getOperationTypes(this.filter, this.accessToken)
+    await this.serviceOperationType.getOperationTypes(this.emptyFilter, this.accessToken)
       .then(response =>{
         if(response.status === 200 || response.status === 201){
           if(response.body){
@@ -432,6 +444,8 @@ export class OperationRequestsComponent implements OnInit {
     // this.refresh();
     console.log('Operation Request submitted successfully!');
     this.clearForm();
+    await this.loadOperationRequests(); // Reload requests after creating
+    this.cdr.detectChanges(); // Trigger change detection manually
   }
 
   openDeleteModal(request: OperationRequest) {
@@ -453,13 +467,14 @@ export class OperationRequestsComponent implements OnInit {
     await this.service.delete(this.accessToken, request);
     console.log('Operation Request deleted successfully!');
     this.clearForm();
-    // this.refresh();
+    await this.loadOperationRequests(); // Reload requests after creating
+    this.cdr.detectChanges(); // Trigger change detection manually
   }
 
-  confirmDelete() {
+  async confirmDelete() {
     if (this.id) {
       console.log('Delete confirmed');
-      this.delete(this.id);
+      await this.delete(this.id);
       this.isDeleteModalOpen = false;
       this.closeDeleteModal();
     }
@@ -511,6 +526,8 @@ export class OperationRequestsComponent implements OnInit {
     this.closeUpdateModal();
     console.log('Operation Request updated successfully!');
     this.clearForm();
+    await this.loadOperationRequests(); // Reload requests after creating
+    this.cdr.detectChanges(); // Trigger change detection manually
   }
 
   async confirmUpdate(update: OperationRequest) {
@@ -591,27 +608,6 @@ export class OperationRequestsComponent implements OnInit {
         console.error('Error loading Operation Requests:', error);
       }
     )
-    // ).subscribe(
-    //   (data) => {
-    //     this.requests = data.map(request =>
-    //       ({
-    //         id: request.id,
-    //         staff: request.staff,
-    //         patient: request.patient,
-    //         operationType: request.operationType,
-    //         deadlineDate: request.deadlineDate,
-    //         priority: request.priority,
-    //         status: request.status
-    //       })
-    //     );
-    //     console.log('Filtered Operation Requests:', this.requests);
-    //     this.currentPage = 1;
-    //     this.totalPages = Math.ceil(this.requests.length / this.itemsPerPage);
-    //   },
-    //   (error) => {
-    //     console.error('Error loading Operation Requests:', error);
-    //   }
-    // );
   }
 
   isFormValid(): boolean {
@@ -655,10 +651,7 @@ export class OperationRequestsComponent implements OnInit {
     this.isDeleteModalOpen = false;
 
     this.filter = {
-      pageNumber: 0,
-      name: '',
-      specialization: '',
-      status: ''
+      pageNumber: 1
     }
 
     this.filters = {
