@@ -16,6 +16,7 @@ import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.compon
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import { PrologComponent } from './components/prolog/prolog.component';
+import { AppointmentsComponent } from './components/appointments/appointments.component';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { PrologComponent } from './components/prolog/prolog.component';
     AdminMenuComponent,
     AdminUsersComponent,
     AppComponent,
+    AppointmentsComponent,
     AuthCallbackComponent,
     DoctorMenuComponent,
     HomeComponent,
@@ -31,7 +33,8 @@ import { PrologComponent } from './components/prolog/prolog.component';
     OperationTypesComponent,
     StaffsComponent,
     TechnicianMenuComponent,
-    PrologComponent
+    PrologComponent,
+    AppointmentsComponent
   ],
   imports: [
     BrowserModule,

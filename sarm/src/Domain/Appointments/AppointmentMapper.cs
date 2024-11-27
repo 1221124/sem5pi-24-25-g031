@@ -39,5 +39,15 @@ namespace DDDNetCore.Domain.Appointments
                 appointment.AssignedStaff
             );
         }
+
+        public static List<AppointmentDto> ToDtoList(List<Appointment> appointments)
+        {
+            var appointmentDtos = new List<AppointmentDto>();
+            foreach (var appointment in appointments)
+            {
+                appointmentDtos.Add(ToDto(appointment));
+            }
+            return appointmentDtos;
+        }
     }
 }

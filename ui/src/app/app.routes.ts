@@ -13,12 +13,14 @@ import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.compon
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import {PrologComponent} from './components/prolog/prolog.component';
+import { AppointmentsComponent } from './components/appointments/appointments.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
   { path: 'callback', component: AuthCallbackComponent },
   { path: 'admin/staffs', component: StaffsComponent },
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
+  { path: 'admin/appointments', component: AppointmentsComponent },
   { path: 'admin/operationTypes', component: OperationTypesComponent },
   { path: 'admin/patients', component: AdminPatientsComponent },
   { path: 'admin/users', component: AdminUsersComponent },

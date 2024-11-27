@@ -1,0 +1,66 @@
+<div class="appointments">
+    <div class="appointments-header">
+      <button (click)="goToAdmin()" class="btn btn-outline-primary back-btn">Back to Admin Home</button>
+    </div>
+  
+    <div *ngIf="appointments.length > 0; else noAppointments">
+      <h1>Appointments</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Appointment Number</th>
+            <th>
+              Request Code
+              <!-- <input type="text" [(ngModel)]="filter.requestCode" placeholder="Filter by Request Code" /> -->
+            </th>
+            <th>Surgery Room</th>
+            <th colspan="2">Appointment Date</th>
+            <th>Assigned Staff</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>Start</th>
+            <th>End</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let appointment of appointments">
+            <td>{{ appointment.AppointmentNumber }}</td>
+            <td>{{ appointment.RequestCode }}</td>
+            <td>{{ appointment.SurgeryRoomNumber }}</td>
+            <td>{{ appointment.AppointmentDate.Start | date: 'yyyy-MM-dd HH:mm' }}</td>
+            <td>{{ appointment.AppointmentDate.End | date: 'yyyy-MM-dd HH:mm' }}</td>
+            <td>
+              <ul>
+                <li *ngFor="let staff of appointment.AssignedStaff">{{ staff }}</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- <div class="filter-buttons">
+        <button (click)="applyFilter()">Apply Filters</button>
+        <button (click)="clearFilters()">Clear Filters</button>
+      </div> -->
+  
+      <div class="pagination">
+        <button (click)="changePage(filter.pageNumber - 1)" [disabled]="filter.pageNumber <= 1">Previous</button>
+        <span>Page {{ filter.pageNumber }} of {{ totalPages }}</span>
+        <button (click)="changePage(filter.pageNumber + 1)" [disabled]="filter.pageNumber >= totalPages">Next</button>
+      </div>
+    </div>
+  
+    <ng-template #noAppointments>
+      <p *ngIf="message; else loading">{{ message }}</p>
+    </ng-template>
+  
+    <ng-template #loading>
+      <p>Loading...</p>
+    </ng-template>
+  </div>
+  

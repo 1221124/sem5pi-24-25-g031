@@ -22,9 +22,14 @@ namespace DDDNetCore.Domain.Appointments
             return await _appointmentRepository.GetByRoomAndDateAsync(surgeryRoomNumber, date);
         }
 
-        public async Task<List<Appointment>> GetAll()
+        public async Task<List<AppointmentDto>> GetAll()
         {
-            return await _appointmentRepository.GetAllAsync();
+            var appointments = await _appointmentRepository.GetAllAsync();
+            if (appointments == null || appointments.Count == 0)
+            {
+                return null;
+            }
+            return AppointmentMapper.ToDtoList(appointments);
         }
 
         public async Task<Appointment> AddAsync(CreatingAppointmentDto appointment)

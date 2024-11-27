@@ -11,6 +11,7 @@ export const environment = {
   patients: 'http://localhost:5500/api/Patient',
   surgeryRooms: 'http://localhost:5500/api/SurgeryRooms',
   prolog: 'http://localhost:5500/api/Prolog',
+  appointments: 'http://localhost:5500/api/Appointments',
   three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE',
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
