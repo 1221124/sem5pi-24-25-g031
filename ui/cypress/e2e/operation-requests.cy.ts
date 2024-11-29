@@ -1,12 +1,9 @@
-﻿  import '../support/commands';
+﻿  import '../support/commands.ts'
 
   describe('Operation Requests E2E Tests', () => {
-    const baseUrl = 'http://localhost:4200';
 
     beforeEach(() => {
-      cy.visit(baseUrl);
-      cy.loginByAuth0Api(); // Call the custom command
-      cy.visit('/operation-requests'); // Navigate to the protected page
+      cy.loginRedirect('1220784@isep.ipp.pt');
     });
 
     it('should display a list of operation requests', () => {

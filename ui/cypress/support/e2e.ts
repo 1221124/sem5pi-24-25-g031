@@ -14,13 +14,13 @@
 // ***********************************************************
 
 // When a command from ./commands is ready to use, import with `import './commands'` syntax
-// import './commands';
+import './commands';
 
 // cypress/support/index.d.ts
 /// <reference types="cypress" />
 
 declare namespace Cypress {
-  interface Chainable {
-    loginByAuth0Api(): Chainable<void>;
+  interface Chainable<Subject = any> {
+    loginRedirect(): Chainable<void>;
   }
 }

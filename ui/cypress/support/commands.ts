@@ -44,33 +44,63 @@
 
 
 // cypress/support/commands.js or commands.ts
-import jwtDecode from 'jwt-decode';
+// import jwtDecode from 'jwt-decode';
 
-Cypress.Commands.add('loginByAuth0Api', () => {
-  cy.request({
-    method: 'POST',
-    url: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
-    body: {
-      grant_type: 'password',
-      username: Cypress.env('username'),
-      password: Cypress.env('password'),
-      audience: Cypress.env('api_audience'),
-      //scope: 'openid profile email',
-      client_id: Cypress.env('client_id'),
-      client_secret: Cypress.env('client_secret'),
-    }
-  }).then((response) => {
-    const { access_token, id_token, expires_in } = response.body;
+// Cypress.Commands.add('loginByAuth0Api', () => {
+//   cy.request({
+//     method: 'POST',
+//     url: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
+//     body: {
+//       grant_type: 'password',
+//       username: Cypress.env('username'),
+//       password: Cypress.env('password'),
+//       audience: Cypress.env('api_audience'),
+//       //scope: 'openid profile email',
+//       client_id: Cypress.env('client_id'),
+//       client_secret: Cypress.env('client_secret'),
+//     }
+//   }).then((response) => {
+//     const { access_token, id_token, expires_in } = response.body;
+//
+//     const auth0State = {
+//       body: {
+//         access_token,
+//         id_token,
+//       },
+//       expiresAt: Math.floor(Date.now() / 1000) + expires_in,
+//     };
+//
+//     window.localStorage.setItem('auth0Cypress', JSON.stringify(auth0State));
+//
+//     cy.visit('/');
+//   });
+// });
 
-    const auth0State = {
-      access_token,
-      id_token,
-      expires_in,
-    };
+Cypress.Commands.add('loginRedirect', (
+  username: string
+) => {
+  // Visit the login page
+  cy.visit('http://localhost:4200');
 
-    localStorage.setItem('auth0Cypress', JSON.stringify(auth0State));
+  // Click the login button to initiate Auth0 login
+  cy.get('button').contains('Login / Registration').click();
 
-    cy.visit('/');
+  // Wait for the redirection to the Auth0 hosted login page
+  cy.origin(
+    'https://dev-sagir8s22k2ehmk0.us.auth0.com',
+    { args: { username, password: 'Motokeros31!' } },
+    ({ username, password }) => { 
+    // Fill the username and password fields in Auth0 login form
+    // cy.get('input[name="username"]').type(Cypress.env('1220784@isep.ipp.pt'));
+    // cy.get('input[name="password"]').type(Cypress.env('Motokeros31!'));
+    // cy.get('button[type="submit"]').click();
+
+    cy.get('input[name="username"]').type(username);
+    cy.get('input[name="password"]').type('Motokeros31!');
+
+    cy.get('button[type="submit"]').first().click();
   });
-});
 
+  // Wait for redirection back to the app
+  cy.url().should('include', 'http://localhost:4200/callback');
+});

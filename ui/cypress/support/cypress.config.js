@@ -14,6 +14,7 @@ module.exports = defineConfig({
       return config; // Return the updated configuration if necessary
     },
       baseUrl: 'http://localhost:4200',
+      chromeWebSecurity: false,
   },
     env: {
       username: "1220784@isep.ipp.pt",
