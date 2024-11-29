@@ -89,7 +89,7 @@ Cypress.Commands.add('loginRedirect', (
   cy.origin(
     'https://dev-sagir8s22k2ehmk0.us.auth0.com',
     { args: { username, password: 'Motokeros31!' } },
-    ({ username, password }) => { 
+    ({ username, password }) => {
     // Fill the username and password fields in Auth0 login form
     // cy.get('input[name="username"]').type(Cypress.env('1220784@isep.ipp.pt'));
     // cy.get('input[name="password"]').type(Cypress.env('Motokeros31!'));
