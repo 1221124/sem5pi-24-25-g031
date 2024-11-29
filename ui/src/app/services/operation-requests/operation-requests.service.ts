@@ -221,7 +221,7 @@ export class OperationRequestsService {
                   deadlineDate: request.deadlineDate.date,
                   priority: request.priority,
                   status: request.status,
-                  requestCode: request.requestCode
+                  requestCode: request.requestCode.value
               };
             })
           };

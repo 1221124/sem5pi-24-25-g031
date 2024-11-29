@@ -262,7 +262,7 @@ export class OperationRequestsComponent implements OnInit {
               deadlineDate: request.deadlineDate,
               priority: request.priority,
               status: request.status,
-              requestCode: request.requestCode
+              requestCode: request.requestCode.toUpperCase()
             }));
             console.log('Operation Requests obtained:', this.requests);
 
