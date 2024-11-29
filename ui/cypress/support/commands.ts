@@ -41,3 +41,36 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+
+// cypress/support/commands.js or commands.ts
+import jwtDecode from 'jwt-decode';
+
+Cypress.Commands.add('loginByAuth0Api', () => {
+  cy.request({
+    method: 'POST',
+    url: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
+    body: {
+      grant_type: 'password',
+      username: Cypress.env('username'),
+      password: Cypress.env('password'),
+      audience: Cypress.env('api_audience'),
+      //scope: 'openid profile email',
+      client_id: Cypress.env('client_id'),
+      client_secret: Cypress.env('client_secret'),
+    }
+  }).then((response) => {
+    const { access_token, id_token, expires_in } = response.body;
+
+    const auth0State = {
+      access_token,
+      id_token,
+      expires_in,
+    };
+
+    localStorage.setItem('auth0Cypress', JSON.stringify(auth0State));
+
+    cy.visit('/');
+  });
+});
+
