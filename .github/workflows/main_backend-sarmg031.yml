@@ -51,4 +51,4 @@ jobs:
           app-name: 'backend-sarmg031'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B89906578AAE45B3B2A9D0DB4A058570 }}
-          package: sarm
+          package: ${{env.DOTNET_ROOT}}/myapp
