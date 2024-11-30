@@ -5,8 +5,8 @@ describe('Operation Requests E2E Tests', () => {
     cy.loginRedirect('1220784@isep.ipp.pt'); // Use a valid email for login
 
     // Navigate to the 'Manage Operation Requests' page after login
-    cy.get('.btn.btn-primary').contains('Manage Operation Requests').click();
-    cy.url().should('include', '/operationRequests'); // Ensure we are on the operation requests page
+    cy.get('.btn.btn-primary').contains('Manage Operation Requests').should('be.visible').click();
+    cy.url().should('include', '/doctor/operationRequests'); // Ensure we are on the operation requests page
   });
 
   it('should create a new operation request', () => {

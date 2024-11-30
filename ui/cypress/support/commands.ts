@@ -96,7 +96,7 @@ Cypress.Commands.add('loginRedirect', (
     // cy.get('button[type="submit"]').click();
 
     cy.get('input[name="username"]').type(username);
-    cy.get('input[name="password"]').type('Motokeros31!');
+    cy.get('input[name="password"]').type(password);
 
     cy.get('button[type="submit"]').first().click();
   });
