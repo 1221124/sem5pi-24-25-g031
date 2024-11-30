@@ -14,22 +14,21 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '9.x'
-          include-prerelease: true
 
       - name: Build with dotnet
         run: dotnet build sarm/DDDNetCore.csproj --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish sarm/DDDNetCore.csproj -c Release -o ./myapp
+        run: dotnet publish sarm/DDDNetCore.csproj -c Release -o $(Build.ArtifactStagingDirectory)/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ./myapp
+          path: $(Build.ArtifactStagingDirectory)/myapp
 
   deploy:
     runs-on: windows-latest
@@ -51,4 +50,4 @@ jobs:
           app-name: 'backend-sarmg031'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B89906578AAE45B3B2A9D0DB4A058570 }}
-          package: ./myapp
+          package: $(Build.ArtifactStagingDirectory)/myapp
