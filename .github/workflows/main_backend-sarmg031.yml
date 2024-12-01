@@ -22,13 +22,13 @@ jobs:
         run: dotnet build sarm/DDDNetCore.csproj --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish sarm/DDDNetCore.csproj -c Release
+        run: dotnet publish sarm/DDDNetCore.csproj -c Release -o sarm/publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: sarm/bin/Release/net9.0/publish
+          path: sarm/publish
 
   deploy:
     runs-on: windows-latest
@@ -50,4 +50,4 @@ jobs:
           app-name: 'backend-sarmg031'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B89906578AAE45B3B2A9D0DB4A058570 }}
-          package: sarm/bin/Release/net9.0/publish
+          package: sarm/publish
