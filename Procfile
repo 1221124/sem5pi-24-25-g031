@@ -1,1 +1,1 @@
-web: dotnet sarm/bin/Release/net9.0/DDDNetCore.dll
+web: dotnet sarm/DDDNetCore.csproj
