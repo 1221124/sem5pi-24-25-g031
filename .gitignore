@@ -13,3 +13,9 @@ wwwroot/
 publish/
 sarm/publish/
 ui/dist/
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
