@@ -8,3 +8,9 @@ bin/
 **/*.dll
 **/*.xml
 *.cache
+/ui
+/3DVisualizationModule
+/DDDNetCore.Tests
+/node_modules
+/docs
+/.idea

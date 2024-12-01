@@ -36,6 +36,8 @@
     <!-- <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>  -->
     <SelfContained>false</SelfContained>
+    <!-- <PublishTrimmed>true</PublishTrimmed> -->
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,4 +3,8 @@
 bin/
 obj/
 /ui
-/3dvisualizationmodule
+/3DVisualizationModule
+/DDDNetCore.Tests
+/node_modules
+/docs
+/.idea
