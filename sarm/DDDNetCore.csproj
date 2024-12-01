@@ -34,6 +34,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+  <PropertyGroup>
+    <PublishTrimmed>true</PublishTrimmed>
+  </PropertyGroup>
 
   <ItemGroup>
       <PackageReference Include="FirebaseAdmin" Version="3.0.1" />

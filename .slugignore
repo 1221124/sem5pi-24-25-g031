@@ -1,4 +1,9 @@
-**/node_modules
-**/bin
-**/obj
-**/publish
+node_modules/
+*.pdb
+*.md
+obj/
+bin/
+.git/
+.vscode/
+**/*.dll
+**/*.xml
