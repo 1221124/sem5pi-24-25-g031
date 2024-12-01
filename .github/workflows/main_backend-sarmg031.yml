@@ -49,6 +49,9 @@ jobs:
         with:
           name: dotnet-app
 
+      - name: List downloaded files
+        run: dir dotnet-app
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -56,4 +59,4 @@ jobs:
           app-name: 'backend-sarmg031'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B89906578AAE45B3B2A9D0DB4A058570 }}
-          package: dotnet-app
+          package: ./dotnet-app
