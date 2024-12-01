@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Domain.Shared;
 using Domain.Users;
-using Microsoft.DiaSymReader;
 
 namespace Domain.Patients {
 

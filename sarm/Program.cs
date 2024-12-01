@@ -1,4 +1,4 @@
-﻿using DDDNetCore.Domain.Patients;
+﻿﻿using DDDNetCore.Domain.Patients;
 using DDDNetCore.Infrastructure.Patients;
 using Infrastructure;
 using Infrastructure.OperationTypes;
@@ -45,22 +45,15 @@ builder.Services.AddControllers()
 
 
 builder.Services.AddDbContext<SARMDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                           Environment.GetEnvironmentVariable("DefaultConnection");
-
-    options.UseSqlServer(connectionString)
-           .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>();
-});
-
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowAll", policy =>
-        {
-            policy.AllowAnyOrigin()  
-                .AllowAnyMethod() 
-                .AllowAnyHeader(); 
+        options.AddPolicy("AllowFrontendBackendAnd3D", policy => {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
     });
 
@@ -125,10 +118,9 @@ builder.Services.AddTransient<AppointmentService>();
 builder.Services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
 builder.Services.AddTransient<SurgeryRoomService>();
 
-builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
-
-builder.Services.AddTransient<PrologService>();
-builder.Services.AddTransient<PrologIntegrationService>();
+builder.Services.AddScoped<PrologService>();
+builder.Services.AddScoped<PrologIntegrationService>();
+builder.Services.AddScoped<PrologService>();
 
 builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.com", "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"));
 
@@ -184,10 +176,9 @@ else
     app.UseHsts();
 }
 
-app.UseCors("AllowFrontendBackendAnd3D");
-
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors("AllowFrontendBackendAnd3D");
 
 // app.UseSession();
 
