@@ -49,7 +49,7 @@ jobs:
         with:
           name: dotnet-app
 
-      - name: List downloaded files
+      - name: List files in artifact directory
         run: dir dotnet-app
 
       - name: Deploy to Azure Web App
@@ -59,4 +59,4 @@ jobs:
           app-name: 'backend-sarmg031'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B89906578AAE45B3B2A9D0DB4A058570 }}
-          package: ./dotnet-app
+          package: ${{ github.workspace }}/sarm/publish
