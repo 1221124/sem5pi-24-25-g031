@@ -8,3 +8,8 @@ ui/node_modules
 *.cache
 /DDDNetCore.Tests/obj
 /sarm/obj
+dist/
+wwwroot/
+publish/
+sarm/publish/
+ui/dist/

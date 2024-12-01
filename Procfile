@@ -1,0 +1,1 @@
+web: dotnet sarm/publish/DDDNetCore.dll
