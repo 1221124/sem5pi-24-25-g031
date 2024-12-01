@@ -57,7 +57,7 @@ builder.Services.AddDbContext<SARMDbContext>(options =>
 builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowFrontendBackendAnd3D", policy => {
-            policy.WithOrigins("http://localhost:4200", "http://localhost:5500", "http://localhost:63342")
+            policy.WithOrigins("http://localhost:4200", "http://localhost:5500", "http://localhost:63342", "https://backend-sarmg031-6a6528a6ecb5.herokuapp.com")
                 .AllowCredentials()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
@@ -184,9 +184,10 @@ else
     app.UseHsts();
 }
 
+app.UseCors("AllowFrontendBackendAnd3D");
+
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowFrontendBackendAnd3D");
 
 // app.UseSession();
 

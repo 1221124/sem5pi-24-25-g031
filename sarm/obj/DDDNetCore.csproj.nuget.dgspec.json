@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj": {}
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj": {
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj",
+        "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\sarm\\DDDNetCore.csproj",
+        "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj",
         "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi-24-25-g061\\sarm\\obj\\",
+        "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -44,31 +44,11 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
-            "FirebaseAdmin": {
+            "FluentAssertions": {
               "target": "Package",
-              "version": "[3.0.1, )"
-            },
-            "Google.Apis.Auth": {
-              "target": "Package",
-              "version": "[1.68.0, )"
-            },
-            "Google.Cloud.Firestore": {
-              "target": "Package",
-              "version": "[3.9.0, )"
-            },
-            "MailKit": {
-              "target": "Package",
-              "version": "[4.8.0, )"
-            },
-            "Microsoft.AspNetCore.Authentication.Google": {
-              "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[6.12.2, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
-              "target": "Package",
-              "version": "[8.0.10, )"
-            },
-            "Microsoft.AspNetCore.Authentication.OpenIdConnect": {
               "target": "Package",
               "version": "[8.0.10, )"
             },
@@ -104,9 +84,11 @@
               "target": "Package",
               "version": "[8.0.8, )"
             },
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+            "Microsoft.NET.ILLink.Tasks": {
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.5, )"
+              "version": "[9.0.0, )",
+              "autoReferenced": true
             },
             "Newtonsoft.Json": {
               "target": "Package",
