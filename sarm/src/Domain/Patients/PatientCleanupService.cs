@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using Domain.DbLogs;
 using Domain.Patients;
 using Infrastructure.DbLogs;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace DDDNetCore.Domain.Patients
 {

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.Patients;
 using Domain.Shared;
-using Google.Type;
 using System;
 using DDDNetCore.Domain.Patients;
 using Domain.Users;

@@ -14,7 +14,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Emails;
 using Domain.Patients;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace DDDNetCore.Tests.src.IntegrationWithIsolation.Domain.Patients
 {

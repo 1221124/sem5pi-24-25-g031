@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Shared;
-using FirebaseAdmin.Auth;
 
 namespace Domain.Users
 {

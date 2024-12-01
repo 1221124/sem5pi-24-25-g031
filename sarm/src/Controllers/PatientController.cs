@@ -3,7 +3,6 @@ using Domain.DbLogs;
 using Domain.Emails;
 using Domain.Patients;
 using Domain.Shared;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

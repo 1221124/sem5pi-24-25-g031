@@ -3,7 +3,6 @@ using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Shared;
-using Org.BouncyCastle.Ocsp;
 using Xunit;
 
 namespace DDDNetCore.Tests.Unit.Domain.Appointments

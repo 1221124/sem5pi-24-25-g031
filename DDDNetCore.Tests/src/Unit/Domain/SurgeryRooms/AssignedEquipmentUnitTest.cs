@@ -1,7 +1,4 @@
-﻿using System;
-using Action = FirebaseAdmin.Messaging.Action;
-
-namespace DDDNetCore.Tests.Unit.Domain.SurgeryRooms;
+﻿namespace DDDNetCore.Tests.Unit.Domain.SurgeryRooms;
 
 using Xunit;
 using FluentAssertions;

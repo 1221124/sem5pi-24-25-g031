@@ -4,9 +4,6 @@ using Domain.Shared;
 using Domain.OperationTypes;
 using Domain.Staffs;
 using DDDNetCore.Domain.Patients;
-using System.Linq;
-using Azure.Core;
-using Google.Type;
 
 namespace DDDNetCore.Domain.OperationRequests
 {
