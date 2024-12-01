@@ -2,3 +2,5 @@
 .vs/
 bin/
 obj/
+/ui
+/3dvisualizationmodule

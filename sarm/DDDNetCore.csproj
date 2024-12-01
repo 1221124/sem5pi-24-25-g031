@@ -69,4 +69,10 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="**/*.md" />
+    <None Remove="**/*.json" />
+    <None Remove="**/tests/**" />
+  </ItemGroup>
+
 </Project>
