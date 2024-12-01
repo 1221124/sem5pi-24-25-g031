@@ -22,13 +22,13 @@ jobs:
         run: dotnet build sarm/DDDNetCore.csproj --configuration Release
 
       - name: Create publish directory
-        run: mkdir sarm\publish
+        run: mkdir ./sarm\publish
 
       - name: dotnet publish
-        run: dotnet publish sarm/DDDNetCore.csproj -c Release -o sarm/publish
+        run: dotnet publish sarm/DDDNetCore.csproj -c Release -o ./sarm/publish
 
       - name: List files in the publish directory
-        run: dir sarm\publish
+        run: dir ./sarm\publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
