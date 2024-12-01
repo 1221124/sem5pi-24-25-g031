@@ -22,19 +22,19 @@ jobs:
         run: dotnet build sarm/DDDNetCore.csproj --configuration Release
 
       - name: Create publish directory
-        run: mkdir ./sarm\publish
+        run: mkdir sarm/publish
 
       - name: dotnet publish
-        run: dotnet publish sarm/DDDNetCore.csproj -c Release -o ./sarm/publish
+        run: dotnet publish sarm/DDDNetCore.csproj -c Release -o sarm/publish
 
       - name: List files in the publish directory
-        run: dir ./sarm\publish
+        run: dir sarm/publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: .net-app
-          path: ./sarm/publish
+          name: dotnet-app
+          path: sarm/publish
 
   deploy:
     runs-on: windows-latest
@@ -47,7 +47,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: .net-app
+          name: dotnet-app
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -56,4 +56,4 @@ jobs:
           app-name: 'backend-sarmg031'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B89906578AAE45B3B2A9D0DB4A058570 }}
-          package: ./sarm/publish
+          package: dotnet-app
