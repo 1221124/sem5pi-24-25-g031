@@ -34,8 +34,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- <PublishTrimmed>true</PublishTrimmed>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>false</SelfContained> -->
+    <PublishSingleFile>true</PublishSingleFile>  -->
+    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>
