@@ -19,9 +19,9 @@ namespace DDDNetCore.Controllers {
             _logService = logService;
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<List<SurgeryRoomNumber>>> GetAll()
+        [HttpGet ("roomNumbers")]
+        //[Authorize]
+        public async Task<ActionResult<List<SurgeryRoomNumber>>> GetSurgeryRoomNumber()
         {
             try{
                 var rooms = await _surgeryRoomService.GetAll();
@@ -37,6 +37,24 @@ namespace DDDNetCore.Controllers {
                 return BadRequest(new { error = "Error fetching surgery room numbers", details = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult<List<SurgeryRoom>>> GetAll()
+        {
+            try
+            {
+                var rooms = await _surgeryRoomService.GetAll();
+                if (rooms == null || rooms.Count == 0)
+                    return NotFound();
+                return Ok(new { rooms = rooms });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error: " + ex.Message);
+            }
+        }
+        
+        
 
         [HttpPost]
         [Authorize (Roles = "Admin")]
