@@ -12,4 +12,4 @@ bin/
 /DDDNetCore.Tests
 /node_modules
 /docs
-/.idea
+/.idea  
