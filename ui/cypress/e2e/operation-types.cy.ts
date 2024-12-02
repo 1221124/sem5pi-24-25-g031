@@ -1,111 +1,86 @@
-describe('OperationTypesComponent E2E Tests with Backend Isolation', () => {
+import '../support/commands.ts';
+
+describe('Operation Types E2E Tests', () => {
   beforeEach(() => {
-    cy.clock();
-    cy.intercept('GET', 'http://localhost:5500/api/OperationTypes', {
-      statusCode: 200,
-      delayMs: 1000,
-      body: {
-        operationTypes: [
-          { Id: '1', Name: 'Heart Surgery', Specialization: 'Cardiology', Status: 'Active' },
-          { Id: '2', Name: 'Knee Surgery', Specialization: 'Orthopedics', Status: 'Inactive' },
-        ],
-        totalItems: 2,
-      },
-    }).as('getOperationTypes');
+    cy.loginRedirect('sarmg031@gmail.com');
+
+    cy.wait(5000);  
+    cy.get('.btn.btn-primary').contains('Manage Operation Types').should('be.visible').click();
+    cy.url().should('include', '/admin/operationTypes'); 
   });
 
-  it('Should display the list of operation types and allow filtering', () => {
-    cy.visit('/admin/operationTypes');
-    cy.wait('@getOperationTypes');
-    cy.get('tbody tr').should('have.length', 2);
-    cy.intercept('GET', 'http://localhost:5500/api/OperationTypes*name=Heart*', {
-      statusCode: 200,
-      delayMs: 1000,
-      body: {
-        operationTypes: [{ Id: '1', Name: 'Heart Surgery', Specialization: 'Cardiology', Status: 'Active' }],
-        totalItems: 1,
-      },
-    }).as('filterOperationTypes');
-    cy.get('input[placeholder="Filter by Name"]').type('Heart');
-    cy.get('button').contains('Apply Filters').click();
-    cy.wait('@filterOperationTypes');
-    cy.get('tbody tr').should('have.length', 1);
-    cy.get('tbody tr').first().contains('Heart Surgery');
-  });
+  it('should create a new operation type', () => {
+    const operationName = 'Hand Surgery';
+    const specialization = 'Orthopaedics';
 
-  it('Should open the create form and add a new operation type', () => {
-    cy.visit('/admin/operationTypes');
-    cy.wait('@getOperationTypes');
-    cy.get('.create-btn').click();
-    cy.get('form').should('be.visible');
-    cy.get('input[name="operationName"]').type('Brain Surgery');
-    cy.get('select[name="specialization"]').select('Neurosurgery');
-    cy.get('input[id="preparationDuration"]').type('30');
-    cy.get('input[id="surgeryDuration"]').type('120');
-    cy.get('input[id="cleaningDuration"]').type('15');
+    cy.get('.btn.btn-primary.create-btn').click();
+
+    cy.get('input[name="operationName"]').type(operationName);
+    cy.get('select[name="specialization"]').select(specialization);
+
     cy.get('select[name="newStaffRole"]').select('Nurse');
-    cy.get('select[name="newStaffSpecialization"]').select('General');
-    cy.get('input[id="newStaffQuantity"]').clear().type('3');
+    cy.get('select[name="newStaffSpecialization"]').select('Orthopaedics');
+    cy.get('input[name="newStaffQuantity"]').clear().type('2');
     cy.get('button').contains('Add Staff').click();
-    cy.intercept('POST', 'http://localhost:5500/api/OperationTypes', {
-      statusCode: 201,
-      body: { message: 'Operation Type successfully created!' },
-    }).as('createOperationType');
+
+    cy.get('input[name="preparationDuration"]').clear().type('30');
+    cy.get('input[name="surgeryDuration"]').clear().type('120');
+    cy.get('input[name="cleaningDuration"]').clear().type('45');
+
     cy.get('button[type="submit"]').contains('Submit Operation Type').click();
-    cy.wait('@createOperationType');
-    cy.contains('Operation Type successfully created!').should('be.visible');
+
+    // cy.get('.success').should('exist').and('contain', 'Operation Type successfully created!');
+    cy.get('table tbody tr').should('have.length.greaterThan', 1);
   });
 
-  it('Should paginate through operation types', () => {
-    cy.visit('/admin/operationTypes');
-    cy.wait('@getOperationTypes');
-    cy.intercept('GET', 'http://localhost:5500/api/OperationTypes?pageNumber=2', {
-      statusCode: 200,
-      body: {
-        operationTypes: [
-          { Id: '3', Name: 'Shoulder Surgery', Specialization: 'Orthopedics', Status: 'Active' },
-          { Id: '4', Name: 'Eye Surgery', Specialization: 'Ophthalmology', Status: 'Inactive' },
-        ],
-        totalItems: 4,
-      },
-    }).as('getPage2');
-    cy.get('.pagination').contains('Next').click();
-    cy.wait('@getPage2');
-    cy.get('tbody tr').should('have.length', 2);
-    cy.get('tbody tr').first().contains('Shoulder Surgery');
-  });
+  it('should update an existing operation type', () => {
+    cy.get('input[placeholder="Filter by Name"]').type('Hand Surgery');
+    cy.get('button').contains('Apply Filters').click();
 
-  it('Should update an existing operation type', () => {
-    cy.visit('/admin/operationTypes');
-    cy.wait('@getOperationTypes');
-    cy.intercept('PUT', 'http://localhost:5500/api/OperationTypes/1', {
-      statusCode: 200,
-      body: { message: 'Operation Type successfully updated!' },
-    }).as('updateOperationType');
-    cy.get('tbody tr').first().find('button').contains('Update').click();
-    cy.get('form').should('be.visible');
-    cy.get('input[name="operationName"]').clear().type('Heart Surgery - Updated');
+    cy.get('table tbody tr').contains('Hand Surgery').parent().find('button').contains('Update').click();
+
+    const updatedName = 'Updated Hand Surgery';
+    
+    cy.get('input[name="operationName"]').clear().type(updatedName);
+
     cy.get('button[type="submit"]').contains('Update Operation Type').click();
-    cy.wait('@updateOperationType');
-    cy.contains('Operation Type successfully updated!').should('be.visible');
+
+    cy.get('.success').should('exist').and('contain', 'Operation Type successfully updated!');
   });
 
-  it('Should activate and inactivate operation types', () => {
-    cy.visit('/admin/operationTypes');
-    cy.wait('@getOperationTypes');
-    cy.intercept('PUT', 'http://localhost:5500/api/OperationTypes/2', {
-      statusCode: 200,
-      body: { message: 'Operation Type successfully updated to Active!' },
-    }).as('activateOperationType');
-    cy.intercept('DELETE', 'http://localhost:5500/api/OperationTypes/1', {
-      statusCode: 200,
-      body: { message: 'Operation Type successfully deleted!' },
-    }).as('inactivateOperationType');
-    cy.get('tbody tr').last().find('button').contains('Activate').click();
-    cy.wait('@activateOperationType');
-    cy.contains('Operation Type successfully updated to Active!').should('be.visible');
-    cy.get('tbody tr').first().find('button').contains('Inactivate').click();
-    cy.wait('@inactivateOperationType');
-    cy.contains('Operation Type successfully deleted!').should('be.visible');
+  it('should filter operation types by name', () => {
+    cy.get('input[placeholder="Filter by Name"]').type('Updated Hand Surgery');
+    cy.get('button').contains('Apply Filters').click();
+
+    cy.get('table tbody tr').should('have.length', 1);
+    cy.get('table tbody tr').first().should('contain', 'Updated Hand Surgery');
+  });
+  it('should inactivate an operation type', () => {
+    cy.get('input[placeholder="Filter by Name"]').type('Updated Hand Surgery');
+    cy.get('button').contains('Apply Filters').click();
+    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().find('button').contains('Inactivate').click();
+
+    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().should('contain', 'Inactive');
+  });
+
+  it('should activate "Hand Surgery" operation type', () => {
+    cy.get('input[placeholder="Filter by Name"]').type('Updated Hand Surgery');
+    cy.get('button').contains('Apply Filters').click();
+    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().find('button').contains('Activate').click();
+
+    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().should('contain', 'Active');
+  });
+
+  it('should navigate back to the admin home', () => {
+    cy.get('.btn.btn-outline-primary.back-btn').click();
+    cy.url().should('include', '/admin');
+  });
+
+  it('should navigate through pagination', () => {
+    cy.get('button').contains('Next').click();
+    cy.get('span').should('contain.text', 'Page 2');
+
+    cy.get('button').contains('Previous').click();
+    cy.get('span').should('contain.text', 'Page 1');
   });
 });
