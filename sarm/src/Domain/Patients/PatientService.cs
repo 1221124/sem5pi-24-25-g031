@@ -345,6 +345,7 @@ namespace DDDNetCore.Domain.Patients
                     {
                         throw new Exception("Phone number already exists");
                     }
+                    patient.ContactInformation.PhoneNumber = new PhoneNumber(dto.PhoneNumber);
                 }
                 if (dto.Email != null && !dto.Email.Equals(patient.ContactInformation.Email))
                 {
@@ -354,7 +355,10 @@ namespace DDDNetCore.Domain.Patients
                     {
                         throw new Exception("Email already exists");
                     } 
+                    patient.ContactInformation.Email = new Email(dto.Email);
                 }
+
+                await _unitOfWork.CommitAsync();
 
                 if (dto.PhoneNumber != null && patient.ContactInformation.PhoneNumber != dto.PhoneNumber)
                 {
@@ -389,9 +393,10 @@ namespace DDDNetCore.Domain.Patients
                 var dto = PatientMapper.ToDto(patient);
                 var creatingPatientDto = PatientMapper.ToUpdatingPatientDto(dto);
                     
-                var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
-                await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
+                //var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
+                //await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
                 
+                await DeleteAsync(patient.Id);
                 return PatientMapper.ToDto(patient);
             }
             catch (Exception e)

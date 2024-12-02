@@ -66,6 +66,8 @@ export class PatientComponent {
 
   oldEmail: string = '';
 
+  isDeleted = false;
+
   async ngOnInit() {
     if (!this.authorizationService.isAuthenticated()) {
       this.authorizationService.updateMessage('You are not authenticated or are not a patient! Please login...');
@@ -145,8 +147,26 @@ export class PatientComponent {
     await this.patientService.deletePatient(id, this.accessToken)
       .then(response => {
         if(response.status === 200){
+          this.isDeleted = true; // Marca como excluído
+          this.patient = {
+            Id: '',
+            FullName: {FirstName: '', LastName: ''},
+            DateOfBirth: new Date(),
+            Gender: '',
+            MedicalRecordNumber: '',
+            ContactInformation: {Email: '', PhoneNumber: 0},
+            MedicalCondition: [],
+            EmergencyContact: 0,
+            AppointmentHistory: [],
+            UserId: ''
+          };
           this.message = 'Patient deleted successfully!';
           this.success = true;
+          /*
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 2000);
+           */
           //this.getPatient();
         } else {
           this.message = 'There was an error deleting the patient: ' + response.body;

@@ -23,22 +23,24 @@ namespace Domain.Emails
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
-            var client = new RestClient("https://api.sendinblue.com/v3/smtp/email");
-            var request = new RestRequest("", Method.Post);
-            request.AddHeader("api-key", _apiKey);
-            request.AddJsonBody(new
+            try
             {
-                sender = new { name = "SARM G031", email = _fromEmail },
-                to = new[] { new { email = toEmail, name = toEmail } },
-                subject = subject,
-                htmlContent = body
-            });
+                var client = new RestClient("https://api.sendinblue.com/v3/smtp/email");
+                var request = new RestRequest("", Method.Post);
+                request.AddHeader("api-key", _apiKey);
+                request.AddJsonBody(new
+                {
+                    sender = new { name = "SARM G031", email = _fromEmail },
+                    to = new[] { new { email = toEmail, name = toEmail } },
+                    subject = subject,
+                    htmlContent = body
+                });
 
-            var response = await client.ExecuteAsync<dynamic>(request);
-
-            if (!response.IsSuccessful)
+                var response = await client.ExecuteAsync<dynamic>(request);
+            }
+            catch (Exception e)
             {
-                throw new Exception($"Error sending email: {response.Content}");
+                return;
             }
         }
 

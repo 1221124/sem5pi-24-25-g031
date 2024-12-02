@@ -257,8 +257,8 @@ namespace DDDNetCore.Controllers
 
                 if (dto.PendingPhoneNumber == null && dto.PendingEmail == null) return Ok(new { patient = patient });
                 
-                var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(dto);
-                await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
+                //var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(dto);
+                //await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
 
                 return Ok(new { patient = patient });
             }
