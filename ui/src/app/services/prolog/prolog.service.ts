@@ -11,7 +11,7 @@ export class PrologService {
   constructor(private http: HttpClient) { }
 
   async getSurgeryRooms(accessToken: string) {
-    const url = environment.surgeryRooms;
+    const url = environment.surgeryRooms + "/roomNumbers";
     const headers = {
       Authorization: `Bearer ${accessToken}`
     };
