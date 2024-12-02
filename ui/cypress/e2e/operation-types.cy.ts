@@ -34,7 +34,7 @@ describe('Operation Types E2E Tests', () => {
   });
 
   it('should update an existing operation type', () => {
-    cy.get('input[placeholder="Filter by Name"]').type('Hand Surgery');
+    cy.get('input[placeholder="Filter by Name"]').type('Hip Replacement Surgery');
     cy.get('button').contains('Apply Filters').click();
 
     cy.get('table tbody tr').contains('Hand Surgery').parent().find('button').contains('Update').click();
@@ -49,26 +49,26 @@ describe('Operation Types E2E Tests', () => {
   });
 
   it('should filter operation types by name', () => {
-    cy.get('input[placeholder="Filter by Name"]').type('Updated Hand Surgery');
+    cy.get('input[placeholder="Filter by Name"]').type('Hip Replacement Surgery');
     cy.get('button').contains('Apply Filters').click();
 
     cy.get('table tbody tr').should('have.length', 1);
-    cy.get('table tbody tr').first().should('contain', 'Updated Hand Surgery');
+    cy.get('table tbody tr').first().should('contain', 'Hip Replacement Surgery');
   });
   it('should inactivate an operation type', () => {
-    cy.get('input[placeholder="Filter by Name"]').type('Updated Hand Surgery');
+    cy.get('input[placeholder="Filter by Name"]').type('Hip Replacement Surgery');
     cy.get('button').contains('Apply Filters').click();
-    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().find('button').contains('Inactivate').click();
+    cy.get('table tbody tr').contains('Hip Replacement Surgery').parent().find('button').contains('Inactivate').click();
 
-    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().should('contain', 'Inactive');
+    cy.get('table tbody tr').contains('Hip Replacement Surgery').parent().should('contain', 'Inactive');
   });
 
-  it('should activate "Hand Surgery" operation type', () => {
-    cy.get('input[placeholder="Filter by Name"]').type('Updated Hand Surgery');
+  it('should activate an operation type', () => {
+    cy.get('input[placeholder="Filter by Name"]').type('Hip Replacement Surgery');
     cy.get('button').contains('Apply Filters').click();
-    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().find('button').contains('Activate').click();
+    cy.get('table tbody tr').contains('Hip Replacement Surgery').parent().find('button').contains('Activate').click();
 
-    cy.get('table tbody tr').contains('Updated Hand Surgery').parent().should('contain', 'Active');
+    cy.get('table tbody tr').contains('Hip Replacement Surgery').parent().should('contain', 'Active');
   });
 
   it('should navigate back to the admin home', () => {

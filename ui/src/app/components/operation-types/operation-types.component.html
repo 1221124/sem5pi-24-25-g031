@@ -10,7 +10,6 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th>
           <th>
             Name
             <input type="text" [(ngModel)]="filter.name" placeholder="Filter by Name" />
@@ -36,7 +35,6 @@
       </thead>
       <tbody>
         <tr *ngFor="let operation of operationTypes">
-          <td>{{ operation.Id }}</td>
           <td>{{ operation.Name }}</td>
           <td>{{ operation.Specialization }}</td>
           <td>{{ operation.Status }}</td>
