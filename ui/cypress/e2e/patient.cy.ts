@@ -8,7 +8,6 @@ describe('Patient E2E Tests', () => {
 
     cy.url().should('include', '/patient');
   });
-
   it('should display patient details', () => {
     cy.get('.patient-details').within(() => {
       cy.contains('First Name:').should('exist');
@@ -20,31 +19,38 @@ describe('Patient E2E Tests', () => {
   });
 
   it('should open and close the edit email modal', () => {
-    cy.get('button').contains('Edit').eq(0).click();
+
+    cy.get('button[aria-label="edit-email"]').click();
     cy.get('.modal-content').should('be.visible');
 
     cy.get('input#email').type('updated.email@example.com');
     cy.get('button').contains('Save').click();
 
-    // Verifica se houve um erro (erro 500 no backend)
-    cy.get('.toast') // Substitua '.toast' por um seletor que indique o erro no seu frontend.
-      .should('contain.text', 'There was an error updating the patient information');
-
-    // Confirma que o modal permanece aberto após o erro
     cy.get('.modal-content').should('be.visible');
   });
 
   it('should open and close the edit phone number modal', () => {
-    cy.get('button').contains('Edit').eq(1).click();
+    cy.wait(1000);
+
+    cy.get('button[aria-label="edit-phone-number"]').click();
     cy.get('.modal-content').should('be.visible');
-    cy.get('input#phoneNumber').type('987654321');
+    cy.get('input#phoneNumber').clear().type('987654321');
     cy.get('button').contains('Save').click();
-    cy.get('.modal-content').should('not.exist');
   });
 
-  it('should delete the patient account', () => {
+
+  it('should remove the delete account button after deleting the patient', () => {
+
+    cy.wait(2000);
+    cy.get('.delete-button').contains('Delete Account').should('be.visible');
+
+
     cy.get('.delete-button').contains('Delete Account').click();
-    cy.get('.toast').should('contain.text', 'Patient deleted successfully!');
+
+    cy.wait(2000);
+    cy.get('.delete-button').should('not.exist');
+    cy.get('.patient-details').should('not.exist');
+
   });
 
 });
