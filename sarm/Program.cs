@@ -33,13 +33,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 AppSettings.Initialize(builder.Configuration);
 
-// var apiKey = builder.Configuration.GetValue<string>("SendinBlue:ApiKey");
-
-// if (string.IsNullOrEmpty(apiKey))
-// {
-//     throw new InvalidOperationException("API Key for SendinBlue is missing.");
-// }
-
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers()
@@ -58,7 +51,7 @@ builder.Services.AddDbContext<SARMDbContext>(options =>
 builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowFrontendBackendAnd3D", policy => {
-            policy.WithOrigins("http://localhost:4200", "http://localhost:5500", "http://localhost:63342", "https://backend-sarmg031-6a6528a6ecb5.herokuapp.com")
+            policy.WithOrigins("http://localhost:4200", "http://localhost:5500", "http://localhost:63342", "https://sarmg031.azurewebsites.net")
                 .AllowCredentials()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
