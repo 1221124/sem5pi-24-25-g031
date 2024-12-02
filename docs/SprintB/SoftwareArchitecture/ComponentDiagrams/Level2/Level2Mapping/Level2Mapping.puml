@@ -1,0 +1,67 @@
+@startuml Mapping
+
+title Level 2 Mapping
+
+package ImplementationView {
+    [I-BackofficeWebApplication]
+    [I-Planning/OptimizationModule]
+    [I-GDPRModule]
+    [I-3DVisualizationModule]
+    [I-BusinessContinuityPlan]
+}
+
+package LogicalView {
+    [L-BackofficeWebApplication]
+    [L-Planning/OptimizationModule]
+    [L-GDPRModule]
+    [L-3DVisualizationModule]
+    [L-BusinessContinuityPlan]
+}
+
+package PhysicalView {
+    package localost:4200 {
+        [WebApp UI]
+    }
+
+    package localhost:5500 {
+        [PH-BackofficeWebApplication]
+        [PH-Planning/OptimizationModule]
+        [PH-GDPRModule]
+        [PH-3DVisualizationModule]
+        [PH-BusinessContinuityPlan]
+    }
+
+    package dev-sagir8s22kk2ehmk0.us.auth0.com {
+        [IAM]
+    }
+
+    package sem5pi-24-25-g031.database.windows.net {
+        [Azure SQL Db]
+    }
+    
+}
+
+'ImplementationView
+[I-BackofficeWebApplication] <.. [I-Planning/OptimizationModule] : Uses
+[I-BackofficeWebApplication] <.. [I-GDPRModule] : Uses
+[I-BackofficeWebApplication] <.. [I-3DVisualizationModule] : Uses
+[I-BackofficeWebApplication] <.. [I-BusinessContinuityPlan] : Uses
+
+'LogicalView
+[L-BackofficeWebApplication] <.. [L-Planning/OptimizationModule] : Uses
+[L-BackofficeWebApplication] <.. [L-GDPRModule] : Uses
+[L-BackofficeWebApplication] <.. [L-3DVisualizationModule] : Uses
+[L-BackofficeWebApplication] <.. [L-BusinessContinuityPlan] : Uses
+
+'PhysicalView
+[WebApp UI] ..> [PH-BackofficeWebApplication] : Uses
+[IAM] ..> [PH-BackofficeWebApplication] : Uses
+[Azure SQL Db] ..> [PH-BackofficeWebApplication] : Uses
+
+'Mapeamento
+LogicalView ..> ImplementationView
+ImplementationView ..> PhysicalView
+
+
+
+@enduml
