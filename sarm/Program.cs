@@ -33,6 +33,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 AppSettings.Initialize(builder.Configuration);
 
+var apiKey = builder.Configuration.GetValue<string>("SendinBlue:ApiKey");
+
+if (string.IsNullOrEmpty(apiKey))
+{
+    throw new InvalidOperationException("API Key for SendinBlue is missing.");
+}
+
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers()
@@ -123,11 +130,11 @@ builder.Services.AddScoped<PrologService>();
 builder.Services.AddScoped<PrologIntegrationService>();
 builder.Services.AddScoped<PrologService>();
 
-builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.com", "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"));
+builder.Services.AddSingleton<IEmailService>(new EmailService("sarmg031@gmail.com", apiKey));
 
 builder.Services.AddTransient<PatientCleanupService>();
 
-builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", "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"));
+builder.Services.AddSingleton(new EmailService("sarmg031@gmail.com", apiKey));
 
 builder.Services.AddHttpClient<IAMService>();
 

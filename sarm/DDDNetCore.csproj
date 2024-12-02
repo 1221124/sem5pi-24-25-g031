@@ -1,4 +1,4 @@
-<!-- <Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<!-- <Project Sdk="Microsoft.NET.Sdk.Web">
 
 <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -38,6 +38,7 @@
     <SelfContained>false</SelfContained>
     <!-- <PublishTrimmed>true</PublishTrimmed> -->
     <PublishSingleFile>false</PublishSingleFile>
+    <UserSecretsId>fa98c67e-ed65-4e59-a67d-8d8bba70eb53</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
