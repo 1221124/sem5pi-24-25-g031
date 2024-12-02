@@ -4,9 +4,9 @@ describe('Operation Types E2E Tests', () => {
   beforeEach(() => {
     cy.loginRedirect('sarmg031@gmail.com');
 
-    cy.wait(5000);  
+    cy.wait(5000);
     cy.get('.btn.btn-primary').contains('Manage Operation Types').should('be.visible').click();
-    cy.url().should('include', '/admin/operationTypes'); 
+    cy.url().should('include', '/admin/operationTypes');
   });
 
   it('should create a new operation type', () => {
@@ -40,7 +40,7 @@ describe('Operation Types E2E Tests', () => {
     cy.get('table tbody tr').contains('Hand Surgery').parent().find('button').contains('Update').click();
 
     const updatedName = 'Updated Hand Surgery';
-    
+
     cy.get('input[name="operationName"]').clear().type(updatedName);
 
     cy.get('button[type="submit"]').contains('Update Operation Type').click();
