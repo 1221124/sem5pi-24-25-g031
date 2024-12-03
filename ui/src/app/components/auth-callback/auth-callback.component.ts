@@ -84,6 +84,10 @@ export class AuthCallbackComponent implements OnInit {
             this.authService.updateMessage('Bad request during user callback: ' + error.body); 
             this.authService.updateIsError(true);
             return;
+          } else if (error.status == 404) {
+            this.authService.updateMessage('Not found during user callback: ' + error.body);
+            this.authService.updateIsError(true);
+            return;
           }
         });
       } else {

@@ -172,21 +172,11 @@ namespace Controllers
                 var user = await _service.GetByEmailAsync(email);
 
                 if (user == null)
-                    return BadRequest(new { message = $"User with email {email} not found." });
+                    return NotFound(new { message = $"User with email {email} not found." });
 
                 var loggedIn = _service.Login(user);
                 if (!loggedIn)
                     return BadRequest(new { message = $"User with email {email} is not active." });
-
-                // Response.Cookies.Append("accessToken", accessToken, new CookieOptions
-                // {
-                //     HttpOnly = false,
-                //     SameSite = SameSiteMode.None,
-                //     Secure = true,
-                //     Expires = DateTime.UtcNow.AddHours(1)
-                // });
-
-                // Console.WriteLine("Cookies in request: " + string.Join(", ", HttpContext.Request.Cookies.Select(c => $"{c.Key}={c.Value}")));
 
                 return Ok( new { message = $"User with email {email} logged in." });
             } catch (BusinessRuleValidationException ex) {
