@@ -100,21 +100,6 @@ export class AuthService {
       return await firstValueFrom(this.http.post<HttpResponse<any>>(`${environment.usersApiUrl}`, dto, { observe: 'response', responseType: 'json', headers: new HttpHeaders({ 'Authorization': `Bearer ${accessToken}` }) }));
     }
 
-    async login(accessToken: string) : Promise<HttpResponse<{ message: string }>> {
-      const queryParams = new HttpParams()
-        .set('accessToken', accessToken);
-
-      const response = await firstValueFrom(
-        this.http.post<{ message: string }>(
-          `${environment.usersApiUrl}/login`,
-          null,
-          { params: queryParams, observe: 'response' }
-        )
-      );
-
-      return response;
-    }
-
     async redirectBasedOnRole(accessToken: string) {
       const roleFromAccessToken = this.extractRoleFromAccessToken(accessToken) as string;
       const role = roleFromAccessToken.toLowerCase() as string;

@@ -119,7 +119,7 @@ namespace Controllers
 
         // POST: api/Users
         [HttpPost()]
-        [Authorize(Roles = "Admin")]
+        [Authorize()]
         public async Task<ActionResult<UserDto>> Create(CreatingUserDto dto)
         {
             var user = await _service.GetByEmailAsync(dto.Email);
@@ -155,7 +155,7 @@ namespace Controllers
                         patientDto.UserId = new UserId(user.Id);
                         await _patientService.AdminUpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
                     } else {
-                        return BadRequest(new { Message = $"Patient with email {dto.Email.Value} not found." });
+                        return BadRequest(new { Message = $"There is no patient record in our system with email {user.Email.Value}. Please contact our system administrator!" });
                     }
                 }
             }

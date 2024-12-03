@@ -50,26 +50,6 @@ export class AuthCallbackComponent implements OnInit {
               this.authService.updateIsError(false);
               this.authService.redirectBasedOnRole(accessToken);
               return;
-              // const loginResponse = await this.authService.login(accessToken);
-              // try {
-              //   if (loginResponse.status == 200) {
-              //     console.log('Login successful');
-              //     this.authService.updateMessage('Login successful!');
-              //     this.authService.redirectBasedOnRole(accessToken);
-              //     return;
-              //   } else {
-              //     console.log('Unexpected response during login: ' + loginResponse.body?.message);
-              //     this.authService.updateMessage('Unexpected response during login: ' + loginResponse.body?.message);
-              //     this.authService.updateIsError(true);
-              //     return;
-              //   }
-              // } catch {
-              //   if (loginResponse.status == 400) {
-              //     this.authService.updateMessage('Bad request during login: ' + loginResponse.body?.message);
-              //     this.authService.updateIsError(true);
-              //     return;
-              //   }
-              // }
             } else {
               console.log('User does not exist. Creating user...');
               this.authService.updateMessage('User does not exist. Creating user...');
@@ -132,9 +112,9 @@ export class AuthCallbackComponent implements OnInit {
     try {
       const response = await this.authService.createUser(email, role, accessToken);
       if (response?.status === 201) {
-        this.authService.updateMessage('User with email ${email} created successfully! Redirecting to login...');  
+        this.authService.updateMessage('User with email ' + email + ' created successfully!');  
         this.authService.updateIsError(false);
-        this.authService.redirectToLogin();
+        this.authService.redirectBasedOnRole(accessToken);
         return;
       } else {
         this.authService.updateMessage('Bad request during user creation: ' + response?.body);  
