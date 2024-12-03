@@ -1,8 +1,8 @@
 export const environment = {
     production: true,
-    homeUrl: 'http://localhost:4200',
+    homeUrl: 'https://orange-island-0de28a303.4.azurestaticapps.net/',
     tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
-    loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:4200/callback&scope=openid%20profile%20email&prompt=login',
+    loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=https://orange-island-0de28a303.4.azurestaticapps.net/callback&scope=openid%20profile%20email&prompt=login',
     usersApiUrl: 'https://sarmg031.azurewebsites.net/api/Users',
     operationRequests: 'https://sarmg031.azurewebsites.net/api/OperationRequest',
     operationTypes: 'https://sarmg031.azurewebsites.net/api/OperationTypes',
@@ -16,7 +16,7 @@ export const environment = {
     authConfig: {
         clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
         clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
-        redirectUri: 'http://localhost:4200/callback',
+        redirectUri: 'https://orange-island-0de28a303.4.azurestaticapps.net/callback',
         authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
         audience: 'https://api.sarmg031.com'
 
