@@ -1,0 +1,24 @@
+@startuml SSD-Create
+
+actor User
+participant System
+participant AzureSQLDatabase
+
+activate User
+    User -> System : Request Create (include object)
+    activate System
+        
+        System -> System : Validate object
+        
+        System -> AzureSQLDatabase : Create object
+        activate AzureSQLDatabase
+            
+            AzureSQLDatabase --> System : Return success/error message
+        deactivate AzureSQLDatabase
+        
+        System --> User : Return success/error message
+    deactivate System
+deactivate User
+        
+
+@enduml

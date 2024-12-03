@@ -1,0 +1,22 @@
+@startuml SSD-Update
+
+actor User
+participant System
+participant AzureSQLDatabase
+
+activate User
+    User -> System : Request Update (include data)
+    activate System
+        
+        System -> System : Validate data
+        
+        System -> AzureSQLDatabase : Update data
+        activate AzureSQLDatabase
+            
+            AzureSQLDatabase --> System : Return object
+        deactivate AzureSQLDatabase
+        
+        System --> User : Return success/error message    
+    deactivate System
+deactivate User
+@enduml

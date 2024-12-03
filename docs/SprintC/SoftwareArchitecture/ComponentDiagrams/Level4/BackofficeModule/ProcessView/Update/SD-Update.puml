@@ -1,0 +1,62 @@
+@startuml SD-Update
+
+participant "Routing" as Routing
+participant "Controller" as Controller
+participant "Service" as Service
+participant "IRepository" as Repository
+participant "Mapper" as Mapper
+participant "Domain" as Domain
+participant "DTO" as DTO
+participant "IUnitOfWork" as UnitOfWork
+
+-> Routing : HTTP PUT /api/.../{id}
+activate Routing
+
+    Routing -> Controller : Update(id, ...)
+    activate Controller
+
+        Controller -> Service : GetById(id)
+        activate Service
+
+            Service -> Repository : GetById(id)
+            activate Repository
+
+                Repository --> Service : ...
+            deactivate Repository
+
+            Service -> Mapper : ToDTO(...)
+            activate Mapper
+
+                loop for each attribute: 
+                    Mapper -> Domain : Get attribute
+                    activate Domain
+
+                        Domain --> Mapper : Return attribute
+                    deactivate Domain
+
+                    Mapper -> DTO : Set attribute
+                    activate DTO
+
+                        DTO --> Mapper : Return attribute
+                    deactivate DTO
+                end
+
+                Mapper --> Service : dto
+            deactivate Mapper
+
+            Service -> UnitOfWork : CommitAsync()
+            activate UnitOfWork
+
+                UnitOfWork --> Service : void
+            deactivate UnitOfWork
+
+            Service --> Controller : dto
+        deactivate Service
+
+        Controller --> Routing : Ok(dto)
+    deactivate Controller
+
+    <-- Routing : 200 Ok
+deactivate Routing
+
+@enduml

@@ -12,7 +12,7 @@ import { AdminUsersComponent } from './components/admin-users/admin-users.compon
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
-import {PrologComponent} from './components/prolog/prolog.component';
+import { PrologComponent } from './components/prolog/prolog.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
 
 export const routes: Route[] = [

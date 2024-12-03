@@ -1,0 +1,68 @@
+@startuml UseCaseDiagram
+
+left to right direction
+
+actor Admin
+actor "Backoffice User" as BackofficeUser
+actor Patient
+actor Doctor
+actor User
+actor Staff
+actor "System Administrator" as SystemAdmin
+actor System
+actor "Entity" as Ent
+
+rectangle "Healthcare Management System" {
+    Admin --> (Register Backoffice Users)
+    Admin --> (Create Patient Profile)
+    Admin --> (Edit Patient Profile) 
+    Admin --> (Delete Patient Profile)
+    Admin --> (List/Search Patient Profiles)
+    Admin --> (Create Staff Profile) 
+    Admin --> (Edit Staff Profile) 
+    Admin --> (Deactivate Staff Profile) 
+    Admin --> (List/Search Staff Profiles)
+    Admin --> (Manage Operation Types) 
+    Admin --> (List/Search Operation Types)
+    Admin --> (Have information about staff, operation types and operation requests used in the 3D Module to be in sync with entered in the backoffice module)
+    Admin --> (Have information about staff's availability and operation schedule to be in sync with the planning module)
+    Admin --> (Obtain better scheduling of operations in a certain room in a specific day)
+    Admin --> (Know till what dimension in terms of number of surgeries is possible to ask for the better solution)
+    Admin --> (Obtain a good schedule, not necessarily the better, in useful time to be adopted)
+
+    Doctor --> (Request an Operation) 
+    Doctor --> (Update Operation Requisition)
+    Doctor --> (Remove Operation Requisition) 
+    Doctor --> (List/Search Operation Requisitions)
+
+    Patient --> (Update User Profile) 
+    Patient --> (Delete Account) 
+
+    User --> (Have integrated UI for all modules)
+    User --> (Adjust application menu according to my role)
+    
+    Staff --> (Have information shown on 3d Module to be in sync with planning module)
+    Staff --> (See a 3d representation of the hospital floor)
+    Staff --> (See appropiate textures mapped onto the floor)
+    Staff --> (See the hospital floor illuminated with ambient and directional light)
+    Staff --> (Control the camera with the mouse)
+
+    SystemAdmin --> (Deplyoment of one of the RFP modules in a DEI VM to be systematic, validating it on a scheduled basis with the test plan)
+    SystemAdmin --> (Only clients on the DEI's internal network - wired or via VPN - are able to access the system)
+    SystemAdmin --> (Clients listed in previous requirement can be defined by changing a text file)
+    SystemAdmin --> (Define the MBCO to propose to stakeholders)
+    SystemAdmin --> (Get users with more than 3 failed login attempts)
+
+    Ent --> (Ensure the team has good knowledge of the project and how it can affect patient's personal data)
+    System --> (Notify both users and the responsible authority in case of a data breach, so that I comply with GDPR's breach notification requirements)
+}
+
+rectangle "IAM System" {
+    BackofficeUser --> (Login to the System) 
+    BackofficeUser --> (Reset Password) 
+
+    Patient --> (Register for the Healthcare Application) 
+    Patient --> (Login using IAM Credentials) 
+}
+
+@enduml
