@@ -104,7 +104,7 @@ public class OperationRequestServiceUnitTest
         (
             new LicenseNumber("1234"),
             new MedicalRecordNumber("5678"),
-            new Name("Surgery"),
+            new OperationTypeCode("typ1"),
             new DeadlineDate("2024-11-21"),
             Priority.URGENT
         );
@@ -144,7 +144,7 @@ public class OperationRequestServiceUnitTest
                 id,
                 new LicenseNumber("1234"),
                 new MedicalRecordNumber("5678"),
-                new Name("Surgery"),
+                new OperationTypeCode("typ1"),
                 new DeadlineDate("2024-11-21"),
                 Priority.EMERGENCY,
                 RequestStatus.ACCEPTED,
@@ -173,7 +173,7 @@ public class OperationRequestServiceUnitTest
             id,
             new LicenseNumber("1234"),
             new MedicalRecordNumber("5678"),
-            new Name("Surgery"),
+            new OperationTypeCode("typ1"),
             new DeadlineDate("2024-11-21"),
             Priority.EMERGENCY,
             RequestStatus.REJECTED,

@@ -5,6 +5,7 @@ using Domain.Staffs;
 using Domain.Patients;
 using Domain.Shared;
 using FluentAssertions;
+using Domain.OperationTypes;
 
 namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
     public class OperationRequestTests{
@@ -14,7 +15,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             // Arrange
             var staff = new LicenseNumber("D123");
             var patient = new MedicalRecordNumber("P456");
-            var operationType = new Name("Surgery");
+            var operationType = new OperationTypeCode("typ1");
             var deadlineDate = new DeadlineDate(DateTime.UtcNow.AddDays(7));
             var priority = Priority.ELECTIVE;
             var requestCode = new RequestCode("req1");
@@ -37,7 +38,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             // Arrange
             var staff = new LicenseNumber("D123");
             var patient = new MedicalRecordNumber("P456");
-            var operationType = new Name("Surgery");
+            var operationType = new OperationTypeCode("typ1");
             Priority? priority = new Priority();
             var requestCode = new RequestCode("req1");
 
@@ -62,7 +63,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             // Arrange
             var staff = new LicenseNumber("D123");
             var patient = new MedicalRecordNumber("P456");
-            var operationType = new Name("Surgery");
+            var operationType = new OperationTypeCode("typ1");
             var deadlineDate = new DeadlineDate(DateTime.UtcNow.AddDays(7));
             var priority = Priority.URGENT;
             var requestCode = new RequestCode("req1");
@@ -95,7 +96,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationRequests{
             var id = Guid.NewGuid();
             var staff = new LicenseNumber("D123");
             var patient = new MedicalRecordNumber("P456");
-            var operationType = new Name("Surgery");
+            var operationType = new OperationTypeCode("typ1");
             var deadlineDate = new DeadlineDate(DateTime.UtcNow.AddDays(7));
             var priority = Priority.URGENT;
             var status = RequestStatus.REJECTED;

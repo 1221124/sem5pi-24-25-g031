@@ -9,7 +9,7 @@ using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using DDDNetCore.Domain.OperationRequests;
-
+using global::Domain.OperationTypes;
 
 public class OperationRequestMapperTests
 {
@@ -21,7 +21,7 @@ public class OperationRequestMapperTests
             new Guid("11111111-1111-1111-1111-111111111111"),
             new LicenseNumber("staff1"),
             new MedicalRecordNumber("patient1"),
-            new Name("operation1"),
+            new OperationTypeCode("typ1"),
             new DeadlineDate("2024-12-01"),
             Priority.URGENT,
             RequestStatus.PENDING,
@@ -49,7 +49,7 @@ public class OperationRequestMapperTests
             new Guid("11111111-1111-1111-1111-111111111111"),
             new LicenseNumber("staff1"),
             new MedicalRecordNumber("patient1"),
-            new Name("operation1"),
+            new OperationTypeCode("typ1"),
             new DeadlineDate("2024-12-01"),
             Priority.URGENT,
             RequestStatus.PENDING,
@@ -77,7 +77,7 @@ public class OperationRequestMapperTests
         (
             new LicenseNumber("staff2"),
             new MedicalRecordNumber("patient2"),
-            new Name("operation2"),
+            new OperationTypeCode("typ2"),
             new DeadlineDate("2024-12-15"),
             Priority.EMERGENCY
         );
@@ -103,7 +103,7 @@ public class OperationRequestMapperTests
                 new Guid("11111111-1111-1111-1111-111111111111"),
                 new LicenseNumber("staff1"),
                 new MedicalRecordNumber("patient1"),
-                new Name("operation1"),
+                new OperationTypeCode("typ1"),
                 new DeadlineDate("2024-12-01"),
                 Priority.URGENT,
                 RequestStatus.PENDING,
@@ -113,7 +113,7 @@ public class OperationRequestMapperTests
                 new Guid("22222222-2222-2222-2222-222222222222"),
                 new LicenseNumber("staff2"),
                 new MedicalRecordNumber("patient2"),
-                new Name("operation2"),
+                new OperationTypeCode("typ2"),
                 new DeadlineDate("2024-12-15"),
                 Priority.EMERGENCY,
                 RequestStatus.ACCEPTED,
@@ -141,7 +141,7 @@ public class OperationRequestMapperTests
                 Id = new Guid("11111111-1111-1111-1111-111111111111"),
                 Staff = new LicenseNumber("staff1"),
                 Patient = new MedicalRecordNumber("patient1"),
-                OperationType = new Name("operation1"),
+                OperationType = new OperationTypeCode("typ1"),
                 DeadlineDate = new DeadlineDate("2024-12-01"),
                 Priority = Priority.EMERGENCY,
                 Status = RequestStatus.PENDING
@@ -151,7 +151,7 @@ public class OperationRequestMapperTests
                 Id = new Guid("22222222-2222-2222-2222-222222222222"),
                 Staff = new LicenseNumber("staff2"),
                 Patient = new MedicalRecordNumber("patient2"),
-                OperationType = new Name("operation2"),
+                OperationType = new OperationTypeCode("typ2"),
                 DeadlineDate = new DeadlineDate("2024-12-15"),
                 Priority = Priority.URGENT,
                 Status = RequestStatus.ACCEPTED
