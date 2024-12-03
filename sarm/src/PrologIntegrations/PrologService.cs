@@ -91,7 +91,7 @@ namespace DDDNetCore.PrologIntegrations
                 if (operationTypes == null || operationTypes.Count == 0)
                     return (false, "No operation types found.");
 
-                operationTypes.OrderBy(x => x.Name.Value);
+                operationTypes.OrderBy(x => x.OperationTypeCode.Value);
 
                 PopulateStaff(staffs, operationTypes);
 
@@ -144,7 +144,7 @@ namespace DDDNetCore.PrologIntegrations
 
         private void PopulateStaff(List<StaffDto> staffs, List<OperationTypeDto> operationTypes)
         {
-            // staff(d20241,doctor,orthopaedics,[aCL_Reconstruction_Surgery,...]).
+            //staff(d20241,doctor,orthopaedics,[typ1,...]).
             //staff(license number, role, specialization, [op. types associated]).
 
             foreach (var staff in staffs) {
@@ -165,9 +165,8 @@ namespace DDDNetCore.PrologIntegrations
                     copyOperationTypes = operationTypes.FindAll(o => o.Specialization == staff.Specialization);
                 }
                 foreach (var operationType in copyOperationTypes) {
-                    var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
-                    name = char.ToLower(name[0]) + name[1..];
-                    value += name + ",";
+                    var code = operationType.OperationTypeCode.Value.Trim().ToLower();
+                    value += code + ",";
                 }
                 if (value.EndsWith(",")) value = value[..^1];
                 value += "]).";
@@ -233,22 +232,20 @@ namespace DDDNetCore.PrologIntegrations
         }
 
         private void PopulateSurgery(List<OperationTypeDto> operationTypes) {
-            //surgery(aCL_Reconstruction_Surgery,45,60,45).
-            //surgery(OperationTypeName,TPreparation,TSurgery,TCleaning).
+            //surgery(typ1,45,60,45).
+            //surgery(OperationTypeCode,TPreparation,TSurgery,TCleaning).
             foreach (var operationType in operationTypes) {
-                var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
-                name = char.ToLower(name[0]) + name[1..];
-                string value = "surgery(" + name + "," + operationType.PhasesDuration.Preparation + "," + operationType.PhasesDuration.Surgery + "," + operationType.PhasesDuration.Cleaning + ").";
+                var code = operationType.OperationTypeCode.Value.Trim().ToLower();
+                string value = "surgery(" + code + "," + operationType.PhasesDuration.Preparation + "," + operationType.PhasesDuration.Surgery + "," + operationType.PhasesDuration.Cleaning + ").";
                 this._surgery.Add(value);
             }
         }
 
         private void PopulateSurgeryRequiredStaff(List<OperationTypeDto> operationTypes) {
-            //required_staff(aCL_Reconstruction_Surgery,doctor,orthopaedics,3).
-            //required_staff(OperationTypeName,Role,Specialization,Quantity).
+            //required_staff(typ1,doctor,orthopaedics,3).
+            //required_staff(OperationTypeCode,Role,Specialization,Quantity).
             foreach (var operationType in operationTypes) {
-                var name = operationType.Name.Value.Replace(" ", "_").Replace("-", "_");
-                name = char.ToLower(name[0]) + name[1..];
+                var code = operationType.OperationTypeCode.Value.Trim().ToLower();
 
                 foreach (var staff in operationType.RequiredStaff) {
                     var role = RoleUtils.ToString(staff.Role);
@@ -257,19 +254,18 @@ namespace DDDNetCore.PrologIntegrations
                     var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");
                     specialization = char.ToLower(specialization[0]) + specialization[1..];
                     
-                    string value = "required_staff(" + name + "," + role + "," + specialization + "," + staff.Quantity.Value + ").";
+                    string value = "required_staff(" + code + "," + role + "," + specialization + "," + staff.Quantity.Value + ").";
                     this._surgeryRequiredStaff.Add(value);
                 }
             }
         }
 
         private void PopulateSurgeryId(List<OperationRequestDto> operationRequests) {
-            //surgery_id(req1,aCL_Reconstruction_Surgery).
-            //surgery_id(OperationReqCode, OpTypeName).
+            //surgery_id(req1,typ1).
+            //surgery_id(OperationReqCode, OperationTypeCode).
             foreach (var operationRequest in operationRequests) {
                 var code = operationRequest.RequestCode.ToString().ToLower();
-                var operationType = operationRequest.OperationType.Value.Replace(" ", "_").Replace("-", "_");
-                operationType = char.ToLower(operationType[0]) + operationType[1..];
+                var operationType = operationRequest.OperationType.Value.Trim().ToLower();
                 string value = "surgery_id(" + code + "," + operationType + ").";
                 this._surgeryId.Add(value);
             }
