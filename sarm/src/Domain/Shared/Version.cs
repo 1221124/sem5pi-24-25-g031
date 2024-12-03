@@ -28,16 +28,6 @@ namespace Domain.Shared
             return new Version(value);
         }
 
-        public static bool operator ==(Version a, Version b)
-        {
-            return a.Value == b.Value;
-        }
-
-        public static bool operator !=(Version a, Version b)
-        {
-            return a.Value != b.Value;
-        }
-
         public override bool Equals(object obj)
         {
             if (obj is Version other)

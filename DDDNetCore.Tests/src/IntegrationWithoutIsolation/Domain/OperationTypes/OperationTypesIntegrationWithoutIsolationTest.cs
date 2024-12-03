@@ -71,8 +71,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 Specialization.ANAESTHESIOLOGY,
                 new List<RequiredStaff>
                 {
-                    new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                    new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                    new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                    new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
                 },
                 new PhasesDuration(30, 120, 60));
 
@@ -105,8 +105,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
 
@@ -143,8 +143,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
             {
                 await _OperationTypeService.AddAsync(new CreatingOperationTypeDto(OperationTypesList[i], Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60)), new OperationTypeCode("typ1"));
                 await _unitOfWorkMock.Object.CommitAsync();
@@ -176,8 +176,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -202,8 +202,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -245,8 +245,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -304,8 +304,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -340,8 +340,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -371,8 +371,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));

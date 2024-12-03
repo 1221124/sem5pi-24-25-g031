@@ -30,7 +30,7 @@ namespace Controllers
 
             if (operationTypes == null)
             {
-                return NotFound();
+                return Ok(new { operationTypes = new List<OperationTypeDto>{}, totalItems = 0 });
             }
 
             var totalItems = operationTypes.Count;
@@ -85,7 +85,7 @@ namespace Controllers
             operationType = await _service.AddAsync(dto, code);
 
             _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Create, new Message($"Create {operationType.OperationTypeCode}"));
-            return CreatedAtAction(nameof(GetById), new { code = operationType.OperationTypeCode }, operationType);
+            return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
         }
 
         

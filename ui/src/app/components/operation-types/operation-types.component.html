@@ -10,6 +10,7 @@
     <table>
       <thead>
         <tr>
+          <th>Code</th>
           <th>
             Name
             <input type="text" [(ngModel)]="filter.name" placeholder="Filter by Name" />
@@ -30,14 +31,17 @@
               </option>
             </select>
           </th>
+          <th>Version</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let operation of operationTypes">
+          <td>{{ operation.OperationTypeCode }}</td>
           <td>{{ operation.Name }}</td>
           <td>{{ operation.Specialization }}</td>
           <td>{{ operation.Status }}</td>
+          <td>{{ operation.Version }}</td>
           <td>
             <button *ngIf="operation.Status === 'Active'" (click)="inactivate(operation.Id)">
               Inactivate
@@ -85,19 +89,55 @@
       </select>
 
       <h3>Add Required Staff</h3>
+
       <label for="newStaffRole">Role:</label>
       <select [(ngModel)]="newStaff.Role" name="newStaffRole" id="newStaffRole">
         <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
       </select>
-
+      
       <label for="newStaffSpecialization">Specialization:</label>
       <select [(ngModel)]="newStaff.Specialization" name="newStaffSpecialization" id="newStaffSpecialization">
         <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
       </select>
-
+      
       <label for="newStaffQuantity">Quantity:</label>
-      <input type="number" [(ngModel)]="newStaff.Quantity" name="newStaffQuantity" id="newStaffQuantity" min="1" />
-
+      <input
+        type="number"
+        [(ngModel)]="newStaff.Quantity"
+        name="newStaffQuantity"
+        id="newStaffQuantity"
+        min="1"
+      />
+      
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="newStaff.IsRequiredInPreparation"
+            name="newStaffIsRequiredInPreparation"
+          />
+          Preparation
+        </label>
+      
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="newStaff.IsRequiredInSurgery"
+            name="newStaffIsRequiredInSurgery"
+          />
+          Surgery
+        </label>
+      
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="newStaff.IsRequiredInCleaning"
+            name="newStaffIsRequiredInCleaning"
+          />
+          Cleaning
+        </label>
+      </div>
+      
       <button type="button" (click)="addStaff()">Add Staff</button>
 
       <div *ngFor="let staff of operationType.RequiredStaff; let i = index" class="required-staff">
@@ -105,6 +145,7 @@
         <p>Role: {{ staff.Role }}</p>
         <p>Specialization: {{ staff.Specialization }}</p>
         <p>Quantity: {{ staff.Quantity }}</p>
+        <button type="button" (click)="removeStaff(i)">Remove Staff</button>
       </div>
 
       <div class="duration-field">

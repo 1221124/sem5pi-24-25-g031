@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
@@ -10,12 +7,18 @@ namespace Domain.OperationTypes
         public Role Role { get; set; }
         public Specialization Specialization { get; set; }
         public Quantity Quantity { get; set; }
+        public bool IsRequiredInPreparation { get; set; }
+        public bool IsRequiredInSurgery { get; set; }
+        public bool IsRequiredInCleaning { get; set; }
 
-        public RequiredStaff(Role role, Specialization specialization, Quantity quantity)
+        public RequiredStaff(Role role, Specialization specialization, Quantity quantity, bool isRequiredInPreparation, bool isRequiredInSurgery, bool isRequiredInCleaning)
         {
             Role = role;
             Specialization = specialization;
             Quantity = quantity;
+            IsRequiredInPreparation = isRequiredInPreparation;
+            IsRequiredInSurgery = isRequiredInSurgery;
+            IsRequiredInCleaning = isRequiredInCleaning;
         }
 
         public static implicit operator RequiredStaff(string value)
@@ -27,9 +30,9 @@ namespace Domain.OperationTypes
 
             var parts = value.Split(',');
 
-            if (parts.Length != 3)
+            if (parts.Length != 6)
             {
-                throw new ArgumentException("Input string must be in the format 'Role,Specialization,Quantity'.");
+                throw new ArgumentException("Input string must be in the format 'Role,Specialization,Quantity,IsRequiredInPreparation,IsRequiredInSurgery,IsRequiredInCleaning'.");
             }
 
             var role = RoleUtils.FromString(parts[0]);
@@ -40,7 +43,15 @@ namespace Domain.OperationTypes
             }
 
             var quantity = new Quantity(quantityValue);
-            return new RequiredStaff(role, specialization, quantity);
+
+            var isRequiredInPreparation = false;
+            var isRequiredInSurgery = false;
+            var isRequiredInCleaning = false;
+            if (parts[3].Trim().ToLower() == "true") isRequiredInPreparation = true;
+            if (parts[4].Trim().ToLower() == "true") isRequiredInSurgery = true;
+            if (parts[5].Trim().ToLower() == "true") isRequiredInCleaning = true;
+
+            return new RequiredStaff(role, specialization, quantity, isRequiredInPreparation, isRequiredInSurgery, isRequiredInCleaning);
         }
 
         public static string ToString(List<RequiredStaff> staff)
@@ -57,7 +68,10 @@ namespace Domain.OperationTypes
                 var specializationString = SpecializationUtils.ToString(staffMember.Specialization);
                 var roleString = RoleUtils.ToString(staffMember.Role);
                 var quantityString = staffMember.Quantity.Value.ToString();
-                staffStrings.Add($"{roleString},{specializationString},{quantityString}");
+                var isRequiredInPreparationString = staffMember.IsRequiredInPreparation.ToString().ToLower();
+                var isRequiredInSurgeryString = staffMember.IsRequiredInSurgery.ToString().ToLower();
+                var isRequiredInCleaningString = staffMember.IsRequiredInCleaning.ToString().ToLower();
+                staffStrings.Add($"{roleString},{specializationString},{quantityString},{isRequiredInPreparationString},{isRequiredInSurgeryString},{isRequiredInCleaningString}");
             }
 
             return string.Join(";", staffStrings);

@@ -16,6 +16,7 @@ import { AuthService } from '../../services/auth/auth.service';
 export class OperationTypesComponent implements OnInit {
   operationType: OperationType = {
     Id: '',
+    OperationTypeCode: '',
     Name: '',
     Specialization: '',
     RequiredStaff: [],
@@ -24,17 +25,24 @@ export class OperationTypesComponent implements OnInit {
       Surgery: 0,
       Cleaning: 0
     },
-    Status: ''
+    Status: '',
+    Version: 0
   };
 
   newStaff: {
     Role: string;
     Specialization: string;
     Quantity: number;
+    IsRequiredInPreparation: boolean;
+    IsRequiredInSurgery: boolean;
+    IsRequiredInCleaning: boolean;
   } = {
     Role: '',
     Specialization: '',
-    Quantity: 1
+    Quantity: 1,
+    IsRequiredInPreparation: false,
+    IsRequiredInSurgery: false,
+    IsRequiredInCleaning: false
   };
 
   operationTypes: OperationType[] = [];
@@ -171,11 +179,15 @@ export class OperationTypesComponent implements OnInit {
   addStaff(): void {
     if (this.newStaff.Role && this.newStaff.Specialization && this.newStaff.Quantity) {
       this.operationType.RequiredStaff.push({ ...this.newStaff });
-      this.newStaff = { Role: '', Specialization: '', Quantity: 1 };
+      this.newStaff = { Role: '', Specialization: '', Quantity: 1, IsRequiredInPreparation: false, IsRequiredInSurgery: false, IsRequiredInCleaning: false };
     } else {
       this.message = 'Please fill in all fields for the staff';
       this.success = false;
     }
+  }
+
+  removeStaff(index: number): void {
+    this.operationType.RequiredStaff.splice(index, 1);
   }
 
   startEditOperationType(operationType: OperationType, isActivate: boolean): void {
@@ -298,6 +310,7 @@ export class OperationTypesComponent implements OnInit {
   clearForm(): void {
     this.operationType = {
       Id: '',
+      OperationTypeCode: '',
       Name: '',
       Specialization: '',
       RequiredStaff: [],
@@ -306,9 +319,10 @@ export class OperationTypesComponent implements OnInit {
         Surgery: 0,
         Cleaning: 0
       },
-      Status: ''
+      Status: '',
+      Version: 0
     };
-    this.newStaff = { Role: '', Specialization: '', Quantity: 1 };
+    this.newStaff = { Role: '', Specialization: '', Quantity: 1, IsRequiredInPreparation: false, IsRequiredInSurgery: false, IsRequiredInCleaning: false };
     this.isEditMode = false;
     this.message = '';
   }

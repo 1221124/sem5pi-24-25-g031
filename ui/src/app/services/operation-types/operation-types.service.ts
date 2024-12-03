@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { OperationType } from '../../models/operation-type.model';
-import { Injectable } from '@angular/core';
+import { Injectable, Version } from '@angular/core';
 import { environment, httpOptions } from '../../../environments/environment';
 import { firstValueFrom, Observable } from 'rxjs';
 
@@ -41,7 +41,10 @@ export class OperationTypesService {
         "Specialization": staff.Specialization,
         "Quantity": {
           "Value": staff.Quantity
-        }
+        },
+        "IsRequiredInPreparation": staff.IsRequiredInPreparation,
+        "IsRequiredInSurgery": staff.IsRequiredInSurgery,
+        "IsRequiredInCleaning": staff.IsRequiredInCleaning
       })),
       "PhasesDuration": "PREPARATION: " + operationType.PhasesDuration.Preparation + ",SURGERY: " + operationType.PhasesDuration.Surgery + ",CLEANING: " + operationType.PhasesDuration.Cleaning,
     };
@@ -105,6 +108,7 @@ export class OperationTypesService {
         if (response.status === 200 && response.body) {
           const operationTypes = response.body.operationTypes.map(item => ({
             Id: item.id,
+            OperationTypeCode: item.operationTypeCode.value,
             Name: item.name.value,
             Specialization: item.specialization.toString(),
             RequiredStaff: item.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; }) => ({
@@ -117,7 +121,8 @@ export class OperationTypesService {
               Surgery: item.phasesDuration.surgery.value,
               Cleaning: item.phasesDuration.cleaning.value
             },
-            Status: item.status.toString()
+            Status: item.status.toString(),
+            Version: item.version.value
           }));
 
           return {
@@ -146,6 +151,7 @@ export class OperationTypesService {
             status: response.status,
             body: {
               Id: operationType.id,
+              OperationTypeCode: operationType.operationTypeCode.value,
               Name: operationType.name.value,
               Specialization: operationType.specialization.toString(),
               RequiredStaff: operationType.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; }) => ({
@@ -158,7 +164,8 @@ export class OperationTypesService {
                 Surgery: operationType.phasesDuration.phases.surgery.value,
                 Cleaning: operationType.phasesDuration.phases.cleaning.value
               },
-              Status: operationType.status.toString()
+              Status: operationType.status.toString(),
+              Version: operationType.version.value
             }
           };
         } else {

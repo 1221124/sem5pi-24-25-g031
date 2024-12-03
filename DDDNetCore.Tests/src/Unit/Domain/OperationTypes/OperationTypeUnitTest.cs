@@ -22,8 +22,8 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
             _specialization = Specialization.CARDIOLOGY;
             _requiredStaff = new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, new Quantity(1)),
-                new RequiredStaff(Role.Nurse, Specialization.ANAESTHESIOLOGY, new Quantity(2))
+                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, new Quantity(1), false, true, false),
+                new RequiredStaff(Role.Nurse, Specialization.ANAESTHESIOLOGY, new Quantity(2), false, true, false)
             };
             _phasesDuration = new PhasesDuration(30, 60, 20);
             _status = Status.Active;
@@ -94,7 +94,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
             var newSpecialization = Specialization.ORTHOPAEDICS;
             var newRequiredStaff = new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Technician, Specialization.ORTHOPAEDICS, new Quantity(1))
+                new RequiredStaff(Role.Technician, Specialization.ORTHOPAEDICS, new Quantity(1), false, true, false),
             };
             var newPhasesDuration = new PhasesDuration(40, 70, 30);
             var newStatus = Status.Inactive;
