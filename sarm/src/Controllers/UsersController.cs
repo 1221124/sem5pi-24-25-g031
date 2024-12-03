@@ -107,7 +107,9 @@ namespace Controllers
                     return BadRequest(new { Message = "Failed to assign role to user." });
                 }
 
-                return Ok(new {exists = true});
+                if (!_service.Login(user)) return BadRequest(new { Message = "User does not exist or is not active." });
+
+                return Ok(new { exists = true, Message = $"User with email {email} logged in successfully!" });
             }
             catch (Exception ex)
             {
@@ -160,28 +162,6 @@ namespace Controllers
 
             _ = await _dbLogService.LogAction(EntityType.User, DbLogType.Create, new Message($"User {user.Id} created."));
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-        }
-
-        // POST: api/Users/login?accessToken={accessToken}
-        [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login([FromQuery] string accessToken)
-        {
-            try {
-                var email = _iamService.GetClaimsFromToken(accessToken).Email;
-
-                var user = await _service.GetByEmailAsync(email);
-
-                if (user == null)
-                    return NotFound(new { message = $"User with email {email} not found." });
-
-                var loggedIn = _service.Login(user);
-                if (!loggedIn)
-                    return BadRequest(new { message = $"User with email {email} is not active." });
-
-                return Ok( new { message = $"User with email {email} logged in." });
-            } catch (BusinessRuleValidationException ex) {
-                return BadRequest(new { message = ex.Message });
-            }
         }
 
         // PUT: api/Users/id

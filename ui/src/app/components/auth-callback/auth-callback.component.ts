@@ -46,26 +46,30 @@ export class AuthCallbackComponent implements OnInit {
         .then(async response => {
           if (response.status === 200) {
             if (response.body?.exists == true) {
-              const loginResponse = await this.authService.login(accessToken);
-              try {
-                if (loginResponse.status == 200) {
-                  console.log('Login successful');
-                  this.authService.updateMessage('Login successful!');
-                  this.authService.redirectBasedOnRole(accessToken);
-                  return;
-                } else {
-                  console.log('Unexpected response during login: ' + loginResponse.body?.message);
-                  this.authService.updateMessage('Unexpected response during login: ' + loginResponse.body?.message);
-                  this.authService.updateIsError(true);
-                  return;
-                }
-              } catch {
-                if (loginResponse.status == 400) {
-                  this.authService.updateMessage('Bad request during login: ' + loginResponse.body?.message);
-                  this.authService.updateIsError(true);
-                  return;
-                }
-              }
+              this.authService.updateMessage(response.body.message);
+              this.authService.updateIsError(false);
+              this.authService.redirectBasedOnRole(accessToken);
+              return;
+              // const loginResponse = await this.authService.login(accessToken);
+              // try {
+              //   if (loginResponse.status == 200) {
+              //     console.log('Login successful');
+              //     this.authService.updateMessage('Login successful!');
+              //     this.authService.redirectBasedOnRole(accessToken);
+              //     return;
+              //   } else {
+              //     console.log('Unexpected response during login: ' + loginResponse.body?.message);
+              //     this.authService.updateMessage('Unexpected response during login: ' + loginResponse.body?.message);
+              //     this.authService.updateIsError(true);
+              //     return;
+              //   }
+              // } catch {
+              //   if (loginResponse.status == 400) {
+              //     this.authService.updateMessage('Bad request during login: ' + loginResponse.body?.message);
+              //     this.authService.updateIsError(true);
+              //     return;
+              //   }
+              // }
             } else {
               console.log('User does not exist. Creating user...');
               this.authService.updateMessage('User does not exist. Creating user...');
