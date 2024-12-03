@@ -50,9 +50,8 @@ builder.Services.AddDbContext<SARMDbContext>(options =>
 
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowFrontendBackendAnd3D", policy => {
-            policy.WithOrigins("http://localhost:4200", "http://localhost:5500", "http://localhost:63342", "https://sarmg031.azurewebsites.net", "https://orange-island-0de28a303.4.azurestaticapps.net")
-                .AllowCredentials()
+        options.AddPolicy("AllowAll", policy => {
+            policy.AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -180,9 +179,7 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowFrontendBackendAnd3D");
-
-// app.UseSession();
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
