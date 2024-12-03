@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Domain.Shared;
-
 namespace Domain.OperationTypes
 {
     public class OperationTypeMapper
@@ -10,28 +7,32 @@ namespace Domain.OperationTypes
             return new OperationTypeDto
             {
                 Id = operationType.Id.AsGuid(),
+                OperationTypeCode = operationType.OperationTypeCode,
                 Name = operationType.Name,
                 Specialization = operationType.Specialization,
                 RequiredStaff = operationType.RequiredStaff,
                 PhasesDuration = operationType.PhasesDuration,
-                Status = operationType.Status
+                Status = operationType.Status,
+                Version = operationType.Version
             };
         }
 
         public static OperationType ToEntity(OperationTypeDto dto)
         {
             return new OperationType(
-                dto.Id,
+                dto.OperationTypeCode,
                 dto.Name,
                 dto.Specialization,
                 dto.RequiredStaff,
                 dto.PhasesDuration,
-                dto.Status
+                dto.Status,
+                dto.Version
             );
         }
 
-        public static OperationType ToEntityFromCreating(CreatingOperationTypeDto dto) {
+        public static OperationType ToEntityFromCreating(CreatingOperationTypeDto dto, OperationTypeCode operationTypeCode) {
             return new OperationType(
+                operationTypeCode,
                 dto.Name,
                 dto.Specialization,
                 dto.RequiredStaff,

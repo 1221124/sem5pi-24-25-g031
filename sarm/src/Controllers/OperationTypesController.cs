@@ -73,6 +73,8 @@ namespace Controllers
                 return BadRequest("Creating Operation Type DTO cannot be null");
             }
 
+            var code = await _service.AssignCodeAsync();
+
             var operationType = await _service.GetByNameAsync(dto.Name);
             if (operationType != null)
             {
@@ -80,10 +82,10 @@ namespace Controllers
                 return BadRequest("Operation Type with this name already exists");
             }
 
-            operationType = await _service.AddAsync(dto);
+            operationType = await _service.AddAsync(dto, code);
 
-            _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Create, new Message($"Create {operationType.Id}"));
-            return CreatedAtAction(nameof(GetById), new { id = operationType.Id }, operationType);
+            _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Create, new Message($"Create {operationType.OperationTypeCode}"));
+            return CreatedAtAction(nameof(GetById), new { code = operationType.OperationTypeCode }, operationType);
         }
 
         
@@ -96,7 +98,7 @@ namespace Controllers
             {
                 if (id != dto.Id)
                 {
-                    return BadRequest( new { Message = "Id in URL does not match Id in body" });
+                    return BadRequest( new { Message = "Id in URL does not match id in body" });
                 }
 
                 var operationType = await _service.UpdateAsync(dto);
@@ -115,7 +117,7 @@ namespace Controllers
             }
         }
 
-        // Inactivate: api/OperationTypes/5
+        // DELETE: api/OperationTypes/id
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
@@ -138,7 +140,7 @@ namespace Controllers
             return Ok();
         }
         
-        // DELETE: api/OperationTypes/5
+        // DELETE: api/OperationTypes/id/hard
         [HttpDelete("{id}/hard")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> HardDelete(Guid id)

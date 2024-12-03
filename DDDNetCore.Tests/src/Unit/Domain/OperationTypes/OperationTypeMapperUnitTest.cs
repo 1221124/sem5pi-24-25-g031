@@ -16,6 +16,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         {
             _operationType = new OperationType(
                 Guid.NewGuid(),
+                new OperationTypeCode("typ1"),
                 new Name("Example Operation"),
                 Specialization.CARDIOLOGY,
                 new List<RequiredStaff>
@@ -74,14 +75,13 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         [Fact]
         public void ToEntityFromCreating_ShouldConvertCreatingOperationTypeDtoToOperationType()
         {
-            var entity = OperationTypeMapper.ToEntityFromCreating(_creatingOperationTypeDto);
+            var entity = OperationTypeMapper.ToEntityFromCreating(_creatingOperationTypeDto, new OperationTypeCode("typ1"));
 
-            Assert.NotEqual(Guid.Empty, entity.Id.AsGuid()); // A new Guid should be generated
             Assert.Equal(_creatingOperationTypeDto.Name, entity.Name);
             Assert.Equal(_creatingOperationTypeDto.Specialization, entity.Specialization);
             Assert.Equal(_creatingOperationTypeDto.RequiredStaff, entity.RequiredStaff);
             Assert.Equal(_creatingOperationTypeDto.PhasesDuration, entity.PhasesDuration);
-            Assert.Equal(Status.Active, entity.Status); // Default status should be Active
+            Assert.Equal(Status.Active, entity.Status);
         }
 
         [Fact]

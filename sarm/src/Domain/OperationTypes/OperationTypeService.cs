@@ -62,9 +62,9 @@ namespace Domain.OperationTypes
             return OperationTypeMapper.ToDto(operationType);
         }
 
-        public async Task<OperationTypeDto> AddAsync(CreatingOperationTypeDto dto)
+        public async Task<OperationTypeDto> AddAsync(CreatingOperationTypeDto dto, OperationTypeCode code)
         {
-            var operationType = OperationTypeMapper.ToEntityFromCreating(dto);
+            var operationType = OperationTypeMapper.ToEntityFromCreating(dto, code);
 
             if (await this._repo.GetByNameAsync(operationType.Name) != null)
                 return null;
@@ -93,6 +93,8 @@ namespace Domain.OperationTypes
             operationType.RequiredStaff = dto.RequiredStaff;
             operationType.PhasesDuration = dto.PhasesDuration;
             operationType.Status = dto.Status;
+            operationType.Version = dto.Version;
+            operationType.Version.Increment();
 
             await this._unitOfWork.CommitAsync();
 
@@ -146,6 +148,33 @@ namespace Domain.OperationTypes
         public bool CheckIfOperationTypeIsActive(OperationTypeDto operationTypeDto)
         {
             return operationTypeDto.Status == Status.Active;
+        }
+
+        public async Task<OperationTypeDto?> GetByCodeAsync(OperationTypeCode code)
+        {
+            try
+            {
+                var type = await _repo.GetByCodeAsync(code);
+
+                if(type == null) return null;
+
+                return OperationTypeMapper.ToDto(type);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<OperationTypeCode> AssignCodeAsync()
+        {
+            var types = await _repo.GetAllAsync();
+
+            if(types == null || types.Count == 0)
+                return new OperationTypeCode("typ1");
+
+            int count = types.Count + 1;
+            return new OperationTypeCode("typ" + count);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
 {
     public class OperationTypeUnitTest
     {
+        private readonly OperationTypeCode _code;
         private readonly Name _name;
         private readonly Specialization _specialization;
         private readonly List<RequiredStaff> _requiredStaff;
@@ -16,6 +17,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
 
         public OperationTypeUnitTest()
         {
+            _code = new OperationTypeCode("typ1");
             _name = new Name("Example Operation");
             _specialization = Specialization.CARDIOLOGY;
             _requiredStaff = new List<RequiredStaff>
@@ -31,9 +33,10 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         public void Constructor_WithAllParameters_ShouldInitializeProperties()
         {
             var id = Guid.NewGuid();
-            var operationType = new OperationType(id, _name, _specialization, _requiredStaff, _phasesDuration, _status);
+            var operationType = new OperationType(id, _code, _name, _specialization, _requiredStaff, _phasesDuration, _status);
 
             Assert.Equal(new OperationTypeId(id), operationType.Id);
+            Assert.Equal(_code, operationType.OperationTypeCode);
             Assert.Equal(_name, operationType.Name);
             Assert.Equal(_specialization, operationType.Specialization);
             Assert.Equal(_requiredStaff, operationType.RequiredStaff);
@@ -44,9 +47,10 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         [Fact]
         public void Constructor_WithoutId_ShouldGenerateNewIdAndSetStatusToActive()
         {
-            var operationType = new OperationType(_name, _specialization, _requiredStaff, _phasesDuration);
+            var operationType = new OperationType(_code, _name, _specialization, _requiredStaff, _phasesDuration);
 
             Assert.NotEmpty(operationType.Id.Value);
+            Assert.Equal(_code, operationType.OperationTypeCode);
             Assert.Equal(_name, operationType.Name);
             Assert.Equal(_specialization, operationType.Specialization);
             Assert.Equal(_requiredStaff, operationType.RequiredStaff);
@@ -55,56 +59,37 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         }
 
         [Fact]
-        public void Constructor_WithStringParameters_ShouldInitializeCorrectly()
-        {
-            var requiredStaffStrings = new List<string> { "Doctor,Cardiology,1", "Nurse,General,2" };
-            var phasesDurationStrings = new List<string> { "PREPARATION:30", "SURGERY:60", "CLEANING:20" };
-            var operationType = new OperationType("Example Operation", "Cardiology", requiredStaffStrings, phasesDurationStrings);
-
-            Assert.NotEmpty(operationType.Id.Value);
-            Assert.Equal("Example Operation", operationType.Name.Value);
-            Assert.Equal(Specialization.CARDIOLOGY, operationType.Specialization);
-            Assert.Equal(Status.Active, operationType.Status);
-            Assert.Equal(1, operationType.RequiredStaff[0].Quantity.Value);
-            Assert.Equal(Role.Doctor, operationType.RequiredStaff[0].Role);
-            Assert.Equal(Specialization.CARDIOLOGY, operationType.RequiredStaff[0].Specialization);
-            Assert.Equal(30, operationType.PhasesDuration.Preparation.Value);
-            Assert.Equal(60, operationType.PhasesDuration.Surgery.Value);
-            Assert.Equal(20, operationType.PhasesDuration.Cleaning.Value);
-        }
-
-        [Fact]
         public void Constructor_ShouldThrowArgumentNullException_WhenNameIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new OperationType(Guid.NewGuid(), null, _specialization, _requiredStaff, _phasesDuration, _status));
+                new OperationType(Guid.NewGuid(), _code, null, _specialization, _requiredStaff, _phasesDuration, _status));
         }
 
         [Fact]
         public void Constructor_ShouldThrowArgumentNullException_WhenPhasesDurationIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new OperationType(Guid.NewGuid(), _name, _specialization, _requiredStaff, null, _status));
+                new OperationType(Guid.NewGuid(), _code, _name, _specialization, _requiredStaff, null, _status));
         }
 
         [Fact]
         public void Constructor_ShouldThrowArgumentNullException_WhenRequiredStaffIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new OperationType(Guid.NewGuid(), _name, _specialization, null, _phasesDuration, _status));
+                new OperationType(Guid.NewGuid(), _code, _name, _specialization, null, _phasesDuration, _status));
         }
 
         [Fact]
         public void Constructor_ShouldSetDefaultStatusToActive_IfNotProvided()
         {
-            var operationType = new OperationType(_name, _specialization, _requiredStaff, _phasesDuration);
+            var operationType = new OperationType(_code, _name, _specialization, _requiredStaff, _phasesDuration);
             Assert.Equal(Status.Active, operationType.Status);
         }
 
         [Fact]
         public void PropertyAssignments_ShouldWorkCorrectly()
         {
-            var operationType = new OperationType(_name, _specialization, _requiredStaff, _phasesDuration);
+            var operationType = new OperationType(_code, _name, _specialization, _requiredStaff, _phasesDuration);
             var newName = new Name("Updated Operation");
             var newSpecialization = Specialization.ORTHOPAEDICS;
             var newRequiredStaff = new List<RequiredStaff>

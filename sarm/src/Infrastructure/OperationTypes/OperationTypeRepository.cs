@@ -63,5 +63,11 @@ namespace Infrastructure.OperationTypes
             return await this._objs
                 .AsQueryable().Where(x => status.Equals(x.Status)).ToListAsync();
         }
+
+        public async Task<OperationType> GetByCodeAsync(OperationTypeCode code)
+        {
+            return await this._objs
+                .AsQueryable().Where(x => code.Equals(x.OperationTypeCode)).FirstOrDefaultAsync();
+        }
     }
 }

@@ -1,49 +1,54 @@
 using Domain.Shared;
+using Version = Domain.Shared.Version;
 
 namespace Domain.OperationTypes
 {
     public class OperationType : Entity<OperationTypeId>, IAggregateRoot
     {
+        public OperationTypeCode OperationTypeCode { get; set; }
         public Name Name { get; set; }
-
         public Specialization Specialization { get; set; }
-
         public List<RequiredStaff> RequiredStaff { get; set; }
-
         public PhasesDuration PhasesDuration { get; set; }
-
         public Status Status { get; set; }
+        public Version Version { get; set; }
 
         public OperationType() { }
 
-        public OperationType(Guid id, Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration, Status status)
+        public OperationType(Guid id, OperationTypeCode operationTypeCode, Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration, Status status)
         {
             Id = new OperationTypeId(id);
+            OperationTypeCode = operationTypeCode;
             Name = name;
             Specialization = specialization;
             RequiredStaff = requiredStaff;
             PhasesDuration = phasesDuration;
             Status = status;
+            Version = new Version();
         }
-        
-        public OperationType(Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
+
+        public OperationType(OperationTypeCode operationTypeCode, Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration, Status status, Version version)
         {
             Id = new OperationTypeId(Guid.NewGuid());
+            OperationTypeCode = operationTypeCode;
+            Name = name;
+            Specialization = specialization;
+            RequiredStaff = requiredStaff;
+            PhasesDuration = phasesDuration;
+            Status = status;
+            Version = version;
+        }
+        
+        public OperationType(OperationTypeCode operationTypeCode, Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
+        {
+            Id = new OperationTypeId(Guid.NewGuid());
+            OperationTypeCode = operationTypeCode;
             Name = name;
             Specialization = specialization;
             RequiredStaff = requiredStaff;
             PhasesDuration = phasesDuration;
             Status = Status.Active;
-        }
-
-        public OperationType(string name, string specialization, List<string> requiredStaff, List<string> phasesDuration)
-        {
-            Id = new OperationTypeId(Guid.NewGuid());
-            Name = name;
-            Specialization = SpecializationUtils.FromString(specialization);
-            RequiredStaff = RequiredStaffUtils.FromStringList(requiredStaff);
-            PhasesDuration = PhasesDuration.FromString(phasesDuration);
-            Status = Status.Active;
+            Version = new Version();
         }
     }
 }

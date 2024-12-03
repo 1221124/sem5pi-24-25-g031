@@ -11,6 +11,14 @@ namespace Infrastructure.OperationTypes
         {
             builder.HasKey(o => o.Id);
 
+            builder.Property(o => o.OperationTypeCode)
+                .IsRequired()
+                .HasConversion(
+                    v => v.Value,
+                    v => new OperationTypeCode(v)
+                )
+                .HasColumnName("OperationTypeCode");
+
             builder.Property(o => o.Name)
                 .IsRequired()
                 .HasMaxLength(100)
@@ -50,6 +58,14 @@ namespace Infrastructure.OperationTypes
                     v => StatusUtils.FromString(v)
                 )
                 .HasColumnName("Status");
+
+            builder.Property(o => o.Version)
+                .IsRequired()
+                .HasConversion(
+                    v => v.Value,
+                    v => new Domain.Shared.Version(v)
+                )
+                .HasColumnName("Version");
         }
     }
 }

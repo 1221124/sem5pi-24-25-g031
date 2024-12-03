@@ -76,7 +76,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 },
                 new PhasesDuration(30, 120, 60));
 
-            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var OperationTypes = await _OperationTypeService.GetAllAsync();
@@ -110,10 +110,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
             },
             new PhasesDuration(30, 120, 60));
 
-            await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
-            await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var OperationTypes = await _OperationTypeService.GetAllAsync();
@@ -146,7 +146,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1),
                 new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
             },
-            new PhasesDuration(30, 120, 60)));
+            new PhasesDuration(30, 120, 60)), new OperationTypeCode("typ1"));
                 await _unitOfWorkMock.Object.CommitAsync();
             }
 
@@ -180,7 +180,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
             },
             new PhasesDuration(30, 120, 60));
-            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var OperationTypeId = OperationType.Id;
@@ -206,7 +206,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
             },
             new PhasesDuration(30, 120, 60));
-            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var OperationTypeId = OperationType.Id;
@@ -249,7 +249,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
             },
             new PhasesDuration(30, 120, 60));
-            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var OperationTypeId = OperationType.Id;
@@ -308,7 +308,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
             },
             new PhasesDuration(30, 120, 60));
-            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var Name = OperationType.Name;
@@ -344,7 +344,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
             },
             new PhasesDuration(30, 120, 60));
-            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var result = await _OperationTypeService.GetByStatusAsync(Status.Active);
@@ -375,7 +375,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
                 new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2)
             },
             new PhasesDuration(30, 120, 60));
-            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto);
+            var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
             var result = await _OperationTypeService.GetBySpecializationAsync(Specialization.ANAESTHESIOLOGY);
