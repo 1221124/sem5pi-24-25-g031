@@ -35,6 +35,8 @@ export class OperationRequestsComponent implements OnInit {
   priority: string = '';
   status: string = '';
 
+  operationTypeCode: string = '';
+
   message: string = '';
   success: boolean = false;
 
@@ -146,6 +148,9 @@ export class OperationRequestsComponent implements OnInit {
       return error;
     });
 
+    console.log("loading op types...");
+    await this.loadOperationTypes();
+    console.log("op types: ", this.operationTypes);
     console.log("loading op requests...");
     await this.loadOperationRequests();
     console.log("op requests: ", this.requests);
@@ -155,9 +160,6 @@ export class OperationRequestsComponent implements OnInit {
     console.log("loading patients...");
     await this.loadPatients();
     console.log("patients: ", this.patients);
-    console.log("loading op types...");
-    await this.loadOperationTypes();
-    console.log("op types: ", this.operationTypes);
     console.log("loading priorities...");
     await this.loadPriority();
     console.log("priorities: ", this.priorities);
@@ -258,7 +260,7 @@ export class OperationRequestsComponent implements OnInit {
               id: request.id,
               staff: request.staff,
               patient: request.patient,
-              operationType: request.operationType,
+              operationType: this.operationTypes.find(operationType => operationType.OperationTypeCode === request.operationType)?.Name as string,
               deadlineDate: request.deadlineDate,
               priority: request.priority,
               status: request.status,
@@ -387,6 +389,7 @@ export class OperationRequestsComponent implements OnInit {
               return {
                 ...operationType,
                 name: operationType.Name.Value,
+                code: operationType.OperationTypeCode,
                 specialization: operationType.Specialization
               }
             });
@@ -439,7 +442,8 @@ export class OperationRequestsComponent implements OnInit {
   async create() {
     console.log('Create button clicked');
     if (!this.isFormValid()) return;
-    await this.service.post(this.accessToken, this.staff, this.patient, this.operationType, this.deadlineDate, this.priority);
+    this.operationTypeCode = this.operationTypes.find(operationType => operationType.Name === this.operationType)?.OperationTypeCode as string;
+    await this.service.post(this.accessToken, this.staff, this.patient, this.operationTypeCode, this.deadlineDate, this.priority);
     this.closeCreateModal();
     // this.refresh();
     console.log('Operation Request submitted successfully!');
@@ -588,7 +592,7 @@ export class OperationRequestsComponent implements OnInit {
               id: request?.id,
               staff: request?.staff,
               patient: request?.patient,
-              operationType: request?.operationType,
+              operationType: this.operationTypes.find(operationType => operationType.OperationTypeCode === request.operationType)?.Name as string,
               deadlineDate: request?.deadlineDate,
               priority: request.priority,
               status: request.status,
@@ -668,7 +672,5 @@ export class OperationRequestsComponent implements OnInit {
     this.totalItems = 0;
     this.totalPages = 1;
     this.currentPage = 1;
-
-    this.accessToken = '';
   }
 }

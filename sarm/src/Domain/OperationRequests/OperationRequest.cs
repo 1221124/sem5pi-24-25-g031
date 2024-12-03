@@ -1,6 +1,7 @@
 using Domain.Shared;
 using Domain.Patients;
 using Domain.Staffs;
+using Domain.OperationTypes;
 
 
 namespace DDDNetCore.Domain.OperationRequests
@@ -9,54 +10,54 @@ namespace DDDNetCore.Domain.OperationRequests
     {
         public LicenseNumber Staff { get; set; }
         public MedicalRecordNumber Patient { get; set; }
-        public Name OperationType { get; set; }
+        public OperationTypeCode OperationType { get; set; }
         public DeadlineDate DeadlineDate { get; set; }
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
         public RequestCode RequestCode { get; set; }
 
-        public OperationRequest(LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestCode requestCode)
+        public OperationRequest(LicenseNumber doctorId, MedicalRecordNumber patientId, OperationTypeCode operationTypeCode, DeadlineDate deadlineDate, Priority priority, RequestCode requestCode)
         {
             Id = new OperationRequestId(Guid.NewGuid());
             Staff = doctorId;
             Patient = patientId;
-            OperationType = operationTypeId;
+            OperationType = operationTypeCode;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = RequestStatus.PENDING;
             RequestCode = requestCode;
         }
 
-        public OperationRequest(Guid id, LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status, RequestCode requestCode)
+        public OperationRequest(Guid id, LicenseNumber doctorId, MedicalRecordNumber patientId, OperationTypeCode operationTypeCode, DeadlineDate deadlineDate, Priority priority, RequestStatus status, RequestCode requestCode)
         {
             Id = new OperationRequestId(id);
             Staff = doctorId;
             Patient = patientId;
-            OperationType = operationTypeId;
+            OperationType = operationTypeCode;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
             RequestCode = requestCode;
         }
         
-        public OperationRequest(OperationRequestId id, LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate deadlineDate, Priority priority, RequestStatus status, RequestCode requestCode)
+        public OperationRequest(OperationRequestId id, LicenseNumber doctorId, MedicalRecordNumber patientId, OperationTypeCode operationTypeCode, DeadlineDate deadlineDate, Priority priority, RequestStatus status, RequestCode requestCode)
         {
             Id = id;
             Staff = doctorId;
             Patient = patientId;
-            OperationType = operationTypeId;
+            OperationType = operationTypeCode;
             DeadlineDate = deadlineDate;
             Priority = priority;
             Status = status;
             RequestCode = requestCode;
         }
 
-        public OperationRequest(Guid id, LicenseNumber doctorId, MedicalRecordNumber patientId, Name operationTypeId, DeadlineDate? deadlineDate, Priority? priority, RequestStatus? status, RequestCode? requestCode)
+        public OperationRequest(Guid id, LicenseNumber doctorId, MedicalRecordNumber patientId, OperationTypeCode operationTypeCode, DeadlineDate? deadlineDate, Priority? priority, RequestStatus? status, RequestCode? requestCode)
         {
             Id = new OperationRequestId(id);
             Staff = doctorId;
             Patient = patientId;
-            OperationType = operationTypeId;
+            OperationType = operationTypeCode;
             DeadlineDate = deadlineDate ?? throw new ArgumentNullException(nameof(deadlineDate));
             Priority = priority ?? throw new ArgumentNullException(nameof(priority));
             Status = status ?? throw new ArgumentNullException(nameof(status));

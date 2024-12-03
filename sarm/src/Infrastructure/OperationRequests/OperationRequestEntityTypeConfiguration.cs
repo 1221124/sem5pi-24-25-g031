@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.Shared;
 using Domain.Patients;
 using Domain.Staffs;
+using Domain.OperationTypes;
 
 namespace DDDNetCore.Infrastructure.OperationRequests
 {
@@ -42,7 +43,7 @@ namespace DDDNetCore.Infrastructure.OperationRequests
                 .HasColumnName("OperationType")
                 .HasConversion(
                     v => v.Value,
-                    v => new Name(v)
+                    v => new OperationTypeCode(v)
                 );
             
             builder.Property(o => o.DeadlineDate)

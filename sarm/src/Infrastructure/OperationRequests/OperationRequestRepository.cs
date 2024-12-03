@@ -43,7 +43,7 @@ namespace Infrastructure.OperationRequests
                 .AsQueryable().Where(x => x.Priority.Equals(priority)).ToListAsync();
         }
 
-        public async Task<List<OperationRequest>> GetByOperationType(Name operationType)
+        public async Task<List<OperationRequest>> GetByOperationType(OperationTypeCode operationType)
         {
             return await _objs
                 .AsQueryable().Where(x => x.OperationType.Equals(operationType)).ToListAsync();

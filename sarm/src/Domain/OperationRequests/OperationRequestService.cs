@@ -220,7 +220,7 @@ namespace DDDNetCore.Domain.OperationRequests
                     var operationTypeName = await _operationTypeService.GetByNameAsync(searchOperationType);
 
                     requestQuery = requestQuery
-                        .Where(r => r != null && r.OperationType.Value == operationTypeName.Name)
+                        .Where(r => r != null && r.OperationType.Value == operationTypeName.OperationTypeCode.Value)
                         .ToList();
                 }
 

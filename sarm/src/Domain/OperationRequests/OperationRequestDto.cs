@@ -12,13 +12,13 @@ namespace DDDNetCore.Domain.OperationRequests
         public Guid Id { get; set; }
         public LicenseNumber Staff { get; set; }
         public MedicalRecordNumber Patient { get; set; }
-        public Name OperationType { get; set; }
+        public OperationTypeCode OperationType { get; set; }
         public DeadlineDate DeadlineDate { get; set; }
         public Priority Priority { get; set; }
         public RequestStatus Status {get; set;}
         public RequestCode RequestCode { get; set; }
         
-        public OperationRequestDto(Guid id, LicenseNumber staff, MedicalRecordNumber patient, Name operationType, DeadlineDate deadlineDate, Priority priority, RequestStatus status, RequestCode requestCode)
+        public OperationRequestDto(Guid id, LicenseNumber staff, MedicalRecordNumber patient, OperationTypeCode operationType, DeadlineDate deadlineDate, Priority priority, RequestStatus status, RequestCode requestCode)
         {
             Id = id;
             Staff = staff;
