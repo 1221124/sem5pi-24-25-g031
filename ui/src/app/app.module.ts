@@ -17,33 +17,38 @@ import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import { PrologComponent } from './components/prolog/prolog.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
+import {PatientModule} from './components/patient/patient.module';
+
 
 
 @NgModule({
-  declarations: [
-    AdminMenuComponent,
-    AdminUsersComponent,
-    AppComponent,
-    AppointmentsComponent,
-    AuthCallbackComponent,
-    DoctorMenuComponent,
-    HomeComponent,
-    NurseMenuComponent,
-    OperationRequestsComponent,
-    OperationTypesComponent,
-    StaffsComponent,
-    TechnicianMenuComponent,
-    PrologComponent,
-    AppointmentsComponent
-  ],
+    declarations: [
+        AdminMenuComponent,
+        DoctorMenuComponent,
+        HomeComponent,
+        NurseMenuComponent,
+        TechnicianMenuComponent
+    ],
   imports: [
     BrowserModule,
     CommonModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
-    FormsModule
+    FormsModule,
+    AdminUsersComponent,
+    AppComponent,
+    AuthCallbackComponent,
+    AppointmentsComponent,
+    OperationRequestsComponent,
+    OperationTypesComponent,
+    StaffsComponent,
+    PrologComponent,
+    AppointmentsComponent,
+    PatientModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+    providers: [],
+  exports: [
+  ],
+    bootstrap: []
 })
 export class AppModule { }

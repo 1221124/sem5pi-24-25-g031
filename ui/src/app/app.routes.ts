@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { HomeComponent } from './components/home/home.component';
 import { StaffsComponent } from './components/staffs/staffs.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
-import { PatientComponent } from './components/patient/patient.component';
+import { PatientComponent } from './components/patient/patient-main/patient.component';
 import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';

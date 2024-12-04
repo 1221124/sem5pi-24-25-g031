@@ -105,7 +105,7 @@ describe('AdminPatientsComponent', () => {
     expect(mockPatientService.getFilterPatients).toHaveBeenCalledWith(component.filter, '');
   });
 
-  it('should delete a patient and refresh the list', async () => {
+  it('should delete a patient-main and refresh the list', async () => {
     const mockPatient = { id: '1', fullName: { firstName: 'John', lastName: 'Doe' } };
     mockPatientService.deletePatient.and.returnValue(of(null));
     spyOn(component, 'refreshPatients');
@@ -116,7 +116,7 @@ describe('AdminPatientsComponent', () => {
     expect(component.refreshPatients).toHaveBeenCalled();
   });
 
-  it('should create a new patient and refresh the list', () => {
+  it('should create a new patient-main and refresh the list', () => {
     mockPatientService.post.and.returnValue(of(null).subscribe());
     spyOn(component, 'refreshPatients');
 
@@ -186,7 +186,7 @@ describe('AdminPatientsComponent', () => {
     expect(component.selectedPatient.appointmentHistory.length).toBe(1);
   });
 
-  it('should add a new slot to the selected patient', () => {
+  it('should add a new slot to the selected patient-main', () => {
     component.selectedPatient = { appointmentHistory: [] };
     component.newSlotStart = '2024-01-01T08:00:00';
     component.newSlotEnd = '2024-01-01T09:00:00';
@@ -242,7 +242,7 @@ describe('AdminPatientsComponent', () => {
     expect(component.isAppoitmentHistoryModalOpen).toBeFalse();
   });
 
-  it('should reset selectedPatient and open create patient modal', () => {
+  it('should reset selectedPatient and open create patient-main modal', () => {
     component.selectedPatient = { fullName: 'Existing Patient' };
     component.isEditModalOpen = true;
 
@@ -305,7 +305,7 @@ describe('AdminPatientsComponent', () => {
     expect(component.isValidDate('invalid-date')).toBeFalse();
   });
 
-  it('should open create patient modal', () => {
+  it('should open create patient-main modal', () => {
     component.selectedPatient = { id: '1' };
     component.isEditModalOpen = true;
 
@@ -317,7 +317,7 @@ describe('AdminPatientsComponent', () => {
     expect(component.isAppoitmentHistoryModalOpen).toBeFalse();
   });
 
-  it('should close create patient modal', () => {
+  it('should close create patient-main modal', () => {
     component.isCreateModalOpen = true;
 
     component.closeCreatePatientModal();
@@ -346,7 +346,7 @@ describe('AdminPatientsComponent', () => {
     expect(component.isAppoitmentHistoryModalOpen).toBeFalse();
   });
 
-  it('should confirm delete patient and open delete modal', () => {
+  it('should confirm delete patient-main and open delete modal', () => {
     const mockPatient = { id: '1' };
 
     component.confirmDeletePatient(mockPatient);
@@ -355,7 +355,7 @@ describe('AdminPatientsComponent', () => {
     expect(component.selectedPatient).toEqual(mockPatient);
   });
 
-  it('should close delete modal and reset selected patient', () => {
+  it('should close delete modal and reset selected patient-main', () => {
     component.isDeleteModalOpen = true;
     component.selectedPatient = { id: '1' };
 

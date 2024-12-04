@@ -267,7 +267,7 @@ describe('OperationRequestsComponent', () => {
 
 
     it('should initialize patients', async () => {
-      // Arrange: Provide mock patient data directly
+      // Arrange: Provide mock patient-main data directly
       const mockPatients = [
         {
           appointmentHistory: [

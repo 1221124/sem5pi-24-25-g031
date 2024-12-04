@@ -157,7 +157,7 @@ export class AdminPatientsComponent implements OnInit {
     }
   }
 
-  // Add the new slot to the selected patient's appointment history
+  // Add the new slot to the selected patient-main's appointment history
   addNewSlot() {
     if (this.newSlotStart && this.newSlotEnd) {
       // Create a new slot object
@@ -166,7 +166,7 @@ export class AdminPatientsComponent implements OnInit {
         end: this.newSlotEnd
       };
 
-      // Add the new slot to the patient's appointment history
+      // Add the new slot to the patient-main's appointment history
       if (!this.selectedPatient.appointmentHistory) {
         this.selectedPatient.appointmentHistory = [];
       }
@@ -185,7 +185,7 @@ export class AdminPatientsComponent implements OnInit {
     this.isAddSlotFormVisible = true;
   }
 
-  // Method to save the updated patient data
+  // Method to save the updated patient-main data
   savePatient() {
     // Ensure valid Date objects for each slot
     this.selectedPatient.appointmentHistory = this.selectedPatient.appointmentHistory.map((slot: { start: Date; end: Date; }) => ({
@@ -193,13 +193,13 @@ export class AdminPatientsComponent implements OnInit {
       end: new Date(slot.end)
     }));
 
-    // Call the service to save the patient data
+    // Call the service to save the patient-main data
     this.patientService.updatePatient(this.selectedPatient, this.accessToken).subscribe(
       () => {
         this.isEditModalOpen = false;
         this.refreshPatients();  // Refresh to show updated data
       },
-      error => console.error('Error updating patient:', error)
+      error => console.error('Error updating patient-main:', error)
     );
   }
 
@@ -354,7 +354,7 @@ export class AdminPatientsComponent implements OnInit {
           this.isDeleteModalOpen = false;
           this.refreshPatients();
         },
-          (error: any) => console.error('Error deleting patient:', error)
+          (error: any) => console.error('Error deleting patient-main:', error)
       );
     }
   }
