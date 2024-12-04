@@ -1,10 +1,14 @@
-<p>Patients</p>
+<h1 class="title">Patient Profile</h1>
 <div class="patient-container">
   <ng-container *ngIf="patient; else noPatient">
 
     <app-patient-details [patient]="patient"></app-patient-details>
 
-    <app-patient-contact-info [patient]="patient"></app-patient-contact-info>
+    <app-patient-contact-info
+      [patient]="patient"
+      [accessToken]="accessToken"
+      (patientUpdated)="patient = $event">
+    </app-patient-contact-info>
 
   </ng-container>
 

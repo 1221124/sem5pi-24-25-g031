@@ -1,1 +1,49 @@
 
+.patient-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  max-width: 700px;
+  margin: 20px auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.patient-container p {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.patient-container .success {
+  color: #28a745;
+  font-weight: bold;
+  text-align: center;
+}
+
+.patient-container .error {
+  color: #dc3545;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ng-container {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.no-patient-message {
+  text-align: center;
+  font-size: 16px;
+  color: #888;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}

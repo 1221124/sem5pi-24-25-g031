@@ -86,24 +86,6 @@ export class PatientComponent {
       });
   }
 
-  async updatePatient(updatedPatient: Patient) {
-    if (!this.patient) return;
-
-    await this.patientService.update(updatedPatient, this.patient.ContactInformation.Email, this.accessToken)
-      .then((response) => {
-        if (response.status === 200) {
-          this.message = 'Patient information updated successfully!';
-          this.success = true;
-          this.patient = { ...updatedPatient }; // Atualiza os dados localmente
-        } else {
-          this.handleError('Failed to update patient-main. Response status: ' + response.status);
-        }
-      })
-      .catch((error) => {
-        this.handleError('Error updating patient-main information: ' + error.message);
-      });
-  }
-
   async deletePatient() {
     if (!this.patient) return;
 
