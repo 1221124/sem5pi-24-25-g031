@@ -12,7 +12,7 @@ export const environment = {
   surgeryRooms: 'http://localhost:5500/api/SurgeryRooms',
   prolog: 'http://localhost:5500/api/Prolog',
   appointments: 'http://localhost:5500/api/Appointments',
-  three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE',
+  three_d_module: 'http://localhost:63342/sem5pi-24-25-g031/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=l1br4f1tf1a5ib520tudjrll1p&_ij_reload=RELOAD_ON_SAVE',
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
     clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
