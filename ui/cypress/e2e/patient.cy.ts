@@ -6,9 +6,9 @@ describe('Patient E2E Tests', () => {
   beforeEach(() => {
     cy.loginRedirect('gui.cr04@gmail.com');
 
-    cy.url().should('include', '/patient');
+    cy.url().should('include', '/patient-main');
   });
-  it('should display patient details', () => {
+  it('should display patient-main details', () => {
     cy.get('.patient-details').within(() => {
       cy.contains('First Name:').should('exist');
       cy.contains('Last Name:').should('exist');
@@ -39,7 +39,7 @@ describe('Patient E2E Tests', () => {
   });
 
 
-  it('should remove the delete account button after deleting the patient', () => {
+  it('should remove the delete account button after deleting the patient-main', () => {
 
     cy.wait(2000);
     cy.get('.delete-button').contains('Delete Account').should('be.visible');

@@ -15,7 +15,7 @@ describe('Operation Requests E2E Tests', () => {
     cy.get('table tbody tr').should('have.length.greaterThan', 0); // Certifica que há pacientes listados
   });
 
-  it('should open and close the create patient modal', () => {
+  it('should open and close the create patient-main modal', () => {
     cy.get('button').contains('Create Patient').click();
     cy.get('.modal-content').should('be.visible'); // Verifica se o modal está visível
     cy.get('.close').click();
@@ -23,7 +23,7 @@ describe('Operation Requests E2E Tests', () => {
   });
 
 
-  it('should create a new patient', () => {
+  it('should create a new patient-main', () => {
     cy.get('button').contains('Create Patient').click();
     cy.get('input#firstName').type('John');
     cy.get('input#lastName').type('Doe');
@@ -43,7 +43,7 @@ describe('Operation Requests E2E Tests', () => {
     });
   });
 
-  it('should edit a patient', () => {
+  it('should edit a patient-main', () => {
     cy.get('table tbody tr').first().within(() => {
       cy.get('button.edit-button').click(); // Abre o modal de edição
     });
@@ -52,14 +52,14 @@ describe('Operation Requests E2E Tests', () => {
     cy.get('input#firstNameEdit').clear().type('Updated John');
     cy.get('input#lastNameEdit').clear().type('Updated Doe');
     cy.get('button').contains('Save Patient').click();
-    
+
     cy.get('table tbody tr').first().within(() => {
       cy.contains('Updated John');
       cy.contains('Updated Doe');
     });
   });
 
-  it('should delete a patient', () => {
+  it('should delete a patient-main', () => {
     cy.get('table tbody tr').first().within(() => {
       cy.get('button.delete-button').click(); // Abre o modal de confirmação
     });
