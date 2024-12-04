@@ -1,0 +1,5 @@
+<div class="pagination">
+  <button (click)="changePage(filter.pageNumber - 1)" [disabled]="filter.pageNumber <= 1">Previous</button>
+  <span>Page {{ filter.pageNumber }} of {{ totalPages }}</span>
+  <button (click)="changePage(filter.pageNumber + 1)" [disabled]="filter.pageNumber >= totalPages">Next</button>
+</div>
