@@ -6,6 +6,7 @@ import { Patient } from '../../../models/patient.model';
 import {AppModule} from '../../../app.module';
 import {CommonModule} from '@angular/common';
 import {PatientDetailsComponent} from '../patient-details/patient-details.component';
+import {PatientContactInfoComponent} from '../patient-contact-info/patient-contact-info.component';
 
 @Component({
   selector: 'app-patient-main',
@@ -13,13 +14,33 @@ import {PatientDetailsComponent} from '../patient-details/patient-details.compon
   styleUrls: ['./patient.component.css'],
   imports: [
     CommonModule,
-    PatientDetailsComponent
+    PatientDetailsComponent,
+    PatientContactInfoComponent
   ],
   standalone: true
 })
 export class PatientComponent {
   accessToken: string = '';
-  patient: any = {};
+  patient: Patient = {
+    Id: '',
+    FullName: {
+      FirstName: '',
+      LastName: ''
+    },
+    DateOfBirth: new Date(),
+    Gender: '',
+    MedicalRecordNumber: '',
+    ContactInformation: {
+      Email: '',
+      PhoneNumber: 0
+    },
+    MedicalCondition: [],
+    EmergencyContact: 0,
+    AppointmentHistory: [],
+    UserId: ''
+  }
+
+
   message: string = '';
   success: boolean = true;
 
@@ -30,7 +51,6 @@ export class PatientComponent {
   ) {}
 
   async ngOnInit() {
-    // Autenticação
     if (!this.authService.isAuthenticated()) {
       this.handleAuthenticationError('You are not authenticated or are not a patient-main! Please login...');
       return;
@@ -43,7 +63,6 @@ export class PatientComponent {
       return;
     }
 
-    // Buscar dados do paciente
     await this.loadPatientData();
   }
 
@@ -93,7 +112,6 @@ export class PatientComponent {
         if (response.status === 200) {
           this.message = 'Patient deleted successfully!';
           this.success = true;
-          this.patient = null; // Remove os dados localmente
         } else {
           this.handleError('Failed to delete patient-main. Response status: ' + response.status);
         }
