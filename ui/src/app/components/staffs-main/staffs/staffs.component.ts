@@ -1,20 +1,22 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StaffsService } from '../../services/staffs/staffs.service';
+import { StaffsService } from '../../../services/staffs/staffs.service';
 import { Router, RouterModule } from '@angular/router';
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
-import { AuthService } from '../../services/auth/auth.service';
-import { Staff } from '../../models/staff.model';
+import { AuthService } from '../../../services/auth/auth.service';
+import { Staff } from '../../../models/staff.model';
 import { response } from 'express';
 import { Console } from 'console';
-import {OperationType} from '../../models/operation-type.model';
+import {OperationType} from '../../../models/operation-type.model';
+import { ListStaffsComponent } from '../list-staffs/list-staffs.component';
+
 
 @Component({
   selector: 'app-staffs',
-  standalone: true,
-  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf],
+  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf,ListStaffsComponent],
   templateUrl: './staffs.component.html',
-  styleUrl: './staffs.component.css'
+  styleUrl: './staffs.component.css',
+  standalone: true
 })
 export class StaffsComponent implements OnInit {
 
@@ -526,4 +528,7 @@ export class StaffsComponent implements OnInit {
   }
   saveStaff() { }
 
+}
+
+export class StaffsMainComponent {
 }
