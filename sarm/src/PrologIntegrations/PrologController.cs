@@ -4,6 +4,7 @@ using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Staffs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDNetCore.PrologIntegrations
@@ -26,23 +27,23 @@ namespace DDDNetCore.PrologIntegrations
             _patientService = patientService;
         }
         
-        //api/Prolog?option={option}&surgeryRoom={surgeryRoom}&date={date}
-        [HttpGet]
-        public async Task<ActionResult> RunProlog([FromQuery] string option, [FromQuery] string surgeryRoom, [FromQuery] string date)
+        //POST: api/Prolog?option={option}&surgeryRoom={surgeryRoom}&date={date}
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> RunProlog([FromBody] PrologParams prologParams)
         {
             try
             {
-                var surgeryRoomNumber = SurgeryRoomNumberUtils.FromString(surgeryRoom);
-
-                var dateTime = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var surgeryRoomNumber = prologParams.SurgeryRoomNumber;
+                var dateTime = prologParams.DateTime;
+                var option = prologParams.Option;
 
                 var value = await _service.CreateKB(surgeryRoomNumber, dateTime);
                 if(!value.done) return BadRequest(new {message = value.message});
 
-                var optionAsInt = int.Parse(option);
-                if (optionAsInt != 0 && optionAsInt != 1) return BadRequest(new {message = "Invalid option."});
+                if (option != 0 && option != 1) return BadRequest(new {message = "Invalid option."});
 
-                var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime, optionAsInt);
+                var response = _service.RunPrologEngine(surgeryRoomNumber, dateTime, option);
                 if (response == null) return BadRequest(new {message = "Appointments couldn't be created due to staff's incompatibility.\nPlease, try again later."});
 
                 var codesAndAppointments = await _appointmentService.CreateAppointmentsAutomatically(surgeryRoomNumber, dateTime, response);
@@ -74,7 +75,7 @@ namespace DDDNetCore.PrologIntegrations
                 value = _service.DestroyKB(dateTime);
                 if(!value.done) return BadRequest(new {message = value.message});
                 
-                return Ok(new {message = "Appointments created successfully!"});
+                return CreatedAtAction("RunProlog", new {id = surgeryRoomNumber+"_"+dateTime.Date.ToString()}, new {message = "Appointments created successfully!"});
             }
             catch (Exception e)
             {

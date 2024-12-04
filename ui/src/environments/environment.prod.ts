@@ -19,7 +19,6 @@ export const environment = {
         redirectUri: 'https://black-bush-0ea41ce03.4.azurestaticapps.net/callback',
         authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
         audience: 'https://api.sarmg031.com'
-
     }
 };
 

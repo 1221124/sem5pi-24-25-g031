@@ -30,21 +30,18 @@ export class PrologService {
     }
   }
 
-  async runProlog(option: string, surgeryRoom: string, date: string, accessToken: string) {
+  async runProlog(option: string, surgeryRoomNumber: string, date: string, accessToken: string) {
     const url = `${environment.prolog}`;
-    var params = new HttpParams();
-    params = params.append('option', option);
-    params = params.append('surgeryRoom', surgeryRoom);
-    params = params.append('date', date);
+    const dateTime = new Date(date).toISOString();
+    const prologParams = {
+      "SurgeryRoomNumber": surgeryRoomNumber,
+      "DateTime": dateTime,
+      "Option": option
+    };
     const headers = {
       Authorization: `Bearer ${accessToken}`
     };
-    const options = {
-      ...httpOptions,
-      headers: headers,
-      params: params
-    };
-    return await firstValueFrom(this.http.get(url, { ...options }));
+    return await firstValueFrom(this.http.post(url, prologParams, { ...httpOptions, headers }));
   }
 
 }
