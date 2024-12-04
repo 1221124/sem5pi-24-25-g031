@@ -45,6 +45,7 @@ describe('OperationRequestsService', () => {
       );
 
       await service.getAll(
+        [],
         /*Access Token*/ 'token'
       ).then(requests => {
         console.log('Response body:', requests.body);
