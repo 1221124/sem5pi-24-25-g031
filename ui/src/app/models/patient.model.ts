@@ -1,4 +1,4 @@
-// src/app/models/patient.model.ts
+// src/app/models/patient-main.model.ts
 
 export interface Patient {
   Id: string,
