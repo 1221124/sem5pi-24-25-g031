@@ -1,0 +1,36 @@
+<div *ngIf="isEditModalOpen" class="modal">
+  <div class="modal-content">
+    <span type="button" class="close" (click)="closeModal()">&times;</span>
+    <h2>Edit Staff</h2>
+
+    <form (ngSubmit)="saveStaff()">
+      <div>
+        <label for="emailEdit">Email</label>
+        <input type="text" id="emailEdit" [(ngModel)]="staff.ContactInformation.Email" name="email" />
+      </div>
+      <div>
+        <label for="phoneNumberEdit">Phone Number</label>
+        <input type="text" id="phoneNumberEdit" [(ngModel)]="staff.ContactInformation.PhoneNumber"
+               name="phoneNumber" />
+      </div>
+      <div>
+        <label for="specialization">Specialization</label>
+        <select id="specialization" name="specialization" [(ngModel)]="staff.specialization">
+          <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+        </select>
+      </div>
+
+      <!-- <div *ngFor="let spec of specializations; let i = index">
+        <label [for]="'specialization' + i">Specialization {{ i + 1 }}</label>
+        <input type="text" [id]="'specialization' + i" [(ngModel)]="staff.ContactInformation.specializations[i]" name="specialization{{i}}" />
+      </div>-->
+
+      <app-slot-availability [staff]="staff"></app-slot-availability>
+
+      <div class="button-group">
+        <button type="submit" (click)="submitRequest()">{{ isEditMode ? 'Update' : 'Submit' }}
+          Save</button>
+      </div>
+    </form>
+  </div>
+</div>
