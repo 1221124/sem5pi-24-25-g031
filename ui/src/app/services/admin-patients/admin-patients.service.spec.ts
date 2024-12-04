@@ -29,7 +29,7 @@ describe('PatientsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should create a new patient', () => {
+  it('should create a new patient-main', () => {
     const mockPatient = {
       firstName: 'John',
       lastName: 'Doe',

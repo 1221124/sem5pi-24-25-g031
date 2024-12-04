@@ -70,7 +70,7 @@ export class PatientsService {
       },
       error => {
         console.log('Patient:', creatingPatientDto);
-        console.error('Error creating patient:', error)
+        console.error('Error creating patient-main:', error)
       }
     )
   }

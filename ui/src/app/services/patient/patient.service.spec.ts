@@ -19,7 +19,7 @@ describe('PatientService', () => {
     service = TestBed.inject(PatientService);
   });
 
-  it('should retrieve a patient by email', async () => {
+  it('should retrieve a patient-main by email', async () => {
     const mockPatient = {
       id: '6ae7402e-0773-4a3a-ad19-dd52304549d0',
       fullName: {
@@ -56,7 +56,7 @@ describe('PatientService', () => {
     expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
   });
 
-  it('should delete a patient by ID', async () => {
+  it('should delete a patient-main by ID', async () => {
     const mockId = '6ae7402e-0773-4a3a-ad19-dd52304549d0';
     const mockToken = 'mockAccessToken';
 
@@ -84,7 +84,7 @@ describe('PatientService', () => {
     expect(httpClientSpy.delete).not.toHaveBeenCalled();
   });
 
-  it('should update a patient', async () => {
+  it('should update a patient-main', async () => {
     const mockPatient = {
       Id: 'string',
       FullName: {
