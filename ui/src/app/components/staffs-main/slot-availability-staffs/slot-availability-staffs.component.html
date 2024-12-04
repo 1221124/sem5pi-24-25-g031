@@ -1,0 +1,32 @@
+<h3>Slots Availability</h3>
+
+<div *ngIf="!staff.SlotAvailability || staff.SlotAvailability.length === 0" class="no-slots">
+  <p>No slots available.</p>
+</div>
+
+<div>
+  <div *ngIf="staff.SlotAvailability && staff.SlotAvailability.length > 0">
+    <table class="slots-table">
+      <thead>
+      <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let slot of staff.SlotAvailability; let i = index">
+        <td>
+          <input type="datetime-local" [(ngModel)]="slot.Start" name="slotStart{{i}}" />
+        </td>
+        <td>
+          <input type="datetime-local" [(ngModel)]="slot.End" name="slotEnd{{i}}" />
+        </td>
+        <!-- <td>
+            <button type="button" (click)="removeSlot(i)">Remove</button> </td>
+            -->
+
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
