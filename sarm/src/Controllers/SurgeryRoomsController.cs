@@ -21,7 +21,7 @@ namespace DDDNetCore.Controllers {
 
         [HttpGet ("roomNumbers")]
         //[Authorize]
-        public async Task<ActionResult<List<SurgeryRoomNumber>>> GetSurgeryRoomNumber()
+        public async Task<ActionResult<List<SurgeryRoomNumber>>> GetSurgeryRoomNumbers()
         {
             try{
                 var rooms = await _surgeryRoomService.GetAll();
