@@ -1,0 +1,6 @@
+<div class="patient-details">
+  <div><strong>First Name:</strong> {{ patient.FullName.FirstName }}</div>
+  <div><strong>Last Name:</strong> {{ patient.FullName.LastName }}</div>
+  <div><strong>Date of Birth:</strong> {{ patient.DateOfBirth | date: 'yyyy-MM-dd' }}</div>
+  <div><strong>Gender:</strong> {{ patient.Gender }}</div>
+</div>
