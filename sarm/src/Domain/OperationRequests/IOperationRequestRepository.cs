@@ -10,6 +10,7 @@ namespace DDDNetCore.Domain.OperationRequests
         Task<OperationRequest> GetByCode(RequestCode code);
         Task<List<OperationRequest>> GetByStatusId(RequestStatus status);
         Task UpdateAsync(OperationRequest operationRequest);
+        Task<string?> GetLastRequestCodeAsync();
         // Task<List<OperationRequest>> GetFilteredAsync(OperationRequestFilters filters);
     }
 }

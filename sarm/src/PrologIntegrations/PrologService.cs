@@ -229,7 +229,8 @@ namespace DDDNetCore.PrologIntegrations
                         end = endToMinutes;
                     }
                 }
-                this._timetable.Add(value + start + "," + end + ")).");
+                if (end > start) this._timetable.Add(value + start + "," + end + ")).");
+                // else this._timetable.Add(value + ")).");
             }
         }
 

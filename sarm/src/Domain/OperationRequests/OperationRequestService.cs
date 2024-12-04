@@ -277,13 +277,19 @@ namespace DDDNetCore.Domain.OperationRequests
 
         public async Task<RequestCode> AssignCodeAsync()
         {
-            var requests = await _repo.GetAllAsync();
+            var lastCode = await _repo.GetLastRequestCodeAsync();
 
-            if(requests == null || requests.Count == 0)
-                return new RequestCode("req1");
+            int lastNumber = 0;
+            if (!string.IsNullOrEmpty(lastCode) && lastCode.Trim().ToLower().StartsWith("req"))
+            {
+                if (int.TryParse(lastCode.Substring(3), out var parsedNumber))
+                {
+                    lastNumber = parsedNumber;
+                }
+            }
 
-            int count = requests.Count + 1;
-            return new RequestCode("req" + count);
+            int nextNumber = lastNumber + 1;
+            return new RequestCode($"req{nextNumber}");
         }
     }
 }

@@ -48,5 +48,14 @@ namespace Infrastructure.OperationRequests
             return await _objs
                 .AsQueryable().Where(x => x.OperationType.Equals(operationType)).ToListAsync();
         }
+        public async Task<string?> GetLastRequestCodeAsync()
+        {
+            var lastRequest = await _objs
+                .AsQueryable()
+                .OrderByDescending(x => x.RequestCode)
+                .FirstOrDefaultAsync();
+
+            return lastRequest?.RequestCode;
+        }
     }
 }
