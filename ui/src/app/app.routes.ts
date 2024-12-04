@@ -2,7 +2,7 @@ import { Route, RouterModule } from '@angular/router';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { NgModule } from '@angular/core';
 import { HomeComponent } from './components/home/home.component';
-import { StaffsComponent } from './components/staffs/staffs.component';
+import { StaffsComponent } from './components/staffs-main/staffs/staffs.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
 import { PatientComponent } from './components/patient/patient-main/patient.component';
 import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';

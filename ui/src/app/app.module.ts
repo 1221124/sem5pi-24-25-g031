@@ -7,7 +7,7 @@ import { routes } from './app.routes';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { HomeComponent } from './components/home/home.component';
 import { OperationRequestsComponent } from './components/operation-requests/operation-requests.component';
-import { StaffsComponent } from './components/staffs/staffs.component';
+import { StaffsComponent } from './components/staffs-main/staffs/staffs.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
@@ -18,7 +18,7 @@ import { TechnicianMenuComponent } from './components/technician-menu/technician
 import { PrologComponent } from './components/prolog/prolog.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
 import {PatientModule} from './components/patient/patient.module';
-
+import { StaffModule } from './components/staffs-main/staffs.module';
 
 
 @NgModule({
@@ -44,7 +44,8 @@ import {PatientModule} from './components/patient/patient.module';
     StaffsComponent,
     PrologComponent,
     AppointmentsComponent,
-    PatientModule
+    PatientModule,
+    StaffModule
   ],
     providers: [],
   exports: [
