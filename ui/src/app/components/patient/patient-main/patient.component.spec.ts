@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PatientComponent } from './patient.component';
 import {HttpResponse, provideHttpClient, withFetch} from '@angular/common/http';
-import {PatientService} from '../../services/patient/patient.service';
-import {AuthService} from '../../services/auth/auth.service';
+import {PatientService} from '../../../services/patient/patient.service';
+import {AuthService} from '../../../services/auth/auth.service';
 import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -92,10 +92,10 @@ describe('PatientComponent', () => {
   });
 
   describe('delete', () => {
-    it('should delete a patient successfully', async () => {
+    it('should delete a patient-main successfully', async () => {
       await component.delete('patient-id');
 
-      expect(mockPatientService.deletePatient).toHaveBeenCalledWith('patient-id', 'mockToken');
+      expect(mockPatientService.deletePatient).toHaveBeenCalledWith('patient-main-id', 'mockToken');
       expect(component.message).toBe('Patient deleted successfully!');
       expect(component.success).toBeTrue();
     });
@@ -113,7 +113,7 @@ describe('PatientComponent', () => {
       await component.ngOnInit();
 
       expect(mockAuthService.updateMessage).toHaveBeenCalledWith(
-        'You are not authenticated or are not a patient! Please login...'
+        'You are not authenticated or are not a patient-main! Please login...'
       );
     }));
 
@@ -125,11 +125,11 @@ describe('PatientComponent', () => {
 
     await component.delete('patient-id');
 
-    expect(mockPatientService.deletePatient).toHaveBeenCalledWith('patient-id', 'mockToken');
+    expect(mockPatientService.deletePatient).toHaveBeenCalledWith('patient-main-id', 'mockToken');
     expect(component.message).toBe('You are not authorized to delete patients! Please log in...');
   });
 
-  it('should fetch patient by email', async () => {
+  it('should fetch patient-main by email', async () => {
     mockPatientService.getByEmail.and.returnValue(
       Promise.resolve({
         status: 200,

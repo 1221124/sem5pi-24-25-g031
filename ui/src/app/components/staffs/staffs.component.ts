@@ -463,7 +463,7 @@ export class StaffsComponent implements OnInit {
         end: this.newSlotEnd
       };
 
-      // Add the new slot to the patient's appointment history
+      // Add the new slot to the patient-main's appointment history
       if (!this.selectedStaff.slotAvailability) {
         this.selectedStaff.slotAvailability = [];
       }

@@ -1,0 +1,16 @@
+<p>Patients</p>
+<div class="patient-container">
+  <ng-container *ngIf="patient; else noPatient">
+
+    <app-patient-details [patient]="patient"></app-patient-details>
+
+  </ng-container>
+
+  <ng-template #noPatient>
+    <p>No patient data available.</p>
+  </ng-template>
+
+  <p *ngIf="message" [class.success]="success" [class.error]="!success">
+    {{ message }}
+  </p>
+</div>
