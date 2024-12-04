@@ -114,10 +114,12 @@ namespace DDDNetCore.PrologIntegrations
                 // );
 
                 // var operationRequests = pendingOperationRequests.Concat(rejectedOperationRequests).ToList();
+
+                //only get requests with deadline date after or equal to the given date
+                operationRequests = operationRequests.Where(x => x.DeadlineDate.Date >= DateOnly.FromDateTime(date)).ToList();
                 if (operationRequests == null || operationRequests.Count == 0)
                     return (false, "No operation requests found.");
                 
-                //only the first AppSettings.MaxOperations will be considered
                 int appointmentsCount = appointments.Count;
 
                 if (appointmentsCount >= int.Parse(AppSettings.MaxOperations))
