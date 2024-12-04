@@ -1,0 +1,27 @@
+<div class="patient-edit-buttons">
+  <div>
+    <button class="edit-btn" (click)="openEditModal()">Update Contact Information</button>
+  </div>
+
+  <div class="modal" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <h3>Edit Contact Information</h3>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input id="email" type="email" [(ngModel)]="tempEmail" />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number:</label>
+        <input id="phone" type="text" [(ngModel)]="tempPhoneNumber" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="save-btn" (click)="saveChanges()">Save</button>
+        <button class="close-btn" (click)="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <p *ngIf="message" [class.success]="success" [class.error]="!success">{{ message }}</p>
+</div>
