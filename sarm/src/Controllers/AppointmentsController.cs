@@ -15,7 +15,7 @@ namespace DDDNetCore.Controllers {
 
         // GET: api/Appointments?pageNumber={pageNumber}
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAll([FromQuery] string? pageNumber)
         {
             var appointments = await _service.GetAll();
@@ -29,11 +29,11 @@ namespace DDDNetCore.Controllers {
 
             if (pageNumber != null && int.TryParse(pageNumber, out int page))
             {
-                var paginatedOperationTypes = appointments
+                var paginatedAppointments = appointments
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
-                appointments = paginatedOperationTypes;
+                appointments = paginatedAppointments;
             }
 
             return Ok(new { appointments = appointments, totalItems = totalItems });

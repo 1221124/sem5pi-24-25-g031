@@ -29,15 +29,24 @@ export class AppointmentsService {
       .then(response => {
         if (response.status === 200 && response.body) {
           const appointments = response.body.appointments.map(item => ({
-            Id: item.Id,
-            RequestCode: item.RequestCode,
-            SurgeryRoomNumber: item.SurgeryRoomNumber,
-            AppointmentNumber: item.AppointmentNumber,
-            AppointmentDate: {
-              Start: item.AppointmentDate.Start,
-              End: item.AppointmentDate.End
+            Id: item.id,
+            RequestCode: item.requestCode.value,
+            SurgeryRoomNumber: item.surgeryRoomNumber,
+            AppointmentNumber: item.appointmentNumber.value,
+            AppointmentDate: item.appointmentDate && 
+              typeof item.appointmentDate.start === 'string' && 
+              typeof item.appointmentDate.end === 'string' 
+              ? {
+                Start: item.appointmentDate.start,
+                End: item.appointmentDate.end
+              }
+            : {
+              Start: '',
+              End: ''
             },
-            AssignedStaff: item.assignedStaff.map((staff: { value: any; }) => staff.value)
+            AssignedStaff: Array.isArray(item.assignedStaff) 
+            ? item.assignedStaff.map((staff: { value: any }) => staff.value) 
+            : [],
           }));
 
           return {
