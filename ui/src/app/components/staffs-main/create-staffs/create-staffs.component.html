@@ -1,0 +1,36 @@
+<div *ngIf="isCreateModalOpen" class="modal">
+  <div class="modal-content">
+    <span type="button" class="close" (click)="closeModal()">&times;</span>
+    <h2>Create New Staff</h2>
+
+    <form (ngSubmit)="submitRequest()">
+      <div class="form-group">
+        <input type="text" id="firstName" name="firstName" [(ngModel)]="staff.FullName.FirstName" placeholder="Enter First Name" />
+      </div>
+      <div class="form-group">
+        <input type="text" id="lastName" name="lastName" [(ngModel)]="staff.FullName.LastName" placeholder="Enter Last Name" />
+      </div>
+      <div class="form-group">
+        <input type="text" id="email" name="email" [(ngModel)]="staff.ContactInformation.Email" placeholder="Enter Email" />
+      </div>
+      <div class="form-group">
+        <input type="text" id="phoneNumber" name="phoneNumber" [(ngModel)]="staff.ContactInformation.PhoneNumber" placeholder="Enter Phone Number" />
+      </div>
+      <div class="form-group">
+        <label for="specialization">Select Specialization:</label>
+        <select id="specialization" name="specialization" [(ngModel)]="staff.specialization">
+          <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+        </select>
+      </div>
+      <div *ngFor="let role of roles">
+        <input type="radio" id="{{role}}" name="role" [value]="role" [(ngModel)]="staff.staffRole">
+        <label for="{{role}}">{{ role }}</label>
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="submit-button">Submit</button>
+        <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+      </div>
+    </form>
+  </div>
+</div>
