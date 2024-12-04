@@ -1,21 +1,24 @@
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+.patient-details {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9; /* Fundo suave */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 500px;
+  margin: 20px auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  max-width: 90%;
+.patient-details div {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.patient-details strong {
+  color: #333;
+  font-weight: bold;
+}
+
+.end-slot {
+  margin-left: 40px;
 }

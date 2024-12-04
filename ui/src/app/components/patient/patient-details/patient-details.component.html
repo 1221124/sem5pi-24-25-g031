@@ -2,15 +2,15 @@
   <div><strong>First Name:</strong> {{ patient.FullName.FirstName }}</div>
   <div><strong>Last Name:</strong> {{ patient.FullName.LastName }}</div>
   <div><strong>Date of Birth:</strong> {{ patient.DateOfBirth | date: 'yyyy-MM-dd' }}</div>
-  <div><strong>Gender:</strong> {{ patient.Gender }}</div>
+  <div><strong>Gender:</strong> {{ patient.Gender | lowercase | titlecase}}</div>
   <div><strong>Phone Number:</strong> {{ patient.ContactInformation.PhoneNumber }}</div>
   <div><strong>Email:</strong> {{ patient.ContactInformation.Email }}</div>
-  <div *ngIf="patient.EmergencyContact"><strong>EmergencyContact: {{ patient.EmergencyContact}}</strong></div>
+  <div *ngIf="patient.EmergencyContact"><strong>EmergencyContact: </strong>{{ patient.EmergencyContact}}</div>
   <div><strong>Appointment History:</strong></div>
   <div *ngIf="patient.AppointmentHistory.length > 0">
     <div *ngFor="let slot of patient.AppointmentHistory">
       <span><strong>Start:</strong> {{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</span>
-      <span class="End-Slot"><strong>End:</strong> {{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</span>
+      <span class="end-slot"><strong>End:</strong> {{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</span>
     </div>
   </div>
   <div *ngIf="patient.AppointmentHistory.length === 0">No appointments available</div>
