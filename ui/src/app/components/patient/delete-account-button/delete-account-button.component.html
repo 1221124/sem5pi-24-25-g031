@@ -1,0 +1,20 @@
+<div class="patient-delete-button">
+  <div>
+    <button class="open-modal-btn" (click)="openDeleteModal()">Delete Account</button>
+  </div>
+  <div class="modal" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <h3>Delete Patient</h3>
+
+      <div class="form-group">
+        <div>Are you Sure you want to delete your patient Profile?</div>
+        <div class="modal-actions">
+          <button class="delete-btn" (click)="deletePatient()">Delete Profile</button>
+        </div>
+        <div class="modal-actions">
+          <button class="cancel-btn" (click)="closeDeleteModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
