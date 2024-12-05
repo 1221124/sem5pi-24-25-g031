@@ -68,8 +68,8 @@ This project is a **web-based system** designed to manage surgical appointments 
 
 ## Technologies Used
 
-- **Frontend**: HTML, CSS and Typescript (with Angular framework)
-- **Backend**: C# (with .NET framework)
+- **Frontend**: HTML, CSS and Typescript (with Angular framework) - Deployed in Azure Static Web Apps
+- **Backend**: C# (with ASP.NET framework) - Deployed in Azure App Service
 - **Database**: Azure SQL Server
 - **3D Visualization**: Three.js for real-time rendering
 - **Authentication**: Auth0 IAM
