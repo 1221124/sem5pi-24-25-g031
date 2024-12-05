@@ -20,12 +20,12 @@ namespace Controllers
         private readonly StaffService _staffService;
         private readonly PatientService _patientService;
         private readonly IAMService _iamService;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
         private readonly DbLogService _dbLogService;
         private readonly int pageSize = 2;
 
         public UsersController(UserService service, StaffService staffService, PatientService patientService, 
-        IAMService iAMService, EmailService emailService, DbLogService dbLogService)
+        IAMService iAMService, IEmailService emailService, DbLogService dbLogService)
         {
             _service = service;
             _staffService = staffService;
@@ -106,8 +106,19 @@ namespace Controllers
                     }
                     return BadRequest(new { Message = "Failed to assign role to user." });
                 }
-
                 if (!_service.Login(user)) return BadRequest(new { Message = "User does not exist or is not active." });
+
+                if (RoleUtils.IsStaff(user.Role)) {
+                    if (!await _staffService.IsActive(user.Email) || await _staffService.HasUserIdNull(user.Email)) {
+                        return BadRequest(new { Message = "Staff is not active or does not have an user assigned." });
+                    }
+                }
+
+                if (RoleUtils.IsPatient(user.Role)) {
+                    if (await _patientService.HasUserIdNull(user.Email)) {
+                        return BadRequest(new { Message = "Patient does not have an user assigned." });
+                    }
+                }
 
                 return Ok(new { exists = true, Message = $"User with email {email} logged in successfully!" });
             }
@@ -152,8 +163,7 @@ namespace Controllers
                     var patientDto = await _patientService.GetByEmailAsync(dto.Email);
                     if (patientDto != null)
                     {
-                        patientDto.UserId = new UserId(user.Id);
-                        await _patientService.AdminUpdateAsync(PatientMapper.ToUpdatingPatientDto(patientDto));
+                        await _patientService.AssignUserId(patientDto, user.Id);
                     } else {
                         return BadRequest(new { Message = $"There is no patient record in our system with email {user.Email.Value}. Please contact our system administrator!" });
                     }

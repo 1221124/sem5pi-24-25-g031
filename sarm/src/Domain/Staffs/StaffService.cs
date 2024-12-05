@@ -541,5 +541,35 @@ namespace Domain.Staffs
             int mins = minutes % 60;
             return $"{hours:D2}:{mins:D2}";
         }
+
+        public async Task<bool> IsActive(Email email)
+        {
+            try {
+                var staff = await _repo.GetByEmailAsync(email);
+
+                if (staff == null) {
+                    return false;
+                }
+
+                return staff.Status.IsActive();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        public async Task<bool> HasUserIdNull(Email email)
+        {
+            try {
+                var staff = await _repo.GetByEmailAsync(email);
+
+                if (staff == null) {
+                    return false;
+                }
+
+                return staff.UserId == null;
+            } catch (Exception e) {
+                return false;
+            }
+        }
     }
 }

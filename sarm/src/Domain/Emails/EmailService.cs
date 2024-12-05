@@ -17,32 +17,23 @@ namespace Domain.Emails
         {
         }
 
-        public async Task SendEmailAsync(string to, string subject, string body)
+        public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
-            try
+            using (var smtpClient = new SmtpClient(AppSettings.SmtpServer, int.Parse(AppSettings.SmtpPort)))
             {
-                using (var smtpClient = new SmtpClient(AppSettings.SmtpServer, int.Parse(AppSettings.SmtpPort)))
+                smtpClient.Credentials = new NetworkCredential(AppSettings.FromEmail, AppSettings.Password);
+                smtpClient.EnableSsl = true;
+
+                var mailMessage = new MailMessage
                 {
-                    smtpClient.Credentials = new NetworkCredential(AppSettings.FromEmail, AppSettings.Password);
-                    smtpClient.EnableSsl = true;
+                    From = new MailAddress(AppSettings.FromEmail, "SARM G031"),
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                };
+                mailMessage.To.Add(toEmail);
 
-                    var mailMessage = new MailMessage
-                    {
-                        From = new MailAddress(AppSettings.FromEmail, "SARM G031"),
-                        Subject = subject,
-                        Body = body,
-                        IsBodyHtml = true
-                    };
-
-                    mailMessage.To.Add(new MailAddress(to));
-
-                    await smtpClient.SendMailAsync(mailMessage);
-                    Console.WriteLine("Email sent successfully!");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("Error sending email : " + ex.Message);
+                await smtpClient.SendMailAsync(mailMessage);
             }
         }
 

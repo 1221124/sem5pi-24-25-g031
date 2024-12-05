@@ -126,7 +126,6 @@ builder.Services.AddScoped<PrologService>();
 builder.Services.AddTransient<PatientCleanupService>();
 
 builder.Services.AddSingleton<IEmailService, EmailService>();
-builder.Services.AddSingleton<EmailService>();
 
 builder.Services.AddHttpClient<IAMService>();
 

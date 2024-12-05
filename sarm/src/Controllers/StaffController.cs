@@ -15,7 +15,7 @@ namespace Controllers
         private const int pageSize = 2;
         private readonly StaffService _service;
 
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
 
         private readonly IStaffRepository _repo;
 
@@ -25,7 +25,7 @@ namespace Controllers
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public StaffController(StaffService service, EmailService emailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService)
+        public StaffController(StaffService service, IEmailService emailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService)
         {
             _service = service;
             _emailService = emailService;

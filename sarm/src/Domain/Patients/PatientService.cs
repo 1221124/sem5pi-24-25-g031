@@ -379,6 +379,20 @@ namespace DDDNetCore.Domain.Patients
             }
         }
         
+        public async Task<PatientDto> AssignUserId(PatientDto dto, Guid id) {
+            try {
+                var patient = await _repo.GetByMedicalRecordNumberAsync(dto.MedicalRecordNumber);
+                if (patient == null) {
+                    return null;
+                }
+                patient.UserId = new UserId(id);
+                await _unitOfWork.CommitAsync();
+                return PatientMapper.ToDto(patient);
+            } catch (Exception e) {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
         
         
         public async Task<PatientDto> PatientDeleteAsync(PatientId id)
@@ -464,6 +478,21 @@ namespace DDDNetCore.Domain.Patients
                 return true;
             } catch (Exception e) {
                 Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+        public async Task<bool> HasUserIdNull(Email email)
+        {
+            try {
+                var patient = await _repo.GetByEmailAsync(email);
+
+                if (patient == null) {
+                    return false;
+                }
+
+                return patient.UserId == null;
+            } catch (Exception e) {
                 return false;
             }
         }
