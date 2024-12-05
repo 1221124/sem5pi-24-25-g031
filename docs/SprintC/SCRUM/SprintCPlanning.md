@@ -1,4 +1,4 @@
-# Sprint B Planning
+# Sprint C Planning
 
 - **Sprint Goal**: Develop the Web Application's frontend, 3d visualization, planning module and integration with the backoffice system.
 
