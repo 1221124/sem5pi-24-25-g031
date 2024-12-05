@@ -11,7 +11,9 @@
     </app-patient-contact-info>
 
     <app-delete-account-button
-      [accessToken]="accessToken">
+      [patient]="patient"
+      [accessToken]="accessToken"
+      (patientDeleted)="patient = $event">
     </app-delete-account-button>
 
   </ng-container>

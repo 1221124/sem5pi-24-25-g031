@@ -73,7 +73,7 @@ export class PatientContactInfoComponent {
   hideNotificationAfterDelay() {
     setTimeout(() => {
       this.showNotification = false;
-    }, 5000); // Notificação desaparece após 5 segundos
+    }, 5000);
   }
 
   openEditModal() {

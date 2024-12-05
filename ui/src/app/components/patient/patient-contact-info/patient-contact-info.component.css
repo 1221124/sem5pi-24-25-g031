@@ -89,12 +89,12 @@
 }
 
 .modal-actions .close-btn {
-  background-color: #dc3545;
+  background-color: #007bff;
   color: white;
 }
 
 .modal-actions .close-btn:hover {
-  background-color: #c82333;
+  background-color: #0064d5;
 }
 
 .notification {
@@ -113,12 +113,12 @@
 
 /* Sucesso */
 .notification.success {
-  background-color: #89c392; /* Verde */
+  background-color: #89c392;
 }
 
 /* Erro */
 .notification.error {
-  background-color: #dc3545; /* Vermelho */
+  background-color: #dc3545;
 }
 
 
