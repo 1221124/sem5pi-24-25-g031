@@ -163,7 +163,8 @@ namespace Domain.IAM
 
             Console.WriteLine("Email: " + emailTrimmed);
             Console.WriteLine("AdminEmail: " + AppSettings.AdminEmail.Trim().ToLower());
-            Console.WriteLine("DoctorEmail: " + AppSettings.DoctorEmail.Trim().ToLower());
+            Console.WriteLine("Doctor1Email: " + AppSettings.Doctor1Email.Trim().ToLower());
+            Console.WriteLine("Doctor2Email: " + AppSettings.Doctor2Email.Trim().ToLower());
             Console.WriteLine("NurseEmail: " + AppSettings.NurseEmail.Trim().ToLower());
             Console.WriteLine("TechnicianEmail: " + AppSettings.TechnicianEmail.Trim().ToLower());
             Console.WriteLine("EmailDomain: " + AppSettings.EmailDomain.Trim().ToLower());
@@ -176,7 +177,7 @@ namespace Domain.IAM
                 role = "Admin";
             } else if (emailTrimmed.EndsWith(AppSettings.EmailDomain.Trim().ToLower()))
             {
-                if (emailTrimmed.StartsWith("d") || emailTrimmed.Equals(AppSettings.DoctorEmail.Trim().ToLower())) {
+                if (emailTrimmed.StartsWith("d") || emailTrimmed.Equals(AppSettings.Doctor1Email.Trim().ToLower()) || emailTrimmed.Equals(AppSettings.Doctor2Email.Trim().ToLower())) {
                     roleId = AppSettings.RoleDoctor;
                     role = "Doctor";
                 } else if (emailTrimmed.StartsWith("n") || emailTrimmed.Equals(AppSettings.NurseEmail.Trim().ToLower())) {

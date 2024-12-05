@@ -20,16 +20,16 @@ import { AppointmentsComponent } from './components/appointments/appointments.co
 import {PatientModule} from './components/patient/patient.module';
 import { StaffModule } from './components/staffs-main/staffs.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 @NgModule({
-    declarations: [
-        AdminMenuComponent,
-        DoctorMenuComponent,
-        HomeComponent,
-        NurseMenuComponent,
-        TechnicianMenuComponent
-    ],
+  declarations: [
+    AdminMenuComponent,
+    DoctorMenuComponent,
+    HomeComponent,
+    NurseMenuComponent,
+    TechnicianMenuComponent
+  ],
   imports: [
     BrowserModule,
     CommonModule,
@@ -47,7 +47,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     PrologComponent,
     AppointmentsComponent,
     PatientModule,
-    StaffModule
+    StaffModule,
+    VerifyEmailComponent
   ],
     providers: [],
   exports: [

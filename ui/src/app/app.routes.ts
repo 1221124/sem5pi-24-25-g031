@@ -14,6 +14,7 @@ import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import { PrologComponent } from './components/prolog/prolog.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -30,6 +31,7 @@ export const routes: Route[] = [
   { path: 'patient', component: PatientComponent },
   { path: 'nurse', component: NurseMenuComponent },
   { path: 'technician', component: TechnicianMenuComponent},
+  { path: 'verify-email', component: VerifyEmailComponent}
 ];
 
 @NgModule({

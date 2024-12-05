@@ -20,7 +20,8 @@ namespace Infrastructure
         public static string SensitiveInfoPatientUrl { get; private set; }
         public static string RemoveSensitiveInfoPatientUrl { get; private set; }
         public static string AdminEmail { get; private set; }
-        public static string DoctorEmail { get; private set; }
+        public static string Doctor1Email { get; private set; }
+        public static string Doctor2Email { get; private set; }
         public static string NurseEmail { get; private set; }
         public static string TechnicianEmail { get; private set; }
         public static string RoleAdmin { get; private set; }
@@ -52,7 +53,8 @@ namespace Infrastructure
             SensitiveInfoPatientUrl = configuration["SensitiveInfoPatientUrl"];
             RemoveSensitiveInfoPatientUrl = configuration["RemoveSensitiveInfoPatientUrl"];
             AdminEmail = configuration["Email:Admin"];
-            DoctorEmail = configuration["Email:Doctor"];
+            Doctor1Email = configuration["Email:Doctor1"];
+            Doctor2Email = configuration["Email:Doctor2"];
             NurseEmail = configuration["Email:Nurse"];
             TechnicianEmail = configuration["Email:Technician"];
             RoleAdmin = configuration["RoleId:Admin"];

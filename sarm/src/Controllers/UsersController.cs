@@ -105,7 +105,7 @@ namespace Controllers
                     }
                     return BadRequest(new { Message = "Failed to assign role to user." });
                 }
-                if (!_service.Login(user)) return BadRequest(new { Message = "User does not exist or is not active." });
+                if (!_service.Login(user)) return Unauthorized("You are not active. Please contact the system administrator.");
 
                 if (RoleUtils.IsStaff(user.Role)) {
                     if (!await _staffService.IsActive(user.Email) || await _staffService.InvalidUserId(user.Email, user.Id)) {

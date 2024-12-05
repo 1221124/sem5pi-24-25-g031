@@ -1,9 +1,12 @@
+import { verify } from "crypto";
+
 export const environment = {
   production: false,
   homeUrl: 'http://localhost:4200',
   tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
   loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:4200/callback&scope=openid%20profile%20email&prompt=login',
   usersApiUrl: 'http://localhost:5500/api/Users',
+  verifyEmailUrl: 'http://localhost:5500/api/Users/verify',
   operationRequests: 'http://localhost:5500/api/OperationRequest',
   operationTypes: 'http://localhost:5500/api/OperationTypes',
   enums: 'http://localhost:5500/api/Enums',
@@ -20,28 +23,6 @@ export const environment = {
     authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
     audience: 'https://api.sarmg031.com'
   }
-  /*
-  tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
-  loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:4200/callback&scope=openid%20profile%20email&prompt=login',
-  usersApiUrl: 'https://sarmg031.azurewebsites.net/api/Users',
-  operationRequests: 'https://sarmg031.azurewebsites.net/api/OperationRequest',
-  operationTypes: 'https://sarmg031.azurewebsites.net/api/OperationTypes',
-  enums: 'https://sarmg031.azurewebsites.net/api/Enums',
-  staffs: 'https://sarmg031.azurewebsites.net/api/Staff',
-  patients: 'https://sarmg031.azurewebsites.net/api/Patient',
-  surgeryRooms: 'https://sarmg031.azurewebsites.net/api/SurgeryRooms',
-  prolog: 'https://sarmg031.azurewebsites.net/api/Prolog',
-  appointments: 'https://sarmg031.azurewebsites.net/api/Appointments',
-  three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE',
-  authConfig: {
-    clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
-    clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
-    redirectUri: 'http://localhost:4200/callback',
-    authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
-    audience: 'https://api.sarmg031.com'
-
-  }
-  */
 };
 
 export const httpOptions = {

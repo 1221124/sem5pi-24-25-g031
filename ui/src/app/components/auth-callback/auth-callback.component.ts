@@ -66,13 +66,16 @@ export class AuthCallbackComponent implements OnInit {
         }).catch(error => {
           if (error.status == 400) {
             this.authService.updateMessage('Bad request during user callback: ' + error.body); 
-            this.authService.updateIsError(true);
-            return;
           } else if (error.status == 404) {
-            this.authService.updateMessage('Not found during user callback: ' + error.body);
-            this.authService.updateIsError(true);
-            return;
+            this.authService.updateMessage('User not found');
+          } else if (error.status == 401) {
+            this.authService.updateMessage('You are not active. Please contact your system administrator.');
           }
+          this.authService.updateIsError(true);
+          setTimeout(() => {
+            this.authService.redirectToLogin();
+          }, 5000);
+          return;
         });
       } else {
         this.authService.updateMessage('Token verification failed');  

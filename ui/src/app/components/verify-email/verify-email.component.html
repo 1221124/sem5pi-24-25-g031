@@ -1,0 +1,19 @@
+<div class="verify-email-container">
+    <div *ngIf="wait" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Verifying your email, please wait...</p>
+    </div>
+  
+    <div *ngIf="!wait && !isError" class="success-message">
+      <span class="material-icons checkmark-icon">check_circle</span>
+      <h1>{{ message }}</h1>
+      <p>You'll be redirected to the login page shortly...</p>
+    </div>
+  
+    <div *ngIf="!wait && isError" class="error-message">
+      <span class="material-icons error-icon">error</span>
+      <h1>Oops!</h1>
+      <p>{{ message }}</p>
+      <p>Please try again or contact the system administrator if the problem persists.</p>
+    </div>
+  </div>  
