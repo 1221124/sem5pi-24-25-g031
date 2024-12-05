@@ -19,7 +19,8 @@ export const environment = {
         clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
         redirectUri: 'https://black-bush-0ea41ce03.4.azurestaticapps.net/callback',
         authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
-        audience: 'https://api.sarmg031.com'
+        audience: 'https://api.sarmg031.com',
+        logoutUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/v2/logout?client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&returnTo=https://black-bush-0ea41ce03.4.azurestaticapps.net'
     }
 };
 

@@ -1,5 +1,3 @@
-import { verify } from "crypto";
-
 export const environment = {
   production: false,
   homeUrl: 'http://localhost:4200',
@@ -21,7 +19,8 @@ export const environment = {
     clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
     redirectUri: 'http://localhost:4200/callback',
     authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
-    audience: 'https://api.sarmg031.com'
+    audience: 'https://api.sarmg031.com',
+    logoutUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/v2/logout?client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&returnTo=http://localhost:4200'
   }
 };
 

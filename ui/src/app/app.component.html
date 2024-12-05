@@ -1,6 +1,7 @@
 <div class="app-container">
   <header class="app-header">
     <h1>{{ title }}</h1>
+    <button *ngIf="showLogoutButton" class="logout-btn" (click)="logout()">Logout</button>
   </header>
 
   <router-outlet></router-outlet>
