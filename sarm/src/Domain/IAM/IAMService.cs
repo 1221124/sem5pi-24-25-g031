@@ -94,12 +94,12 @@ namespace Domain.IAM
             return (emailClaim, rolesClaim);
         }
 
-        public async Task<string> GetIAMUserIdByEmailAsync(string email, string accessToken)
+        public async Task<string> GetIAMUserIdByEmailAsync(string email, string managementToken, string accessToken)
         {
             var url = $"{AppSettings.IAMDomain}api/v2/users-by-email?email={email}";
 
             var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+            request.Headers.Add("Authorization", $"Bearer {managementToken}");
 
             var response = await _httpClient.SendAsync(request);
 
@@ -116,17 +116,48 @@ namespace Domain.IAM
                 throw new Exception("User not found");
             }
 
-            return users[0].UserId;
+            var user = users.FirstOrDefault(u => 
+                u.Identities != null && 
+                u.Identities.Any(i => i.Provider == GetLoginProviderFromAccessToken(accessToken))
+            );
+
+            if (user == null)
+            {
+                throw new Exception("No user found with the specified provider");
+            }
+
+            return user.UserId;
         }
 
-        public async Task<(bool done, string role)> AssignRoleToUserAsync(string email)
+        public string GetLoginProviderFromAccessToken(string accessToken)
         {
-            string role = "a";
-            string roleId = "a";
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(accessToken) as JwtSecurityToken;
 
-            string accessToken = await GetAccessTokenAsync();
+            if (jsonToken == null)
+            {
+                throw new Exception("Invalid access token");
+            }
+
+            var subClaim = jsonToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+
+            if (subClaim != null)
+            {
+                var provider = subClaim.Split('|')[0];
+                return provider;
+            }
+
+            throw new Exception("Unable to determine login provider from sub claim");
+        }
+
+        public async Task<(bool done, string role)> AssignRoleToUserAsync(string email, string accessToken)
+        {
+            string role = "";
+            string roleId = "";
+
+            string managementToken = await GetManagementTokenAsync();
             string emailTrimmed = email.Trim().ToLower();
-            string userId = await GetIAMUserIdByEmailAsync(email, accessToken);
+            string userId = await GetIAMUserIdByEmailAsync(email, managementToken, accessToken);
 
             var url = $"{AppSettings.IAMDomain}api/v2/users/{userId}/roles";
 
@@ -173,7 +204,7 @@ namespace Domain.IAM
                 Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json")
             };
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", managementToken);
 
             var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
@@ -188,7 +219,7 @@ namespace Domain.IAM
             }
         }
 
-        private async Task<string> GetAccessTokenAsync()
+        private async Task<string> GetManagementTokenAsync()
         {
             var url = $"{AppSettings.IAMDomain}oauth/token";
 
@@ -197,7 +228,7 @@ namespace Domain.IAM
                 grant_type = "client_credentials",
                 client_id = AppSettings.IAMClientId,
                 client_secret = AppSettings.IAMClientSecret,
-                audience = "https://dev-sagir8s22k2ehmk0.us.auth0.com/api/v2/",
+                audience = $"{AppSettings.IAMDomain}api/v2/",
                 scope = "read:roles update:users"
             };
 
@@ -245,19 +276,32 @@ namespace Domain.IAM
 
         [JsonProperty("picture")]
         public string Picture { get; set; }
+
+        [JsonProperty("identities")]
+        public List<Identity> Identities { get; set; }
+        
         public Auth0User() {}
 
         public Auth0User(string UserId) {
             this.UserId = UserId;
         }
 
-        public Auth0User(string UserId, string Email, string Name, string Nickname, string Picture) {
+        public Auth0User(string UserId, string Email, string Name, string Nickname, string Picture, List<Identity> Identities) {
             this.UserId = UserId;
             this.Email = Email;
             this.Name = Name;
             this.Nickname = Nickname;
             this.Picture = Picture;
+            this.Identities = Identities;
         }
+    }
+
+    public class Identity
+    {
+        public string Provider { get; set; }
+        public string Connection { get; set; }
+        public string UserId { get; set; }
+        public bool IsSocial { get; set; }
     }
 
     public class Jwk

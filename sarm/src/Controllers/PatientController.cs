@@ -14,12 +14,12 @@ namespace DDDNetCore.Controllers
     {
         private const int PageSize = 2;
         private readonly PatientService _service;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
         
         private readonly DbLogService _dbLogService;
         private readonly IUnitOfWork _unitOfWork;
         
-        public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, EmailService emailService)
+        public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, IEmailService emailService)
         {
             _service = service;
             _dbLogService = dbLogService;

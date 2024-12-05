@@ -98,7 +98,7 @@ namespace Controllers
 
                 if (user == null)
                 {
-                    var assignedRole = await _iamService.AssignRoleToUserAsync(email);
+                    var assignedRole = await _iamService.AssignRoleToUserAsync(email, accessToken);
                     if (assignedRole.done)
                     {
                         return Ok(new { exists = false, Message = assignedRole.role });
@@ -116,6 +116,13 @@ namespace Controllers
                 if (RoleUtils.IsPatient(user.Role)) {
                     if (await _patientService.InvalidUserId(user.Email, user.Id)) {
                         return BadRequest(new { Message = "Patient does not have its user assigned." });
+                    }
+                }
+
+                if (emailAndRole.Roles == null || emailAndRole.Roles.Count == 0 || emailAndRole.Roles[0] == null) {
+                    var roleAssigned = await _iamService.AssignRoleToUserAsync(email, accessToken);
+                    if (!roleAssigned.done || !string.Equals(roleAssigned.role.Trim().ToLower(), RoleUtils.ToString(user.Role).Trim().ToLower())) {
+                        return BadRequest(new { Message = "Failed to assign role to user." });
                     }
                 }
 

@@ -20,11 +20,11 @@ export class AuthService {
     constructor(private http: HttpClient, private router: Router) {}
 
     isAuthenticated(): boolean {
-      return sessionStorage.getItem(this.tokenKey) !== null;
+      return localStorage.getItem(this.tokenKey) !== null;
     }
 
     getToken(): string {
-      const token = sessionStorage.getItem(this.tokenKey);
+      const token = localStorage.getItem(this.tokenKey);
       if (!token) {
         this.updateMessage('Error getting token: ' + 'Token is empty');
         this.updateIsError(true);
@@ -33,7 +33,7 @@ export class AuthService {
     }
 
     setToken(accessToken: string): void {
-      sessionStorage.setItem(this.tokenKey, accessToken);
+      localStorage.setItem(this.tokenKey, accessToken);
     }
 
     verifyToken() : boolean {
@@ -55,7 +55,7 @@ export class AuthService {
     }
 
     clearToken(): void {
-      sessionStorage.removeItem(this.tokenKey);      
+      localStorage.removeItem(this.tokenKey);      
     }
 
     updateMessage(newMessage: string) {
