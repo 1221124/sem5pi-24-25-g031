@@ -123,6 +123,8 @@ namespace Controllers
                     var roleAssigned = await _iamService.AssignRoleToUserAsync(email, accessToken);
                     if (!roleAssigned.done || !string.Equals(roleAssigned.role.Trim().ToLower(), RoleUtils.ToString(user.Role).Trim().ToLower())) {
                         return BadRequest(new { Message = "Failed to assign role to user." });
+                    } else {
+                        return Ok(new { exists = true, Message = "Login successful! If it's the first time you're logging in our system using a different login method, please login again to be redirected to your profile." });
                     }
                 }
 
