@@ -7,6 +7,7 @@ import {AppModule} from '../../../app.module';
 import {CommonModule} from '@angular/common';
 import {PatientDetailsComponent} from '../patient-details/patient-details.component';
 import {PatientContactInfoComponent} from '../patient-contact-info/patient-contact-info.component';
+import {DeleteAccountButtonComponent} from '../delete-account-button/delete-account-button.component';
 
 @Component({
   selector: 'app-patient-main',
@@ -15,7 +16,8 @@ import {PatientContactInfoComponent} from '../patient-contact-info/patient-conta
   imports: [
     CommonModule,
     PatientDetailsComponent,
-    PatientContactInfoComponent
+    PatientContactInfoComponent,
+    DeleteAccountButtonComponent
   ],
   standalone: true
 })
@@ -83,23 +85,6 @@ export class PatientComponent {
       })
       .catch((error) => {
         this.handleError('Error fetching patient-main data: ' + error.message);
-      });
-  }
-
-  async deletePatient() {
-    if (!this.patient) return;
-
-    await this.patientService.deletePatient(this.patient.Id, this.accessToken)
-      .then((response) => {
-        if (response.status === 200) {
-          this.message = 'Patient deleted successfully!';
-          this.success = true;
-        } else {
-          this.handleError('Failed to delete patient-main. Response status: ' + response.status);
-        }
-      })
-      .catch((error) => {
-        this.handleError('Error deleting patient-main: ' + error.message);
       });
   }
 

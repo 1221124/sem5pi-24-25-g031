@@ -5,6 +5,9 @@ import {PatientDetailsComponent} from './patient-details/patient-details.compone
 import {AppModule} from '../../app.module';
 import {AppComponent} from '../../app.component';
 import {FormsModule} from '@angular/forms';
+import {DeleteAccountButtonComponent} from './delete-account-button/delete-account-button.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ToastrModule} from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -14,11 +17,13 @@ import {FormsModule} from '@angular/forms';
     CommonModule,
     FormsModule,
     PatientComponent,
-    PatientDetailsComponent
+    PatientDetailsComponent,
+    DeleteAccountButtonComponent,
   ],
   exports: [
     PatientComponent,
-    PatientDetailsComponent
+    PatientDetailsComponent,
+    DeleteAccountButtonComponent
   ]
 })
 export class PatientModule { }
