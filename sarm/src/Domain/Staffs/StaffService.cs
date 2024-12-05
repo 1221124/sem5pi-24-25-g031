@@ -557,7 +557,7 @@ namespace Domain.Staffs
             }
         }
 
-        public async Task<bool> HasUserIdNull(Email email)
+        public async Task<bool> InvalidUserId(Email email, Guid userId)
         {
             try {
                 var staff = await _repo.GetByEmailAsync(email);
@@ -566,7 +566,7 @@ namespace Domain.Staffs
                     return false;
                 }
 
-                return staff.UserId == null;
+                return staff.UserId == null || staff.UserId.AsGuid() != userId;
             } catch (Exception e) {
                 return false;
             }

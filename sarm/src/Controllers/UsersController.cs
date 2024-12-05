@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using Domain.Users;
 using Domain.Staffs;
-using Domain.Patients;
 using Domain.Emails;
 using Domain.IAM;
 using DDDNetCore.Domain.Patients;
@@ -109,14 +108,14 @@ namespace Controllers
                 if (!_service.Login(user)) return BadRequest(new { Message = "User does not exist or is not active." });
 
                 if (RoleUtils.IsStaff(user.Role)) {
-                    if (!await _staffService.IsActive(user.Email) || await _staffService.HasUserIdNull(user.Email)) {
-                        return BadRequest(new { Message = "Staff is not active or does not have an user assigned." });
+                    if (!await _staffService.IsActive(user.Email) || await _staffService.InvalidUserId(user.Email, user.Id)) {
+                        return BadRequest(new { Message = "Staff is not active or does not have its user assigned." });
                     }
                 }
 
                 if (RoleUtils.IsPatient(user.Role)) {
-                    if (await _patientService.HasUserIdNull(user.Email)) {
-                        return BadRequest(new { Message = "Patient does not have an user assigned." });
+                    if (await _patientService.InvalidUserId(user.Email, user.Id)) {
+                        return BadRequest(new { Message = "Patient does not have its user assigned." });
                     }
                 }
 

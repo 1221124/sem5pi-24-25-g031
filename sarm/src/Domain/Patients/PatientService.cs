@@ -482,7 +482,7 @@ namespace DDDNetCore.Domain.Patients
             }
         }
 
-        public async Task<bool> HasUserIdNull(Email email)
+        public async Task<bool> InvalidUserId(Email email, Guid userId)
         {
             try {
                 var patient = await _repo.GetByEmailAsync(email);
@@ -491,7 +491,7 @@ namespace DDDNetCore.Domain.Patients
                     return false;
                 }
 
-                return patient.UserId == null;
+                return patient.UserId == null || patient.UserId.AsGuid() != userId;
             } catch (Exception e) {
                 return false;
             }
