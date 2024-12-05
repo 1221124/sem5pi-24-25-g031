@@ -195,25 +195,39 @@ namespace DDDNetCore.Domain.Appointments
             return AppointmentMapper.ToDto(appointment);
         }
 
-        // public async Task<Appointment> DeleteAsync(AppointmentId id)
-        // {
-        //     try
-        //     {
-        //         var appointment = await _appointmentRepository.GetByIdAsync(id);
-        //
-        //         if (appointment == null)
-        //             return null;
-        //
-        //         await _appointmentRepository.Remove(appointment);
-        //         await _unitOfWork.CommitAsync();
-        //
-        //         return appointment;
-        //     }
-        //     catch (Exception)
-        //     {
-        //         return null;
-        //     }
-        // }
+        public async Task<AppointmentDto> GetByRequestCodeAsync(RequestCode requestCode)
+        {
+            try {
+                if (requestCode == null)
+                    throw new ArgumentNullException(nameof(requestCode));
+
+                var appointment = await _appointmentRepository.GetByRequestCodeAsync(requestCode);
+
+                if (appointment == null)
+                    return null;
+
+                return AppointmentMapper.ToDto(appointment);
+            } catch (Exception) {
+                return null;
+            }
+        }
+
+        public async Task<List<AppointmentDto>> GetByLicenseNumberAsync(LicenseNumber licenseNumber)
+        {
+            try {
+                if (licenseNumber == null)
+                    throw new ArgumentNullException(nameof(licenseNumber));
+
+                var appointments = await _appointmentRepository.GetByLicenseNumberAsync(licenseNumber);
+
+                if (appointments == null || appointments.Count == 0)
+                    return [];
+
+                return AppointmentMapper.ToDtoList(appointments);
+            } catch (Exception) {
+                return null;
+            }
+        }
     }
 }
             

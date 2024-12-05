@@ -3,8 +3,9 @@ using Domain.Shared;
 using Domain.Staffs;
 using Domain.DbLogs;
 using Domain.Emails;
-using Domain.Patients;
 using Microsoft.AspNetCore.Authorization;
+using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Domain.Appointments;
 
 namespace Controllers
 {
@@ -25,13 +26,18 @@ namespace Controllers
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public StaffController(StaffService service, IEmailService emailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService)
+        private readonly AppointmentService _appointmentService;
+        private readonly OperationRequestService _operationRequestService;
+
+        public StaffController(StaffService service, IEmailService emailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService, AppointmentService appointmentService, OperationRequestService operationRequestService)
         {
             _service = service;
             _emailService = emailService;
             _repo = repo;
             _dbLogService = dbLogService;
             _unitOfWork = unitOfWork;
+            _appointmentService = appointmentService;
+            _operationRequestService = operationRequestService;
         }
 
         // GET: api/Staff/?pageNumber=1
@@ -366,6 +372,14 @@ namespace Controllers
                 if (result == null)
                 {
                     return NotFound("Staff could not be inactivated.");
+                }
+
+                var appointments = await _appointmentService.GetByLicenseNumberAsync(result.LicenseNumber);
+                foreach (var appointment in appointments)
+                {
+                    await _appointmentService.DeleteAsync(new AppointmentId(appointment.Id));
+                    await _dbLogService.LogAction(EntityType.Appointment, DbLogType.Delete, "Appointment deleted");
+                    var operationRequest = await _operationRequestService.UpdateStatusToPending(appointment.RequestCode);
                 }
 
                 await _dbLogService.LogAction(EntityType.Staff, DbLogType.Deactivate, "Staff deactivated");

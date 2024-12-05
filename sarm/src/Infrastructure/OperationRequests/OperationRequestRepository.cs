@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DDDNetCore.Domain.OperationRequests;
 using Domain.OperationTypes;
+using Domain.Patients;
 using Domain.Shared;
 using Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +57,12 @@ namespace Infrastructure.OperationRequests
                 .FirstOrDefaultAsync();
 
             return lastRequest?.RequestCode;
+        }
+
+        public async Task<List<OperationRequest>> GetByPatient(MedicalRecordNumber patient)
+        {
+            return await _objs
+                .AsQueryable().Where(x => x.Patient.Equals(patient)).ToListAsync();
         }
     }
 }

@@ -1,5 +1,6 @@
 using DDDNetCore.Domain.OperationRequests;
 using Domain.OperationTypes;
+using Domain.Patients;
 using Domain.Shared;
 
 namespace DDDNetCore.Domain.OperationRequests
@@ -11,6 +12,7 @@ namespace DDDNetCore.Domain.OperationRequests
         Task<List<OperationRequest>> GetByStatusId(RequestStatus status);
         Task UpdateAsync(OperationRequest operationRequest);
         Task<string?> GetLastRequestCodeAsync();
+        Task<List<OperationRequest>> GetByPatient(MedicalRecordNumber patient);
         // Task<List<OperationRequest>> GetFilteredAsync(OperationRequestFilters filters);
     }
 }

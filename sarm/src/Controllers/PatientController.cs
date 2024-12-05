@@ -1,3 +1,5 @@
+using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using Domain.Emails;
@@ -20,14 +22,18 @@ namespace DDDNetCore.Controllers
         private readonly DbLogService _dbLogService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserService _userService;
+        private readonly OperationRequestService _operationRequestService;
+        private readonly AppointmentService _appointmentService;
         
-        public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, IEmailService emailService, UserService userService)
+        public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, IEmailService emailService, UserService userService, OperationRequestService operationRequestService, AppointmentService appointmentService)
         {
             _service = service;
             _dbLogService = dbLogService;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _userService = userService;
+            _operationRequestService = operationRequestService;
+            _appointmentService = appointmentService;
         }
 
         
@@ -296,9 +302,9 @@ namespace DDDNetCore.Controllers
             }
             
             await _unitOfWork.CommitAsync();
-            var patientDto2 = PatientMapper.ToDto(patient);
+            patientDto = PatientMapper.ToDto(patient);
             
-            return Ok (new {patient = patientDto2});
+            return Ok (new {patient = patientDto});
         }
 
         
@@ -314,15 +320,41 @@ namespace DDDNetCore.Controllers
 
                 if (patient == null)
                 {
-                    await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Patient not found");
+                    await _dbLogService.LogAction(EntityType.Patient, DbLogType.Error, "Patient not found");
                     await _unitOfWork.CommitAsync();
                     return NotFound();
                 }
+
+                var user = await _userService.GetByEmailAsync(patient.ContactInformation.Email);
+                if (user != null) {
+                    _ = await _userService.DeleteAsync(new UserId(user.Id));
+                }
+
+                var operationRequests = await _operationRequestService.GetByPatientAsync(patient.MedicalRecordNumber);
+                if (operationRequests == null)
+                {
+                    return BadRequest("Operation requests are null.");
+                } else if (operationRequests.Count > 0)
+                {
+                    foreach (var operationRequest in operationRequests)
+                    {
+                        var appointment = await _appointmentService.GetByRequestCodeAsync(operationRequest.RequestCode);
+                        if (appointment != null)
+                        {
+                            await _appointmentService.DeleteAsync(new AppointmentId(appointment.Id));
+                            await _operationRequestService.UpdateStatusToPending(operationRequest.RequestCode);
+                        }
+                        await _operationRequestService.DeleteAsync(new OperationRequestId(operationRequest.Id));
+                    }
+                }
+
+                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + patient.Id + "}");
+
                 return Ok(patient);
             }
             catch (BusinessRuleValidationException ex)
             {
-                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, ex.Message);
+                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Error, ex.Message);
                 await _unitOfWork.CommitAsync();
                 return BadRequest(new { ex.Message });
             }
@@ -338,6 +370,11 @@ namespace DDDNetCore.Controllers
 
             await _service.DeleteAsync(new PatientId(patientDto.Id));
             await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + new PatientId(patientDto.Id).Value + "}");
+
+            var user = await _userService.GetByEmailAsync(patientDto.ContactInformation.Email);
+            if (user != null) {
+                _ = await _userService.DeleteAsync(new UserId(user.Id));
+            }
 
             return Ok(patientDto);
         }

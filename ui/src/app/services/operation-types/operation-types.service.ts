@@ -64,6 +64,9 @@ export class OperationTypesService {
 
     const dto = {
       "Id": id,
+      "OperationTypeCode": {
+        "Value": operationType.OperationTypeCode
+      },
       "Name": {
         "Value": operationType.Name
       },
@@ -76,7 +79,10 @@ export class OperationTypesService {
         }
       })),
       "PhasesDuration": "PREPARATION: " + operationType.PhasesDuration.Preparation + ",SURGERY: " + operationType.PhasesDuration.Surgery + ",CLEANING: " + operationType.PhasesDuration.Cleaning,
-      "Status": operationType.Status
+      "Status": operationType.Status,
+      "Version": {
+        "Value": operationType.Version
+      }
     };
 
     const headers = new HttpHeaders({

@@ -265,6 +265,19 @@ namespace DDDNetCore.Domain.OperationRequests
             }
         }
 
+        public async Task<List<OperationRequestDto>> GetByPatientAsync(MedicalRecordNumber patient) {
+            try {
+                var requests = await _repo.GetByPatient(patient);
+
+                if(requests == null || requests.Count == 0) return [];
+
+                return OperationRequestMapper.ToDtoList(requests);
+            }
+            catch (Exception) {
+                return null;
+            }
+        }
+
         public async Task<OperationRequestDto?> GetByCodeAsync(RequestCode code)
         {
             try
@@ -336,7 +349,36 @@ namespace DDDNetCore.Domain.OperationRequests
                 {
                     if (request.Status == RequestStatus.ACCEPTED) continue;
                     await DeleteAsync(request.Id);
+                    await _logService.LogAction(EntityType.OperationRequest, DbLogType.Delete, "Deleted {" + request.Id + "}");
                     removed.Add(OperationRequestMapper.ToDto(request));
+                }
+                return removed;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<OperationRequestDto>> DeleteWithPatientAsync(MedicalRecordNumber medicalRecordNumber)
+        {
+            try {
+                List<OperationRequestDto> removed = new List<OperationRequestDto>();
+
+                var patient = await _patientService.GetByMedicalRecordNumberAsync(medicalRecordNumber);
+
+                if(patient == null) return null;
+
+                var requests = await GetFilteredAsync(null, null, patient.FullName.ToString(), null, null, null, null);
+
+                if(requests == null || requests.Count == 0) return removed;
+
+                foreach(var request in requests)
+                {
+                    if (request.Status == RequestStatus.ACCEPTED) continue;
+                    await DeleteAsync(new OperationRequestId(request.Id));
+                    await _logService.LogAction(EntityType.OperationRequest, DbLogType.Delete, "Deleted {" + request.Id + "}");
+                    removed.Add(request);
                 }
                 return removed;
             }

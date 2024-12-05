@@ -92,7 +92,7 @@ namespace Controllers
         }
 
         
-        // PUT: api/OperationTypes/id
+        // PUT: api/OperationTypes/{id}
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> Update(Guid id, [FromBody] OperationTypeDto dto)
@@ -120,7 +120,7 @@ namespace Controllers
             }
         }
 
-        // DELETE: api/OperationTypes/id
+        // DELETE: api/OperationTypes/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
@@ -151,7 +151,7 @@ namespace Controllers
             return Ok();
         }
         
-        // DELETE: api/OperationTypes/id/hard
+        // DELETE: api/OperationTypes/{id}/hard
         [HttpDelete("{id}/hard")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> HardDelete(Guid id)
@@ -166,11 +166,11 @@ namespace Controllers
                     return NotFound();
                 }
 
-                // if (_service.CheckIfOperationTypeIsActive(operationType))
-                // {
-                //     _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error deleting operation type: operation type is active"));
-                //     return BadRequest(new { Message = "It is not possible to delete an active operation type." });
-                // }
+                if (_service.CheckIfOperationTypeIsActive(operationType))
+                {
+                    _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error deleting operation type: operation type is active"));
+                    return BadRequest(new { Message = "It is not possible to delete an active operation type." });
+                }
 
                 _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Delete, new Message($"Delete {operationType.Id}"));
                 return Ok(operationType);
