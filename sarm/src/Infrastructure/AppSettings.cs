@@ -4,7 +4,9 @@ namespace Infrastructure
     {
         public static string EmailDomain { get; private set; }
         public static string ConnectionString { get; private set; }
-        public static string Email { get; private set; }
+        public static string SmtpServer { get; private set; }
+        public static string SmtpPort { get; private set; }
+        public static string FromEmail { get; private set; }
         public static string Password { get; private set; }
         public static string IAMDomain { get; private set; }
         public static string IAMAudience { get; private set; }
@@ -14,6 +16,9 @@ namespace Infrastructure
         public static string IAMLoginUrl { get; private set; }
         public static string IAMLogoutUrl { get; private set; }
         public static string VerifyEmailUrl { get; private set; }
+        public static string SensitiveInfoStaffUrl { get; private set; }
+        public static string SensitiveInfoPatientUrl { get; private set; }
+        public static string RemoveSensitiveInfoPatientUrl { get; private set; }
         public static string AdminEmail { get; private set; }
         public static string DoctorEmail { get; private set; }
         public static string NurseEmail { get; private set; }
@@ -31,7 +36,9 @@ namespace Infrastructure
         {
             EmailDomain = configuration["EmailSettings:EmailDomain"];
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
-            Email = configuration["SendEmailSettings:Email"];
+            SmtpServer = configuration["SendEmailSettings:SmtpServer"];
+            SmtpPort = configuration["SendEmailSettings:Port"];
+            FromEmail = configuration["SendEmailSettings:FromEmail"];
             Password = configuration["SendEmailSettings:Password"];
             IAMDomain = configuration["IAM:Domain"];
             IAMClientId = configuration["IAM:ClientId"];
@@ -41,6 +48,9 @@ namespace Infrastructure
             IAMLoginUrl = configuration["IAM:LoginURL"];
             IAMLogoutUrl = configuration["IAM:LogoutURL"];
             VerifyEmailUrl = configuration["VerifyEmailUrl"];
+            SensitiveInfoStaffUrl = configuration["SensitiveInfoStaffUrl"];
+            SensitiveInfoPatientUrl = configuration["SensitiveInfoPatientUrl"];
+            RemoveSensitiveInfoPatientUrl = configuration["RemoveSensitiveInfoPatientUrl"];
             AdminEmail = configuration["Email:Admin"];
             DoctorEmail = configuration["Email:Doctor"];
             NurseEmail = configuration["Email:Nurse"];

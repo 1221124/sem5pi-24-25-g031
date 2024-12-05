@@ -393,8 +393,8 @@ namespace DDDNetCore.Domain.Patients
                 var dto = PatientMapper.ToDto(patient);
                 var creatingPatientDto = PatientMapper.ToUpdatingPatientDto(dto);
                     
-                //var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
-                //await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
+                var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
+                await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
                 
                 await DeleteAsync(patient.Id);
                 return PatientMapper.ToDto(patient);
@@ -415,8 +415,7 @@ namespace DDDNetCore.Domain.Patients
                 return null;
             try
             {
-                //var emailService = new EmailService("smtp.gmail.com", 587, "gui.cr04@gmail.com", "your-password");
-                //await emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
+                await _emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
             }catch(Exception e)
             {
                 Console.WriteLine(e.Message);

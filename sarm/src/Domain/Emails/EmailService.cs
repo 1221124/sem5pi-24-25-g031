@@ -1,46 +1,48 @@
-
 using Domain.Shared;
 using System.Security.Cryptography;
 using System.Web;
 using DDDNetCore.Domain.Patients;
 using Infrastructure;
-using RestSharp;
 using System.Text;
 using Domain.Staffs;
+using System.Net.Mail;
+using System.Net;
 
 namespace Domain.Emails
 {
-    public class EmailService: IEmailService
+    public class EmailService : IEmailService
     {
-        private readonly string _fromEmail;
-        private readonly string _apiKey;
 
-        public EmailService(string fromEmail, string apiKey)
+        public EmailService()
         {
-            _fromEmail = fromEmail;
-            _apiKey = apiKey;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        public async Task SendEmailAsync(string to, string subject, string body)
         {
             try
             {
-                var client = new RestClient("https://api.sendinblue.com/v3/smtp/email");
-                var request = new RestRequest("", Method.Post);
-                request.AddHeader("api-key", _apiKey);
-                request.AddJsonBody(new
+                using (var smtpClient = new SmtpClient(AppSettings.SmtpServer, int.Parse(AppSettings.SmtpPort)))
                 {
-                    sender = new { name = "SARM G031", email = _fromEmail },
-                    to = new[] { new { email = toEmail, name = toEmail } },
-                    subject = subject,
-                    htmlContent = body
-                });
+                    smtpClient.Credentials = new NetworkCredential(AppSettings.FromEmail, AppSettings.Password);
+                    smtpClient.EnableSsl = true;
 
-                var response = await client.ExecuteAsync<dynamic>(request);
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(AppSettings.FromEmail, "SARM G031"),
+                        Subject = subject,
+                        Body = body,
+                        IsBodyHtml = true
+                    };
+
+                    mailMessage.To.Add(new MailAddress(to));
+
+                    await smtpClient.SendMailAsync(mailMessage);
+                    Console.WriteLine("Email sent successfully!");
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return;
+                throw new ApplicationException("Error sending email : " + ex.Message);
             }
         }
 
@@ -80,7 +82,7 @@ namespace Domain.Emails
         public async Task<(string subject, string body)> GenerateVerificationEmailContentSensitiveInfoStaff(String oldEmail, UpdatingStaffDto dto)
         {
             var subject = "Please verify that you want to change sensitive information";
-            var baseUrl = "Staff";
+            var baseUrl = "staff";
             var link = GenerateLinkSensitiveInfo(baseUrl, oldEmail, dto.PendingPhoneNumber, dto.PendingEmail);
             var body = $"Hi, {oldEmail}!\n\nYou have requested to change sensitive information. Click on the link below to change it: {link}.\n\nSARM G031";
 
@@ -90,13 +92,14 @@ namespace Domain.Emails
 
         public string GenerateLink(string email)
         {
-            return $"http://localhost:5500/api/Users/verify?token={EncodeToken(email)}";
+            return $"{AppSettings.VerifyEmailUrl}?token={EncodeToken(email)}";
         }
-        
         
         public string GenerateLinkSensitiveInfo(string baseUrl, string email, PhoneNumber? phoneNumber, Email? newEmail)
         {
-            var uriBuilder = new UriBuilder($"http://localhost:5500/api/{baseUrl}/sensitiveInfo?token={EncodeToken(email)}");
+            var url = string.Equals(baseUrl.Trim().ToLower(), "patient") ? AppSettings.SensitiveInfoPatientUrl : AppSettings.SensitiveInfoStaffUrl;
+
+            var uriBuilder = new UriBuilder($"{url}?token={EncodeToken(email)}");
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             
             if (phoneNumber != null)
@@ -114,7 +117,7 @@ namespace Domain.Emails
         
         public string GenerateLinkRemoveSensitiveInfo(string email)
         {
-            return $"http://localhost:5500/api/Patient/removePatient?token={EncodeToken(email)}";
+            return $"{AppSettings.RemoveSensitiveInfoPatientUrl}?token={EncodeToken(email)}";
         }
 
         public string GenerateToken()

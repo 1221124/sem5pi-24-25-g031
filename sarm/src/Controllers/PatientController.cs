@@ -14,7 +14,7 @@ namespace DDDNetCore.Controllers
     {
         private const int PageSize = 2;
         private readonly PatientService _service;
-        private readonly IEmailService _emailService;
+        private readonly EmailService _emailService;
         
         private readonly DbLogService _dbLogService;
         private readonly IUnitOfWork _unitOfWork;
@@ -257,8 +257,8 @@ namespace DDDNetCore.Controllers
 
                 if (dto.PendingPhoneNumber == null && dto.PendingEmail == null) return Ok(new { patient = patient });
                 
-                //var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(dto);
-                //await _emailService.SendEmailAsync(dto.EmailId.Value, subject, body);
+                // var (subject, body) = await _emailService.GenerateVerificationEmailContentSensitiveInfo(dto);
+                // _emailService.SendEmail(dto.EmailId.Value, subject, body);
 
                 return Ok(new { patient = patient });
             }
