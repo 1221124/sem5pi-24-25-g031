@@ -169,7 +169,7 @@ namespace DDDNetCore.Controllers
                 var operationRequestDto = await _operationRequestService.DeleteAsync(new OperationRequestId(id));
 
                 if (operationRequestDto == null)
-                    return NotFound();
+                    return NotFound("Unable to delete request: either it does not exist or it is already scheduled. Please unschedule it first.");
                 
                 return Ok(new { message = "Operation Request deleted successfully." });
             }

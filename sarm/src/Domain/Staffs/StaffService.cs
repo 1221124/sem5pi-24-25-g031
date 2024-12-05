@@ -571,5 +571,27 @@ namespace Domain.Staffs
                 return false;
             }
         }
+
+        public async Task<List<StaffDto>> DeleteAppointmentAsync(AppointmentDto appointment)
+        {
+            try {
+                var staffs = await _repo.GetAllAsync();
+                List<StaffDto> removed = new List<StaffDto>();
+                foreach (var staff in staffs) {
+                    if (staff.SlotAppointement != null && staff.SlotAppointement.Count > 0) {
+                        foreach (var slot in staff.SlotAppointement) {
+                            if (slot.Start == appointment.AppointmentDate.Start && slot.End == appointment.AppointmentDate.End) {
+                                staff.RemoveAppointmentSlot(slot);
+                                await _unitOfWork.CommitAsync();
+                                removed.Add(StaffMapper.ToDto(staff));
+                            }
+                        }
+                    }
+                }
+                return removed;
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
 }

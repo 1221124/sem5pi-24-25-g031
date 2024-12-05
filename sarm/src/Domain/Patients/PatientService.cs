@@ -496,6 +496,22 @@ namespace DDDNetCore.Domain.Patients
                 return false;
             }
         }
+
+        public async Task<PatientDto> DeleteAppointmentAsync(OperationRequestDto operationRequestDto, AppointmentDto appointment)
+        {
+            try {
+                var patient = await _repo.GetByMedicalRecordNumberAsync(operationRequestDto.Patient);
+                if (patient == null)
+                {
+                    return null;
+                }
+                patient.RemoveAppointmentHistory(appointment.AppointmentDate);
+                await _unitOfWork.CommitAsync();
+                return PatientMapper.ToDto(patient);
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
     
 }

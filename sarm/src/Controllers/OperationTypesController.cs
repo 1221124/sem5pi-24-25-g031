@@ -4,6 +4,7 @@ using Domain.OperationTypes;
 using Domain.DbLogs;
 using DDDNetCore.Domain.DbLogs;
 using Microsoft.AspNetCore.Authorization;
+using DDDNetCore.Domain.OperationRequests;
 
 namespace Controllers
 {
@@ -14,11 +15,13 @@ namespace Controllers
         private readonly int pageSize = 2;
         private readonly OperationTypeService _service;
         private readonly DbLogService _dbLogService;
+        private readonly OperationRequestService _operationRequestService;
 
-        public OperationTypesController(OperationTypeService service, DbLogService dbLogService)
+        public OperationTypesController(OperationTypeService service, DbLogService dbLogService, OperationRequestService operationRequestService)
         {
             _service = service;
             _dbLogService = dbLogService;
+            _operationRequestService = operationRequestService;
         }
 
         // GET: api/OperationTypes?pageNumber={pageNumber}&?name={name}&?specialization={specialization}&?status={status}
@@ -122,7 +125,7 @@ namespace Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
         {
-            var operationType = await _service.InactivateAsync(new OperationTypeId(id));
+            var operationType = await _service.GetByIdAsync(new OperationTypeId(id));
 
             if (operationType == null)
             {
@@ -134,6 +137,14 @@ namespace Controllers
             {
                 _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error inactivating operation type: operation type is inactive"));
                 return BadRequest(new { Message = "It is not possible to inactivate an already inactive operation type." });
+            }
+
+            operationType = await _service.InactivateAsync(new OperationTypeId(id));
+
+            var operationRequest = await _operationRequestService.DeleteWithOperationTypeAsync(operationType.Name);
+            if (operationRequest == null) {
+                _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Error, new Message("Error inactivating operation type: name not found while deleting operation requests"));
+                return NotFound();
             }
 
             _ = await _dbLogService.LogAction(EntityType.OperationType, DbLogType.Deactivate, new Message($"Deactivate {operationType.Id}"));

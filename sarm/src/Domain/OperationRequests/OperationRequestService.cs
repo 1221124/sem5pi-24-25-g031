@@ -120,7 +120,13 @@ namespace DDDNetCore.Domain.OperationRequests
                 var category = await this._repo.GetByIdAsync(id);
 
                 if (category == null){
-                    await _logService.LogAction(entity, log, "Unable to delete {" + id + "}");
+                    await _logService.LogAction(entity, log, "Unable to delete {" + id + "} because it does not exist.");
+                    return null;
+                }
+
+                if (category.Status == RequestStatus.ACCEPTED)
+                {
+                    await _logService.LogAction(entity, log, "Unable to delete {" + id + "} because it is already accepted.");
                     return null;
                 }
                 
@@ -290,6 +296,54 @@ namespace DDDNetCore.Domain.OperationRequests
 
             int nextNumber = lastNumber + 1;
             return new RequestCode($"req{nextNumber}");
+        }
+
+        public async Task<OperationRequestDto> UpdateStatusToPending(RequestCode code)
+        {
+            try
+            {
+                var request = await _repo.GetByCode(code);
+
+                if(request == null) return null;
+
+                request.Status = RequestStatus.PENDING;
+
+                await _repo.UpdateAsync(request);
+                await _unitOfWork.CommitAsync();
+
+                return OperationRequestMapper.ToDto(request);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<OperationRequestDto>> DeleteWithOperationTypeAsync(Name name)
+        {
+            try {
+                List<OperationRequestDto> removed = new List<OperationRequestDto>();
+
+                var operationType = await _operationTypeService.GetByNameAsync(name);
+
+                if(operationType == null) return null;
+
+                var requests = await _repo.GetByOperationType(operationType.OperationTypeCode);
+
+                if(requests == null || requests.Count == 0) return removed;
+
+                foreach(var request in requests)
+                {
+                    if (request.Status == RequestStatus.ACCEPTED) continue;
+                    await DeleteAsync(request.Id);
+                    removed.Add(OperationRequestMapper.ToDto(request));
+                }
+                return removed;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

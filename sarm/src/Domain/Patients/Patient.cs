@@ -257,5 +257,18 @@ namespace DDDNetCore.Domain.Patients
 
             AppointmentHistory.Add(appointment);
         }
+
+        public void RemoveAppointmentHistory(Slot appointmentDate)
+        {
+            if (appointmentDate == null)
+            {
+                throw new ArgumentNullException("AppointmentDate is null.");
+            }
+
+            if (AppointmentHistory != null && AppointmentHistory.Contains(appointmentDate))
+            {
+                AppointmentHistory.Remove(appointmentDate);
+            } 
+        }
     }
 }

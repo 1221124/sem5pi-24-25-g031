@@ -97,5 +97,12 @@ namespace Domain.Shared
                    this.End.Hour == date.End.Hour &&
                    this.End.Minute == date.End.Minute;
         }
+
+        public bool SameDay(Slot slot)
+        {
+            return this.Start.Date.Year == slot.Start.Date.Year &&
+                   this.Start.Date.Month == slot.Start.Date.Month &&
+                   this.Start.Date.Day == slot.Start.Date.Day;
+        }
     }
 }

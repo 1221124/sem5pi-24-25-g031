@@ -182,6 +182,19 @@ namespace DDDNetCore.Domain.Appointments
             }
         }
 
+        public async Task<AppointmentDto> DeleteAsync(AppointmentId id)
+        {
+            var appointment = await this._appointmentRepository.GetByIdAsync(id); 
+
+            if (appointment == null)
+                return null;
+            
+            this._appointmentRepository.Remove(appointment);
+            await this._unitOfWork.CommitAsync();
+
+            return AppointmentMapper.ToDto(appointment);
+        }
+
         // public async Task<Appointment> DeleteAsync(AppointmentId id)
         // {
         //     try

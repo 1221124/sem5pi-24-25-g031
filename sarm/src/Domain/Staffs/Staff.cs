@@ -130,5 +130,13 @@ namespace Domain.Staffs
             }
             return LicenseNumber == ((Staff)obj).LicenseNumber;
         }
+
+        public void RemoveAppointmentSlot(Slot slot)
+        {
+            if (SlotAppointement != null && SlotAppointement.Contains(slot))
+            {
+                SlotAppointement.Remove(slot);
+            }
+        }
     }
 }
