@@ -3,6 +3,7 @@ using Domain.DbLogs;
 using Domain.Emails;
 using Domain.Patients;
 using Domain.Shared;
+using Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,13 +19,15 @@ namespace DDDNetCore.Controllers
         
         private readonly DbLogService _dbLogService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserService _userService;
         
-        public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, IEmailService emailService)
+        public PatientController(PatientService service, DbLogService dbLogService, IUnitOfWork unitOfWork, IEmailService emailService, UserService userService)
         {
             _service = service;
             _dbLogService = dbLogService;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
+            _userService = userService;
         }
 
         
@@ -232,6 +235,10 @@ namespace DDDNetCore.Controllers
             }
             else
             {
+                var user = await _userService.GetByEmailAsync(patient.ContactInformation.Email);
+                if (user != null) {
+                    await _service.AssignUserId(patient, user.Id);
+                }
                 return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
             }
         }

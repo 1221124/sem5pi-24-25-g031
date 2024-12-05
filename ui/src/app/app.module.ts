@@ -21,6 +21,7 @@ import {PatientModule} from './components/patient/patient.module';
 import { StaffModule } from './components/staffs-main/staffs.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { VerifyPatientSensitiveInfoComponent } from './components/verify-patient-sensitive-info/verify-patient-sensitive-info.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { VerifyEmailComponent } from './components/verify-email/verify-email.com
     DoctorMenuComponent,
     HomeComponent,
     NurseMenuComponent,
-    TechnicianMenuComponent
+    TechnicianMenuComponent,
+    VerifyPatientSensitiveInfoComponent
   ],
   imports: [
     BrowserModule,
