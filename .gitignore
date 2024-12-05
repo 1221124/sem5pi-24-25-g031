@@ -6,8 +6,6 @@ sarm/bin
 sarm/obj
 ui/node_modules
 *.cache
-/DDDNetCore.Tests/obj
-/sarm/obj
 dist/
 wwwroot/
 publish/
