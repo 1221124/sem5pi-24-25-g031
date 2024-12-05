@@ -1,3 +1,9 @@
+<div
+  *ngIf="showNotification"
+  [class]="'notification ' + (success ? 'success' : 'error')"
+>
+  {{ message }}
+</div>
 <div class="patient-edit-buttons">
   <div>
     <button class="edit-btn" (click)="openEditModal()">Update Contact Information</button>
@@ -23,5 +29,4 @@
       </div>
     </div>
   </div>
-  <p *ngIf="message" [class.success]="success" [class.error]="!success">{{ message }}</p>
 </div>

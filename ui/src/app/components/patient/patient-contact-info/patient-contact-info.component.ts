@@ -27,9 +27,10 @@ export class PatientContactInfoComponent {
   tempEmail: string = '';
   tempPhoneNumber: string = '';
 
+  showNotification: boolean = false;
+
   constructor(
-    private patientService: PatientService
-  ) {}
+    private patientService: PatientService) {}
 
   async saveChanges() {
     if (!this.patient || !this.accessToken) return;
@@ -42,31 +43,42 @@ export class PatientContactInfoComponent {
       }
     };
 
-    await this.patientService.update(updatedPatient, this.patient.ContactInformation.Email, this.accessToken)
+    await this.patientService
+      .update(updatedPatient, this.patient.ContactInformation.Email, this.accessToken)
       .then((response) => {
         if (response.status === 200) {
-          this.message = 'Patient information updated successfully!';
           this.success = true;
+          this.message = 'Patient information updated successfully!';
           this.patient = { ...updatedPatient };
           this.patientUpdated.emit(updatedPatient);
+          this.showNotification = true;
+          this.closeEditModal();
+          this.hideNotificationAfterDelay();
         } else {
-          this.handleError('Failed to update patient-main. Response status: ' + response.status);
+          this.displayError('Failed to update patient information.');
         }
       })
       .catch((error) => {
-        this.handleError('Error updating patient-main information: ' + error.message);
+        this.displayError('Error updating patient information: ' + error.message);
       });
   }
 
-  private handleError(message: string) {
-    this.message = message;
+  displayError(errorMessage: string) {
     this.success = false;
-    console.error(message);
+    this.message = errorMessage;
+    this.showNotification = true;
+    this.hideNotificationAfterDelay();
+  }
+
+  hideNotificationAfterDelay() {
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 5000); // Notificação desaparece após 5 segundos
   }
 
   openEditModal() {
-    this.tempEmail = this.patient.ContactInformation.Email;
-    this.tempPhoneNumber = this.patient.ContactInformation.PhoneNumber.toString();
+    this.tempEmail = this.patient.ContactInformation.Email || '';
+    this.tempPhoneNumber = this.patient.ContactInformation.PhoneNumber.toString() || '';
     this.isModalOpen = true;
   }
 

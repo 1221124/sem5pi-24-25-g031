@@ -19,6 +19,7 @@ import { PrologComponent } from './components/prolog/prolog.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
 import {PatientModule} from './components/patient/patient.module';
 import { StaffModule } from './components/staffs-main/staffs.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import { StaffModule } from './components/staffs-main/staffs.module';
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
     FormsModule,
+    BrowserAnimationsModule,
     AdminUsersComponent,
     AppComponent,
     AuthCallbackComponent,

@@ -5,7 +5,7 @@
 }
 
 .patient-edit-buttons button {
-  background-color: #007bff;
+  background-color: #89c392;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -16,7 +16,7 @@
 }
 
 .patient-edit-buttons button:hover {
-  background-color: #0056b3;
+  background-color: #6a9771;
 }
 
 .modal {
@@ -80,12 +80,12 @@
 }
 
 .modal-actions .save-btn {
-  background-color: #28a745;
+  background-color:#89c392;
   color: white;
 }
 
 .modal-actions .save-btn:hover {
-  background-color: #218838;
+  background-color: #6a9771;
 }
 
 .modal-actions .close-btn {
@@ -96,3 +96,30 @@
 .modal-actions .close-btn:hover {
   background-color: #c82333;
 }
+
+/* Notificação */
+.notification {
+  position: fixed;
+  top: 85px;
+  right: 20px;
+  z-index: 1000;
+  padding: 15px 20px;
+  border-radius: 40px;
+  font-size: 16px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+/* Sucesso */
+.notification.success {
+  background-color: #89c392; /* Verde */
+}
+
+/* Erro */
+.notification.error {
+  background-color: #dc3545; /* Vermelho */
+}
+
+
