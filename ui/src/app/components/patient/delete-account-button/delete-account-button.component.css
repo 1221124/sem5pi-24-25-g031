@@ -1,11 +1,11 @@
 .patient-delete-button {
   display: flex;
   justify-content: center;
-  margin: 20px 0;
+  align-items: center;
 }
 
 .patient-delete-button button {
-  background-color: #dc3545;
+  background-color: #d9534f;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -16,7 +16,7 @@
 }
 
 .patient-delete-button button:hover {
-  background-color: #c82333;
+  background-color: #c9302c;
 }
 
 .modal {
@@ -53,7 +53,7 @@
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  margin-top: 10px;
 }
 
 .modal-actions button {
@@ -64,20 +64,43 @@
   font-size: 14px;
 }
 
-.modal-actions .delete-btn {
-  background-color: #dc3545;
-  color: white;
-}
-
-.modal-actions .delete-btn:hover {
-  background-color: #c82333;
-}
-
 .modal-actions .cancel-btn {
   background-color: #007bff;
   color: white;
 }
 
 .modal-actions .cancel-btn:hover {
-  background-color: #c82333;
+  background-color: #0056b3;
 }
+
+.modal-actions .delete-button {
+  background-color:#c9302c;
+  color: white;
+}
+
+.modal-actions .delete-button:hover {
+  background-color: #b52b27;
+}
+
+.notification {
+  position: fixed;
+  top: 85px;
+  right: 20px;
+  z-index: 1000;
+  padding: 15px 20px;
+  border-radius: 40px;
+  font-size: 16px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.notification.success {
+  background-color: #89c392;
+}
+
+.notification.error {
+  background-color: #dc3545;
+}
+

@@ -1,3 +1,9 @@
+<div
+  *ngIf="showNotification"
+  [class]="'notification ' + (success ? 'success' : 'error')"
+>
+  {{ message }}
+</div>
 <div class="patient-delete-button">
   <div>
     <button class="open-modal-btn" (click)="openDeleteModal()">Delete Account</button>

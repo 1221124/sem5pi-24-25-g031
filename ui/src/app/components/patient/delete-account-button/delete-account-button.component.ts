@@ -18,11 +18,16 @@ import {PatientService} from '../../../services/patient/patient.service';
 export class DeleteAccountButtonComponent{
   @Input() patient!: Patient;
   @Input() accessToken!: string;
+  @Output() patientDeleted = new EventEmitter<Patient>();
 
   message: string = '';
   success: boolean = true;
 
   isModalOpen: boolean = false;
+  tempEmail: string = '';
+  tempPhoneNumber: string = '';
+
+  showNotification: boolean = false;
 
   constructor(
     private patientService: PatientService
@@ -36,26 +41,39 @@ export class DeleteAccountButtonComponent{
         if (response.status === 200) {
           this.message = 'Patient deleted successfully!';
           this.success = true;
+          this.patient = { ...this.patient };
+          this.patientDeleted.emit(this.patient);
+          this.showNotification = true;
           this.closeDeleteModal();
+          this.hideNotificationAfterDelay();
         } else {
-          this.handleError('Failed to delete patient-main. Response status: ' + response.status);
+          this.displayError('Failed to delete patient profile.');
         }
       })
       .catch((error) => {
-        this.handleError('Error deleting patient-main: ' + error.message);
+        this.displayError('Error updating patient information: ' + error.message);
       });
-  }
-
-  private handleError(message: string) {
-
   }
 
   openDeleteModal() {
     this.isModalOpen = true;
   }
 
-  // Fechar o modal
   closeDeleteModal() {
     this.isModalOpen = false;
+  }
+
+
+  displayError(errorMessage: string) {
+    this.success = false;
+    this.message = errorMessage;
+    this.showNotification = true;
+    this.hideNotificationAfterDelay();
+  }
+
+  hideNotificationAfterDelay() {
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 5000); // Notificação desaparece após 5 segundos
   }
 }
