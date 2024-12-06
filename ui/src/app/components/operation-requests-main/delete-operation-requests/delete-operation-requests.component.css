@@ -1,0 +1,94 @@
+/* Modal Styling for Deletion */
+.delete-modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 500px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.delete-modal h3 {
+  color: var(--danger-color);
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.delete-modal p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.delete-modal strong {
+  color: #333;
+}
+
+/* Actions Section */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px; /* Slightly larger for visibility */
+  font-weight: bold;
+  border: 2px solid transparent; /* Add a border for hover effect */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+}
+
+/* "Yes, Delete" Button */
+.actions button:first-of-type {
+  background-color: #4CAF50; /* Bright red for delete */
+  color: white;
+}
+
+.actions button:first-of-type:hover {
+  background-color: #3e8e41; /* Slightly darker green */
+  border-color: #3e8e41;
+
+  transform: scale(1.03);
+}
+
+/* "Cancel" Button */
+.actions button:last-of-type {
+  background-color: #ff4d4d; /* Bright green for cancel */
+  color: white;
+}
+
+.actions button:last-of-type:hover {
+  background-color: #e63939; /* Slightly darker red */
+  border-color: #e63939;
+  transform: scale(1.03);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .delete-modal {
+    width: 90%;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+/* Color Variables (For Consistency) */
+:root {
+  --danger-color: #af5454;
+  --hover-danger: #974747;
+  --success-color: #4CAF50; /* New brighter green */
+  --hover-success: #3e8e41;
+}
