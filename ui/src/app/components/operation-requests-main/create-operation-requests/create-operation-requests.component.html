@@ -1,0 +1,55 @@
+<div>
+  <h1>Create Operation Request</h1>
+
+  <!-- Create Modal -->
+  <div class="modal-content">
+    <span type="button" class="close" (click)="emitCloseModalEvent()">&times;</span>
+    <h2>Operation Request Form</h2>
+
+    <form class="form-group">
+      <!-- Patient Selection -->
+      <div>
+        <select *ngIf="patients.length" id="patient" name="patient" [(ngModel)]="selectedPatient"
+                (focus)="patientTouched = true">
+          <option value="" disabled selected>Select Patient</option>
+          <option *ngFor="let patient of patients" [value]="patient.medicalRecordNumber.value ">
+            {{ patient.contactInformation.email.value }} >>> {{ patient.medicalRecordNumber.value }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Operation Type Selection -->
+      <div>
+        <select *ngIf="operationTypes?.length" id="operationType" name="operationType"
+                [(ngModel)]="selectedOperationType"
+                (focus)="operationTypeTouched = true">
+          <option value="" disabled selected>Select Operation Type</option>
+          <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">
+            {{ operationType.Specialization }} >>> {{ operationType.Name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Date Selection -->
+      <div>
+        <input type="date" id="deadlineDate" name="deadlineDate" [(ngModel)]="selectedDeadlineDate"
+               (focus)="deadlineDateTouched = true"/>
+      </div>
+
+      <!-- Priority Selection -->
+      <div>
+        <select id="priority" name="priority" [(ngModel)]="selectedPriority"
+                (focus)="priorityTouched = true">
+          <option value="" disabled selected>Select Priority</option>
+          <option *ngFor="let priority of priorities" [value]="priority">
+            {{ priority }}
+          </option>
+        </select>
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn-create-request" (click)="submit()">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>

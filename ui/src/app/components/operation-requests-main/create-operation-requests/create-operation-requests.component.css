@@ -1,0 +1,105 @@
+/* General styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+h1 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-top: 20px;
+}
+
+/* Modal Styling */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: #333;
+}
+
+.close {
+  color: #aaa;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: black;
+}
+
+/* Form Styling */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+select, input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+select:focus, input[type="date"]:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Button Styling */
+.button-group {
+  text-align: center;
+  background-color: rgba(0, 0, 255, 0.5); /* Temporary visual aid */
+}
+
+
+.btn-create-request {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-create-request:hover {
+  background-color: var(--hover-primary);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+  }
+}
+
+:root {
+  --primary-color: #85a585;
+  --hover-primary: #577357;
+}
