@@ -1,0 +1,66 @@
+<div class="get-requests">
+
+  <!-- Filter Form -->
+  <div class="filter-container">
+    <input type="text" [(ngModel)]="filter.searchRequestCode" placeholder="Enter Request Code" />
+    <input type="text" [(ngModel)]="filter.searchLicenseNumber" placeholder="Enter License Number" />
+    <input type="text" [(ngModel)]="filter.searchPatientName" placeholder="Enter Patient Name" />
+    <select [(ngModel)]="filter.searchOperationType">
+      <option value="" disabled selected>Select Operation Type</option>
+      <option *ngFor="let operationType of operationTypes" [value]="operationType.Name">
+        [{{ operationType.Specialization }}] {{ operationType.Name }}
+      </option>
+    </select>
+    <input type="date" [(ngModel)]="filter.searchDeadlineDate" placeholder="Enter Date" />
+    <select [(ngModel)]="filter.searchPriority">
+      <option value="" disabled selected>Select Priority</option>
+      <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
+    </select>
+    <select [(ngModel)]="filter.searchStatus">
+      <option value="" disabled selected>Select Status</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ status.toUpperCase() }}</option>
+    </select>
+
+    <!-- Filter and Clear buttons -->
+    <button type="button" (click)="filterRequests()">Filter</button>
+    <button type="button" (click)="clear()">Clear</button>
+  </div>
+
+  <!-- Requests Table -->
+  <table>
+    <thead>
+    <tr>
+      <th>Request Code</th>
+      <th>Staff</th>
+      <th>Patient</th>
+      <th>Operation Type</th>
+      <th>Deadline Date</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let request of filteredRequests">
+      <td>{{ request.requestCode.toUpperCase() }}</td>
+      <td>{{ request.staff }}</td>
+      <td>{{ request.patient }}</td>
+      <td>{{ request.operationType.toUpperCase() }}</td>
+      <td>{{ request.deadlineDate }}</td>
+      <td>{{ request.priority }}</td>
+      <td>{{ request.status }}</td>
+      <td>
+        <button (click)="navigateToWith('update', request)">Update</button>
+        <button (click)="deleteRequestEvent.emit(request)">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button (click)="changePage(pages.currentPage - 1)" [disabled]="pages.currentPage <= 1">Previous</button>
+    <span>Page {{ pages.currentPage }} of {{ pages.totalPages }}</span>
+    <button (click)="changePage(pages.currentPage + 1)" [disabled]="pages.currentPage >= pages.totalPages">Next</button>
+  </div>
+</div>

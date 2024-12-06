@@ -1,0 +1,140 @@
+/* General styling for the component */
+p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px auto;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+thead {
+  background-color: #1abc9c; /* Pretty green header */
+  color: white;
+  font-size: 1rem;
+}
+
+th, td {
+  padding: 15px 20px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  font-weight: 700;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #ecf0f1;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fdfdfd;
+}
+
+tbody tr:hover {
+  background-color: #bdc3c7; /* Subtle hover effect */
+  cursor: pointer;
+  transform: scale(1.01);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Button styling */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:nth-child(1) {
+  background-color: #3498db; /* Blue for "Update" */
+  color: white;
+}
+
+button:nth-child(1):hover {
+  background-color: #2980b9;
+}
+
+button:nth-child(2) {
+  background-color: #e74c3c; /* Red for "Delete" */
+  color: white;
+}
+
+button:nth-child(2):hover {
+  background-color: #c0392b;
+}
+
+/* Filter Section Styling */
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 15px 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-container input,
+.filter-container select {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 23%; /* Adjust for 4 elements */
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+
+  button {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+
+  .filter-container {
+    flex-direction: column; /* Stack filters vertically */
+    align-items: stretch;
+  }
+
+  .filter-container input,
+  .filter-container select {
+    width: 100%; /* Full width for smaller screens */
+  }
+}
