@@ -1,0 +1,19 @@
+<div class="modal" *ngIf="request">
+  <h2>Update Operation Request</h2>
+  <form (ngSubmit)="submit()">
+    <label for="deadlineDate">Deadline Date:</label>
+    <input type="date" id="deadlineDate" [(ngModel)]="request.deadlineDate" name="deadlineDate">
+
+    <label for="priority">Priority:</label>
+    <select id="priority" [(ngModel)]="request.priority" name="priority">
+      <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
+    </select>
+    <label for="status">Status:</label>
+    <select id="status" [(ngModel)]="request.status" name="status">
+      <option *ngFor="let status of statuses" [value]="status">{{ status.toUpperCase() }}</option>
+    </select>
+
+    <button type="submit">Save</button>
+    <button type="button" (click)="emitCloseModalEvent()">Cancel</button>
+  </form>
+</div>
