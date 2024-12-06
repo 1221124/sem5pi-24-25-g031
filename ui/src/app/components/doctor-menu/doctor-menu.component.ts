@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-doctor-menu',
   templateUrl: './doctor-menu.component.html',
+  standalone: true,
   styleUrls: ['./doctor-menu.component.css']
 })
 export class DoctorMenuComponent implements OnInit {
