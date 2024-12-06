@@ -72,7 +72,6 @@
           <th>Medical Record Number</th>
           <th>Emergency Contact</th>
           <th>Appointment History</th>
-          <th>User ID</th>
         </tr>
       </thead>
       <tbody>
@@ -92,7 +91,6 @@
           <td>
             <button type="button" (click)="openAppointmentHistoryModal(patient)">View</button>
           </td>
-          <td>{{ patient.userId ? patient.userId : 'N/A' }}</td>
         </tr>
     </table>
   </div>
