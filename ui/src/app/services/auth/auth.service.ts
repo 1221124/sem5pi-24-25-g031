@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     getToken(): string {
-      const token = localStorage.getItem(this.tokenKey);
+      const token = sessionStorage.getItem(this.tokenKey);
       if (!token) {
         this.updateMessage('Error getting token: ' + 'Token is empty');
         this.updateIsError(true);
@@ -33,7 +33,7 @@ export class AuthService {
     }
 
     setToken(accessToken: string): void {
-      localStorage.setItem(this.tokenKey, accessToken);
+      sessionStorage.setItem(this.tokenKey, accessToken);
     }
 
     verifyToken() : boolean {
@@ -55,14 +55,7 @@ export class AuthService {
     }
 
     clearToken(): void {
-      localStorage.removeItem(this.tokenKey);      
-    }
-
-    logout(): void {
-      if (this.isAuthenticated()) {
-        this.clearToken();
-      }
-      this.http.get(`${environment.authConfig.logoutUrl}`);
+      localStorage.removeItem(this.tokenKey);
     }
 
     updateMessage(newMessage: string) {
