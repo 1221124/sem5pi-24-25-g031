@@ -118,16 +118,6 @@ export class OperationRequestsService {
             body: []
           }
         });
-
-    // return this.http.delete(deleteUrl, httpOptions)
-    //   .subscribe(
-    //     response => {
-    //       console.log('Operation Request deleted successfully', response);
-    //     },
-    //     error => {
-    //       console.error('Error deleting request:', error);
-    //     }
-    //   );
   }
 
   async put(
@@ -192,11 +182,11 @@ export class OperationRequestsService {
   }
 
   async getAll(
-    pageFilter: any,
+    /*pageFilter: any,*/
     accessToken: string
   ) {
-    let params = new HttpParams()
-      .set('pageNumber', pageFilter.pageNumber.toString());
+    let params = new HttpParams();
+      // .set('pageNumber', pageFilter.pageNumber.toString());
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -236,21 +226,21 @@ export class OperationRequestsService {
 
   async get(
     accessToken: string,
-    searchIdDto: string,
+    searchRequestCode: string,
     searchLicenseNumber: string,
     searchPatientName: string,
     searchOperationType: string,
     searchDeadlineDate: string,
     searchPriority: string,
-    searchRequestStatus: string
+    searchRequestStatus: string,
   ) {
 
     let searchUrl = environment.operationRequests + '/filtered?';
     const params = [];
 
-    if (searchIdDto) {
-      console.log('ID:', searchIdDto);
-      params.push('searchId=' + encodeURIComponent(searchIdDto));
+    if (searchRequestCode) {
+      console.log('Request Code:', searchRequestCode);
+      params.push('searchRequestCode=' + encodeURIComponent(searchRequestCode));
     }
 
     if (searchLicenseNumber) {
