@@ -18,18 +18,19 @@ import { PrologComponent } from './components/prolog/prolog.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
 import {PatientModule} from './components/patient/patient.module';
 import { StaffModule } from './components/staffs-main/staffs.module';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { VerifyPatientSensitiveInfoComponent } from './components/verify-patient-sensitive-info/verify-patient-sensitive-info.component';
+import { VerifyStaffSensitiveInfoComponent } from './components/verify-staff-sensitive-info/verify-staff-sensitive-info.component';
+import { VerifyRemovePatientComponent } from './components/verify-remove-patient/verify-remove-patient.component';
 
 import { OperationRequestsModule } from './components/operation-requests-main/operation-requests.module';
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 @NgModule({
   declarations: [
     AdminMenuComponent,
     HomeComponent,
     NurseMenuComponent,
-    TechnicianMenuComponent,
-    VerifyPatientSensitiveInfoComponent
+    TechnicianMenuComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +46,14 @@ import { OperationRequestsModule } from './components/operation-requests-main/op
     StaffsComponent,
     OperationRequestsModule,
     PrologComponent,
-    DoctorMenuComponent
+    DoctorMenuComponent,
+    AppointmentsComponent,
+    PatientModule,
+    StaffModule,
+    VerifyEmailComponent,
+    VerifyPatientSensitiveInfoComponent,
+    VerifyStaffSensitiveInfoComponent,
+    VerifyRemovePatientComponent
   ],
   providers: [],
   bootstrap: []

@@ -10,9 +10,14 @@ import { AdminUsersComponent } from './components/admin-users/admin-users.compon
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
 import { PrologComponent } from './components/prolog/prolog.component';
 import { AppointmentsComponent } from './components/appointments/appointments.component';
-import {
-  OperationRequestsComponent
-} from './components/operation-requests-main/operation-requests/operation-requests.component';
+import { OperationRequestsComponent } from './components/operation-requests-main/operation-requests/operation-requests.component';
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { VerifyPatientSensitiveInfoComponent } from './components/verify-patient-sensitive-info/verify-patient-sensitive-info.component';
+import { VerifyStaffSensitiveInfoComponent } from './components/verify-staff-sensitive-info/verify-staff-sensitive-info.component';
+import { VerifyRemovePatientComponent } from './components/verify-remove-patient/verify-remove-patient.component';
+import { PatientComponent } from './components/patient/patient-main/patient.component';
+import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
+import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -35,8 +40,15 @@ export const routes: Route[] = [
           import('./components/operation-requests-main/operation-requests.module')
           .then((m) => m.OperationRequestsModule)
       }
-    ]}
-  ];
+    ]},
+  { path: 'patient', component: PatientComponent },
+  { path: 'nurse', component: NurseMenuComponent },
+  { path: 'technician', component: TechnicianMenuComponent },
+  { path: 'verify-email', component: VerifyEmailComponent },
+  { path: 'verify-patient-sensitive-info', component: VerifyPatientSensitiveInfoComponent },
+  { path: 'verify-staff-sensitive-info', component: VerifyStaffSensitiveInfoComponent },
+  { path: 'verify-remove-patient', component: VerifyRemovePatientComponent }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

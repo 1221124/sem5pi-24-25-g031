@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PatientService } from '../../services/patient/patient.service';
+import { StaffsService } from '../../services/staffs/staffs.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { CommonModule, NgIf } from '@angular/common';
@@ -7,13 +7,13 @@ import { CommonModule, NgIf } from '@angular/common';
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, NgIf],
-  selector: 'app-verify-patient-sensitive-info',
-  templateUrl: './verify-patient-sensitive-info.component.html',
-  styleUrl: './verify-patient-sensitive-info.component.css'
+  selector: 'app-verify-staff-sensitive-info',
+  templateUrl: './verify-staff-sensitive-info.component.html',
+  styleUrl: './verify-staff-sensitive-info.component.css'
 })
-export class VerifyPatientSensitiveInfoComponent {
+export class VerifyStaffSensitiveInfoComponent {
 
-  constructor(private service: PatientService, private route: ActivatedRoute, private authService: AuthService) { }
+  constructor(private service: StaffsService, private route: ActivatedRoute, private authService: AuthService) { }
 
   message: string = '';
   isError: boolean = false;

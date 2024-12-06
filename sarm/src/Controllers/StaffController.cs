@@ -342,7 +342,7 @@ namespace Controllers
             var staffDto = await _service.GetByEmailAsync(new Email(emailDecode)); //1220784
 
             if (staffDto == null)
-                return null;
+                return NotFound(new {Message = "Staff not found"});
 
             var staff = StaffMapper.ToEntity(staffDto);
 
@@ -357,7 +357,7 @@ namespace Controllers
 
             await _unitOfWork.CommitAsync();
 
-            return StaffMapper.ToDto(staff);
+            return Ok(new { staff = staff });
         }
 
 

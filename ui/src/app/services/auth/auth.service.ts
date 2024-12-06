@@ -58,6 +58,13 @@ export class AuthService {
       localStorage.removeItem(this.tokenKey);
     }
 
+    logout(): void {
+      if (this.isAuthenticated()) {
+        this.clearToken();
+      }
+      this.http.get(`${environment.authConfig.logoutUrl}`);
+    }
+
     updateMessage(newMessage: string) {
       this.messageSource.next(newMessage);
     }

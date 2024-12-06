@@ -4,7 +4,6 @@ export const environment = {
     tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
     loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=https://black-bush-0ea41ce03.4.azurestaticapps.net/callback&scope=openid%20profile%20email&prompt=login',
     usersApiUrl: 'https://sarmg031.azurewebsites.net/api/Users',
-    verifyEmailUrl: 'https://sarmg031.azurewebsites.net/api/Users/verify',
     operationRequests: 'https://sarmg031.azurewebsites.net/api/OperationRequest',
     operationTypes: 'https://sarmg031.azurewebsites.net/api/OperationTypes',
     enums: 'https://sarmg031.azurewebsites.net/api/Enums',

@@ -93,5 +93,18 @@ export class PatientService {
     return await firstValueFrom(this.http.delete(`${environment.patients}/patient/${id}`, options));
   }
 
+  async verifySensitiveInfo(token: string, pendingPhoneNumber: string, pendingEmail: string) {
+    var params = new HttpParams();
+    if (token) params = params.set('token', token);
+    if (pendingPhoneNumber) params = params.set('pendingPhoneNumber', pendingPhoneNumber);
+    if (pendingEmail) params = params.set('pendingEmail', pendingEmail);
+    return await firstValueFrom(this.http.get<any>(`${environment.patients}/sensitiveInfo`, { ...httpOptions, params: params }));
+  }
+
+  async verifyRemoveSensitiveInfo(token: string) {
+    var params = new HttpParams();
+    if (token) params = params.set('token', token);
+    return await firstValueFrom(this.http.get<any>(`${environment.patients}/removePatient`, { ...httpOptions, params: params }));
+  }
 
 }

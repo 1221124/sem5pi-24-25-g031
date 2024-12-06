@@ -12,7 +12,7 @@ export class VerifyEmailService {
 
   async verifyEmail(token: string) {
     var params = new HttpParams().set('token', token);
-    return await firstValueFrom(this.http.get<any>(`${environment.verifyEmailUrl}`, { ...httpOptions, params: params }));
+    return await firstValueFrom(this.http.get<any>(`${environment.usersApiUrl}/verify`, { ...httpOptions, params: params }));
   }
 
 }

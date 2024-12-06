@@ -178,4 +178,12 @@ export class StaffsService {
     return await firstValueFrom(this.http.put(`${environment.staffs}/update/${staff.ContactInformation.Email}`, staffDto, options));
   }
 
+  async verifySensitiveInfo(token: string, pendingPhoneNumber: string, pendingEmail: string) {
+    var params = new HttpParams();
+    if (token) params = params.set('token', token);
+    if (pendingPhoneNumber) params = params.set('pendingPhoneNumber', pendingPhoneNumber);
+    if (pendingEmail) params = params.set('pendingEmail', pendingEmail);
+    return await firstValueFrom(this.http.get<any>(`${environment.staffs}/sensitiveInfo`, { ...httpOptions, params: params }));
+  }
+
 }

@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
-import { PatientService } from '../../services/patient/patient.service';
+import { StaffsService } from '../../services/staffs/staffs.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { CommonModule, NgIf } from '@angular/common';
+import { PatientService } from '../../services/patient/patient.service';
 
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, NgIf],
-  selector: 'app-verify-patient-sensitive-info',
-  templateUrl: './verify-patient-sensitive-info.component.html',
-  styleUrl: './verify-patient-sensitive-info.component.css'
+  selector: 'app-verify-remove-patient',
+  templateUrl: './verify-remove-patient.component.html',
+  styleUrl: './verify-remove-patient.component.css'
 })
-export class VerifyPatientSensitiveInfoComponent {
+export class VerifyRemovePatientComponent {
 
   constructor(private service: PatientService, private route: ActivatedRoute, private authService: AuthService) { }
 
@@ -31,13 +32,11 @@ export class VerifyPatientSensitiveInfoComponent {
     setTimeout(() => {
       this.route.queryParams.subscribe(params => {
         const token = params['token'];
-        const pendingPhoneNumber = params['pendingPhoneNumber'];
-        const pendingEmail = params['pendingEmail'];
         if (token) {
-          this.service.verifySensitiveInfo(token, pendingPhoneNumber, pendingEmail)
+          this.service.verifyRemoveSensitiveInfo(token)
           .then(async response => {
             if (response.status === 200) {
-              this.authService.updateMessage('Sensitive info update verified successfully!');
+              this.authService.updateMessage('You were deleted from our system! Sad to see you go...');
               this.authService.updateIsError(false);
             } else {
               this.authService.updateMessage('Unexpected status...');
