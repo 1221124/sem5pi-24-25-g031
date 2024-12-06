@@ -1,0 +1,43 @@
+<div class="operationRequests-request">
+  <h1>Operation Requests</h1>
+
+  <!-- Button to navigate to Create Operation Request -->
+  <button (click)="openCreateModal()" class="btn btn-primary">Create New Request</button>
+
+  <!-- Button to navigate back to Doctor Menu -->
+  <button (click)="navigateToDoctorMenu()" class="btn btn-secondary">Back to Menu</button>
+
+  <!-- Display the filtered table of operation requests -->
+  <app-operation-requests-table
+    *ngIf="requests && requests.length > 0"
+    [requests]="requests"
+    (updateRequestEvent)="openUpdateModal($event)"
+    (deleteRequestEvent)="openDeleteModal($event)">
+  </app-operation-requests-table>
+
+  <!-- Delete Modal -->
+  <app-delete-operation-requests
+    *ngIf="isDeleteModalOpen"
+    [request]="selectedRequestToDelete"
+    (close)="closeDeleteModal()"
+    (delete)="deleteRequest($event)">
+  </app-delete-operation-requests>
+
+  <!-- Update Modal -->
+  <app-update-operation-requests
+    *ngIf="isUpdateModalOpen"
+    [request]="selectedRequestToUpdate"
+    [priorities]="priorities"
+    [statuses]="statuses"
+    (close)="closeUpdateModal()"
+    (update)="updateRequest($event)">
+  </app-update-operation-requests>
+
+  <!-- Create Modal -->
+  <app-create-operation-requests
+    *ngIf="isCreateModalOpen"
+    [request]="selectedRequestToCreate"
+    (closeModalEvent)="closeCreateModal()"
+    (createRequestEvent)="createRequest($event)">
+  </app-create-operation-requests>
+</div>
