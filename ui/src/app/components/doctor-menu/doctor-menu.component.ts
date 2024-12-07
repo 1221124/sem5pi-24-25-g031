@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { environment } from '../../../environments/environment';
 
@@ -7,6 +7,9 @@ import { environment } from '../../../environments/environment';
   selector: 'app-doctor-menu',
   templateUrl: './doctor-menu.component.html',
   standalone: true,
+  imports: [
+    RouterOutlet
+  ],
   styleUrls: ['./doctor-menu.component.css']
 })
 export class DoctorMenuComponent implements OnInit {
@@ -41,6 +44,7 @@ export class DoctorMenuComponent implements OnInit {
   }
 
   navigateTo(path: string) {
+    console.log("navigating to ", path);
     this.router.navigateByUrl('/doctor/' + path), { replaceUrl: true };
   }
 
