@@ -11,12 +11,4 @@ export class DeleteOperationRequestsComponent {
   @Input() request!: OperationRequest;
   @Output() close = new EventEmitter<void>();
   @Output() delete = new EventEmitter<OperationRequest>();
-
-  confirm() {
-    this.delete.emit(this.request);
-  }
-
-  emitCloseModalEvent(){
-    this.close.emit();
-  }
 }
