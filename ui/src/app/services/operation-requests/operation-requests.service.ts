@@ -43,7 +43,7 @@ export class OperationRequestsService {
       "priority": priorityDto
     };
 
-    console.log('Operation Request DTO:', dto);
+    console.log('Operation Request DTO being sent:', dto);
 
     let params = new HttpParams();
 
@@ -56,7 +56,7 @@ export class OperationRequestsService {
 
     return await firstValueFrom(this.http.post(environment.operationRequests, dto, options))
       .then(response => {
-        console.log(response);
+        console.log('Full response:', response);
 
         if (response.status === 200 || response.status === 201) {
           return {
