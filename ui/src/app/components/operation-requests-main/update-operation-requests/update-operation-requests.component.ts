@@ -28,11 +28,6 @@ export class UpdateOperationRequestsComponent {
   status: string = '';
 
   submit() {
-
-    this.request.deadlineDate = this.date;
-    this.request.priority = this.priority;
-    this.request.status = this.status;
-
     console.log('Updated request:', this.request);
 
     this.update.emit(this.request);
