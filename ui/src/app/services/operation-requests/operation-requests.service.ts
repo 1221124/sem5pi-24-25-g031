@@ -139,9 +139,7 @@ export class OperationRequestsService {
 
     const dto = { //updatingOperationRequestDto
       "id": idDto,
-      "deadlineDate": {
-        "date": deadlineDateDto
-      },
+      "deadlineDate": deadlineDateDto,
       "priority": priorityDto,
       "requestStatus": statusDto
     };
