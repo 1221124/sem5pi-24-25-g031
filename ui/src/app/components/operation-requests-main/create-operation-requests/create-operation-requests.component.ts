@@ -45,6 +45,8 @@ export class CreateOperationRequestComponent implements OnInit {
   success: boolean = false;
   message: string = '';
 
+  isProcessing: boolean = false;
+
   patientTouched: boolean = false;
   operationTypeTouched: boolean = false;
   deadlineDateTouched: boolean = false;
@@ -153,13 +155,24 @@ export class CreateOperationRequestComponent implements OnInit {
 
   submit() {
     console.log('submit');
+    if (this.isProcessing) {
+      console.log('Already processing, ignoring duplicate submission.');
+      return; // Prevent duplicate submissions
+    }
+
+    this.isProcessing = true;
 
     this.request.patient = this.selectedPatient;
     this.request.operationType = this.selectedOperationType;
     this.request.deadlineDate = this.selectedDeadlineDate;
     this.request.priority = this.selectedPriority;
 
-    this.closeModalEvent.emit(this.request);
+    console.log('Emitting request:', this.request);
+    this.createRequestEvent.emit(this.request);
+
+    setTimeout(() => {
+      this.isProcessing = false;
+    }, 5000);
   }
 
   emitCloseModalEvent(){
