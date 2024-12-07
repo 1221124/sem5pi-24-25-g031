@@ -106,7 +106,20 @@ export class OperationRequestsComponent implements OnInit {
   async loadOperationRequests() {
     try {
       const response = await this.service.getAll(this.accessToken);
-      this.requests = response.body || [];
+      this.requests = response.body.map(
+        (request: OperationRequest) => {
+          return {
+            id: request.id,
+            staff: request.staff,
+            patient: request.patient,
+            operationType: request.operationType.toUpperCase(),
+            deadlineDate: request.deadlineDate,
+            priority: request.priority.toUpperCase(),
+            status: request.status.toUpperCase(),
+            requestCode: request.requestCode.toUpperCase()
+          };
+        }
+      )
       this.success = true;
       this.message = 'Operation Requests loaded!';
       console.log('Operation Requests:', this.requests);
@@ -198,6 +211,8 @@ export class OperationRequestsComponent implements OnInit {
   }
 
   closeUpdateModal() {
+    console.log('Closing update modal...');
+
     this.selectedRequestToUpdate = {
       id: '',
       staff: '',
@@ -292,12 +307,29 @@ export class OperationRequestsComponent implements OnInit {
     this.selectedRequestToDelete = request;
 
     try {
-      await this.service.delete(this.accessToken, this.selectedRequestToDelete.id);
+      await this.service.delete(this.accessToken, this.selectedRequestToDelete.id)
+      .then(
+        response => {
+          if(response.status === 200) {
+            this.message = 'Request deleted successfully!';
+            this.success = true;
+          }
 
-      await this.loadOperationRequests();
+          else {
+            console.error('Error deleting request:', response);
+            this.message = 'Failed to delete the request.';
+            this.success = false;
+          }
 
-      this.message = 'Request deleted successfully!';
-      this.success = true;
+          console.log(this.message);
+
+        }
+      )
+
+      if(this.success){
+        await this.loadOperationRequests();
+      }
+
     } catch (error) {
       console.error('Error deleting request:', error);
       this.message = 'Failed to delete the request.';
@@ -308,28 +340,32 @@ export class OperationRequestsComponent implements OnInit {
   }
 
   async updateRequest(request: OperationRequest) {
-    // try {
-    //   console.log('Updating request:', request);
-    //
-    //   await this.service.put(
-    //     this.accessToken,
-    //     this.selectedRequestToUpdate.id,
-    //     this.selectedRequestToUpdate.deadlineDate,
-    //     this.selectedRequestToUpdate.priority,
-    //     this.selectedRequestToUpdate.status,
-    //   );
-    //
-    //   await this.loadOperationRequests();
-    //
-    //   this.message = 'Request updated successfully!';
-    //   this.success = true;
-    // } catch (error) {
-    //   console.error('Error updating request:', error);
-    //   this.message = 'Failed to update the request.';
-    //   this.success = false;
-    // }
+    try {
+      console.log('Updating request:', request);
 
-    console.log('Updating request:', request);
+      await this.service.put(
+      this.accessToken,
+      this.selectedRequestToUpdate.id,
+      this.selectedRequestToUpdate.deadlineDate,
+      this.selectedRequestToUpdate.priority,
+      this.selectedRequestToUpdate.status,
+      );
+
+      await this.loadOperationRequests();
+
+      this.message = 'Request updated successfully!';
+      this.success = true;
+    } catch (error) {
+      console.error('Error updating request:', error);
+      this.message = 'Failed to update the request.';
+      this.success = false;
+    }finally{
+      console.log('Updating request:', request);
+
+      if(this.success) this.closeUpdateModal();
+      else console.error("Failed to update request");
+    }
+
   }
 
   navigateToDoctorMenu() {
