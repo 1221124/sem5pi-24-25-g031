@@ -9,6 +9,7 @@ import {AuthService} from '../../../services/auth/auth.service';
 import {FormsModule} from '@angular/forms';
 import {DeleteOperationRequestsComponent} from '../delete-operation-requests/delete-operation-requests.component';
 import {UpdateOperationRequestsComponent} from '../update-operation-requests/update-operation-requests.component';
+import {StaffsService} from '../../../services/staffs/staffs.service';
 
 @Component({
   selector: 'app-operation-requests',
@@ -35,6 +36,7 @@ export class OperationRequestsComponent implements OnInit {
 
   constructor(
     private service: OperationRequestsService,
+    private serviceStaff: StaffsService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
@@ -52,6 +54,12 @@ export class OperationRequestsComponent implements OnInit {
   isDeleteModalOpen = false;
   isUpdateModalOpen = false;
 
+  staffFilter = {
+    pageNumber: 1,
+    name: '',
+    email: '',
+    specialization: ''
+  }
 
   async ngOnInit() {
     if (!this.authService.isAuthenticated()) {
@@ -64,6 +72,9 @@ export class OperationRequestsComponent implements OnInit {
     }
 
     this.accessToken = this.authService.getToken() as string;
+
+    console.log("Access token:", this.accessToken);
+
     if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
       this.authService.updateMessage(
         'You are not authenticated or are not an admin! Redirecting to login...'
@@ -98,6 +109,7 @@ export class OperationRequestsComponent implements OnInit {
       this.requests = response.body || [];
       this.success = true;
       this.message = 'Operation Requests loaded!';
+      console.log('Operation Requests:', this.requests);
     } catch (error) {
       console.error('Error loading operation requests:', error);
       this.success = false;
@@ -201,15 +213,86 @@ export class OperationRequestsComponent implements OnInit {
     this.navigateToOperationRequestManager();
   }
 
-  async createRequest(request: OperationRequest){
+  async createRequest(request: OperationRequest) {
     console.log('Creating request:', request);
+
+    this.selectedRequestToCreate = request;
+
+    // Extract email and validate
+    this.staffFilter.email = this.authService.extractEmailFromAccessToken(this.accessToken) as string;
+    // this.staffFilter.email = 'staff@email';
+    console.log(this.staffFilter.email)
+    if (!this.staffFilter.email) {
+      throw new Error('Error extracting email from access token');
+    }
+
+    try {
+      // Await the asynchronous getStaff call
+      const staffResponse = await this.serviceStaff.getStaff(this.staffFilter, this.accessToken);
+      console.log(staffResponse);
+
+      if (staffResponse.status === 200) {
+        this.selectedRequestToCreate.staff = staffResponse.body.staffs[0].licenseNumber;
+        console.log('Staff obtained:', this.selectedRequestToCreate.staff);
+      } else {
+        console.log(`Unexpected response status: ${staffResponse.status}`);
+      }
+
+      console.log('Calling post with DTO:', {
+        staff: this.selectedRequestToCreate.staff,
+        patient: this.selectedRequestToCreate.patient,
+        operationType: this.selectedRequestToCreate.operationType,
+        deadlineDate: this.selectedRequestToCreate.deadlineDate,
+        priority: this.selectedRequestToCreate.priority,
+      });
+
+      await this.service.post(
+        this.accessToken,
+        this.selectedRequestToCreate.staff,
+        this.selectedRequestToCreate.patient,
+        this.selectedRequestToCreate.operationType,
+        this.selectedRequestToCreate.deadlineDate,
+        this.selectedRequestToCreate.priority,
+      ).then(
+        response => {
+          if(response.status === 201) {
+            this.message = 'Request created successfully!';
+            this.success = true;
+          }
+
+          else {
+            console.error('Error creating request:', response);
+            this.message = 'Failed to create the request.';
+            this.success = false;
+          }
+
+          console.log(this.message);
+
+        }
+      )
+
+      if(this.success) {
+        await this.loadOperationRequests();
+      }
+
+
+    } catch (error) {
+      console.error('Error creating request:', error);
+      this.message = 'Failed to create the request.';
+      this.success = false;
+    } finally {
+      if(this.success) this.closeCreateModal();
+      else console.error("Failed to create request");
+    }
   }
 
   async deleteRequest(request: OperationRequest) {
-    try {
-      console.log('Deleting request:', request);
+    console.log('Deleting request:', request);
 
-      await this.service.delete(this.selectedRequestToDelete.id, this.accessToken);
+    this.selectedRequestToDelete = request;
+
+    try {
+      await this.service.delete(this.accessToken, this.selectedRequestToDelete.id);
 
       await this.loadOperationRequests();
 
@@ -220,7 +303,7 @@ export class OperationRequestsComponent implements OnInit {
       this.message = 'Failed to delete the request.';
       this.success = false;
     } finally {
-      this.closeDeleteModal(); // Close the modal in both success and error cases
+      this.closeDeleteModal(); // Always close the modal
     }
   }
 
