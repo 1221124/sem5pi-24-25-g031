@@ -47,10 +47,11 @@
       <td>{{ request.patient }}</td>
       <td>{{ request.operationType.toUpperCase() }}</td>
       <td>{{ request.deadlineDate }}</td>
-      <td>{{ request.priority }}</td>
-      <td>{{ request.status }}</td>
+      <td>{{ request.priority.toUpperCase() }}</td>
+      <td>{{ request.status.toUpperCase() }}</td>
       <td>
-        <button (click)="navigateToWith('update', request)">Update</button>
+        <!-- <button (click)="navigateToWith('update', request)">Update</button> -->
+        <button (click)="updateRequestEvent.emit(request)">Update</button>
         <button (click)="deleteRequestEvent.emit(request)">Delete</button>
       </td>
     </tr>

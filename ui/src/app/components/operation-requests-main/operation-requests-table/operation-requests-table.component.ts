@@ -267,6 +267,7 @@ export class OperationRequestsTableComponent implements OnInit {
   }
 
   navigateToWith(route: string, request: OperationRequest) {
+    console.log('Navigating to:', route, " with request:" , request);
     this.updateRequestEvent.emit(request);
     this.navigateTo(route);
   }
