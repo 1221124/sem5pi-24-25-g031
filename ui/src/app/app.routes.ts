@@ -1,7 +1,7 @@
 import { Route, RouterModule } from '@angular/router';
-import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { NgModule } from '@angular/core';
 import { HomeComponent } from './components/home/home.component';
+import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { StaffsComponent } from './components/staffs-main/staffs/staffs.component';
 import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';
 import { OperationTypesComponent } from './components/operation-types/operation-types.component';
@@ -18,11 +18,36 @@ import { VerifyRemovePatientComponent } from './components/verify-remove-patient
 import { PatientComponent } from './components/patient/patient-main/patient.component';
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
+import { ListStaffsComponent } from './components/staffs-main/list-staffs/list-staffs.component';
+import { PaginationStaffsComponent } from './components/staffs-main/pagination-staffs/pagination-staffs.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
   { path: 'callback', component: AuthCallbackComponent },
-  { path: 'admin/staffs', component: StaffsComponent },
+  {
+    path: 'admin/staffs',
+    component: StaffsComponent,
+    children: [
+      {
+        path: 'create',
+        loadChildren: () =>
+          import('./components/staffs-main/staffs.module')
+            .then((m) => m.StaffModule),
+      },
+      {
+        path: 'update',
+        loadChildren: () =>
+          import('./components/staffs-main/staffs.module')
+            .then((m) => m.StaffModule),
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'list'
+      }
+    ]
+  },
+  { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/appointments', component: AppointmentsComponent },
   { path: 'admin/operationTypes', component: OperationTypesComponent },
   { path: 'admin/patients', component: AdminPatientsComponent },
@@ -47,11 +72,15 @@ export const routes: Route[] = [
   { path: 'verify-email', component: VerifyEmailComponent },
   { path: 'verify-patient-sensitive-info', component: VerifyPatientSensitiveInfoComponent },
   { path: 'verify-staff-sensitive-info', component: VerifyStaffSensitiveInfoComponent },
-  { path: 'verify-remove-patient', component: VerifyRemovePatientComponent }
+  { path: 'verify-remove-patient', component: VerifyRemovePatientComponent },
+  { path: 'doctor', component: DoctorMenuComponent },
+  { path: 'patient', component: PatientComponent },
+  { path: 'nurse', component: NurseMenuComponent },
+  { path: 'technician', component: TechnicianMenuComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
