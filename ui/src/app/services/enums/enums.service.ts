@@ -14,26 +14,29 @@ export class EnumsService {
   
   constructor(private http: HttpClient) { }
 
-  async getStaffRoles() {
+  async getStaffRoles(accessToken: string) {
     if (this.staffRoles.length === 0) {
       const url = `${environment.enums}/staffRoles`;
-      this.staffRoles = await firstValueFrom(this.http.get<string[]>(url));
+      const headers = { Authorization: `Bearer ${accessToken}` };
+      this.staffRoles = await firstValueFrom(this.http.get<string[]>(url, { headers }));
     }
     return this.staffRoles;
   }
 
-  async getSpecializations() {
+  async getSpecializations(accessToken: string) {
     if (this.specializations.length === 0) {
       const url = `${environment.enums}/specializations`;
-      this.specializations = await firstValueFrom(this.http.get<string[]>(url));
+      const headers = { Authorization: `Bearer ${accessToken}` };
+      this.specializations = await firstValueFrom(this.http.get<string[]>(url, { headers }));
     }
     return this.specializations;
   }
 
-  async getStatuses() {
+  async getStatuses(accessToken: string) {
     if (this.statuses.length === 0) {
       const url = `${environment.enums}/statuses`;
-      this.statuses = await firstValueFrom(this.http.get<string[]>(url));
+      const headers = { Authorization: `Bearer ${accessToken}` };
+      this.statuses = await firstValueFrom(this.http.get<string[]>(url, { headers }));
     }
     return this.statuses;
   }
