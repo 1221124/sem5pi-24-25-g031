@@ -1,36 +1,68 @@
-<div *ngIf="isCreateModalOpen" class="modal">
+<div class="modal">
   <div class="modal-content">
-    <span type="button" class="close" (click)="closeModal()">&times;</span>
+    <span type="button" class="close" (click)="closeCreateModal()">&times;</span>
     <h2>Create New Staff</h2>
 
-    <form (ngSubmit)="submitRequest()">
-      <div class="form-group">
-        <input type="text" id="firstName" name="firstName" [(ngModel)]="staff.FullName.FirstName" placeholder="Enter First Name" />
-      </div>
-      <div class="form-group">
-        <input type="text" id="lastName" name="lastName" [(ngModel)]="staff.FullName.LastName" placeholder="Enter Last Name" />
-      </div>
-      <div class="form-group">
-        <input type="text" id="email" name="email" [(ngModel)]="staff.ContactInformation.Email" placeholder="Enter Email" />
-      </div>
-      <div class="form-group">
-        <input type="text" id="phoneNumber" name="phoneNumber" [(ngModel)]="staff.ContactInformation.PhoneNumber" placeholder="Enter Phone Number" />
-      </div>
-      <div class="form-group">
-        <label for="specialization">Select Specialization:</label>
-        <select id="specialization" name="specialization" [(ngModel)]="staff.specialization">
-          <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
-        </select>
-      </div>
-      <div *ngFor="let role of roles">
-        <input type="radio" id="{{role}}" name="role" [value]="role" [(ngModel)]="staff.staffRole">
-        <label for="{{role}}">{{ role }}</label>
-      </div>
+    <section>
+      <form #form="ngForm" novalidate>
+        <div class="form-group">
+          <input type="text" id="firstName" name="firstName" [(ngModel)]="staff.FullName.FirstName"
+                 (focus)="firstNameTouched = true" #firstName="ngModel"  placeholder="Enter First Name" required/>
+          <div *ngIf="firstName.invalid && firstName.touched" class="error-message">
+            First Name is required.
+          </div>
+        </div>
 
-      <div class="button-group">
-        <button type="submit" class="submit-button">Submit</button>
-        <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
-      </div>
-    </form>
+        <div class="form-group">
+          <input type="text" id="lastName" name="lastName" [(ngModel)]="staff.FullName.LastName"
+                 (focus)="lastNameTouched = true" #lastName="ngModel" placeholder="Enter Last Name" required/>
+          <div *ngIf="lastName.invalid && lastName.touched" class="error-message">
+            Last Name is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="email" name="email" [(ngModel)]="staff.ContactInformation.Email"
+                 (focus)="emailTouched = true" #email="ngModel" placeholder="Enter Email" required/>
+          <div *ngIf="email.invalid && email.touched" class="error-message">
+            Email is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="phoneNumber" name="phoneNumber"
+                 [(ngModel)]="staff.ContactInformation.PhoneNumber" (focus)="phoneNumberTouched = true"
+                 placeholder="Enter Phone Number" #phoneNumber="ngModel" required/>
+          <div *ngIf="phoneNumber.invalid && phoneNumber.touched" class="error-message">
+            Phone Number is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="specialization">Select Specialization:</label>
+          <select id="specialization" name="specialization" [(ngModel)]="staff.specialization" (focus)="specializationTouched = true"  #specialization="ngModel" required>
+            <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+          </select>
+          <div *ngIf="specialization.invalid && specialization.touched" class="error-message">
+            Specialization is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div *ngFor="let role of roles">
+            <input type="radio" id="{{role}}" name="role" [value]="role" [(ngModel)]="staff.staffRole" (focus)="roleTouched = true" #staffRole="ngModel" required>
+            <label for="{{role}}">{{ role }}</label>
+            <div *ngIf="staffRole.invalid && staffRole.touched" class="error-message">
+              Role is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="submit-button" (click)="submitRequest()" [disabled]="form.invalid">Submit</button>
+          <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+        </div>
+      </form>
+    </section>
   </div>
 </div>
