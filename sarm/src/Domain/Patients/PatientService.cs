@@ -277,7 +277,7 @@ namespace DDDNetCore.Domain.Patients
             greatestNumber++;
 
             var formattedDate = DateTime.Now.ToString("yyyyMM");
-            var combinedString = $"{formattedDate}{greatestNumber:D6}";  // Combine the date and zero-padded number
+            var combinedString = $"{formattedDate}{greatestNumber:D6}"; 
                 
             MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber(combinedString);
             p.ChangeMedicalRecordNumber(medicalRecordNumber);
@@ -415,7 +415,7 @@ namespace DDDNetCore.Domain.Patients
             }
             catch (Exception e)
             {
-                _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, e.Message);
+                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, e.Message);
                 await _unitOfWork.CommitAsync();
                 return null;
             }

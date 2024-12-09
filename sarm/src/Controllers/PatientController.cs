@@ -57,10 +57,10 @@ namespace DDDNetCore.Controllers
                     .Skip((page - 1) * PageSize)
                     .Take(PageSize)
                     .ToList();
-                return paginatedPatients;
+                return Ok(new { patient = paginatedPatients});
             }
 
-            return Ok(patients);
+            return Ok(new { patient = patients});
 
         }
         
