@@ -37,6 +37,7 @@ export class EnumsService {
       const url = `${environment.enums}/statuses`;
       const headers = { Authorization: `Bearer ${accessToken}` };
       this.statuses = await firstValueFrom(this.http.get<string[]>(url, { headers }));
+      this.statuses = this.statuses.map((status) => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase());
     }
     return this.statuses;
   }

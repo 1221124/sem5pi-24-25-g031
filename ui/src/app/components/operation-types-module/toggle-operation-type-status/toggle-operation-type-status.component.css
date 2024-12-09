@@ -1,0 +1,47 @@
+/* Estilo da modal */
+.toggle-status-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.toggle-status-modal h2 {
+  margin-bottom: 20px;
+}
+
+.toggle-status-modal p {
+  margin-bottom: 20px;
+}
+
+.toggle-status-modal .actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.toggle-status-modal .btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toggle-status-modal .btn-danger {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.toggle-status-modal .btn-secondary {
+  background-color: #95a5a6;
+  color: #fff;
+}
+
+.toggle-status-modal .btn:hover {
+  opacity: 0.8;
+}

@@ -1,0 +1,77 @@
+<div class="container">
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>
+            Name
+            <input 
+              type="text" 
+              [(ngModel)]="filter.name"
+              (input)="onFilterChange()"
+              placeholder="Filter by name" 
+            />
+          </th>
+          <th>
+            Specialization
+            <select 
+              [(ngModel)]="filter.specialization" 
+              (change)="onFilterChange()">
+              <option value="">All Specializations</option>
+              <option *ngFor="let specialization of specializations" [value]="specialization">
+                {{ specialization }}
+              </option>
+            </select>
+          </th>
+          <th>Required Staff</th>
+          <th>Phases Duration</th>
+          <th>
+            Status
+            <select 
+              [(ngModel)]="filter.status" 
+              (change)="onFilterChange()">
+              <option value="">All Statuses</option>
+              <option *ngFor="let status of statuses" [value]="status">
+                {{ status }}
+              </option>
+            </select>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let operationType of getPaginatedOperationTypes()">
+          <td>{{ operationType.OperationTypeCode }}</td>
+          <td>{{ operationType.Name }}</td>
+          <td>{{ operationType.Specialization }}</td>
+          <td>
+            <ul>
+              <li *ngFor="let staff of operationType.RequiredStaff">
+                {{ staff.Role }} ({{ staff.Specialization }} - {{ staff.Quantity }})
+              </li>
+            </ul>
+          </td>
+          <td>
+            Preparation: {{ operationType.PhasesDuration.Preparation }}min <br />
+            Surgery: {{ operationType.PhasesDuration.Surgery }}min <br />
+            Cleaning: {{ operationType.PhasesDuration.Cleaning }}min
+          </td>
+          <td>{{ operationType.Status }}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" (click)="edit.emit(operationType)">Update</button>
+            <button class="btn btn-secondary btn-sm" (click)="statusToggle.emit(operationType)">
+              {{ operationType.Status === 'Active' ? 'Inactivate' : 'Activate' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalItems / itemsPerPage">Next</button>
+  </div>
+</div>

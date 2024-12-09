@@ -1,0 +1,18 @@
+<div class="toggle-status-modal">
+  <div class="modal-overlay">
+      <div class="modal-content">
+          <h2>Confirm Status Change</h2>
+          <p>
+              Are you sure you want to
+              <strong>{{ operationType.Status === 'Active' ? 'inactivate' : 'activate' }}</strong>
+              this operation type?
+          </p>
+          <div class="actions">
+              <button class="btn btn-danger" (click)="toggleStatus()">
+                  {{ operationType.Status === 'Active' ? 'Inactivate' : 'Activate' }}
+              </button>
+              <button class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+          </div>
+      </div>
+  </div>
+</div>

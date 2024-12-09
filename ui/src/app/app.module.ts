@@ -7,7 +7,6 @@ import { routes } from './app.routes';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { HomeComponent } from './components/home/home.component';
 import { StaffsComponent } from './components/staffs-main/staffs/staffs.component';
-import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -24,6 +23,8 @@ import { VerifyRemovePatientComponent } from './components/verify-remove-patient
 
 import { OperationRequestsModule } from './components/operation-requests-main/operation-requests.module';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { OperationTypesComponent } from './components/operation-types-module/operation-types/operation-types.component';
+import { OperationTypesModule } from './components/operation-types-module/operation-types.module';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { VerifyEmailComponent } from './components/verify-email/verify-email.com
     AppComponent,
     AppointmentsComponent,
     AuthCallbackComponent,
-    OperationTypesComponent,
+    OperationTypesModule,
     StaffsComponent,
     OperationRequestsModule,
     PrologComponent,

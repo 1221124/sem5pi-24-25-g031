@@ -4,7 +4,6 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { StaffsComponent } from './components/staffs-main/staffs/staffs.component';
 import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';
-import { OperationTypesComponent } from './components/operation-types/operation-types.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
@@ -20,6 +19,7 @@ import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import { ListStaffsComponent } from './components/staffs-main/list-staffs/list-staffs.component';
 import { PaginationStaffsComponent } from './components/staffs-main/pagination-staffs/pagination-staffs.component';
+import { OperationTypesComponent } from './components/operation-types-module/operation-types/operation-types.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -49,11 +49,27 @@ export const routes: Route[] = [
   },
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/appointments', component: AppointmentsComponent },
-  { path: 'admin/operationTypes', component: OperationTypesComponent },
   { path: 'admin/patients', component: AdminPatientsComponent },
   { path: 'admin/users', component: AdminUsersComponent },
   { path: 'admin/prolog', component: PrologComponent },
-  { path: 'admin', component: AdminMenuComponent },
+  {
+    path: 'admin/operationTypes',
+    component: OperationTypesComponent,
+    children: [
+      {
+        path: 'create',
+        loadChildren: () =>
+          import('./components/operation-types-module/operation-types.module')
+            .then((m) => m.OperationTypesModule),
+      },
+      {
+        path: 'update',
+        loadChildren: () =>
+          import('./components/operation-types-module/operation-types.module')
+            .then((m) => m.OperationTypesModule),
+      },
+    ],
+  },
   {
     path: 'doctor',
     component: DoctorMenuComponent,
@@ -73,6 +89,7 @@ export const routes: Route[] = [
   { path: 'verify-patient-sensitive-info', component: VerifyPatientSensitiveInfoComponent },
   { path: 'verify-staff-sensitive-info', component: VerifyStaffSensitiveInfoComponent },
   { path: 'verify-remove-patient', component: VerifyRemovePatientComponent },
+  { path: 'admin', component: AdminMenuComponent },
   { path: 'doctor', component: DoctorMenuComponent },
   { path: 'patient', component: PatientComponent },
   { path: 'nurse', component: NurseMenuComponent },

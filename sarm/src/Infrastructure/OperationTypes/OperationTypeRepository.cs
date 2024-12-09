@@ -25,21 +25,21 @@ namespace Infrastructure.OperationTypes
             if (name != null)
             {
                 operationTypes = operationTypes
-                    .Where(x => name.Equals(x.Name.Value))
+                    .Where(x => x.Name.Value.Trim().ToLower().StartsWith(name.Trim().ToLower()))
                     .ToList();
             }
 
             if (specialization != null)
             {
                 operationTypes = operationTypes
-                    .Where(x => specialization.Equals(SpecializationUtils.ToString(x.Specialization)))
+                    .Where(x => specialization.Trim().ToUpper().Equals(SpecializationUtils.ToString(x.Specialization).Trim().ToUpper()))
                     .ToList();
             }
 
             if (status != null)
             {
                 operationTypes = operationTypes
-                    .Where(x => status.Equals(StatusUtils.ToString(x.Status)))
+                    .Where(x => status.Trim().ToLower().Equals(StatusUtils.ToString(x.Status).Trim().ToLower()))
                     .ToList();
             }
 

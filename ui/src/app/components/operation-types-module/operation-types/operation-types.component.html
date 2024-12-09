@@ -1,0 +1,36 @@
+<div class="operationTypes-container">
+  <h1>Operation Types</h1>
+
+  <button *ngIf="showList" (click)="toggleView()" class="btn btn-primary">Create New Operation Type</button>
+  <button *ngIf="!showList" (click)="toggleView()" class="btn btn-secondary">Show Operation Types</button>
+
+  <div *ngIf="showList">
+    <app-operation-types-list
+      [operationTypes]="operationTypes"
+      [specializations]="specializations"
+      [statuses]="statuses"
+      (edit)="onEdit($event)"
+      (statusToggle)="onStatusToggle($event)"
+      (filterChange)="onFilterChange($event)">
+    </app-operation-types-list>
+
+    <app-toggle-operation-type-status
+      *ngIf="selectedOperationType"
+      [operationType]="selectedOperationType"
+      (statusToggled)="onStatusToggled()"
+      (cancel)="selectedOperationType = null">
+    </app-toggle-operation-type-status>
+  </div>
+
+  <div *ngIf="!showList">
+    <app-operation-types-form
+      [operationType]="selectedOperationType"
+      [specializations]="specializations"
+      [statuses]="statuses"
+      (submit)="onSubmit()"
+      (cancel)="onCancel()">
+    </app-operation-types-form>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>

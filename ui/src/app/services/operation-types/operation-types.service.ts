@@ -14,21 +14,6 @@ export class OperationTypesService {
     private http: HttpClient
   ) {}
 
-  async getStaffRoles() {
-      const url = `${environment.enums}/staffRoles`;
-      return await firstValueFrom(this.http.get<string[]>(url));
-  }
-
-  async getSpecializations() {
-    const url = `${environment.enums}/specializations`;
-    return await firstValueFrom(this.http.get<string[]>(url));
-  }
-
-  async getStatuses() {
-    const url = `${environment.enums}/statuses`;
-    return await firstValueFrom(this.http.get<string[]>(url));
-  }
-
   async post(operationType: OperationType, accessToken: string) {
 
     const dto = {
@@ -95,12 +80,8 @@ export class OperationTypesService {
   async getOperationTypes(filter: any, accessToken: string) {
     let params = new HttpParams();
 
-    if (filter.pageNumber > 0){
-      params = params.set('pageNumber', filter.pageNumber.toString());
-      if (filter.name !== '') params = params.set('name', filter.name);
-      if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
-      if (filter.status !== '') params = params.set('status', filter.status);
-    }
+    if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
+    if (filter.status !== '') params = params.set('status', filter.status);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -117,10 +98,13 @@ export class OperationTypesService {
             OperationTypeCode: item.operationTypeCode.value,
             Name: item.name.value,
             Specialization: item.specialization.toString(),
-            RequiredStaff: item.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; }) => ({
+            RequiredStaff: item.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: any; isRequiredInSurgery: any; isRequiredInCleaning: any; }) => ({
               Role: staff.role,
               Specialization: staff.specialization,
-              Quantity: staff.quantity.value
+              Quantity: staff.quantity.value,
+              IsRequiredInPreparation: staff.isRequiredInPreparation as boolean,
+              IsRequiredInSurgery: staff.isRequiredInSurgery as boolean,
+              IsRequiredInCleaning: staff.isRequiredInCleaning as boolean
             })),
             PhasesDuration: {
               Preparation: item.phasesDuration.preparation.value,
