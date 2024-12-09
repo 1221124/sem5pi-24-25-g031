@@ -1,0 +1,8 @@
+<div class="adminPatients">
+  <h1>Patients</h1>
+
+  <app-admin-patients-table
+    *ngIf="patients && patients.length > 0"
+    [patients]="patients">
+  </app-admin-patients-table>
+</div>

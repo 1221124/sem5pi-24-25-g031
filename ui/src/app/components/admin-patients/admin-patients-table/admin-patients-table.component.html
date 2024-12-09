@@ -1,0 +1,52 @@
+<div class="get-patients">
+  <table>
+    <thead>
+    <tr class="table-filter-container">
+      <th>
+        <!--button class="edit-button" (click)="editPatient(patient)">Edit</button>
+        <button class="delete-button" (click)="confirmDeletePatient(patient)">Delete </button!-->
+      </th>
+      <th colspan="2"><input type="text" [(ngModel)]="filter.fullName" placeholder="Search by Name" /></th>
+      <th><input type="date" [(ngModel)]="filter.dateOfBirth" placeholder="Search by DOB" /></th>
+      <th><input type="text" [(ngModel)]="filter.email" placeholder="Search by Email" /></th>
+      <th><input type="text" [(ngModel)]="filter.phoneNumber" placeholder="Search by Phone" /></th>
+      <th><select [(ngModel)]="filter.gender">
+        <option value="">Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select></th>
+      <th><input type="text" [(ngModel)]="filter.medicalRecordNumber" placeholder="Search by MRN" /></th>
+      <th><button class="button-filter" (click)="applyFilter()">Search</button></th>
+      <th><button class="button-filter" (click)="clearFilters()">Clear</button></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th>Actions</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Date of Birth</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Gender</th>
+      <th>Medical Record Number</th>
+      <th>Emergency Contact</th>
+      <th>Appointment History</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let patient of patients">
+
+      <td>{{ patient.FullName.FirstName }}</td>
+      <td>{{ patient.FullName.LastName }}</td>
+      <td>{{ patient.DateOfBirth | date }}</td>
+      <td>{{ patient.ContactInformation.Email }}</td>
+      <td>{{ patient.ContactInformation.PhoneNumber }}</td>
+      <td>{{ patient.Gender}}</td>
+      <td>{{ patient.MedicalRecordNumber }}</td>
+      <td>{{ patient.EmergencyContact ? patient.EmergencyContact : 'N/A' }}</td>
+      <td>
+        <!--button type="button" (click)="openAppointmentHistoryModal(patient)">View</button!-->
+      </td>
+    </tr>
+  </table>
+</div>

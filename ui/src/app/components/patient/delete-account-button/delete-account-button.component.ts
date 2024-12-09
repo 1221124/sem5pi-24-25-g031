@@ -3,6 +3,7 @@ import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {Patient} from '../../../models/patient.model';
 import {PatientService} from '../../../services/patient/patient.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-delete-account-button',
@@ -30,7 +31,8 @@ export class DeleteAccountButtonComponent{
   showNotification: boolean = false;
 
   constructor(
-    private patientService: PatientService
+    private patientService: PatientService,
+    private router: Router
   ) {}
 
   async deletePatient() {
@@ -46,8 +48,15 @@ export class DeleteAccountButtonComponent{
           this.showNotification = true;
           this.closeDeleteModal();
           this.hideNotificationAfterDelay();
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 5000);
         } else {
           this.displayError('Failed to delete patient profile.');
+          this.closeDeleteModal();
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 5000);
         }
       })
       .catch((error) => {
@@ -74,6 +83,6 @@ export class DeleteAccountButtonComponent{
   hideNotificationAfterDelay() {
     setTimeout(() => {
       this.showNotification = false;
-    }, 5000); // Notificação desaparece após 5 segundos
+    }, 5000);
   }
 }

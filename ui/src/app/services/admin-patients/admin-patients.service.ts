@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Router } from '@angular/router';
-import {environment, httpOptions} from '../../../environments/environment';
-import {Observable} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {firstValueFrom, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -96,16 +95,54 @@ export class PatientsService {
     return this.http.get<any[]>(`${this.apiUrl}/filter`, httpOptions);
   }
 
-  getPatients(accessToken: string): Observable<any> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      })
-    };
+  async getPatients(accessToken: string) {
 
-    return this.http.get(this.apiUrl, httpOptions);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const httpOptions = { headers, observe: 'response' as const };
+
+    return await firstValueFrom(this.http.get<{ patient: any[]}>(`${this.apiUrl}`, httpOptions))
+      .then(response => {
+        if(response.status === 200 && response.body){
+          const items = response.body.patient;
+          const patient = items.map((item: any) => ({
+            Id: item.id,
+            FullName: {
+              FirstName: item.fullName.firstName.value,
+              LastName: item.fullName.lastName.value
+            },
+            DateOfBirth: item.dateOfBirth.birthDate,
+            Gender: item.gender,
+            MedicalRecordNumber: item.medicalRecordNumber.value,
+            ContactInformation: {
+              Email: item.contactInformation.email.value,
+              PhoneNumber: item.contactInformation.phoneNumber.value
+            },
+            MedicalCondition: item.medicalConditions.map((patient: { condition: any; }) => ({
+              Condition: patient.condition
+            })),
+            EmergencyContact: item.emergencyContact?.number?.value || null,
+            AppointmentHistory: item.appointmentHistory.map((slot: { start: any; end: any; }) => ({
+              Start: slot.start,
+              End: slot.end
+            })),
+            UserId: item.userId || null
+          }));
+          return {
+            status: response.status,
+            body: {
+              patient
+            }
+          }
+        } else {
+          throw new Error('Unexpected response structure or status');
+        }
+      });
   }
+
 
   updatePatient(patient: any, accessToken: string): Observable<any> {
     const headers = new HttpHeaders({

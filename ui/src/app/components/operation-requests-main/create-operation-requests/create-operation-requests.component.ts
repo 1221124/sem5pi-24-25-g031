@@ -90,7 +90,7 @@ export class CreateOperationRequestComponent implements OnInit {
       return;
     }
 
-    await this.loadPatients(); if(!this.success) console.log('Error loading patients:', this.message);
+    //await this.loadPatients(); if(!this.success) console.log('Error loading patients:', this.message);
 
     await this.loadOperationTypes(); if(!this.success) console.log('Error loading operation types:', this.message);
 
@@ -98,7 +98,7 @@ export class CreateOperationRequestComponent implements OnInit {
 
     await this.loadRequestStatus(); if (!this.success) console.log('Error loading request statuses:', this.message);
   }
-
+  /*
   async loadPatients() {
     try {
       const response = await this.servicePatient.getPatients(this.accessToken).toPromise();
@@ -116,6 +116,8 @@ export class CreateOperationRequestComponent implements OnInit {
       this.success = false;
     }
   }
+
+   */
 
   async loadOperationTypes() {
     try {
