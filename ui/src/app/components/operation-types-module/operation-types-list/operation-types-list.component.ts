@@ -16,6 +16,7 @@ export class OperationTypesListComponent implements OnInit {
   @Input() operationTypes: OperationType[] = [];
   @Input() totalItems: number = 0;
   @Input() totalPages: number = 1;
+  @Input() currentPage: number = 1;
   @Input() specializations: string[] = [];
   @Input() statuses: string[] = [];
   @Input() filter: { name: string, specialization: string, status: string } = { name: '', specialization: '', status: '' };
@@ -23,7 +24,6 @@ export class OperationTypesListComponent implements OnInit {
   @Output() statusToggle = new EventEmitter<OperationType>();
   @Output() filterChange = new EventEmitter<{ name:string, specialization: string, status: string }>();
 
-  currentPage = 1;
   itemsPerPage = 2;
 
   accessToken = '';
@@ -94,7 +94,7 @@ export class OperationTypesListComponent implements OnInit {
     }
   
     if (this.currentPage) {
-      queryParams['page'] = this.currentPage;
+      queryParams['page'] = this.currentPage.toString();
     }
   
     this.router.navigate(['/admin/operationTypes'], { queryParams });
@@ -109,11 +109,13 @@ export class OperationTypesListComponent implements OnInit {
     if (this.currentPage < Math.ceil(this.totalItems / this.itemsPerPage)) {
       this.currentPage++;
     }
+    this.updateQueryParams();
   }
 
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
+    this.updateQueryParams();
   }
 }

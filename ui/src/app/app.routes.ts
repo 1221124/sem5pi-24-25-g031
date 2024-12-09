@@ -49,7 +49,6 @@ export const routes: Route[] = [
   },
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/appointments', component: AppointmentsComponent },
-  { path: 'admin/operationTypes', component: OperationTypesComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/users', component: AdminUsersComponent },

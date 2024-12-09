@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { OperationType } from '../../../models/operation-type.model';
 import { OperationTypesService } from '../../../services/operation-types/operation-types.service';
@@ -31,12 +31,13 @@ export class OperationTypesComponent implements OnInit {
   showList = true;
   selectedOperationType: OperationType | null = null;
   operationTypes: OperationType[] = [];
+  currentPage: number = 1;
   totalItems: number = 0;
   totalPages: number = 1;
   filter = {
     name: '',
     status: '',
-    specialization: '',
+    specialization: ''
   };
 
   specializations: string[] = [];
@@ -83,6 +84,11 @@ export class OperationTypesComponent implements OnInit {
         this.filter.status = params['status'];
       } else {
         this.filter.status = '';
+      }
+      if (params['page']) {
+        this.currentPage = +params['page'];
+      } else {
+        this.currentPage = 1;
       }
     });
 
