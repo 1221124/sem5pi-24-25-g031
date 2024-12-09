@@ -1,4 +1,4 @@
-@startuml domain-model-backoffice-module
+@startuml domain-model
 
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -11,14 +11,12 @@ top to bottom direction
 hide methods
 hide circle
 
-title Domain Model - Backoffice Module
+title Domain Model
 
 package UserAggregate #MediumAquaMarine {
   class User <<root entity>>
-  class UserId <<value object>>
-  note right of UserId: unique identifier
   class Username <<value object>>
-  note right of Username: same as the user's email
+  note right of Username: same as the user's email (unique identifier)
   class Role <<value object>> {
     ADMIN, DOCTOR, NURSE, TECHNICIAN, PATIENT
   }
@@ -29,42 +27,61 @@ package UserAggregate #MediumAquaMarine {
 
 package PatientAggregate #LightSalmon {
   class Patient <<root entity>>
-  class PatientId <<value object>>
   class DateOfBirth <<value object>>
   note right of DateOfBirth: format: system date
   class Gender <<value object>> {
     MALE, FEMALE
   }
-  class MedicalRecordNumber <<value object>>
-  note right of MedicalRecordNumber: unique identifier (format: YYYYMMnnnnnn - YYYY = year, MM = month, nnnnnn = sequential number)
-  class MedicalCondition <<value object>>
-  note right of MedicalCondition: optional (free text)
   class EmergencyContact <<value object>>
-  class AppointmentHistory <<value object>>
+  note right of EmergencyContact: ContactInformation
+}
+
+package PatientMedicalRecordAggregate #OliveDrab {
+  class PatientMedicalRecord <<root entity>>
+}
+
+package AllergyAggregate #LavenderBlush {
+  class Allergy <<root entity>>
+}
+
+package MedicalConditionAggregate #Magenta {
+  class MedicalCondition <<root entity>>
+  class CommonSymptom <<value object>>
+  note right of CommonSymptom: string
+}
+
+package SpecializationAggregate #LawnGreen {
+  class Specialization <<root entity>>
+}
+
+package RoomTypeAggregate #PowderBlue {
+  class RoomType <<root entity>>
+  class RoomTypeCode <<value object>>
+  note right of RoomTypeCode: unique identifier, max 8 chars, no spaces, only: letters, numbers and "-" allowed
+  class AvailableForSurgeries <<value object>>
+  note right of AvailableForSurgeries: boolean
 }
 
 package StaffAggregate #Pink {
   class Staff <<root entity>>
-  class StaffID <<value object>>
-  note right of StaffID: unique identifier
   class LicenseNumber <<value object>>
-  note left of LicenseNumber: unique
+  note left of LicenseNumber: unique identifier
 }
 
 package OperationRequestAggregate #LightGoldenRodYellow {
   class OperationRequest <<root entity>>
-  class OperationRequestID <<value object>>
-  note right of OperationRequestID: unique identifier
+  class RequestCode <<value object>>
+  note right of RequestCode: unique identifier
   class DeadlineDate <<value object>>
-  class OperationPriority <<value object>> {
+  class Priority <<value object>> {
     ELECTIVE, URGENT, EMERGENCY
   }
 }
 
 package OperationTypeAggregate #PaleGreen {
   class OperationType <<root entity>>
-  class OperationTypeID <<value object>>
-  note bottom of OperationTypeID: unique identifier
+  class OperationTypeCode <<value object>>
+  note bottom of OperationTypeCode: unique identifier
   class OperationTypeName <<value object>>
   class RequiredStaff <<value object>>
   class Quantity <<value object>>
@@ -86,11 +103,8 @@ package AppointmentAggregate #IndianRed {
 
 package SurgeryRoomAggregate #LightBlue {
   class SurgeryRoom <<root entity>>
-  class SurgeryRoomID <<value object>>
-  note bottom of SurgeryRoomID: unique identifier
-  class RoomType <<value object>> {
-    OPERATING, CONSULTATION, ICU
-  }
+  class SurgeryRoomNumber <<value object>>
+  note bottom of SurgeryRoomNumber: unique identifier
   class RoomCapacity <<value object>>
   class AssignedEquipment <<value object>>
   class RoomStatus <<value object>> {
@@ -100,8 +114,6 @@ package SurgeryRoomAggregate #LightBlue {
 
 package LogAggregate #LightGray {
   class Log <<root entity>>
-  class LogID <<value object>>
-  note right of LogID: unique identifier
   class LogType <<value object>> {
     DELETION, UPDATE, CREATION
   }
@@ -114,6 +126,7 @@ package LogAggregate #LightGray {
 
 class FullName <<value object>>
 class Name <<value object>>
+note right of Name: max 100 chars
 class ContactInformation <<value object>>
 class PhoneNumber <<value object>>
 class Email <<value object>>
@@ -121,14 +134,16 @@ class DateTime <<value object>>
 class Date <<value object>>
 class Time <<value object>>
 class Slot <<value object>>
-class Specialization <<value object>> {
-  ANAESTHESIOLOGY, CARDIOLOGY, ORTHOPEDICS
-}
 class Status <<value object>> {
-  ACTIVE, INACTIVE
+  ACTIVE, INACTIVE, PENDING
 }
 note right of Status: represented as a bool value
-
+class MedicalRecordNumber <<value object>>
+note right of MedicalRecordNumber: unique identifier (format: YYYYMMnnnnnn - YYYY = year, MM = month, nnnnnn = sequential number)
+class Description
+note right of Description: max 2048 chars
+class SNOMEDCTCode <<value object>>
+class ICD11Code <<value object>>
 class Admin
 note right of Admin: conceptual class
 class Doctor
@@ -146,8 +161,7 @@ DateTime "1" -- "1" Date : > has
 DateTime "1" -- "1" Time : > has
 Slot "1" -- "2" DateTime : > consists of
 
-User "1" -- "1" UserId : > identified by
-User "1" -- "1" Username : > has
+User "1" -- "1" Username : > identified by
 User "1" -- "1" Email : > has
 User "*" -- "1" Role : > has assigned
 User "*" -- "1" UserStatus : > has
@@ -155,32 +169,48 @@ User "*" -- "1" UserStatus : > has
 User "0..1" <-- "0..1" Staff : < references
 User "0..1" <-- "1" Patient : < references
 
-Patient "1" -- "1" PatientId : > identified by
 Patient "1..*" --- "1" FullName : > has
 Patient "*" --- "1" DateOfBirth : > born on
 Patient "*" --- "1" Gender : > has
-Patient "1" --- "1" MedicalRecordNumber : > has
+Patient "1" --- "1" MedicalRecordNumber : > identified by
 Patient "1" --- "1" ContactInformation : > has
-Patient "0..*" --- "0..*" MedicalCondition : > can have
+Patient "1" --- "1" PatientMedicalRecord : > has
 Patient "*" ---"1" EmergencyContact : > has
-Patient "*" --- "1" AppointmentHistory : > has
+Patient "1" --- "*" Appointment : > has
 
-Staff "1" -- "1" StaffID : > identified by
+PatientMedicalRecord "1" -- "1" MedicalRecordNumber: > has
+PatientMedicalRecord "1" -- "*" Allergy : > has
+PatientMedicalRecord "1" -- "*" MedicalCondition : > has
+
+Allergy "1" -- "1" ICD11Code : > identified by
+Allergy "1" -- "1" Name : > has
+Allergy "1" -- "0..1" Description : > has
+
+MedicalCondition "1" -- "1" ICD11Code : > identified by
+MedicalCondition "1" -- "1" Name : > has
+MedicalCondition "1" -- "1" Description : > has
+MedicalCondition "*" -- "1..*" CommonSymptom : > has
+
+Staff "1" -- "1" LicenseNumber : > identified by
 Staff "*" -- "1" FullName : > has
-Staff "1" -- "1" LicenseNumber : > has
 Staff "*" -- "1" Specialization : > has
 Staff "1" -- "1" ContactInformation : > has
-Staff "*" -- "*" Slot : > has
+Staff "1" -- "*" Slot : > has
+Staff "1" -- "*" Appointment : > has
 Staff "*" -- "1" Status : > has
 
-OperationRequest "1" -- "1" RequestID : > identified by
+Specialization "1" -- "1" SNOMEDCTCode : > identified by
+Specialization "1" -- "1" Name : > has
+Specialization "1" -- "0..1" Description : > has
+
+OperationRequest "1" -- "1" RequestCode : > identified by
 OperationRequest "*" -- "1" Patient : > has
 OperationRequest "*" -- "1" Staff : > requested by
 OperationRequest "*" -- "1" OperationType : > has
 OperationRequest "*" -- "1" DeadlineDate : > has
 OperationRequest "*" -- "1" OperationPriority : > has
 
-OperationType "1" -- "1" OperationTypeID : > identified by
+OperationType "1" -- "1" OperationTypeCode : > identified by
 OperationType "1" -- "1" OperationTypeName : > has
 OperationType "1" -- "*" RequiredStaff : > needs
 OperationType "*" -- "1" Specialization : > has
@@ -198,14 +228,18 @@ Appointment "*" -- "1" DateTime : > scheduled to
 Appointment "*" -- "1" AppointmentStatus : > has
 Appointment "*" -- "1" SurgeryRoom : > happens in
 
-SurgeryRoom "1" -- "1" SurgeryRoomID : > identified by
+SurgeryRoom "1" -- "1" SurgeryRoomNumber : > identified by
 SurgeryRoom "*" -- "1" RoomType : > is
 SurgeryRoom "*" -- "1" RoomCapacity : > has
 SurgeryRoom "*" -- "1..*" AssignedEquipment : > has
 SurgeryRoom "*" -- "1" RoomStatus : > has
-SurgeryRoom "*" -- "*" Slot : > has 
+SurgeryRoom "1" -- "*" Slot : > has
 
-Log "1" - "1" LogID : > identified by
+RoomType "1" -- "1" RoomTypeCode : > identified by
+RoomType "1" -- "1" Name : > has
+RoomType "1" -- "0..1" Description : > has
+RoomType "1" -- "1" AvailableForSurgeries : > is
+
 Log "*" -- "1" LogType : > has
 Log "*" -- "1" EntityType : > has
 Log "*" -- "1" EntityID : > has
@@ -220,6 +254,15 @@ Admin "1" -- "*" Staff : > manages
 Admin "1" -- "*" Patient : > manages
 
 Admin "1" -- "0..*" OperationType : > manages
+Admin "1" -- "0..*" RoomType : > manages
+Admin "1" -- "0..*" SurgeryRoom : > manages
+Admin "1" -- "0..*" Appointment : > manages
+Admin "1" -- "0..*" Allergy : > manages
+Admin "1" -- "0..*" MedicalCondition : > manages
 Doctor "1" -- "0..*" OperationRequest : > manages
+Doctor "1" -- "0..*" PatientMedicalRecord : > manages
+Doctor "1" -- "0..*" Appointment : > manages
+Doctor "1" -- "0..*" Allergy : > lists
+Doctor "1" -- "0..*" MedicalCondition : > lists
 
 @enduml
