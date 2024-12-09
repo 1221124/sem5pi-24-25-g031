@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-menu',
   templateUrl: './admin-menu.component.html',
-  styleUrls: ['./admin-menu.component.css']
+  styleUrls: ['./admin-menu.component.css'],
+  imports: [
+    RouterOutlet
+  ],
+  standalone: true
 })
 export class AdminMenuComponent implements OnInit {
 

@@ -23,15 +23,24 @@ import { VerifyRemovePatientComponent } from './components/verify-remove-patient
 
 import { OperationRequestsModule } from './components/operation-requests-main/operation-requests.module';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
-import { OperationTypesComponent } from './components/operation-types-module/operation-types/operation-types.component';
 import { OperationTypesModule } from './components/operation-types-module/operation-types.module';
+import { AdminPatientsTableComponent } from './components/admin-patients/admin-patients-table/admin-patients-table.component';
+import { AdminPatientsMainComponent } from './components/admin-patients/admin-patients-main/admin-patients-main.component';
+import { AdminPatientsCreateComponent } from './components/admin-patients/admin-patients-create/admin-patients-create.component';
+import { AdminPatientsDeleteComponent } from './components/admin-patients/admin-patients-delete/admin-patients-delete.component';
+import { AdminPatientsUpdateComponent } from './components/admin-patients/admin-patients-update/admin-patients-update.component';
+import { AdminPatientsAppointmentHistComponent } from './components/admin-patients/admin-patients-appointment-hist/admin-patients-appointment-hist.component';
+import {
+  OperationRequestsComponent
+} from './components/operation-requests-main/operation-requests/operation-requests.component';
+import {AdminPatientsModule} from './components/admin-patients/admin-patients.module';
 
 @NgModule({
   declarations: [
-    AdminMenuComponent,
     HomeComponent,
     NurseMenuComponent,
-    TechnicianMenuComponent
+    TechnicianMenuComponent,
+    AdminPatientsAppointmentHistComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +63,9 @@ import { OperationTypesModule } from './components/operation-types-module/operat
     VerifyEmailComponent,
     VerifyPatientSensitiveInfoComponent,
     VerifyStaffSensitiveInfoComponent,
-    VerifyRemovePatientComponent
+    VerifyRemovePatientComponent,
+    AdminPatientsModule,
+    AdminMenuComponent
   ],
   providers: [],
   bootstrap: []

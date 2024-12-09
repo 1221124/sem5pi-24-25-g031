@@ -1,9 +1,8 @@
 import { Route, RouterModule } from '@angular/router';
+import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { NgModule } from '@angular/core';
 import { HomeComponent } from './components/home/home.component';
-import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { StaffsComponent } from './components/staffs-main/staffs/staffs.component';
-import { AdminPatientsComponent } from './components/admin-patients/admin-patients.component';
 import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
@@ -17,9 +16,10 @@ import { VerifyRemovePatientComponent } from './components/verify-remove-patient
 import { PatientComponent } from './components/patient/patient-main/patient.component';
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
+import { AdminPatientsMainComponent } from './components/admin-patients/admin-patients-main/admin-patients-main.component';
 import { ListStaffsComponent } from './components/staffs-main/list-staffs/list-staffs.component';
 import { PaginationStaffsComponent } from './components/staffs-main/pagination-staffs/pagination-staffs.component';
-import { OperationTypesComponent } from './components/operation-types-module/operation-types/operation-types.component';
+import {OperationTypesComponent} from './components/operation-types-module/operation-types/operation-types.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -49,7 +49,9 @@ export const routes: Route[] = [
   },
   { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/appointments', component: AppointmentsComponent },
-  { path: 'admin/patients', component: AdminPatientsComponent },
+  { path: 'admin/operationTypes', component: OperationTypesComponent },
+  { path: 'admin/patients', component: AdminPatientsMainComponent },
+  { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/users', component: AdminUsersComponent },
   { path: 'admin/prolog', component: PrologComponent },
   {
@@ -100,4 +102,4 @@ export const routes: Route[] = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
