@@ -1,73 +1,147 @@
 <form *ngIf="operationType" (ngSubmit)="submitForm()">
-  <div>
-    <label for="name">Name:</label>
-    <input type="text" [(ngModel)]="operationType.Name" name="name" required />
+  <div *ngIf="operationType">
+    <label for="operationName">Operation Name:</label>
+    <input
+      type="text"
+      id="operationName"
+      name="operationName"
+      [(ngModel)]="operationType.Name"
+      placeholder="Enter Operation Name"
+      required
+    />
   </div>
 
-  <div>
+  <div *ngIf="operationType">
     <label for="specialization">Specialization:</label>
-    <select [(ngModel)]="operationType.Specialization" name="specialization">
+    <select
+      id="specialization"
+      name="specialization"
+      [(ngModel)]="operationType.Specialization"
+      required
+    >
       <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
     </select>
   </div>
 
-  <div>
-    <h3>Required Staff</h3>
-    <div *ngFor="let staff of operationType.RequiredStaff; let i = index">
-      <div>
-        <label for="role">Role:</label>
-        <input type="text" [(ngModel)]="staff.Role" name="role{{ i }}" required />
-      </div>
-      <div>
-        <label for="specialization">Specialization:</label>
-        <input type="text" [(ngModel)]="staff.Specialization" name="specialization{{ i }}" required />
-      </div>
-      <div>
-        <label for="quantity">Quantity:</label>
-        <input type="number" [(ngModel)]="staff.Quantity" name="quantity{{ i }}" required />
-      </div>
-      <div>
-        <label>Is Required in Preparation:</label>
-        <input type="checkbox" [(ngModel)]="staff.IsRequiredInPreparation" name="prep{{ i }}" />
-      </div>
-      <div>
-        <label>Is Required in Surgery:</label>
-        <input type="checkbox" [(ngModel)]="staff.IsRequiredInSurgery" name="surgery{{ i }}" />
-      </div>
-      <div>
-        <label>Is Required in Cleaning:</label>
-        <input type="checkbox" [(ngModel)]="staff.IsRequiredInCleaning" name="cleaning{{ i }}" />
-      </div>
-      <button type="button" (click)="removeRequiredStaff(i)">Remove</button>
+  <div *ngIf="operationType?.RequiredStaff">
+    <h3>Add Required Staff</h3>
+    <div>
+      <label for="newStaffRole">Role:</label>
+      <select
+        id="newStaffRole"
+        name="newStaffRole"
+        [(ngModel)]="newRequiredStaff.Role"
+        required
+      >
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
     </div>
+
+    <div>
+      <label for="newStaffSpecialization">Specialization:</label>
+      <select
+        id="newStaffSpecialization"
+        name="newStaffSpecialization"
+        [(ngModel)]="newRequiredStaff.Specialization"
+        required
+      >
+        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="newStaffQuantity">Quantity:</label>
+      <input
+        type="number"
+        id="newStaffQuantity"
+        name="newStaffQuantity"
+        [(ngModel)]="newRequiredStaff.Quantity"
+        min="1"
+        required
+      />
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="newRequiredStaff.IsRequiredInPreparation"
+          name="newStaffIsRequiredInPreparation"
+        />
+        Preparation
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="newRequiredStaff.IsRequiredInSurgery"
+          name="newStaffIsRequiredInSurgery"
+        />
+        Surgery
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="newRequiredStaff.IsRequiredInCleaning"
+          name="newStaffIsRequiredInCleaning"
+        />
+        Cleaning
+      </label>
+    </div>
+
     <button type="button" (click)="addRequiredStaff()">Add Staff</button>
   </div>
 
-  <div>
-    <h3>Phases Duration</h3>
-    <div>
-      <label for="preparation">Preparation:</label>
-      <input type="number" [(ngModel)]="operationType.PhasesDuration.Preparation" name="preparation" required />
+  <div *ngFor="let staff of operationType?.RequiredStaff; let i = index" class="required-staff">
+    <h3>Required Staff {{ i + 1 }}</h3>
+    <p>Role: {{ staff.Role }}</p>
+    <p>Specialization: {{ staff.Specialization }}</p>
+    <p>Quantity: {{ staff.Quantity }}</p>
+    <p>Required in:</p>
+    <ul>
+      <li *ngIf="staff.IsRequiredInPreparation">Preparation</li>
+      <li *ngIf="staff.IsRequiredInSurgery">Surgery</li>
+      <li *ngIf="staff.IsRequiredInCleaning">Cleaning</li>
+    </ul>
+    <button type="button" class="cancel" (click)="removeRequiredStaff(i)">Remove Staff</button>
+  </div>
+
+  <div *ngIf="operationType?.PhasesDuration">
+    <div class="duration-field">
+      <label for="preparationDuration">Preparation Duration (minutes):</label>
+      <input
+        type="number"
+        [(ngModel)]="operationType.PhasesDuration.Preparation"
+        name="preparationDuration"
+        id="preparationDuration"
+        min="1"
+      />
     </div>
-    <div>
-      <label for="surgery">Surgery:</label>
-      <input type="number" [(ngModel)]="operationType.PhasesDuration.Surgery" name="surgery" required />
+
+    <div class="duration-field">
+      <label for="surgeryDuration">Surgery Duration (minutes):</label>
+      <input
+        type="number"
+        [(ngModel)]="operationType.PhasesDuration.Surgery"
+        name="surgeryDuration"
+        id="surgeryDuration"
+        min="1"
+      />
     </div>
-    <div>
-      <label for="cleaning">Cleaning:</label>
-      <input type="number" [(ngModel)]="operationType.PhasesDuration.Cleaning" name="cleaning" required />
+
+    <div class="duration-field">
+      <label for="cleaningDuration">Cleaning Duration (minutes):</label>
+      <input
+        type="number"
+        [(ngModel)]="operationType.PhasesDuration.Cleaning"
+        name="cleaningDuration"
+        id="cleaningDuration"
+        min="1"
+      />
     </div>
   </div>
 
-  <div>
-    <label for="status">Status:</label>
-    <select [(ngModel)]="operationType.Status" name="status" required>
-      <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
-    </select>
-  </div>
-
-  <div class="form-actions">
-    <button type="submit">{{ operationType.Id ? 'Update' : 'Create' }}</button>
-    <button type="button" (click)="cancel.emit()">Cancel</button>
-  </div>
+  <button type="submit">{{ operationType.Id ? 'Update' : 'Submit' }} Operation Type</button>
+  <button type="button" class="cancel" (click)="cancelForm()">Cancel</button>
 </form>

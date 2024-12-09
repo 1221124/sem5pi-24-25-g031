@@ -1,8 +1,8 @@
 <div class="operationTypes-container">
   <h1>Operation Types</h1>
 
-  <button *ngIf="showList" (click)="toggleView()" class="btn btn-primary">Create New Operation Type</button>
-  <button *ngIf="!showList" (click)="toggleView()" class="btn btn-secondary">Show Operation Types</button>
+  <button *ngIf="showList" (click)="showOperationTypesForm()" class="btn btn-primary">Create New Operation Type</button>
+  <button *ngIf="!showList" (click)="showOperationTypesList()" class="btn btn-secondary">Show Operation Types</button>
 
   <div *ngIf="showList">
     <app-operation-types-list
@@ -28,6 +28,7 @@
   <div *ngIf="!showList">
     <app-operation-types-form
       [operationType]="selectedOperationType"
+      [roles]="roles"
       [specializations]="specializations"
       [statuses]="statuses"
       (submit)="onSubmit()"

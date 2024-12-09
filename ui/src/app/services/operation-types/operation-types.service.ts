@@ -61,7 +61,10 @@ export class OperationTypesService {
         "Specialization": staff.Specialization,
         "Quantity": {
           "Value": staff.Quantity
-        }
+        },
+        "IsRequiredInPreparation": staff.IsRequiredInPreparation,
+        "IsRequiredInSurgery": staff.IsRequiredInSurgery,
+        "IsRequiredInCleaning": staff.IsRequiredInCleaning
       })),
       "PhasesDuration": "PREPARATION: " + operationType.PhasesDuration.Preparation + ",SURGERY: " + operationType.PhasesDuration.Surgery + ",CLEANING: " + operationType.PhasesDuration.Cleaning,
       "Status": operationType.Status,
@@ -98,7 +101,7 @@ export class OperationTypesService {
             OperationTypeCode: item.operationTypeCode.value,
             Name: item.name.value,
             Specialization: item.specialization.toString(),
-            RequiredStaff: item.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: any; isRequiredInSurgery: any; isRequiredInCleaning: any; }) => ({
+            RequiredStaff: item.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: boolean; isRequiredInSurgery: boolean; isRequiredInCleaning: boolean; }) => ({
               Role: staff.role,
               Specialization: staff.specialization,
               Quantity: staff.quantity.value,

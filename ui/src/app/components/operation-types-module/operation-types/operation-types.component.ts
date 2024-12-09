@@ -40,6 +40,7 @@ export class OperationTypesComponent implements OnInit {
     specialization: ''
   };
 
+  roles: string[] = [];
   specializations: string[] = [];
   statuses: string[] = [];
 
@@ -97,6 +98,7 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async loadEnums() {
+    this.roles = await this.enumsService.getStaffRoles(this.accessToken);
     this.specializations = await this.enumsService.getSpecializations(this.accessToken);
     this.statuses = await this.enumsService.getStatuses(this.accessToken);
   }
@@ -108,7 +110,7 @@ export class OperationTypesComponent implements OnInit {
       this.operationTypes.sort((a, b) => a.OperationTypeCode.localeCompare(b.OperationTypeCode));
       if (this.filter.name) {
         this.operationTypes = this.operationTypes.filter((ot) =>
-          ot.Name.toLowerCase().startsWith(this.filter.name.toLowerCase())
+          ot.Name.toLowerCase().includes(this.filter.name.toLowerCase())
         );
       }
       this.totalItems = this.operationTypes.length;
@@ -118,24 +120,26 @@ export class OperationTypesComponent implements OnInit {
     }
   }
 
-  async toggleView() {
+  async showOperationTypesList() {
     await this.loadOperationTypes();
-    this.showList = !this.showList;
+    this.showList = true;
     this.selectedOperationType = null;
-    if (this.showList) {
-      this.router.navigate(['/admin/operationTypes'], { replaceUrl: true });
+    this.filter.name = '';
+    this.filter.status = '';
+    this.filter.specialization = '';
+    this.router.navigate(['/admin/operationTypes'], { replaceUrl: true });
+  }
+
+  async showOperationTypesForm() {
+    this.showList = false;
+    if (this.selectedOperationType) {
+      this.router.navigate(['/admin/operationTypes/update'], {
+        queryParams: { code: this.selectedOperationType.OperationTypeCode },
+        replaceUrl: true,
+      });
     } else {
       this.router.navigate(['/admin/operationTypes/create'], { replaceUrl: true });
     }
-  }
-
-  async onEdit(operationType: OperationType) {
-    this.selectedOperationType = operationType;
-    this.showList = false;
-    this.router.navigate(['/admin/operationTypes/update'], {
-      queryParams: { code: operationType.OperationTypeCode },
-      replaceUrl: true,
-    });
   }
 
   onStatusToggle(operationType: OperationType) {
@@ -143,8 +147,7 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async onStatusToggled() {
-    this.showList = false;
-    await this.toggleView();
+    await this.showOperationTypesList();
   }
 
   async onFilterChange(filters: { name: string; status: string; specialization: string }) {
@@ -155,11 +158,15 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async onSubmit() {
-    await this.loadOperationTypes();
-    await this.toggleView();
+    await this.showOperationTypesList();
   }
 
-  onCancel() {
-    this.toggleView();
+  async onEdit(operationType: OperationType) {
+    this.selectedOperationType = operationType;
+    await this.showOperationTypesForm();
+  }
+
+  async onCancel() {
+    await this.showOperationTypesList();
   }
 }
