@@ -7,6 +7,8 @@
   <div *ngIf="showList">
     <app-operation-types-list
       [operationTypes]="operationTypes"
+      [totalItems]="totalItems"
+      [totalPages]="totalPages"
       [specializations]="specializations"
       [statuses]="statuses"
       (edit)="onEdit($event)"
@@ -31,6 +33,4 @@
       (cancel)="onCancel()">
     </app-operation-types-form>
   </div>
-
-  <router-outlet></router-outlet>
 </div>

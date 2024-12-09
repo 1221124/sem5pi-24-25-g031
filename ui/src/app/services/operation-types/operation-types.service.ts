@@ -102,9 +102,9 @@ export class OperationTypesService {
               Role: staff.role,
               Specialization: staff.specialization,
               Quantity: staff.quantity.value,
-              IsRequiredInPreparation: staff.isRequiredInPreparation as boolean,
-              IsRequiredInSurgery: staff.isRequiredInSurgery as boolean,
-              IsRequiredInCleaning: staff.isRequiredInCleaning as boolean
+              IsRequiredInPreparation: staff.isRequiredInPreparation,
+              IsRequiredInSurgery: staff.isRequiredInSurgery,
+              IsRequiredInCleaning: staff.isRequiredInCleaning
             })),
             PhasesDuration: {
               Preparation: item.phasesDuration.preparation.value,

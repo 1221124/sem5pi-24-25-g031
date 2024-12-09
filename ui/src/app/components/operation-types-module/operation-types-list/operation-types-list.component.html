@@ -72,6 +72,6 @@
   <div class="pagination">
     <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
     <span>Page {{ currentPage }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage >= totalItems / itemsPerPage">Next</button>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
   </div>
 </div>

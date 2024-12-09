@@ -28,15 +28,15 @@
       </div>
       <div>
         <label>Is Required in Preparation:</label>
-        <input type="checkbox" [(ngModel)]="staff.IsRequiredInPreparation" name="prep{{ i }}" [checked]="staff.IsRequiredInPreparation" />
+        <input type="checkbox" [(ngModel)]="staff.IsRequiredInPreparation" name="prep{{ i }}" />
       </div>
       <div>
         <label>Is Required in Surgery:</label>
-        <input type="checkbox" [(ngModel)]="staff.IsRequiredInSurgery" name="surgery{{ i }}" [checked]="staff.IsRequiredInPreparation" />
+        <input type="checkbox" [(ngModel)]="staff.IsRequiredInSurgery" name="surgery{{ i }}" />
       </div>
       <div>
         <label>Is Required in Cleaning:</label>
-        <input type="checkbox" [(ngModel)]="staff.IsRequiredInCleaning" name="cleaning{{ i }}" [checked]="staff.IsRequiredInPreparation" />
+        <input type="checkbox" [(ngModel)]="staff.IsRequiredInCleaning" name="cleaning{{ i }}" />
       </div>
       <button type="button" (click)="removeRequiredStaff(i)">Remove</button>
     </div>

@@ -32,6 +32,7 @@ export class OperationTypesComponent implements OnInit {
   selectedOperationType: OperationType | null = null;
   operationTypes: OperationType[] = [];
   totalItems: number = 0;
+  totalPages: number = 1;
   filter = {
     name: '',
     status: '',
@@ -47,7 +48,6 @@ export class OperationTypesComponent implements OnInit {
     private enumsService: EnumsService,
     private router: Router,
     private route: ActivatedRoute,
-    private cdRef: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -68,6 +68,23 @@ export class OperationTypesComponent implements OnInit {
       setTimeout(() => this.router.navigate(['']), 3000);
       return;
     }
+    this.route.queryParams.subscribe((params) => {
+      if (params['name']) {
+        this.filter.name = params['name'];
+      } else {
+        this.filter.name = '';
+      }
+      if (params['specialization']) {
+        this.filter.specialization = params['specialization'];
+      } else {
+        this.filter.specialization = '';
+      }
+      if (params['status']) {
+        this.filter.status = params['status'];
+      } else {
+        this.filter.status = '';
+      }
+    });
 
     await this.loadEnums();
     await this.loadOperationTypes();
@@ -80,28 +97,16 @@ export class OperationTypesComponent implements OnInit {
 
   async loadOperationTypes() {
     try {
-      // this.route.queryParams.subscribe((params) => {
-      //   if (params['name']) {
-      //     this.filter.name = params['name'];
-      //   } else {
-      //     this.filter.name = '';
-      //   }
-      //   if (params['specialization']) {
-      //     this.filter.specialization = params['specialization'];
-      //   } else {
-      //     this.filter.specialization = '';
-      //   }
-      //   if (params['status']) {
-      //     this.filter.status = params['status'];
-      //   } else {
-      //     this.filter.status = '';
-      //   }
-      // });
       const response = await this.service.getOperationTypes(this.filter, this.accessToken);
       this.operationTypes = response.body?.operationTypes || [];
-      this.totalItems = response.body?.totalItems || 0;
       this.operationTypes.sort((a, b) => a.OperationTypeCode.localeCompare(b.OperationTypeCode));
-      this.cdRef.detectChanges();
+      if (this.filter.name) {
+        this.operationTypes = this.operationTypes.filter((ot) =>
+          ot.Name.toLowerCase().startsWith(this.filter.name.toLowerCase())
+        );
+      }
+      this.totalItems = this.operationTypes.length;
+      this.totalPages = Math.ceil(this.totalItems / 2);
     } catch (error) {
       console.error('Error loading operation types:', error);
     }

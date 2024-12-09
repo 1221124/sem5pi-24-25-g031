@@ -15,6 +15,7 @@ import { CommonModule, NgForOf, NgIf } from '@angular/common';
 export class OperationTypesListComponent implements OnInit {
   @Input() operationTypes: OperationType[] = [];
   @Input() totalItems: number = 0;
+  @Input() totalPages: number = 1;
   @Input() specializations: string[] = [];
   @Input() statuses: string[] = [];
   @Input() filter: { name: string, specialization: string, status: string } = { name: '', specialization: '', status: '' };
@@ -97,7 +98,7 @@ export class OperationTypesListComponent implements OnInit {
     }
   
     this.router.navigate(['/admin/operationTypes'], { queryParams });
-  }  
+  }
 
   getPaginatedOperationTypes(): OperationType[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
