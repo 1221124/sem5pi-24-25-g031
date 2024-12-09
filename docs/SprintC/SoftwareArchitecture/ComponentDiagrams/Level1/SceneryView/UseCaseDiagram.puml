@@ -11,6 +11,7 @@ actor Staff
 actor "System Administrator" as SystemAdmin
 actor System
 actor "Entity" as Ent
+actor "Hospital Manager" as Manager
 
 rectangle "Healthcare Management System" {
     Admin --> (Register Backoffice Users)
@@ -29,14 +30,34 @@ rectangle "Healthcare Management System" {
     Admin --> (Obtain better scheduling of operations in a certain room in a specific day)
     Admin --> (Know till what dimension in terms of number of surgeries is possible to ask for the better solution)
     Admin --> (Obtain a good schedule, not necessarily the better, in useful time to be adopted)
+    Admin --> (Create Alergy)
+    Admin --> (Create Medical Condition)
+    Admin --> (Create Type of Room)
+    Admin --> (Create Specialization)
+    Admin --> (List Specializations)
+    Admin --> (Edit Specializations)
+    Admin --> (Delete Specializations)
+    Admin --> (Assign a set os appointments to several operation rooms - automatic method)
+    Admin --> (Assign a set os appointments to several operation rooms - genetic algorithm)
+    Admin --> (Schedule appointments according to the dimension of the problem and useful time using the adequate method)
 
     Doctor --> (Request an Operation) 
     Doctor --> (Update Operation Requisition)
     Doctor --> (Remove Operation Requisition) 
     Doctor --> (List/Search Operation Requisitions)
+    Doctor --> (List/Search Allergies)
+    Doctor --> (List/Search Medical Conditions)
+    Doctor --> (Update Patient Medical Record)
+    Doctor --> (List/Search Patient Medical Record entries)
+    Doctor --> (Create Appointment)
+    Doctor --> (Update Appointment)
+    Doctor --> (Include the access of the Patient Medical Record during the patient profile management)
 
     Patient --> (Update User Profile) 
-    Patient --> (Delete Account) 
+    Patient --> (Delete Account)
+    Patient --> (Download Medical History)
+    Patient --> (Know what data will be processed - Privacy Policy)
+    Patient --> (Know for how long my personal data will be kept - Privacy Policy)
 
     User --> (Have integrated UI for all modules)
     User --> (Adjust application menu according to my role)
@@ -46,15 +67,33 @@ rectangle "Healthcare Management System" {
     Staff --> (See appropiate textures mapped onto the floor)
     Staff --> (See the hospital floor illuminated with ambient and directional light)
     Staff --> (Control the camera with the mouse)
+    Staff --> (Select a room by left clicking on the corresponding surgical table)
+    Staff --> (Press "i" key and have information about selected room displayed/hidden)
+    Staff --> (Move smoothly camera instead of instantly)
 
     SystemAdmin --> (Deplyoment of one of the RFP modules in a DEI VM to be systematic, validating it on a scheduled basis with the test plan)
     SystemAdmin --> (Only clients on the DEI's internal network - wired or via VPN - are able to access the system)
     SystemAdmin --> (Clients listed in previous requirement can be defined by changing a text file)
     SystemAdmin --> (Define the MBCO to propose to stakeholders)
     SystemAdmin --> (Get users with more than 3 failed login attempts)
+    SystemAdmin --> (Make a backup copy of the DB(s) to a Cloud environment using a script that renamtes it to the format <db_name>_yyyymmdd)
+    SystemAdmin --> (Create a script using the backup prepared in previous US to manage the files resulting from this backup on the following schedule)
+    SystemAdmin --> (Keep the process of the DB backup in the Linux log)
+    SystemAdmin --> (Have a lifetime of no more than 7 days for the backup of the DB backup)
+    SystemAdmin --> (Provide the admin to have SSH access to the VM by certificate only, without a password)
+    SystemAdmin --> (Create a public file share, in SMB/CIFS or NFS format)
+    SystemAdmin --> (Ensure backups have been carried out correctly)
 
     Ent --> (Ensure the team has good knowledge of the project and how it can affect patient's personal data)
+    Ent --> (Have a disaster recovery plan that meets the MBCO)
+    Ent --> (Have a justification for changes to be made to infrastructure to ensure a MTD of 20 minutes)
+    Ent --> (Be presented with a BIA of the final solution)
+    Ent --> (Implemented access management to meet the appropriate security criteria)
+    Ent --> (Implement clustering system between the systems that implement the SPA)
+
     System --> (Notify both users and the responsible authority in case of a data breach, so that I comply with GDPR's breach notification requirements)
+
+    Manager --> (Have a study of state of the art of application of Robots and Computer Vision in Hospitals)
 }
 
 rectangle "IAM System" {
