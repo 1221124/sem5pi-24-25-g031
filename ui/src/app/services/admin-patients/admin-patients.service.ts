@@ -106,7 +106,9 @@ export class PatientsService {
 
     return await firstValueFrom(this.http.get<{ patient: any[]}>(`${this.apiUrl}`, httpOptions))
       .then(response => {
+        console.log('Patients fetched ', response.body);
         if(response.status === 200 && response.body){
+
           const items = response.body.patient;
           const patient = items.map((item: any) => ({
             Id: item.id,
@@ -138,6 +140,7 @@ export class PatientsService {
             }
           }
         } else {
+          console.log('Failed to fetch patients:', response.status);
           throw new Error('Unexpected response structure or status');
         }
       });

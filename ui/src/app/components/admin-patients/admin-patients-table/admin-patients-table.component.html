@@ -18,7 +18,6 @@
       <th><input type="text" [(ngModel)]="filter.medicalRecordNumber" placeholder="Search by MRN" /></th>
       <th><button class="button-filter" (click)="applyFilter()">Search</button></th>
       <th><button class="button-filter" (click)="clearFilters()">Clear</button></th>
-      <th></th>
     </tr>
     <tr>
       <th>Actions</th>
@@ -36,17 +35,51 @@
     <tbody>
     <tr *ngFor="let patient of patients">
 
+      <td></td>
       <td>{{ patient.FullName.FirstName }}</td>
       <td>{{ patient.FullName.LastName }}</td>
-      <td>{{ patient.DateOfBirth | date }}</td>
+      <td>{{ patient.DateOfBirth }}</td>
       <td>{{ patient.ContactInformation.Email }}</td>
       <td>{{ patient.ContactInformation.PhoneNumber }}</td>
       <td>{{ patient.Gender}}</td>
       <td>{{ patient.MedicalRecordNumber }}</td>
       <td>{{ patient.EmergencyContact ? patient.EmergencyContact : 'N/A' }}</td>
       <td>
-        <!--button type="button" (click)="openAppointmentHistoryModal(patient)">View</button!-->
+        <button class="view-button" type="button" (click)="openAppointmentHistoryModal(patient)">View Appointment History</button>
       </td>
     </tr>
   </table>
+
+</div>
+<div *ngIf="isAppointmentHistoryModalOpen" class="modal">
+  <div class="modal-content">
+    <span type="button" class="close" (click)="closeAppointmentHistoryModal()">&times;</span>
+    <h2>Appointment History</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>Appointment History</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <table>
+            <thead>
+            <tr>
+              <th>Start</th>
+              <th>End</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let slot of selectedPatient.appointmentHistory">
+              <td>{{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</td>
+              <td>{{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>

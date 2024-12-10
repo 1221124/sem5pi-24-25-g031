@@ -6,6 +6,8 @@ import {Patient} from '../../../models/patient.model';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {firstValueFrom} from 'rxjs';
+import {log} from 'node:util';
 
 @Component({
   selector: 'app-admin-patients-table',
@@ -14,7 +16,8 @@ import {HttpErrorResponse} from '@angular/common/http';
   imports: [
     NgForOf,
     FormsModule,
-    DatePipe
+    DatePipe,
+    NgIf
   ],
   standalone: true
 })
@@ -22,15 +25,15 @@ export class AdminPatientsTableComponent {
   @Input() patients!: Patient[];
   @Input() accessToken!: string;
 
+  selectedPatient : any = {};
+
+  isAppointmentHistoryModalOpen = false;
+
   constructor(
     private patientService: PatientsService,
     private router: Router,
     private authService: AuthService
   ) {}
-
-  selectedPatient!: Patient;
-
-  patient: Patient[] = [];
 
   filter = {
     pageNumber: 1,
@@ -42,62 +45,13 @@ export class AdminPatientsTableComponent {
     gender: ''
   }
 
-  message: string = '';
-  success: boolean = true;
-
-  async ngOnInit() {
-
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
-      this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
-
-      return;
-    }
-
-    this.accessToken = this.authService.getToken();
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
-      this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
-
-      return;
-    }
-
-    this.fetchPatients();
-    if (this.selectedPatient.AppointmentHistory) {
-      this.selectedPatient.AppointmentHistory = this.selectedPatient.AppointmentHistory.map(slot => ({
-        Start: new Date(slot.Start),
-        End: new Date(slot.End)
-      }));
-    }
-  }
-
-  async fetchPatients() {
-    const emptyFilter = {
-      pageNumber: 0
-    };
-    await this.patientService.getPatients(this.accessToken)
-      .then(response => {
-        if (response.status === 200 && response.body) {
-          this.patients = response.body.patient;
-        } else {
-          this.handleError('Failed to load patients data. Response status: ' + response.status);
-        }
-      });
-  }
-
   applyFilter() {
     this.refreshPatients();
   }
 
   clearFilters(): void {
     this.filter = {
-      pageNumber: 1,
+      pageNumber: 0,
       fullName: '',
       email: '',
       phoneNumber: '',
@@ -105,26 +59,44 @@ export class AdminPatientsTableComponent {
       dateOfBirth: '',
       gender: ''
     };
-    this.fetchPatients();  // Fetch all patients again after clearing filters
+    this.refreshPatients();
   }
 
-  async refreshPatients(){
+  async refreshPatients() {
     try {
-      this.patients = await this.patientService.getFilterPatients(this.filter, this.accessToken).toPromise();
+      const response = await firstValueFrom(this.patientService.getFilterPatients(this.filter, this.accessToken));
+      this.patients = response || [];
     } catch (error) {
-      const httpError = error as HttpErrorResponse;
-      if (httpError.status === 404 || httpError.status === 400) {
-        this.patients = [];
-        console.warn('No patients found or invalid filter parameters.');
-      } else {
-        console.error('Error refreshing patients:', error);
-      }
+      console.error('Error refreshing patients:', error);
     }
   }
 
-  private handleError(message: string) {
-    this.message = message;
-    this.success = false;
-    console.error(message);
+  openAppointmentHistoryModal(patient: any) {
+    if (Array.isArray(patient) && patient.length > 0) {
+      if (patient[0].AppointmentHistory) {
+        this.selectedPatient = {
+          appointmentHistory: patient[0].AppointmentHistory
+        };
+        console.log("selectedPatient 1 if", this.selectedPatient);
+        this.isAppointmentHistoryModalOpen = true;
+      } else {
+        console.log("Histórico de consultas não encontrado para este paciente.");
+      }
+    } else if (patient && patient.AppointmentHistory) {
+      this.selectedPatient = {
+        appointmentHistory: patient.AppointmentHistory
+      };
+      console.log("selectedPatient 2 if", this.selectedPatient);
+      this.isAppointmentHistoryModalOpen = true;
+    } else {
+      console.log("Não foi possível acessar o histórico de consultas.");
+    }
   }
+
+
+  closeAppointmentHistoryModal() {
+    this.isAppointmentHistoryModalOpen = false;
+  }
+
+
 }
