@@ -1,0 +1,34 @@
+{
+  "name": "patientbackend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/bcrypt-nodejs": "^0.0.31",
+    "@types/winston": "^2.4.4",
+    "argon2": "^0.41.1",
+    "bcrypt-nodejs": "^0.0.3",
+    "bcryptjs": "^2.4.3",
+    "celebrate": "^15.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "expect": "^29.7.0",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.4",
+    "shallow-equal-object": "^1.1.1",
+    "typedi": "^0.10.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/sinon": "^17.0.3",
+    "sinon": "^19.0.2"
+  }
+}
