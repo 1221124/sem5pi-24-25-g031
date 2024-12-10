@@ -42,15 +42,18 @@ export class ToggleOperationTypeStatusComponent implements OnInit {
   async toggleStatus() {
     try {
       if (this.operationType.Status.trim().toLowerCase() === 'active') {
-        await this.service.deleteOperationType(this.operationType.Id, this.accessToken);
+        await this.service.deleteOperationType(this.operationType.Id, this.accessToken).then(() => {
+          this.statusToggled.emit();
+        });
       } else {
         await this.service.updateOperationType(
           this.operationType.Id,
           { ...this.operationType, Status: 'Active' },
           this.accessToken
-        );
+        ).then(() => {
+          this.statusToggled.emit();
+        });
       }
-      this.statusToggled.emit();
     } catch (error) {
       console.error('Error toggling status:', error);
     }
