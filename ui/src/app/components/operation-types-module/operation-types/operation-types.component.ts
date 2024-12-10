@@ -35,6 +35,7 @@ export class OperationTypesComponent implements OnInit {
   currentPage: number = 1;
   totalItems: number = 0;
   totalPages: number = 1;
+  itemsPerPage = 1;
   filter = {
     name: '',
     status: '',
@@ -118,7 +119,7 @@ export class OperationTypesComponent implements OnInit {
         }
       );
       this.totalItems = this.operationTypes.length;
-      this.totalPages = Math.ceil(this.totalItems / 2);
+      this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
     } catch (error) {
       console.error('Error loading operation types:', error);
     }

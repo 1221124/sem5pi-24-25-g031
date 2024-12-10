@@ -17,14 +17,13 @@ export class OperationTypesListComponent implements OnInit {
   @Input() totalItems: number = 0;
   @Input() totalPages: number = 1;
   @Input() currentPage: number = 1;
+  @Input() itemsPerPage: number = 1;
   @Input() specializations: string[] = [];
   @Input() statuses: string[] = [];
   @Input() filter: { name: string, specialization: string, status: string } = { name: '', specialization: '', status: '' };
   @Output() edit = new EventEmitter<OperationType>();
   @Output() statusToggle = new EventEmitter<OperationType>();
   @Output() filterChange = new EventEmitter<{ name:string, specialization: string, status: string }>();
-
-  itemsPerPage = 2;
 
   accessToken = '';
 
@@ -49,6 +48,18 @@ export class OperationTypesListComponent implements OnInit {
       setTimeout(() => this.router.navigate(['']), 3000);
       return;
     }
+  }
+
+  sortedStaff(staffList: any[]) {
+    return staffList.sort((a, b) => {
+      if (a.Role < b.Role) return -1;
+      if (a.Role > b.Role) return 1;
+  
+      if (a.Specialization < b.Specialization) return -1;
+      if (a.Specialization > b.Specialization) return 1;
+  
+      return 0;
+    });
   }
 
   onStatusToggle(operationType: OperationType) {

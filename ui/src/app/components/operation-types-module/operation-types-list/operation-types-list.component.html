@@ -37,6 +37,7 @@
               </option>
             </select>
           </th>
+          <th>Version</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -44,25 +45,34 @@
         <tr *ngFor="let operationType of getPaginatedOperationTypes()">
           <td>{{ operationType.OperationTypeCode }}</td>
           <td>{{ operationType.Name }}</td>
-          <td>{{ operationType.Specialization }}</td>
-          <td>
-            <ul>
-              <li *ngFor="let staff of operationType.RequiredStaff">
-                {{ staff.Role }} ({{ staff.Specialization }} - {{ staff.Quantity }})
+          <td class="specialization-column">{{ operationType.Specialization }}</td>
+          <td class="required-staff-column">
+            <ul class="staff-list">
+              <li *ngFor="let staff of sortedStaff(operationType.RequiredStaff)" class="staff-item">
+                <span class="staff-role">{{ staff.Role }}</span>
+                <span class="staff-specialization">({{ staff.Specialization }} - {{ staff.Quantity }})</span>
+                <div class="staff-requirements">
+                  <span *ngIf="staff.IsRequiredInPreparation" class="badge preparation">Preparation</span>
+                  <span *ngIf="staff.IsRequiredInSurgery" class="badge surgery">Surgery</span>
+                  <span *ngIf="staff.IsRequiredInCleaning" class="badge cleaning">Cleaning</span>
+                </div>
               </li>
             </ul>
           </td>
-          <td>
-            Preparation: {{ operationType.PhasesDuration.Preparation }}min <br />
-            Surgery: {{ operationType.PhasesDuration.Surgery }}min <br />
-            Cleaning: {{ operationType.PhasesDuration.Cleaning }}min
+          <td class="phases-column">
+            <div class="phase-info">Preparation: {{ operationType.PhasesDuration.Preparation }}min</div>
+            <div class="phase-info">Surgery: {{ operationType.PhasesDuration.Surgery }}min</div>
+            <div class="phase-info">Cleaning: {{ operationType.PhasesDuration.Cleaning }}min</div>
           </td>
           <td>{{ operationType.Status }}</td>
+          <td>v{{ operationType.Version }}</td>
           <td>
-            <button class="btn btn-primary btn-sm" (click)="edit.emit(operationType)">Update</button>
-            <button class="btn btn-secondary btn-sm" (click)="statusToggle.emit(operationType)">
-              {{ operationType.Status === 'Active' ? 'Inactivate' : 'Activate' }}
-            </button>
+            <div class="button-container">
+              <button class="btn btn-primary btn-sm" (click)="edit.emit(operationType)">Update</button>
+              <button class="btn btn-secondary btn-sm" (click)="statusToggle.emit(operationType)">
+                {{ operationType.Status === 'Active' ? 'Inactivate' : 'Activate' }}
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

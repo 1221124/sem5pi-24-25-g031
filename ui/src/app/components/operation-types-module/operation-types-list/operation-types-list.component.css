@@ -3,20 +3,118 @@
   padding: 20px;
 }
 
-.btn-clear-filters {
-  background-color: #6c757d;
-  color: white;
-  font-weight: bold;
-  padding: 8px 16px;
+.table {
+  width: 100%;
   margin-bottom: 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background-color: #343a40;
+  color: white;
+}
+
+.table th, .table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #dee2e6;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f8f9fa;
+}
+
+.staff-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.staff-item {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   transition: background-color 0.3s ease;
 }
 
-.btn-clear-filters:hover {
-  background-color: #5a6268;
+.staff-item:hover {
+  background-color: #f9f9f9;
+}
+
+.staff-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.staff-role {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #333;
+}
+
+.staff-specialization {
+  font-size: 0.95em;
+  color: #555;
+}
+
+.staff-requirements {
+  display: flex;
+  flex-direction: column; /* Empilhamento vertical */
+  gap: 8px; /* Distância entre os badges */
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.85em;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.badge.preparation {
+  background-color: #FFB74D; /* Suave laranja */
+}
+
+.badge.surgery {
+  background-color: #64B5F6; /* Azul suave */
+}
+
+.badge.cleaning {
+  background-color: #81C784; /* Verde suave */
+}
+
+.required-staff-column {
+  width: 350px; /* Ajuste a largura da coluna Required Staff */
+  min-width: 300px; /* Largura mínima */
+}
+
+.specialization-column {
+  width: 160px; /* Ajuste a largura da coluna Specialization */
+  min-width: 140px; /* Largura mínima */
+}
+
+.phases-column {
+  width: 250px; /* Ajuste a largura da coluna Phases */
+  min-width: 220px; /* Largura mínima */
+}
+
+.phase-info {
+  font-size: 0.95em;
+  color: #555;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px; /* Espaço entre os botões */
+  margin-top: 10px; /* Espaçamento acima dos botões */
 }
 
 .btn {
@@ -43,56 +141,6 @@
   font-size: 12px;
 }
 
-.btn-warning {
-  background-color: #ffc107;
-  border: 1px solid #ffc107;
-  color: white;
-  font-weight: bold;
-  padding: 8px 16px;
-  margin-bottom: 20px;
-  transition: background-color 0.3s;
-}
-
-.btn-warning:hover {
-  background-color: #e0a800;
-  border-color: #e0a800;
-}
-
-.table {
-  width: 100%;
-  margin-bottom: 20px;
-  border-collapse: collapse;
-}
-
-.table thead {
-  background-color: #343a40;
-  color: white;
-}
-
-.table th, .table td {
-  padding: 12px;
-  text-align: left;
-  border: 1px solid #dee2e6;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: #f8f9fa;
-}
-
-input[type="text"], select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-input[type="text"]:focus, select:focus {
-  outline: none;
-  border-color: #80bdff;
-}
-
 .pagination {
   display: flex;
   align-items: center;
@@ -105,7 +153,7 @@ input[type="text"]:focus, select:focus {
   padding: 5px 10px;
   font-size: 14px;
   background-color: gainsboro;
-  color: blac;
+  color: black;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -113,6 +161,7 @@ input[type="text"]:focus, select:focus {
 
 .pagination button:disabled {
   background-color: #f8f9fa;
+  color:#343a40;
   cursor: not-allowed;
 }
 
@@ -129,6 +178,11 @@ th input {
   width: 100%;
   max-width: 150px;
   padding: 5px;
+}
+
+th, td {
+  text-align: left;
+  vertical-align: middle;
 }
 
 @media (max-width: 768px) {
