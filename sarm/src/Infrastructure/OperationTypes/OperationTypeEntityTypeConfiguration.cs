@@ -35,21 +35,75 @@ namespace Infrastructure.OperationTypes
                     v => SpecializationUtils.FromString(v)
                 );
 
-            builder.Property(o => o.RequiredStaff)
-                .IsRequired()
-                .HasConversion(
-                    v => RequiredStaff.ToString(v),
-                    v => RequiredStaff.FromString(v)
-                )
-                .HasColumnName("RequiredStaff");
+            builder.OwnsMany(o => o.RequiredStaff, staff =>
+            {
+                staff.Property(s => s.Role)
+                    .HasColumnName("Role")
+                    .HasConversion(
+                        v => RoleUtils.ToString(v),
+                        v => RoleUtils.FromString(v)
+                    );
 
-            builder.Property(o => o.PhasesDuration)
-                .IsRequired()
-                .HasConversion(
-                    v => (string)v,
-                    v => (PhasesDuration)v
-                )
-                .HasColumnName("PhasesDuration");
+                staff.Property(s => s.Specialization)
+                    .HasColumnName("Specialization")
+                    .HasConversion(
+                        v => SpecializationUtils.ToString(v),
+                        v => SpecializationUtils.FromString(v)
+                    );
+
+                staff.Property(s => s.Quantity)
+                    .HasColumnName("Quantity")
+                    .HasConversion(
+                        v => v.Value,
+                        v => new Quantity(v)
+                    );
+                
+                staff.Property(s => s.IsRequiredInPreparation)
+                    .HasColumnName("IsRequiredInPreparation")
+                    .HasConversion(
+                        v => v.ToString(),
+                        v => bool.Parse(v)
+                    );
+
+                staff.Property(s => s.IsRequiredInSurgery)
+                    .HasColumnName("IsRequiredInSurgery")
+                    .HasConversion(
+                        v => v.ToString(),
+                        v => bool.Parse(v)
+                    );
+
+                staff.Property(s => s.IsRequiredInCleaning)
+                    .HasColumnName("IsRequiredInCleaning")
+                    .HasConversion(
+                        v => v.ToString(),
+                        v => bool.Parse(v)
+                    );
+            });
+
+            builder.OwnsOne(o => o.PhasesDuration, pd =>
+            {
+                pd.Property(p => p.Preparation)
+                    .HasColumnName("Preparation")
+                    .IsRequired()
+                    .HasConversion(
+                        v => v.Value,
+                        v => new Quantity(v)
+                );
+                pd.Property(p => p.Surgery)
+                    .HasColumnName("Surgery")
+                    .IsRequired()
+                    .HasConversion(
+                        v => v.Value,
+                        v => new Quantity(v)
+                );
+                pd.Property(p => p.Cleaning)
+                    .HasColumnName("Cleaning")
+                    .IsRequired()
+                    .HasConversion(
+                        v => v.Value,
+                        v => new Quantity(v)
+                );
+            });
 
             builder.Property(o => o.Status)
                 .IsRequired()
