@@ -13,25 +13,15 @@ export class PatientsService {
 
   constructor(private http: HttpClient) {}
 
-  post(
+  async post(
     firstName: string,
     lastName: string,
     dateOfBirth: Date,
     email: string,
-    phoneNumber: string,
+    phoneNumber: number,
     gender: string,
     accessToken: string
   ) {
-
-    const contactInformation = {
-      email: email,
-      phoneNumber: phoneNumber
-    }
-
-    const fullName = {
-      firstName: firstName,
-      lastName: lastName
-    }
 
     const creatingPatientDto = {
       "fullName": {
@@ -56,22 +46,35 @@ export class PatientsService {
       "gender": gender
     }
 
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      })
-    };
 
-    return this.http.post(this.apiUrl, creatingPatientDto, httpOptions).subscribe(
-      response =>{
-        console.log('Patient created successfully', response);
-      },
-      error => {
-        console.log('Patient:', creatingPatientDto);
-        console.error('Error creating patient-main:', error)
-      }
-    )
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    })
+
+    const options = { headers, observe: 'response' as const };
+
+    return await firstValueFrom(this.http.post(`${this.apiUrl}`, creatingPatientDto, options))
+      .then(response => {
+
+        if(response.status === 200 || response.status === 201){
+          return {
+            status: response.status,
+            body: response.body
+          };
+        } else {
+          return {
+            status: response.status,
+            body: []
+          };
+        }
+      }).catch(error => {
+        console.error('Error creating patient:', error);
+        return {
+          status: error.status,
+          body: []
+        };
+      });
   }
 
   getFilterPatients(filter: any, accessToken: string): Observable<any> {
