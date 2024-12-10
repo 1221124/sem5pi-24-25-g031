@@ -41,7 +41,7 @@ namespace Domain.Emails
         {
             var subject = "Please verify your registration in our system";
             var link = GenerateLink(email.Value);
-            var body = $"Hi, {email.Value}!\n\nYou have been successfully registered! Click on the link below to verify your email and gain access to our system: {link}.\n\nSARM G031";
+            var body = $"Hi, {email.Value}!\n\nYou have been successfully registered! Click on the link below to verify your email and gain access to our system: {link} .\n\nSARM G031";
 
             return (subject, body);
         }
