@@ -9,6 +9,7 @@ import { OperationTypesFormComponent } from '../operation-types-form/operation-t
 import { OperationTypesListComponent } from '../operation-types-list/operation-types-list.component';
 import { ToggleOperationTypeStatusComponent } from '../toggle-operation-type-status/toggle-operation-type-status.component';
 import { EnumsService } from '../../../services/enums/enums.service';
+import { response } from 'express';
 
 @Component({
   selector: 'app-operation-types',
@@ -105,14 +106,17 @@ export class OperationTypesComponent implements OnInit {
 
   async loadOperationTypes() {
     try {
-      const response = await this.service.getOperationTypes(this.filter, this.accessToken);
-      this.operationTypes = response.body?.operationTypes || [];
-      this.operationTypes.sort((a, b) => a.OperationTypeCode.localeCompare(b.OperationTypeCode));
-      if (this.filter.name) {
-        this.operationTypes = this.operationTypes.filter((ot) =>
-          ot.Name.toLowerCase().includes(this.filter.name.toLowerCase())
-        );
-      }
+      await this.service.getOperationTypes(this.filter, this.accessToken).then(
+        (response) => {
+          this.operationTypes = response.body?.operationTypes || [];
+          this.operationTypes.sort((a, b) => a.OperationTypeCode.localeCompare(b.OperationTypeCode));
+          if (this.filter.name) {
+            this.operationTypes = this.operationTypes.filter((ot) =>
+              ot.Name.toLowerCase().includes(this.filter.name.toLowerCase())
+            );
+          }
+        }
+      );
       this.totalItems = this.operationTypes.length;
       this.totalPages = Math.ceil(this.totalItems / 2);
     } catch (error) {
@@ -121,13 +125,16 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async showOperationTypesList() {
-    await this.loadOperationTypes();
     this.showList = true;
     this.selectedOperationType = null;
     this.filter.name = '';
     this.filter.status = '';
     this.filter.specialization = '';
-    this.router.navigate(['/admin/operationTypes'], { replaceUrl: true });
+    await this.loadOperationTypes();
+    this.router.navigate(['/admin/operationTypes'], { 
+      queryParams: { page: 1 },
+      replaceUrl: true }
+    );
   }
 
   async showOperationTypesForm() {

@@ -116,14 +116,17 @@ export class OperationTypesFormComponent implements OnInit {
     this.operationType!.RequiredStaff.splice(index, 1);
   }
 
-  submitForm() {
+  async submitForm() {
     if (this.operationType) {
       if (this.operationType.Id) {
-        this.service.updateOperationType(this.operationType.Id, this.operationType, this.accessToken);
+        await this.service.updateOperationType(this.operationType.Id, this.operationType, this.accessToken).then(() => {
+          this.submit.emit(this.operationType!);
+        });
       } else {
-        this.service.post(this.operationType, this.accessToken);
+        await this.service.post(this.operationType, this.accessToken).then(() => {
+          this.submit.emit(this.operationType!);
+        });
       }
-      this.submit.emit(this.operationType);
     }
   }
 
