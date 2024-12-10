@@ -17,16 +17,24 @@ import {FormsModule} from '@angular/forms';
   imports: [
     NgIf,
     FormsModule,
-    AdminPatientsTableComponent
+    AdminPatientsTableComponent,
+    AdminPatientsCreateComponent
   ],
   standalone: true
 })
 export class AdminPatientsMainComponent {
+  @Output() selectedPatientToCreate!: Patient;
+  @Output() url: string | undefined;
+
   patients!: Patient[];
 
   accessToken: string = '';
   message: string = '';
   success: boolean = true;
+
+  showNotification: boolean = false;
+
+  isCreateModalOpen: boolean = false;
 
   constructor(
     private service: PatientsService,
@@ -59,7 +67,7 @@ export class AdminPatientsMainComponent {
       console.log('Patients fetched successfully', response);
       this.patients = response.body?.patient || [];
     } catch (error) {
-      this.handleError('Failed to load patients: ' + error);
+      this.displayError('Failed to load patients: ' + error);
     }
   }
 
@@ -71,10 +79,87 @@ export class AdminPatientsMainComponent {
     }, 3000);
   }
 
-  private handleError(message: string) {
-    this.message = message;
+  displayError(errorMessage: string) {
     this.success = false;
-    console.error(message);
+    this.message = errorMessage;
+    this.showNotification = true;
+    this.hideNotificationAfterDelay();
+  }
+
+  openCreateModal() {
+    this.isCreateModalOpen = true;
+    this.selectedPatientToCreate = {
+      Id: '',
+      FullName: {
+        FirstName: '',
+        LastName: ''
+      },
+      DateOfBirth: new Date(),
+      Gender: '',
+      MedicalRecordNumber: '',
+      ContactInformation: {
+        Email: '',
+        PhoneNumber: 0
+      },
+      MedicalCondition: [],
+      EmergencyContact: 0,
+      AppointmentHistory: [],
+      UserId: ''
+    }
+
+  }
+
+  closeCreateModal() {
+    this.isCreateModalOpen = false;
+  }
+
+  createPatient(patient: Patient) {
+    this.selectedPatientToCreate = patient;
+
+    this.service.post(
+      this.selectedPatientToCreate.FullName.FirstName,
+      this.selectedPatientToCreate.FullName.LastName,
+      this.selectedPatientToCreate.DateOfBirth,
+      this.selectedPatientToCreate.ContactInformation.Email,
+      this.selectedPatientToCreate.ContactInformation.PhoneNumber,
+      this.selectedPatientToCreate.Gender,
+      this.accessToken)
+      .then(response => {
+        if (response.status === 200 || response.status === 201) {
+          this.success = true;
+          this.message = 'Patient created successfully!';
+
+          this.closeCreateModal();
+          this.fetchPatients();
+          this.hideNotificationAfterDelay();
+        } else {
+          this.displayError('Failed to create patient: ' + response.status);
+        }
+      })
+      .catch(error => {
+        this.displayError('Failed to create patient: ' + error);
+      });
+  }
+
+  navigateTo(route: string, options?: { queryParams?: any }) {
+    this.router
+      .navigate([route], {
+        relativeTo: this.route,
+        queryParams: options?.queryParams,
+      })
+      .then(r => console.log('Navigated to:', r))
+      .catch(err => console.error('Navigation Error:', err));
+  }
+
+  navigateToPatientManager() {
+    this.router.navigate(['admin/patients']).then(r => console.log('Navigated to patients:', r));
+  }
+
+
+  hideNotificationAfterDelay() {
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 5000);
   }
 
 }

@@ -1,9 +1,23 @@
+<div
+  *ngIf="showNotification"
+  [class]="'notification ' + (success ? 'success' : 'error')">
+  {{ message }}
+</div>
 <div class="adminPatients">
   <h1>Patients</h1>
+
+  <button (click)="openCreateModal()" class="btn-open-create-modal">Create New Patient</button>
 
   <app-admin-patients-table
     *ngIf="patients && patients.length > 0"
     [patients]="patients">
   </app-admin-patients-table>
   <p *ngIf="!patients || patients.length === 0">No patients found.</p>
+
+  <app-admin-patients-create
+    *ngIf="isCreateModalOpen"
+    [patient]="selectedPatientToCreate"
+    (closeModalEvent)="closeCreateModal()"
+    (createPatientEvent)="createPatient($event)">
+  </app-admin-patients-create>
 </div>
