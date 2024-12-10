@@ -1,1 +1,99 @@
-<p>admin-patients-create works!</p>
+<div>
+  <div class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="closeCreatePatientModal()">&times;</span>
+      <h2>Create New Patient</h2>
+
+      <section>
+        <form class="form-group">
+          <!-- First Name -->
+          <div>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              [(ngModel)]="firstName"
+              (focus)="firstNameTouched = true"
+              placeholder="Enter First Name"
+              required
+            />
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              [(ngModel)]="lastName"
+              (focus)="lastNameTouched = true"
+              placeholder="Enter Last Name"
+              required
+            />
+          </div>
+
+          <!-- Date of Birth -->
+          <div>
+            <input
+              type="date"
+              id="dateOfBirth"
+              name="dateOfBirth"
+              [(ngModel)]="dateOfBirth"
+              (focus)="dateOfBirthTouched = true"
+              placeholder="Enter Date of Birth"
+              required
+            />
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <select
+              id="gender"
+              name="gender"
+              [(ngModel)]="gender"
+              (focus)="genderTouched = true"
+              required
+            >
+              <option value="" disabled selected>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+
+          <!-- Phone Number -->
+          <div>
+            <input
+              type="text"
+              id="phoneNumber"
+              name="phoneNumber"
+              [(ngModel)]="phoneNumber"
+              (focus)="phoneNumberTouched = true"
+              placeholder="Enter Phone Number"
+              required
+            />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              [(ngModel)]="email"
+              (focus)="emailTouched = true"
+              placeholder="Enter Email"
+              required
+            />
+          </div>
+
+          <!-- Buttons -->
+          <div class="button-group">
+            <button type="button" class="btn-create-patient" (click)="createPatient()">Create Patient</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+
+</div>
