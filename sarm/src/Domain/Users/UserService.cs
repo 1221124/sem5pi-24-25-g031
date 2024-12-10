@@ -112,7 +112,7 @@ namespace Domain.Users
             if (user == null) {
                 return false;
                 throw new BusinessRuleValidationException($"User with email {user.Email} not found.");
-            } else if (user.UserStatus == UserStatus.Inactive) {
+            } else if (user.UserStatus != UserStatus.Active) {
                 return false;
                 throw new BusinessRuleValidationException($"User with email {user.Email} is not active." );
             } else {
