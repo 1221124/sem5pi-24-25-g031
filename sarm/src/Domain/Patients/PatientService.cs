@@ -5,7 +5,6 @@ using Domain.Patients;
 using Domain.Shared;
 using Domain.Users;
 using Microsoft.AspNetCore.Mvc;
-using Sendinblue.Api.Business;
 using DateTime = System.DateTime;
 using Date = System.DateOnly;
 using PhoneNumber = Domain.Shared.PhoneNumber;
