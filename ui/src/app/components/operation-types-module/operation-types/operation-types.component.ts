@@ -99,6 +99,10 @@ export class OperationTypesComponent implements OnInit {
     await this.loadOperationTypes();
   }
 
+  backToAdmin() {
+    this.router.navigate(['/admin'], {replaceUrl: true});
+  }
+
   async loadEnums() {
     this.roles = await this.enumsService.getStaffRoles(this.accessToken);
     this.specializations = await this.enumsService.getSpecializations(this.accessToken);

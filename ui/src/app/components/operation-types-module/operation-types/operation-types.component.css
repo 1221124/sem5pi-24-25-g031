@@ -34,6 +34,16 @@
     background-color: #5a6268;
     box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
   }
+
+  button.btn-back {
+    background-color: green;
+    color: white;
+  }
+  
+  button.btn-back:hover {
+    background-color: darkgreen;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  }
   
   button:focus {
     outline: none;

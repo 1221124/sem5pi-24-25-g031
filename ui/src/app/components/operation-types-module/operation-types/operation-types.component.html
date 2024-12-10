@@ -3,6 +3,7 @@
 
   <button *ngIf="showList" (click)="showOperationTypesForm()" class="btn btn-primary">Create New Operation Type</button>
   <button *ngIf="!showList" (click)="showOperationTypesList()" class="btn btn-secondary">Show Operation Types</button>
+  <button (click)="backToAdmin()" class="btn btn-back">Back to Admin</button>
 
   <div *ngIf="showList">
     <app-operation-types-list

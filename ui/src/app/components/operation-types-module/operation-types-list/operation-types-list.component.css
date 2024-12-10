@@ -113,8 +113,8 @@
 
 .button-container {
   display: flex;
-  gap: 10px; /* Espaço entre os botões */
-  margin-top: 10px; /* Espaçamento acima dos botões */
+  gap: 2px; /* Espaço entre os botões */
+  margin-top: 2px; /* Espaçamento acima dos botões */
 }
 
 .btn {

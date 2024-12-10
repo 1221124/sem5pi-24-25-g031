@@ -43,7 +43,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let operationType of getPaginatedOperationTypes()">
-          <td>{{ operationType.OperationTypeCode }}</td>
+          <td>{{ operationType.OperationTypeCode.toUpperCase() }}</td>
           <td>{{ operationType.Name }}</td>
           <td class="specialization-column">{{ operationType.Specialization }}</td>
           <td class="required-staff-column">
@@ -60,9 +60,9 @@
             </ul>
           </td>
           <td class="phases-column">
-            <div class="phase-info">Preparation: {{ operationType.PhasesDuration.Preparation }}min</div>
-            <div class="phase-info">Surgery: {{ operationType.PhasesDuration.Surgery }}min</div>
-            <div class="phase-info">Cleaning: {{ operationType.PhasesDuration.Cleaning }}min</div>
+            <div *ngFor="let phase of operationType.PhasesDuration | keyvalue" class="phase-info">
+              <strong>{{ phase.key }}:</strong> {{ phase.value }} min
+            </div>
           </td>
           <td>{{ operationType.Status }}</td>
           <td>v{{ operationType.Version }}</td>
