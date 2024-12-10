@@ -45,8 +45,8 @@ builder.Services.AddControllers()
 
 
 builder.Services.AddDbContext<SARMDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-    .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+           .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 builder.Services.AddCors(options =>
     {
