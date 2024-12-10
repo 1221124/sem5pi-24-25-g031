@@ -47,6 +47,8 @@ export class OperationTypesService {
       throw new Error('Invalid ID format. Please provide a valid GUID.');
     }
 
+    console.log('Version: ' + operationType.Version);
+
     const dto = {
       "Id": id,
       "OperationTypeCode": {
@@ -147,10 +149,13 @@ export class OperationTypesService {
               OperationTypeCode: operationType.operationTypeCode.value,
               Name: operationType.name.value,
               Specialization: operationType.specialization.toString(),
-              RequiredStaff: operationType.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; }) => ({
+              RequiredStaff: operationType.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: boolean; isRequiredInSurgery: boolean; isRequiredInCleaning: boolean; }) => ({
                 Role: staff.role,
                 Specialization: staff.specialization,
-                Quantity: staff.quantity.value
+                Quantity: staff.quantity.value,
+                IsRequiredInPreparation: staff.isRequiredInPreparation,
+                IsRequiredInSurgery: staff.isRequiredInSurgery,
+                
               })),
               PhasesDuration: {
                 Preparation: operationType.phasesDuration.phases.preparation.value,

@@ -4,11 +4,6 @@ namespace Domain.Shared
     {
         public int Value { get; private set; }
 
-        public Version()
-        {
-            Value = 1;
-        }
-
         public Version(int value)
         {
             if (value <= 0)

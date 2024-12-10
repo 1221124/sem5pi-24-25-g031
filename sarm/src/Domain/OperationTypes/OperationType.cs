@@ -24,7 +24,7 @@ namespace Domain.OperationTypes
             RequiredStaff = requiredStaff;
             PhasesDuration = phasesDuration;
             Status = status;
-            Version = new Version();
+            Version = new Version(1);
         }
 
         public OperationType(OperationTypeCode operationTypeCode, Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration, Status status, Version version)
@@ -48,7 +48,7 @@ namespace Domain.OperationTypes
             RequiredStaff = requiredStaff;
             PhasesDuration = phasesDuration;
             Status = Status.Active;
-            Version = new Version();
+            Version = new Version(1);
         }
     }
 }

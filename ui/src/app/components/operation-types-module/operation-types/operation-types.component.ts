@@ -9,6 +9,7 @@ import { OperationTypesFormComponent } from '../operation-types-form/operation-t
 import { OperationTypesListComponent } from '../operation-types-list/operation-types-list.component';
 import { ToggleOperationTypeStatusComponent } from '../toggle-operation-type-status/toggle-operation-type-status.component';
 import { EnumsService } from '../../../services/enums/enums.service';
+import { interval, Subscription, switchMap } from 'rxjs';
 @Component({
   selector: 'app-operation-types',
   standalone: true,
@@ -45,6 +46,8 @@ export class OperationTypesComponent implements OnInit {
   specializations: string[] = [];
   statuses: string[] = [];
 
+  // private pollingSubscription!: Subscription;
+
   constructor(
     private service: OperationTypesService,
     private authService: AuthService,
@@ -72,13 +75,18 @@ export class OperationTypesComponent implements OnInit {
       return;
     }
 
-    await this.loadEnums();
-    await this.loadOperationTypes();
+    // this.pollingSubscription = interval(1000).pipe(
+    //   switchMap(() => this.service.getOperationTypes({ status: '', specialization: '' }, this.accessToken))
+    // ).subscribe(() => {
+    //   this.loadOperationTypes();
+    // });
 
-    this.initializeRoute();
+    await this.loadEnums();
+
+    await this.initializeRoute();
   }
 
-  initializeRoute() {
+  async initializeRoute() {
     this.route.queryParams.subscribe((params) => {
       if (params['name']) {
         this.filter.name = params['name'];
@@ -115,7 +123,7 @@ export class OperationTypesComponent implements OnInit {
         }
       });
     } else {
-      this.showOperationTypesList();
+      await this.showOperationTypesList();
     }
   }
 
@@ -131,17 +139,14 @@ export class OperationTypesComponent implements OnInit {
 
   async loadOperationTypes() {
     try {
-      await this.service.getOperationTypes(this.filter, this.accessToken).then(
-        (response) => {
-          this.operationTypes = response.body?.operationTypes || [];
-          this.operationTypes.sort((a, b) => a.OperationTypeCode.localeCompare(b.OperationTypeCode));
-          if (this.filter.name) {
-            this.operationTypes = this.operationTypes.filter((ot) =>
-              ot.Name.toLowerCase().includes(this.filter.name.toLowerCase())
-            );
-          }
-        }
-      );
+      const response = await this.service.getOperationTypes(this.filter, this.accessToken);
+      this.operationTypes = response.body?.operationTypes || [];
+      this.operationTypes.sort((a, b) => a.OperationTypeCode.localeCompare(b.OperationTypeCode));
+      if (this.filter.name) {
+        this.operationTypes = this.operationTypes.filter((ot) =>
+          ot.Name.toLowerCase().includes(this.filter.name.toLowerCase())
+        );
+      }
       this.totalItems = this.operationTypes.length;
       this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
     } catch (error) {
@@ -151,15 +156,15 @@ export class OperationTypesComponent implements OnInit {
 
   async showOperationTypesList() {
     this.showForm = false;
-    this.showList = true;
-    this.router.navigate(['/admin/operationTypes'], { 
-      queryParams: { page: 1 }}
-    );
+    this.operationTypes = [];
     this.selectedOperationType = null;
     this.filter.name = '';
     this.filter.status = '';
     this.filter.specialization = '';
-    await this.loadOperationTypes();
+    await this.loadOperationTypes().then(() => {
+      this.router.navigate(["/admin/operationTypes"], { queryParams: { page: 1 } });
+      this.showList = true;
+    });
   }
 
   async showOperationTypesForm() {
@@ -190,7 +195,9 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async onSubmit() {
-    await this.showOperationTypesList();
+    setTimeout(async () => {
+      await this.showOperationTypesList();
+    }, 500);
   }
 
   async onEdit(operationType: OperationType) {

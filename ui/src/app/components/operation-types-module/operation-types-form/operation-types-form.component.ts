@@ -78,6 +78,8 @@ export class OperationTypesFormComponent implements OnInit {
         Status: 'Active',
         Version: 1,
       };
+    } else {
+      console.log('OperationType version: ' + this.operationType.Version);
     }
     this.ensureNewStaffBlock();
   }
@@ -86,9 +88,7 @@ export class OperationTypesFormComponent implements OnInit {
     if (!this.isStaffValid(this.newRequiredStaff)) return;
     const lastStaff = this.operationType!.RequiredStaff[this.operationType!.RequiredStaff.length - 1];
     if (!lastStaff || this.isStaffValid(lastStaff)) {
-      console.log('Adding new staff block' + this.newRequiredStaff.Role, this.newRequiredStaff.Specialization, this.newRequiredStaff.Quantity);
       this.operationType!.RequiredStaff.push({ ...this.newRequiredStaff });
-      console.log('Now the required staff is: ' + this.operationType!.RequiredStaff);
     }
   }
 
@@ -119,6 +119,7 @@ export class OperationTypesFormComponent implements OnInit {
   async submitForm() {
     if (this.operationType) {
       if (this.operationType.Id) {
+        console.log('Updating operation type with version: ' + this.operationType.Version);
         await this.service.updateOperationType(this.operationType.Id, this.operationType, this.accessToken).then(() => {
           this.submit.emit(this.operationType!);
         });
