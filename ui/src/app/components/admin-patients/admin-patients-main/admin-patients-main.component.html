@@ -5,4 +5,5 @@
     *ngIf="patients && patients.length > 0"
     [patients]="patients">
   </app-admin-patients-table>
+  <p *ngIf="!patients || patients.length === 0">No patients found.</p>
 </div>

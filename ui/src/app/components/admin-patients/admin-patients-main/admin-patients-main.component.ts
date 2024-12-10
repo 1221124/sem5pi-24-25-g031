@@ -22,7 +22,7 @@ import {FormsModule} from '@angular/forms';
   standalone: true
 })
 export class AdminPatientsMainComponent {
-  @Output() patients!: Patient[];
+  patients!: Patient[];
 
   accessToken: string = '';
   message: string = '';
@@ -43,29 +43,24 @@ export class AdminPatientsMainComponent {
 
     this.accessToken = this.authService.getToken() as string;
 
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('patient')) {
+    const role = this.authService.extractRoleFromAccessToken(this.accessToken);
+
+    if (!role?.toLowerCase().includes('admin')) {
       this.handleAuthenticationError('You are not authorized to access this resource! Redirecting to login...');
       return;
     }
+
     await this.fetchPatients();
   }
 
   async fetchPatients(){
-    const emptyFilter = {
-      pageNumber: 0
+    try {
+      const response = await this.service.getPatients(this.accessToken);
+      console.log('Patients fetched successfully', response);
+      this.patients = response.body?.patient || [];
+    } catch (error) {
+      this.handleError('Failed to load patients: ' + error);
     }
-
-    await this.service.getPatients(this.accessToken)
-      .then(response => {
-        if(response.status === 200 && response.body) {
-          this.patients = response.body.patient;
-        }else {
-          this.handleError('Failed to load patients data. Response status:' + response.status);
-        }
-      })
-      .catch(error =>{
-        this.handleError('Failed to load patients data. Error:' + error.message);
-      });
   }
 
   private handleAuthenticationError(message: string) {
