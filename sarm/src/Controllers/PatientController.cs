@@ -8,6 +8,7 @@ using Domain.Shared;
 using Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace DDDNetCore.Controllers
 {
@@ -41,7 +42,7 @@ namespace DDDNetCore.Controllers
 
         // GET: api/Patient/?pageNumber=1
         [HttpGet]
-        [Authorize(Roles = "Admin,Doctor")]
+        //[Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll([FromQuery] string? pageNumber)
         {
             var patients = await _service.GetAllAsync();
@@ -59,7 +60,7 @@ namespace DDDNetCore.Controllers
                     .ToList();
                 return Ok(new { patient = paginatedPatients});
             }
-
+            
             return Ok(new { patient = patients});
 
         }

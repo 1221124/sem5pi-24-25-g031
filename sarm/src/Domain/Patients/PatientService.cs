@@ -33,12 +33,23 @@ namespace DDDNetCore.Domain.Patients
 
         public async Task<List<PatientDto>> GetAllAsync()
         {
-            var list = await this._repo.GetAllAsync();
-            
-            //List<PatientDto> listDto = list.ConvertAll(static patient => new PatientDto (patient.Id.AsGuid(), patient.FullName, patient.DateOfBirth, patient.Gender, patient.MedicalRecordNumber, patient.ContactInformation, patient.MedicalConditions, patient.EmergencyContact, patient.UserId ));
+            try
+            {
+                var list = await this._repo.GetAllAsync();
 
-            return PatientMapper.ToDtoList(list);
-            //return listDto;
+                if (list == null || list.Count == 0)
+                {
+                    return [];
+                }
+
+                return PatientMapper.ToDtoList(list);
+
+            }
+            catch (Exception)
+            {
+                return [];
+            }
+
         }
         
 
