@@ -2,8 +2,14 @@
   <h1>Operation Types</h1>
 
   <button *ngIf="showList" (click)="showOperationTypesForm()" class="btn btn-primary">Create New Operation Type</button>
-  <button *ngIf="!showList" (click)="showOperationTypesList()" class="btn btn-secondary">Show Operation Types</button>
+  <button *ngIf="showForm" (click)="showOperationTypesList()" class="btn btn-secondary">Show Operation Types</button>
   <button (click)="backToAdmin()" class="btn btn-back">Back to Admin</button>
+
+  <div *ngIf="!showList && !showForm" class="loading-spinner">
+    <div class="spinner"></div>
+    <h1>LOADING</h1>
+    <p>Please wait...</p>
+  </div>
 
   <div *ngIf="showList">
     <app-operation-types-list
@@ -27,7 +33,7 @@
     </app-toggle-operation-type-status>
   </div>
 
-  <div *ngIf="!showList">
+  <div *ngIf="showForm">
     <app-operation-types-form
       [operationType]="selectedOperationType"
       [roles]="roles"

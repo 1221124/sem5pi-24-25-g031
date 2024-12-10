@@ -9,8 +9,6 @@ import { OperationTypesFormComponent } from '../operation-types-form/operation-t
 import { OperationTypesListComponent } from '../operation-types-list/operation-types-list.component';
 import { ToggleOperationTypeStatusComponent } from '../toggle-operation-type-status/toggle-operation-type-status.component';
 import { EnumsService } from '../../../services/enums/enums.service';
-import { response } from 'express';
-
 @Component({
   selector: 'app-operation-types',
   standalone: true,
@@ -29,7 +27,8 @@ import { response } from 'express';
 })
 export class OperationTypesComponent implements OnInit {
   accessToken: string = '';
-  showList = true;
+  showList : boolean = false;
+  showForm : boolean = false;
   selectedOperationType: OperationType | null = null;
   operationTypes: OperationType[] = [];
   currentPage: number = 1;
@@ -72,6 +71,14 @@ export class OperationTypesComponent implements OnInit {
       setTimeout(() => this.router.navigate(['']), 3000);
       return;
     }
+
+    await this.loadEnums();
+    await this.loadOperationTypes();
+
+    this.initializeRoute();
+  }
+
+  initializeRoute() {
     this.route.queryParams.subscribe((params) => {
       if (params['name']) {
         this.filter.name = params['name'];
@@ -95,12 +102,25 @@ export class OperationTypesComponent implements OnInit {
       }
     });
 
-    await this.loadEnums();
-    await this.loadOperationTypes();
+    if (this.router.url.includes('create')) {
+      this.showOperationTypesForm();
+    } else if (this.router.url.includes('update')) {
+      this.route.queryParams.subscribe((params) => {
+        const code = params['code'];
+        if (code) {
+          this.selectedOperationType = this.operationTypes.find((ot) => ot.OperationTypeCode === code) || null;
+          if (this.selectedOperationType) {
+            this.showOperationTypesForm();
+          }
+        }
+      });
+    } else {
+      this.showOperationTypesList();
+    }
   }
 
   backToAdmin() {
-    this.router.navigate(['/admin'], {replaceUrl: true});
+    this.router.navigate(['/admin']);
   }
 
   async loadEnums() {
@@ -130,27 +150,27 @@ export class OperationTypesComponent implements OnInit {
   }
 
   async showOperationTypesList() {
+    this.showForm = false;
     this.showList = true;
+    this.router.navigate(['/admin/operationTypes'], { 
+      queryParams: { page: 1 }}
+    );
     this.selectedOperationType = null;
     this.filter.name = '';
     this.filter.status = '';
     this.filter.specialization = '';
     await this.loadOperationTypes();
-    this.router.navigate(['/admin/operationTypes'], { 
-      queryParams: { page: 1 },
-      replaceUrl: true }
-    );
   }
 
   async showOperationTypesForm() {
     this.showList = false;
+    this.showForm = true;
     if (this.selectedOperationType) {
       this.router.navigate(['/admin/operationTypes/update'], {
-        queryParams: { code: this.selectedOperationType.OperationTypeCode },
-        replaceUrl: true,
+        queryParams: { code: this.selectedOperationType.OperationTypeCode }
       });
     } else {
-      this.router.navigate(['/admin/operationTypes/create'], { replaceUrl: true });
+      this.router.navigate(['/admin/operationTypes/create']);
     }
   }
 
