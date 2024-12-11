@@ -28,30 +28,28 @@ namespace DDDNetCore.Domain.OperationRequests
             _staffService = staffService;
         }        
 
-        public async Task<OperationRequestDto?> AddAsync(CreatingOperationRequestDto requestDto, RequestCode requestCode)
+        public async Task<OperationRequestDto?> AddAsync(CreatingOperationRequestDto requestDto)
         {
             try
             {
+                var requestCode = await AssignCodeAsync();
+
+                if(requestCode == null) return new OperationRequestDto();
+
                 var operationRequest = OperationRequestMapper.ToEntityFromCreating(requestDto, requestCode);
+
+                if(operationRequest == null) return new OperationRequestDto();
+
+                Console.WriteLine("OperationRequest: " + operationRequest);
 
                 await this._repo.AddAsync(operationRequest);
                 await this._unitOfWork.CommitAsync();
                 
-                await _logService.LogAction(
-                    EntityType.OperationRequest, 
-                    DbLogType.Create,
-                    "Created {" + operationRequest.Id.Value + "}"
-                    );
-                
                 return OperationRequestMapper.ToDto(operationRequest);
+
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                await _logService.LogAction(
-                    EntityType.OperationRequest, 
-                    DbLogType.Create, 
-                    e.ToString()
-                    );
                 return null;
             }
         }
@@ -77,10 +75,7 @@ namespace DDDNetCore.Domain.OperationRequests
         }
 
         public async Task<OperationRequestDto?> UpdateAsync(UpdatingOperationRequestDto dto)
-        {
-            var entity = EntityType.OperationRequest;
-            var log = DbLogType.Update;
-            
+        {            
             try
             {
                 var operationRequest = await _repo.GetByIdAsync(new OperationRequestId(dto.Id));
@@ -88,7 +83,6 @@ namespace DDDNetCore.Domain.OperationRequests
                 var newOperationRequest = OperationRequestMapper.ToEntityFromUpdating(dto, operationRequest);
 
                 if(operationRequest == null){
-                    await _logService.LogAction(entity, log, "Unable to update {" + newOperationRequest.Id  + "}");
                     return null;
                 }
 
@@ -96,16 +90,12 @@ namespace DDDNetCore.Domain.OperationRequests
 
                 await _repo.UpdateAsync(operationRequest);
                 await _unitOfWork.CommitAsync();
-
-
-                //await _logService.LogAction(entity, log, "Updated {" + operationRequest.Id + "}");
                 
                 return OperationRequestMapper.ToDto(operationRequest);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                await _logService.LogAction(entity, log, e.ToString());
                 return null;
             }
         }
@@ -120,7 +110,6 @@ namespace DDDNetCore.Domain.OperationRequests
                 var category = await this._repo.GetByIdAsync(id);
 
                 if (category == null){
-                    await _logService.LogAction(entity, log, "Unable to delete {" + id + "} because it does not exist.");
                     return null;
                 }
 
@@ -133,14 +122,12 @@ namespace DDDNetCore.Domain.OperationRequests
                 this._repo.Remove(category);
                 await this._unitOfWork.CommitAsync();
 
-                await _logService.LogAction(entity, log, "Deleted {" + id + "}");
 
                 return OperationRequestMapper.ToDto(id);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                await _logService.LogAction(entity, log, e.ToString());
                 return null;
             }
         }
@@ -191,7 +178,7 @@ namespace DDDNetCore.Domain.OperationRequests
                 
                     if(names.Length != 2)
                     {
-                        return null;
+                        return [];
                     }
                 
                     var firstName = names[0].Trim();
@@ -256,16 +243,21 @@ namespace DDDNetCore.Domain.OperationRequests
 
                 if(requestQuery == null || requestQuery.Count == 0) return [];
                 
-                return requestQuery;
+                var operationRequests = requestQuery
+                    .Where(r => r != null)
+                    .Select(r => OperationRequestMapper.ToEntity(r!))
+                    .ToList();
+
+                return OperationRequestMapper.ToDtoList(operationRequests);
             
             }
             catch(Exception)
             {
-                return null;
+                return [];
             }
         }
 
-        public async Task<List<OperationRequestDto>> GetByPatientAsync(MedicalRecordNumber patient) {
+        public async Task<List<OperationRequestDto>?> GetByPatientAsync(MedicalRecordNumber patient) {
             try {
                 var requests = await _repo.GetByPatient(patient);
 
@@ -296,22 +288,27 @@ namespace DDDNetCore.Domain.OperationRequests
 
         public async Task<RequestCode> AssignCodeAsync()
         {
-            var lastCode = await _repo.GetLastRequestCodeAsync();
+            try{
+                var lastCode = await _repo.GetLastRequestCodeAsync();
 
-            int lastNumber = 0;
-            if (!string.IsNullOrEmpty(lastCode) && lastCode.Trim().ToLower().StartsWith("req"))
-            {
-                if (int.TryParse(lastCode.Substring(3), out var parsedNumber))
+                int lastNumber = 0;
+                if (!string.IsNullOrEmpty(lastCode) && lastCode.Trim().ToLower().StartsWith("req"))
                 {
-                    lastNumber = parsedNumber;
+                    if (int.TryParse(lastCode[3..], out var parsedNumber))
+                    {
+                        lastNumber = parsedNumber;
+                    }
                 }
-            }
 
-            int nextNumber = lastNumber + 1;
-            return new RequestCode($"req{nextNumber}");
+                int nextNumber = lastNumber + 1;
+                return new RequestCode($"req{nextNumber}");
+            }catch (Exception)
+            {
+                return new RequestCode("REQ0");
+            }
         }
 
-        public async Task<OperationRequestDto> UpdateStatusToPending(RequestCode code)
+        public async Task<OperationRequestDto?> UpdateStatusToPending(RequestCode code)
         {
             try
             {
@@ -332,7 +329,7 @@ namespace DDDNetCore.Domain.OperationRequests
             }
         }
 
-        public async Task<List<OperationRequestDto>> DeleteWithOperationTypeAsync(Name name)
+        public async Task<List<OperationRequestDto>?> DeleteWithOperationTypeAsync(Name name)
         {
             try {
                 List<OperationRequestDto> removed = new List<OperationRequestDto>();
@@ -360,7 +357,7 @@ namespace DDDNetCore.Domain.OperationRequests
             }
         }
 
-        public async Task<List<OperationRequestDto>> DeleteWithPatientAsync(MedicalRecordNumber medicalRecordNumber)
+        public async Task<List<OperationRequestDto>?> DeleteWithPatientAsync(MedicalRecordNumber medicalRecordNumber)
         {
             try {
                 List<OperationRequestDto> removed = new List<OperationRequestDto>();

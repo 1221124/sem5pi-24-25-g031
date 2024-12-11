@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Domain.DbLogs;
 using Microsoft.AspNetCore.Mvc;
-using Domain.OperationTypes;
-using Domain.Shared;
-using DDDNetCore.Domain.OperationRequests;
-using Date = System.DateOnly;
 using Microsoft.AspNetCore.Authorization;
+using DDDNetCore.Domain.OperationRequests;
 
 namespace DDDNetCore.Controllers
 {
@@ -107,18 +101,17 @@ namespace DDDNetCore.Controllers
                 if (dto == null)
                 {
                     await _logService.LogAction(entity, log,"Creating Operation Type DTO cannot be null");
-                    return BadRequest("Creating Operation Type DTO cannot be null");
+                    return BadRequest("Creating Operation Type DTO cannot be null: " + dto);
                 }
 
-                var code = await _operationRequestService.AssignCodeAsync();
-
-                var operationRequest = await _operationRequestService.AddAsync(dto, code);
+                var operationRequest = await _operationRequestService.AddAsync(dto);
 
                 if (operationRequest == null)
                 {
                     await _logService.LogAction(EntityType.OperationRequest, DbLogType.Create,
                         "Operation Request was not created.");
-                    return BadRequest("Operation Request was not created.");
+                    //return BadRequest("Operation Request was not created.");
+                    return NoContent();
                 }
 
                 return CreatedAtAction(nameof(Get), new { id = operationRequest.Id }, operationRequest);
@@ -128,9 +121,6 @@ namespace DDDNetCore.Controllers
                 await _logService.LogAction(entity, log, "Error in Create: " + ex.Message);
                 return BadRequest("Error in Create: " + ex.Message);
             }
-
-            // Console.WriteLine("Received a request");
-            // return Ok(new { message = "Request successful" });
         }
 
         //PUT api/operationrequest
