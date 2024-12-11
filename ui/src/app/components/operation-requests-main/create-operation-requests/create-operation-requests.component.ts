@@ -9,6 +9,7 @@ import {FormsModule} from '@angular/forms';
 import {OperationRequest} from '../../../models/operation-request.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
+import { spec } from 'node:test/reporters';
 
 @Component({
   selector: 'app-create-operation-requests',
@@ -36,7 +37,7 @@ export class CreateOperationRequestComponent implements OnInit {
     private router: Router
   ) {}
 
-  patients: any[] = [];
+  patients: Patient[] = [];
   operationTypes: OperationType[] = [];
   priorities: string[] = [];
   statuses: string[] = [];
@@ -90,7 +91,7 @@ export class CreateOperationRequestComponent implements OnInit {
       return;
     }
 
-    //await this.loadPatients(); if(!this.success) console.log('Error loading patients:', this.message);
+    await this.loadPatients(); if(!this.success) console.log('Error loading patients:', this.message);
 
     await this.loadOperationTypes(); if(!this.success) console.log('Error loading operation types:', this.message);
 
@@ -98,14 +99,14 @@ export class CreateOperationRequestComponent implements OnInit {
 
     await this.loadRequestStatus(); if (!this.success) console.log('Error loading request statuses:', this.message);
   }
-  /*
+  
   async loadPatients() {
     try {
-      const response = await this.servicePatient.getPatients(this.accessToken).toPromise();
+      const response = await this.servicePatient.getPatients(this.accessToken);
 
-      console.log("response", response);
+      console.log("patients", response);
 
-      this.patients = response;
+      this.patients = response.body.patient;
 
       console.log("patients", this.patients);
 
@@ -117,12 +118,21 @@ export class CreateOperationRequestComponent implements OnInit {
     }
   }
 
-   */
-
   async loadOperationTypes() {
+    var filter ={
+      specialization: '',
+      status: ''
+    }
+    
     try {
-      const response = await this.serviceOperationType.getOperationTypes([], this.accessToken);
+      const response = await this.serviceOperationType.getOperationTypes(filter, this.accessToken);
+      
+      console.log("response", response);
+      
       this.operationTypes = response.body?.operationTypes || [];
+
+      console.log("operationTypes", this.operationTypes); 
+
       this.success = true;
       this.message = 'Operation Types loaded!';
     } catch (error) {
@@ -171,6 +181,17 @@ export class CreateOperationRequestComponent implements OnInit {
 
     console.log('Emitting request:', this.request);
     this.createRequestEvent.emit(this.request);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        patient: this.request.patient,
+        operationType: this.request.operationType,
+        deadlineDate: this.request.deadlineDate,
+        priority: this.request.priority
+      },
+      queryParamsHandling: 'merge'
+    });
 
     setTimeout(() => {
       this.isProcessing = false;

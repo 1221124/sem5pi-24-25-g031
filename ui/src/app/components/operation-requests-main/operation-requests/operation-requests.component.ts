@@ -10,6 +10,7 @@ import {FormsModule} from '@angular/forms';
 import {DeleteOperationRequestsComponent} from '../delete-operation-requests/delete-operation-requests.component';
 import {UpdateOperationRequestsComponent} from '../update-operation-requests/update-operation-requests.component';
 import {StaffsService} from '../../../services/staffs/staffs.service';
+import { query } from 'express';
 
 @Component({
   selector: 'app-operation-requests',
@@ -166,7 +167,7 @@ export class OperationRequestsComponent implements OnInit {
       status: '',
       requestCode: ''
     }
-    this.navigateTo('create', { queryParams: { request: JSON.stringify(this.selectedRequestToCreate) } });
+    this.navigateTo('create');
   }
 
   openDeleteModal(request: OperationRequest) {
@@ -235,7 +236,6 @@ export class OperationRequestsComponent implements OnInit {
 
     // Extract email and validate
     this.staffFilter.email = this.authService.extractEmailFromAccessToken(this.accessToken) as string;
-    // this.staffFilter.email = 'staff@email';
     console.log(this.staffFilter.email)
     if (!this.staffFilter.email) {
       throw new Error('Error extracting email from access token');
@@ -244,7 +244,7 @@ export class OperationRequestsComponent implements OnInit {
     try {
       // Await the asynchronous getStaff call
       const staffResponse = await this.serviceStaff.getStaff(this.staffFilter, this.accessToken);
-      console.log(staffResponse);
+      console.log("staffResponse: ", staffResponse);
 
       if (staffResponse.status === 200) {
         this.selectedRequestToCreate.staff = staffResponse.body.staffs[0].licenseNumber;
@@ -275,10 +275,14 @@ export class OperationRequestsComponent implements OnInit {
             this.success = true;
           }
 
-          else {
+          else if(response.status === 400) {
             console.error('Error creating request:', response);
             this.message = 'Failed to create the request.';
             this.success = false;
+          } 
+          
+          else {
+            console.error('Unexpected response:', response);
           }
 
           console.log(this.message);

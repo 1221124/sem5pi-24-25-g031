@@ -39,12 +39,11 @@ export class OperationRequestsTableComponent implements OnInit {
   }
 
   selectedRequest!: OperationRequest;
+  filteredRequests: OperationRequest[] = [];
 
   operationTypes: OperationType[] = [];
   priorities: string[] = [];
   statuses: string[] = [];
-
-  filteredRequests: OperationRequest[] = [];
 
   pages = {
     currentPage: 1,
@@ -87,7 +86,6 @@ export class OperationRequestsTableComponent implements OnInit {
 
     console.log('Requests:', this.requests);
 
-
     await this.initialData();
 
     if (!this.requests) {
@@ -95,9 +93,10 @@ export class OperationRequestsTableComponent implements OnInit {
     }
 
     this.filteredRequests = [...this.requests];
-
+    this.pages.currentPage = 1;
     this.pages.totalPages = Math.ceil(this.requests.length / 2);
-    this.requests = this.requests.slice(0, 2);
+    this.changePage(this.pages.currentPage);
+
   }
 
   async initialData() {
@@ -274,7 +273,7 @@ export class OperationRequestsTableComponent implements OnInit {
 
   changePage(page: number) {
     const index = (page - 1) * 2;
-    this.requests = this.requests.slice(index, index + 2);
+    this.filteredRequests = this.requests.slice(index, index + 2);
 
     this.pages.currentPage = page;
 

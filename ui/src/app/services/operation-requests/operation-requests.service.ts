@@ -54,6 +54,8 @@ export class OperationRequestsService {
 
     const options = {headers, observe: 'response' as const, params};
 
+    console.log("sending request to " + environment.operationRequests);
+
     return await firstValueFrom(this.http.post(environment.operationRequests, dto, options))
       .then(response => {
         console.log('Full response:', response);

@@ -12,8 +12,8 @@
         <select *ngIf="patients.length" id="patient" name="patient" [(ngModel)]="selectedPatient"
                 (focus)="patientTouched = true">
           <option value="" disabled selected>Select Patient</option>
-          <option *ngFor="let patient of patients" [value]="patient.medicalRecordNumber.value ">
-            {{ patient.contactInformation.email.value }} >>> {{ patient.medicalRecordNumber.value }}
+          <option *ngFor="let patient of patients" [value]="patient.MedicalRecordNumber ">
+            {{ patient.ContactInformation.Email }} >>> {{ patient.MedicalRecordNumber }}
           </option>
         </select>
       </div>
