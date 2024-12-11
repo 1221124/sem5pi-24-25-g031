@@ -47,7 +47,6 @@ export const routes: Route[] = [
       }
     ]
   },
-  { path: 'doctor/operationRequests', component: OperationRequestsComponent },
   { path: 'admin/appointments', component: AppointmentsComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
@@ -72,12 +71,23 @@ export const routes: Route[] = [
     ],
   },
   {
-    path: 'doctor',
-    component: DoctorMenuComponent,
+    path: 'doctor/operation-requests',
+    component: OperationRequestsComponent,
     children: [
       {
-        path: 'operation-requests',
-        component: OperationRequestsComponent,
+        path: 'create',
+        loadChildren: () =>
+          import('./components/operation-requests-main/operation-requests.module')
+          .then((m) => m.OperationRequestsModule)
+      },
+      {
+        path: 'update',
+        loadChildren: () =>
+          import('./components/operation-requests-main/operation-requests.module')
+          .then((m) => m.OperationRequestsModule)
+      },
+      {
+        path: 'delete',
         loadChildren: () =>
           import('./components/operation-requests-main/operation-requests.module')
           .then((m) => m.OperationRequestsModule)
