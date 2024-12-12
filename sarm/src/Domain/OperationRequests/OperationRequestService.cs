@@ -308,7 +308,7 @@ namespace DDDNetCore.Domain.OperationRequests
             }
         }
 
-        public async Task<OperationRequestDto?> UpdateStatusToPending(RequestCode code)
+        public async Task<OperationRequestDto?> UpdateStatus(RequestCode code, RequestStatus status)
         {
             try
             {
@@ -316,7 +316,7 @@ namespace DDDNetCore.Domain.OperationRequests
 
                 if(request == null) return null;
 
-                request.Status = RequestStatus.PENDING;
+                request.Status = status;
 
                 await _repo.UpdateAsync(request);
                 await _unitOfWork.CommitAsync();

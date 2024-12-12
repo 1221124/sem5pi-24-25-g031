@@ -593,5 +593,25 @@ namespace Domain.Staffs
                 return null;
             }
         }
+
+        public async Task<List<StaffDto>> CreateAppointmentAsync(Appointment appointment)
+        {
+            try {
+                List<StaffDto> staffs = new List<StaffDto>();
+                foreach (var staff in appointment.AssignedStaff) {
+                    var staffEntity = await _repo.GetByLicenseNumber(staff);
+                    if (staffEntity == null) {
+                        return null;
+                    }
+
+                    await AddSlotAppointment(StaffMapper.ToDto(staffEntity), appointment.AppointmentDate);
+                    staffs.Add(StaffMapper.ToDto(staffEntity));
+                }
+
+                return staffs;
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
 }

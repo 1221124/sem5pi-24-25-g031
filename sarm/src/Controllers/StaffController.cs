@@ -379,7 +379,7 @@ namespace Controllers
                 {
                     await _appointmentService.DeleteAsync(new AppointmentId(appointment.Id));
                     await _dbLogService.LogAction(EntityType.Appointment, DbLogType.Delete, "Appointment deleted");
-                    var operationRequest = await _operationRequestService.UpdateStatusToPending(appointment.RequestCode);
+                    var operationRequest = await _operationRequestService.UpdateStatus(appointment.RequestCode, RequestStatus.PENDING);
                 }
 
                 await _dbLogService.LogAction(EntityType.Staff, DbLogType.Deactivate, "Staff deactivated");

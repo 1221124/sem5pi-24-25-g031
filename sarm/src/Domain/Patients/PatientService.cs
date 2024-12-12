@@ -522,6 +522,22 @@ namespace DDDNetCore.Domain.Patients
                 return null;
             }
         }
+
+        public async Task<PatientDto> CreateAppointmentAsync(OperationRequestDto operationRequest, Appointment appointment)
+        {
+            try {
+                var patient = await _repo.GetByMedicalRecordNumberAsync(operationRequest.Patient);
+                if (patient == null)
+                {
+                    return null;
+                }
+                patient.AddAppointmentHistory(appointment.AppointmentDate);
+                await _unitOfWork.CommitAsync();
+                return PatientMapper.ToDto(patient);
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
     
 }

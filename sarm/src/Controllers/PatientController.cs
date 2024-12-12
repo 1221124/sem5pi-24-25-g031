@@ -343,7 +343,7 @@ namespace DDDNetCore.Controllers
                         if (appointment != null)
                         {
                             await _appointmentService.DeleteAsync(new AppointmentId(appointment.Id));
-                            await _operationRequestService.UpdateStatusToPending(operationRequest.RequestCode);
+                            await _operationRequestService.UpdateStatus(operationRequest.RequestCode, RequestStatus.PENDING);
                         }
                         await _operationRequestService.DeleteAsync(new OperationRequestId(operationRequest.Id));
                     }

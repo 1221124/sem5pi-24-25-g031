@@ -1,6 +1,7 @@
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Shared;
+using Domain.Staffs;
 
 namespace DDDNetCore.Domain.Appointments;
 
@@ -9,16 +10,18 @@ public class CreatingAppointmentDto {
     public SurgeryRoomNumber SurgeryRoomNumber { get; set; }
     public AppointmentNumber AppointmentNumber { get; set; }
     public Slot AppointmentDate { get; set; }
+    public List<LicenseNumber> AssignedStaff { get; set; }
 
     public CreatingAppointmentDto ()
     {
     }
 
-    public CreatingAppointmentDto(RequestCode requestCode, SurgeryRoomNumber surgeryRoomNumber, AppointmentNumber appointmentNumber, Slot appointmentDate)
+    public CreatingAppointmentDto(RequestCode requestCode, SurgeryRoomNumber surgeryRoomNumber, AppointmentNumber appointmentNumber, Slot appointmentDate, List<LicenseNumber> assignedStaff) 
     {
         RequestCode = requestCode;
         SurgeryRoomNumber = surgeryRoomNumber;
         AppointmentNumber = appointmentNumber;
         AppointmentDate = appointmentDate;
+        AssignedStaff = assignedStaff;
     }
 }

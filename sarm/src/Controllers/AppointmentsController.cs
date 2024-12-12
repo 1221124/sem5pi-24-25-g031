@@ -1,4 +1,5 @@
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.DbLogs;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
@@ -57,6 +58,40 @@ namespace DDDNetCore.Controllers {
             return Ok(new { appointments = appointments, totalItems = totalItems });
         }
 
+        // POST: api/Appointments
+        [HttpPost]
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<ActionResult<AppointmentDto>> PostAppointment(CreatingAppointmentDto creatingAppointment)
+        {
+            var appointment = await _service.AddAsync(creatingAppointment);
+
+            if (appointment == null)
+            {
+                return BadRequest("An exception occurred while creating the appointment!");
+            }
+
+            var operationRequest = await _operationRequestService.UpdateStatus(appointment.RequestCode, RequestStatus.ACCEPTED);
+            if (operationRequest == null)
+            {
+                return NotFound("Operation request not found!");
+            }
+
+            var staff = await _staffService.CreateAppointmentAsync(appointment);
+            if (staff == null || staff.Count == 0)
+            {
+                return BadRequest("An exception occurred while creating the appointment slots in all staffs!");
+            }
+
+            var patient = await _patientService.CreateAppointmentAsync(operationRequest, appointment);
+            if (patient == null)
+            {
+                return NotFound("Patient not found!");
+            }
+
+            _ = await _logService.CreateLogAsync(new DbLog(new EntityTypeName(EntityType.Appointment), new DbLogTypeName(DbLogType.Create), new Message($"Appointment {appointment.AppointmentNumber} created.")));
+            return Ok(new { Message = "Appointment created successfully!" });
+        }
+
         // DELETE: api/Appointments/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Doctor")]
@@ -69,7 +104,7 @@ namespace DDDNetCore.Controllers {
                 return NotFound("Appointment not found!");
             }
 
-            var operationRequest = await _operationRequestService.UpdateStatusToPending(appointment.RequestCode);
+            var operationRequest = await _operationRequestService.UpdateStatus(appointment.RequestCode, RequestStatus.PENDING);
             if (operationRequest == null)
             {
                 return NotFound("Operation request not found!");
@@ -87,6 +122,7 @@ namespace DDDNetCore.Controllers {
                 return NotFound("Patient not found!");
             }
 
+            _ = await _logService.CreateLogAsync(new DbLog(new EntityTypeName(EntityType.Appointment), new DbLogTypeName(DbLogType.Delete), new Message($"Appointment {appointment.AppointmentNumber} deleted.")));
             return Ok(new { Message = "Appointment deleted successfully!" });
         }
     }

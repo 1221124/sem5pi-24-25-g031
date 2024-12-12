@@ -39,33 +39,12 @@ namespace DDDNetCore.Domain.Appointments
                 if (appointment == null)
                     throw new ArgumentNullException(nameof(appointment));
 
-                var all = await _appointmentRepository.GetAllAsync();
                 var newAppointment = AppointmentMapper.ToEntity(appointment);
 
                 await _appointmentRepository.AddAsync(newAppointment);
                 await _unitOfWork.CommitAsync();
 
                 return newAppointment;
-
-                // if (operationRequest.Any(x => x.Id.ToString() == appointment.OperationRequestId.Value))
-                // {
-                //     var op = await _operationRequestService.GetFilteredAsync(
-                //         appointment.OperationRequestId.Value,
-                //         null, null, null, null, null, null
-                //     );
-
-                //     if (op == null || op.Count != 1) return null;
-                    
-                //     var all = await _appointmentRepository.GetAllAsync();
-
-                //     var newAppointment = AppointmentMapper.ToEntity(appointment, all.Count + 1);
-
-                //     await _appointmentRepository.AddAsync(newAppointment);
-                //     await _unitOfWork.CommitAsync();
-
-                //     //await _logService.AddAsync(new DbLog("Appointment", "Add", appointment.Id.AsString()));   
-                //     return newAppointment;
-                // }
             }
             catch (Exception)
             {
@@ -124,7 +103,7 @@ namespace DDDNetCore.Domain.Appointments
 
                     var slot = new Slot(start, end);
                     
-                    var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot);
+                    var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot, new List<LicenseNumber>());
 
                     var addedAppointment = await AddAsync(creatingAppointment);
                 }

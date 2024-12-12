@@ -17,16 +17,16 @@ public class Appointment : Entity<AppointmentId>, IAggregateRoot
     {
     }
 
-    public Appointment(RequestCode requestCode, SurgeryRoomNumber surgeryRoomNumber, AppointmentNumber appointmentNumber, Slot appointmentDate)
+    public Appointment(RequestCode requestCode, SurgeryRoomNumber surgeryRoomNumber, AppointmentNumber appointmentNumber, Slot appointmentDate, List<LicenseNumber> assignedStaff) 
     {
         Id = new AppointmentId(Guid.NewGuid());
         RequestCode = requestCode;
         SurgeryRoomNumber = surgeryRoomNumber;
         AppointmentNumber = appointmentNumber;
         AppointmentDate = appointmentDate;
-        AssignedStaff = new List<LicenseNumber>();
+        AssignedStaff = assignedStaff;
     }
-
+    
     public void AssignStaff(LicenseNumber staff)
     {
         if (AssignedStaff == null)
@@ -45,6 +45,11 @@ public class Appointment : Entity<AppointmentId>, IAggregateRoot
 
         var other = (Appointment)obj;
         return AppointmentNumber == other.AppointmentNumber;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(AppointmentNumber);
     }
 
 }
