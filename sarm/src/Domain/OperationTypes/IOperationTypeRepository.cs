@@ -10,5 +10,6 @@ namespace Domain.OperationTypes
         Task<OperationType> GetByNameAsync(Name name);
         Task<List<OperationType>> GetBySpecializationAsync(Specialization specialization);
         Task<List<OperationType>> GetByStatusAsync(Status status);
+        Task<string?> GetLastCodeAsync();
     }
 }

@@ -1,5 +1,6 @@
 using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
+using DDDNetCore.src.Domain.RoomTypes;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,8 +24,8 @@ namespace DDDNetCore.Infrastructure.SurgeryRooms{
                 .IsRequired()
                 .HasColumnName("RoomType")
                 .HasConversion(
-                    v => RoomTypeUtils.ToString(v),
-                    v => RoomTypeUtils.FromString(v)
+                    v => v.Value,
+                    v => new RoomTypeCode(v)
                 );
             
             builder.Property(x => x.RoomCapacity)

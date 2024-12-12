@@ -1,5 +1,3 @@
-using DDDNetCore.Domain.Surgeries;
-using DDDNetCore.Domain.SurgeryRooms;
 using Domain.Shared;
 using Domain.SurgeryRooms;
 

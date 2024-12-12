@@ -69,5 +69,15 @@ namespace Infrastructure.OperationTypes
             return await this._objs
                 .AsQueryable().Where(x => code.Equals(x.OperationTypeCode)).FirstOrDefaultAsync();
         }
+
+        public async Task<string?> GetLastCodeAsync()
+        {
+            var last = await _objs
+                .AsQueryable()
+                .OrderByDescending(x => x.OperationTypeCode)
+                .FirstOrDefaultAsync();
+
+            return last?.OperationTypeCode;
+        }
     }
 }

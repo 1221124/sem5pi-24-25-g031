@@ -168,13 +168,24 @@ namespace Domain.OperationTypes
 
         public async Task<OperationTypeCode> AssignCodeAsync()
         {
-            var types = await _repo.GetAllAsync();
+            try{
+                var lastCode = await _repo.GetLastCodeAsync();
 
-            if(types == null || types.Count == 0)
+                int lastNumber = 0;
+                if (!string.IsNullOrEmpty(lastCode) && lastCode.Trim().ToLower().StartsWith("typ"))
+                {
+                    if (int.TryParse(lastCode[3..], out var parsedNumber))
+                    {
+                        lastNumber = parsedNumber;
+                    }
+                }
+
+                int nextNumber = lastNumber + 1;
+                return new OperationTypeCode($"typ{nextNumber}");
+            }catch (Exception)
+            {
                 return new OperationTypeCode("typ1");
-
-            int count = types.Count + 1;
-            return new OperationTypeCode("typ" + count);
+            }
         }
     }
 }

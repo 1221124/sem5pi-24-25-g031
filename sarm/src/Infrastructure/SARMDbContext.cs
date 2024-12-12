@@ -17,6 +17,8 @@ using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.SurgeryRooms;
 using DDDNetCore.Infrastructure.Appointments;
 using DDDNetCore.Infrastructure.SurgeryRooms;
+using DDDNetCore.src.Domain.RoomTypes;
+using DDDNetCore.src.Infrastructure.RoomTypes;
 
 namespace Infrastructure
 {
@@ -31,6 +33,7 @@ namespace Infrastructure
         public DbSet<DbLog> Logs { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<SurgeryRoom> SurgeryRooms { get; set; }
+        public DbSet<RoomType> RoomTypes { get; set; }
 
         public SARMDbContext(DbContextOptions options) : base(options)
         {
@@ -55,6 +58,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new DbLogEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AppointmentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SurgeryRoomEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new RoomTypeEntityTypeConfiguration());
         }
     }
 }
