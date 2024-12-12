@@ -9,7 +9,6 @@ namespace DDDNetCore.Controllers
     [ApiController]
     public class OperationRequestController : ControllerBase
     {
-        private readonly int _pageSize = 4;
         private readonly OperationRequestService _operationRequestService;
         private readonly DbLogService _logService;
 
@@ -34,17 +33,6 @@ namespace DDDNetCore.Controllers
                     return NotFound();
                 
                 var totalItems = operationRequests.Count();
-                var totalPages = (int)Math.Ceiling((double)totalItems / _pageSize);
-
-                if (pageNumber != null)
-                {
-                    var paginated = operationRequests
-                        .Skip((int.Parse(pageNumber) - 1) * _pageSize) // Pula os primeiros itens de acordo com o número da página e o tamanho da página
-                        .Take(_pageSize) // Seleciona a quantidade especificada de itens para a página atual
-                        .ToList(); // Converte o resultado em uma lista para fácil manipulação
-
-                    return Ok(paginated);
-                }
 
                 return Ok(operationRequests);
                 
