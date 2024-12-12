@@ -16,7 +16,11 @@ export class AppointmentsService {
   async getAll(filter: any, accessToken: string) {
     let params = new HttpParams();
 
-    if (filter.pageNumber > 0) params = params.set('pageNumber', filter.pageNumber.toString());
+    // if (filter.pageNumber > 0) params = params.set('pageNumber', filter.pageNumber.toString());
+    // if (filter.surgeryRoomNumber) params = params.set('surgeryRoomNumber', filter.surgeryRoomNumber);
+    if (filter.date) params = params.set('date', filter.date);
+    if (filter.staff) params = params.set('staff', filter.staff);
+    if (filter.patient) params = params.set('patient', filter.patient);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

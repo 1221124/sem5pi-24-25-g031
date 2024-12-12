@@ -14,7 +14,6 @@ import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.compon
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import { PrologComponent } from './components/prolog/prolog.component';
-import { AppointmentsComponent } from './components/appointments/appointments.component';
 import {PatientModule} from './components/patient/patient.module';
 import { StaffModule } from './components/staffs-main/staffs.module';
 import { VerifyPatientSensitiveInfoComponent } from './components/verify-patient-sensitive-info/verify-patient-sensitive-info.component';
@@ -34,6 +33,7 @@ import {
   OperationRequestsComponent
 } from './components/operation-requests-main/operation-requests/operation-requests.component';
 import {AdminPatientsModule} from './components/admin-patients/admin-patients.module';
+import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +57,6 @@ import {AdminPatientsModule} from './components/admin-patients/admin-patients.mo
     OperationRequestsModule,
     PrologComponent,
     DoctorMenuComponent,
-    AppointmentsComponent,
     PatientModule,
     StaffModule,
     VerifyEmailComponent,

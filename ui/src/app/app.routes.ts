@@ -7,7 +7,6 @@ import { AdminMenuComponent } from './components/admin-menu/admin-menu.component
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { DoctorMenuComponent } from './components/doctor-menu/doctor-menu.component';
 import { PrologComponent } from './components/prolog/prolog.component';
-import { AppointmentsComponent } from './components/appointments/appointments.component';
 import { OperationRequestsComponent } from './components/operation-requests-main/operation-requests/operation-requests.component';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 import { VerifyPatientSensitiveInfoComponent } from './components/verify-patient-sensitive-info/verify-patient-sensitive-info.component';
@@ -20,6 +19,7 @@ import { AdminPatientsMainComponent } from './components/admin-patients/admin-pa
 import { ListStaffsComponent } from './components/staffs-main/list-staffs/list-staffs.component';
 import { PaginationStaffsComponent } from './components/staffs-main/pagination-staffs/pagination-staffs.component';
 import {OperationTypesComponent} from './components/operation-types-module/operation-types/operation-types.component';
+import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
