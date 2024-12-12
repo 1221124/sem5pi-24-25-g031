@@ -10,6 +10,7 @@ export const environment = {
   staffs: 'http://localhost:5500/api/Staff',
   patients: 'http://localhost:5500/api/Patient',
   surgeryRooms: 'http://localhost:5500/api/SurgeryRooms',
+  roomTypes: 'http://localhost:5500/api/RoomType',
   prolog: 'http://localhost:5500/api/Prolog',
   appointments: 'http://localhost:5500/api/Appointments',
   three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=m86s9d2mdo8vjm4a4bb9u7udi7&_ij_reload=RELOAD_ON_SAVE',

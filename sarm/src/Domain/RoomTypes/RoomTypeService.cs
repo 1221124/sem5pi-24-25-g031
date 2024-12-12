@@ -28,9 +28,36 @@ namespace DDDNetCore.src.Domain.RoomTypes
             }
         }
 
-        public async Task<List<RoomType>> GetAll() {
+        public async Task<List<RoomTypeDto>> GetAsync(string? name, bool? isAvailableForSurgeries) {
             try{
-                return await _repo.GetAllAsync();
+                List<RoomType> roomTypes;
+                
+                if (string.IsNullOrEmpty(name)) {
+                    roomTypes = await _repo.GetAllAsync();
+                } else {
+                    roomTypes = await _repo.GetByNameAsync(name);
+                }
+
+                if (isAvailableForSurgeries != null) {
+                    roomTypes = roomTypes.FindAll(rt => rt.AvailableForSurgeries == isAvailableForSurgeries);
+                }
+
+                return RoomTypeMapper.ToDtoList(roomTypes);
+            }
+            catch(Exception) {
+                return null;
+            }
+        }
+
+        public async Task<RoomTypeDto> GetByIdAsync(RoomTypeId id) {
+            try{
+                var roomType = await _repo.GetByIdAsync(id);
+
+                if (roomType == null) {
+                    return null;
+                }
+                
+                return RoomTypeMapper.ToDto(roomType);
             }
             catch(Exception) {
                 return null;

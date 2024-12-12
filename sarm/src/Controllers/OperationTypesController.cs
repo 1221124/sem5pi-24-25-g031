@@ -12,7 +12,6 @@ namespace Controllers
     [ApiController]
     public class OperationTypesController : ControllerBase
     {
-        private readonly int pageSize = 2;
         private readonly OperationTypeService _service;
         private readonly DbLogService _dbLogService;
         private readonly OperationRequestService _operationRequestService;
@@ -24,10 +23,10 @@ namespace Controllers
             _operationRequestService = operationRequestService;
         }
 
-        // GET: api/OperationTypes?pageNumber={pageNumber}&?name={name}&?specialization={specialization}&?status={status}
+        // GET: api/OperationTypes?name={name}&specialization={specialization}&status={status}
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> Get([FromQuery] string? pageNumber, [FromQuery] string? name, [FromQuery] string? specialization, [FromQuery] string? status)
+        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> Get([FromQuery] string? name, [FromQuery] string? specialization, [FromQuery] string? status)
         {
             var operationTypes = await _service.GetAsync(name, specialization, status);
 
@@ -36,18 +35,7 @@ namespace Controllers
                 return Ok(new { operationTypes = new List<OperationTypeDto>{}, totalItems = 0 });
             }
 
-            var totalItems = operationTypes.Count;
-
-            if (pageNumber != null && int.TryParse(pageNumber, out int page))
-            {
-                var paginatedOperationTypes = operationTypes
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-                operationTypes = paginatedOperationTypes;
-            }
-
-            return Ok(new { operationTypes = operationTypes, totalItems = totalItems });
+            return Ok(new { operationTypes = operationTypes, totalItems = operationTypes.Count });
         }
 
         // GET: api/OperationTypes/{id}

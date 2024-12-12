@@ -9,6 +9,7 @@ namespace Domain.DbLogs
         OperationType,
         Appointment,
         SurgeryRoom,
+        RoomType,
         Log
     }
 
@@ -44,6 +45,8 @@ namespace Domain.DbLogs
                     return "Appointment";
                 case EntityType.SurgeryRoom:
                     return "Surgery Room";
+                case EntityType.RoomType:
+                    return "Room Type";
                 case EntityType.Log:
                     return "Log";
                 default:

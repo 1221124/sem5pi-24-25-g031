@@ -1,4 +1,5 @@
 using DDDNetCore.src.Domain.RoomTypes;
+using Domain.Shared;
 using Infrastructure;
 using Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,11 @@ namespace DDDNetCore.src.Infrastructure.RoomTypes
         public Task<RoomType> GetByCodeAsync(RoomTypeCode roomTypeCode)
         {
             return _objs.FirstOrDefaultAsync<RoomType>(x => x.RoomTypeCode == roomTypeCode);
+        }
+
+        public Task<List<RoomType>> GetByNameAsync(Name name)
+        {
+            return _objs.Where(x => x.Name == name).ToListAsync();
         }
 
         public async Task<string?> GetLastCodeAsync()

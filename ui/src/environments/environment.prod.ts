@@ -10,6 +10,7 @@ export const environment = {
     staffs: 'https://sarmg031.azurewebsites.net/api/Staff',
     patients: 'https://sarmg031.azurewebsites.net/api/Patient',
     surgeryRooms: 'https://sarmg031.azurewebsites.net/api/SurgeryRooms',
+    roomTypes: 'https://sarmg031.azurewebsites.net/api/RoomType',
     prolog: 'https://sarmg031.azurewebsites.net/api/Prolog',
     appointments: 'https://sarmg031.azurewebsites.net/api/Appointments',
     three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE',

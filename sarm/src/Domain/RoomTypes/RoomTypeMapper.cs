@@ -37,5 +37,10 @@ namespace DDDNetCore.src.Domain.RoomTypes
             );
         }
 
+        public static List<RoomTypeDto> ToDtoList(List<RoomType> entities)
+        {
+            return entities.Select(entity => ToDto(entity)).ToList();
+        }
+
     }
 }
