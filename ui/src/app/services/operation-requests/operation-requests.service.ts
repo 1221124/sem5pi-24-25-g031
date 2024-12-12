@@ -258,6 +258,9 @@ export class OperationRequestsService {
         console.log('Name:', name);
 
         params.push('searchPatientName=' + encodeURIComponent(name));
+      }else {
+        console.log('Name:', searchPatientName);
+        params.push('searchPatientName=' + encodeURIComponent(searchPatientName));
       }
     }
 
@@ -313,7 +316,7 @@ export class OperationRequestsService {
                   deadlineDate: request.deadlineDate.date,
                   priority: request.priority,
                   status: request.status,
-                  requestCode: request.requestCode
+                  requestCode: request.requestCode.value
                 };
               })
             }

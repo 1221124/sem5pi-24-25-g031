@@ -41,7 +41,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let request of filteredRequests">
+    <tr *ngFor="let request of displayRequests">
       <td>{{ request.requestCode.toUpperCase() }}</td>
       <td>{{ request.staff }}</td>
       <td>{{ request.patient }}</td>

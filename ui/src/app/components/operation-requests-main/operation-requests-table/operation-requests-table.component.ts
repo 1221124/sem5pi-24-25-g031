@@ -40,6 +40,7 @@ export class OperationRequestsTableComponent implements OnInit {
 
   selectedRequest!: OperationRequest;
   filteredRequests: OperationRequest[] = [];
+  displayRequests: OperationRequest[] = [];
 
   operationTypes: OperationType[] = [];
   priorities: string[] = [];
@@ -59,6 +60,8 @@ export class OperationRequestsTableComponent implements OnInit {
     searchPriority: '',
     searchStatus: ''
   };
+
+  success: boolean = true;
 
   async ngOnInit() {
     // Authentication checks
@@ -88,11 +91,17 @@ export class OperationRequestsTableComponent implements OnInit {
 
     await this.initialData();
 
+    if(!this.success){
+      console.error('Failed to load initial data');
+      return;
+    }
+
     if (!this.requests) {
       this.requests = [];
     }
 
     this.filteredRequests = [...this.requests];
+    this.displayRequests = [];
     this.pages.currentPage = 1;
     this.pages.totalPages = Math.ceil(this.requests.length / 2);
     this.changePage(this.pages.currentPage);
@@ -100,8 +109,9 @@ export class OperationRequestsTableComponent implements OnInit {
   }
 
   async initialData() {
-    const emptyFilter = {
-      pageNumber: 0
+    const emptyFilter ={
+      specialization: '',
+      status: ''
     }
 
     try {
@@ -120,25 +130,18 @@ export class OperationRequestsTableComponent implements OnInit {
 
     try {
       const response = await this.operationTypesService.getOperationTypes(emptyFilter, this.accessToken);
+      
+      console.log("response", response);
+      
+      this.operationTypes = response.body?.operationTypes || [];
 
-          if (response.status === 200 || response.status === 201) {
-            if (response.body) {
-              this.operationTypes = response.body.operationTypes.map(operationType => {
-                return {
-                  ...operationType,
-                  name: operationType.Name.Value,
-                  specialization: operationType.Specialization
-                }
-              }) || [];
-            }
-          } else {
-            console.error('Failed to fetch operation types:', response.status);
-            this.operationTypes = [];
-          }
+      console.log("operationTypes", this.operationTypes); 
+
     } catch (error) {
-      console.error('Error during operation types fetch:', error);
-      this.operationTypes = [];
+      console.error('Error loading operation types:', error);
+      this.success = false;
     }
+  
 
     try {
       const response = await this.service.getPriority(this.accessToken);
@@ -150,6 +153,7 @@ export class OperationRequestsTableComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error during priorities fetch:', error);
+      this.success = false;
       this.priorities = [];
     }
 
@@ -162,6 +166,7 @@ export class OperationRequestsTableComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error during statuses fetch:', error);
+      this.success = false;
       this.statuses = [];
     }
   }
@@ -183,7 +188,9 @@ export class OperationRequestsTableComponent implements OnInit {
         );
 
         if (response.status === 200 || response.status === 201) {
+          console.log("Filtered requests: ", response.body);
           this.filteredRequests = response.body || [];
+
         } else {
           console.error('Failed to fetch filtered requests:', response.status);
           this.filteredRequests = [];
@@ -199,7 +206,7 @@ export class OperationRequestsTableComponent implements OnInit {
 
         const matchesRequestCode =
           !this.filter.searchRequestCode ||
-          request.requestCode.toLowerCase().includes(this.filter.searchRequestCode.toLowerCase());
+          request.requestCode.toUpperCase().includes(this.filter.searchRequestCode.toUpperCase());
         console.log('Request being checked:', request);
         const matchesLicense =
           !this.filter.searchLicenseNumber ||
@@ -209,10 +216,22 @@ export class OperationRequestsTableComponent implements OnInit {
           request.patient.toLowerCase().includes(this.filter.searchPatientName.toLowerCase());
         const matchesDeadline =
           !this.filter.searchDeadlineDate || request.deadlineDate === this.filter.searchDeadlineDate;
+
+          console.log("request.operationType", request.operationType);
+          console.log("this.filter.searchOperationType", this.filter.searchOperationType);  
+
+        // const matchesOperationType =
+        //   !this.filter.searchOperationType ||
+        //   request.operationType.toLowerCase() === this.filter.searchOperationType.toLowerCase();
+
         const matchesOperationType =
-          !this.filter.searchOperationType ||
-          request.operationType.toLowerCase() === this.filter.searchOperationType.toLowerCase();
-        const matchesPriority =
+        !this.filter.searchOperationType ||
+        this.operationTypes.some(type =>
+          type.Name.toLowerCase() === this.filter.searchOperationType.toLowerCase() &&
+          type.OperationTypeCode === request.operationType
+        );
+
+          const matchesPriority =
           !this.filter.searchPriority ||
           request.priority.toLowerCase() === this.filter.searchPriority.toLowerCase();
         const matchesStatus =
@@ -228,23 +247,18 @@ export class OperationRequestsTableComponent implements OnInit {
           matchesStatus &&
           matchesRequestCode;
 
-        console.log(`
-        matchesRequestCode: ${matchesRequestCode}
-        matchesLicense: ${matchesLicense},
-        matchesPatient: ${matchesPatient},
-        matchesDeadline: ${matchesDeadline},
-        matchesOperationType: ${matchesOperationType},
-        matchesPriority: ${matchesPriority},
-        matchesStatus: ${matchesStatus},
-        Filter result: ${result}
-      `);
-
         return result;
       });
 
       console.log('filtered requests: ', this.filteredRequests);
     }
 
+    this.pages.currentPage = 1;
+    this.pages.totalPages = Math.ceil(this.filteredRequests.length / 2);
+
+    this.changePage(this.pages.currentPage);
+    
+    console.log('Filtered requests for display:', this.filteredRequests);
     this.updateUrlParams(this.filter);
   }
 
@@ -256,6 +270,17 @@ export class OperationRequestsTableComponent implements OnInit {
     }).then(r =>
       console.log('Navigated to:', r)
     );
+  }
+  
+  changePage(page: number) {
+    const index = (page - 1) * 2;
+    this.displayRequests = this.filteredRequests.slice(index, index + 2);
+
+    console.log("Request Displayed: ", this.displayRequests);
+
+    this.pages.currentPage = page;
+
+    this.updateUrlParams({pageNumber: this.pages.currentPage});
   }
 
   navigateTo(route: string, options?: { queryParams?: any }) {
@@ -271,14 +296,6 @@ export class OperationRequestsTableComponent implements OnInit {
     this.navigateTo(route);
   }
 
-  changePage(page: number) {
-    const index = (page - 1) * 2;
-    this.filteredRequests = this.requests.slice(index, index + 2);
-
-    this.pages.currentPage = page;
-
-    this.updateUrlParams({pageNumber: page});
-  }
 
   clear() {
     this.filter = {
@@ -290,12 +307,13 @@ export class OperationRequestsTableComponent implements OnInit {
       searchPriority: '',
       searchStatus: '',
     };
-
-    this.pages.currentPage = 1;
-
+        
     this.filteredRequests = [...this.requests];
-
-    this.updateUrlParams(this.filter); // Clear filters from URL
+    this.displayRequests = [];
+    this.pages.currentPage = 1;
+    this.pages.totalPages = Math.ceil(this.requests.length / 2);
+    console.log('Clearing filter:', this.filter);
+    this.changePage(this.pages.currentPage);
   }
 
 }
