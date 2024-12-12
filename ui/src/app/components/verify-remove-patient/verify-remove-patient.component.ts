@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { CommonModule, NgIf } from '@angular/common';
 import { PatientService } from '../../services/patient/patient.service';
+import {async, firstValueFrom} from 'rxjs';
 
 @Component({
   standalone: true,
@@ -18,27 +19,34 @@ export class VerifyRemovePatientComponent {
 
   message: string = '';
   isError: boolean = false;
-  
+
   wait: boolean = true;
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.authService.message$.subscribe((newMessage) => {
-      this.message = newMessage;  
+      this.message = newMessage;
     });
     this.authService.isError$.subscribe((errorStatus) => {
-      this.isError = errorStatus;  
+      this.isError = errorStatus;
     });
 
-    setTimeout(() => {
-      this.route.queryParams.subscribe(params => {
-        const token = params['token'];
+      const fragment = await firstValueFrom(this.route.fragment);
+      if (!fragment) {
+        return;
+      }
+      const params = new URLSearchParams(fragment);
+      const token = params.get('access_token');
+
         if (token) {
-          this.service.verifyRemoveSensitiveInfo(token)
+          const email = this.authService.extractEmailFromAccessToken(token) as string;
+          this.service.deletePatient(email, token)
           .then(async response => {
             if (response.status === 200) {
+              this.wait = false;
               this.authService.updateMessage('You were deleted from our system! Sad to see you go...');
               this.authService.updateIsError(false);
             } else {
+              this.wait = false;
               this.authService.updateMessage('Unexpected status...');
               this.authService.updateIsError(false);
             }
@@ -49,8 +57,6 @@ export class VerifyRemovePatientComponent {
           }, 5000);
           return;
         }
-      });
-    }, 3000);
   }
 
 }

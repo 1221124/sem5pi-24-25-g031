@@ -38,7 +38,7 @@ export class DeleteAccountButtonComponent{
   async deletePatient() {
     if (!this.patient) return;
 
-    await this.patientService.deletePatient(this.patient.Id, this.accessToken)
+    await this.patientService.preDeletePatient(this.patient.Id, this.accessToken)
       .then((response) => {
         if (response.status === 200) {
           this.message = 'Patient deleted successfully!';

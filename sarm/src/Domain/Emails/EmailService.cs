@@ -64,7 +64,7 @@ namespace Domain.Emails
         public async Task<(string subject, string body)> GenerateVerificationRemoveEmailContentSensitiveInfo(UpdatingPatientDto dto)
         {
             var subject = "Please verify that you want to delete your patient profile";
-            var link = GenerateLinkRemoveSensitiveInfo(dto.EmailId.Value);
+            var link = GenerateLinkRemoveSensitiveInfo();
             var body = $"Hi, {dto.EmailId.Value}!\n\nYou have requested to delete your patient profile. Click on the link below to change it: {link}.\n\nSARM G031";
 
             return (subject ,body);
@@ -106,9 +106,10 @@ namespace Domain.Emails
             return uriBuilder.ToString();
         }
         
-        public string GenerateLinkRemoveSensitiveInfo(string email)
+        public string GenerateLinkRemoveSensitiveInfo()
         {
-            return $"{AppSettings.RemoveSensitiveInfoPatientUrl}?token={EncodeToken(email)}";
+            //redireciona para o link de login da auth0, que redirecta para o método verify do patient controller
+            return $"{AppSettings.RemoveSensitiveInfoPatientUrl}";
         }
 
         public string GenerateToken()

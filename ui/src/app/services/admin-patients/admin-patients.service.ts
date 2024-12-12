@@ -179,14 +179,34 @@ export class PatientsService {
       })
   }
 
-  deletePatient(patientId: any, accessToken: string): Observable<any>{
+  async deletePatient(patientId: any, accessToken: string){
     console.log("Deletion Patient ID:", patientId);
     const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${ accessToken}`
     });
-    const httpOptions = { headers };
+    const httpOptions = { headers, observe: 'response' as const };
 
-    return this.http.delete(`${this.apiUrl}/admin/${patientId}`, httpOptions);
+    return await firstValueFrom(this.http.delete(`${this.apiUrl}/${patientId}`, httpOptions))
+      .then(response => {
+        if(response.status === 200){
+          return {
+            status: response.status,
+            body: response.body
+          };
+        } else {
+          return {
+            status: response.status,
+            body: []
+          };
+        }
+      }).catch(error => {
+        console.error('Error deleting patient:', error);
+        return {
+          status: error.status,
+          body: []
+        };
+      });
   }
 
 }

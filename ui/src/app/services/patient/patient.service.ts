@@ -80,7 +80,18 @@ export class PatientService {
       });
   }
 
-  async deletePatient(id: string, accessToken: string) {
+  async deletePatient(email: string, accessToken: string) {
+
+    const params = new HttpParams().set('email', email);
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers, params};
+    return await firstValueFrom(this.http.delete(`${environment.patients}/removePatient`, options));
+  }
+
+  async preDeletePatient(id: string, accessToken: string) {
     const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     if (!guidRegex.test(id)) {
       throw new Error('Invalid ID format. Please provide a valid GUID.');
@@ -90,7 +101,8 @@ export class PatientService {
       'Authorization': `Bearer ${accessToken}`
     });
     const options = { ...httpOptions, headers};
-    return await firstValueFrom(this.http.delete(`${environment.patients}/patient/${id}`, options));
+    return await firstValueFrom(this.http.delete(`${environment.patients}/${id}`, options));
+
   }
 
   async verifySensitiveInfo(token: string, pendingPhoneNumber: string, pendingEmail: string) {

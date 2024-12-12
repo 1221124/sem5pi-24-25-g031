@@ -12,6 +12,7 @@ import {FormsModule} from '@angular/forms';
 import {
   UpdateOperationRequestsComponent
 } from '../../operation-requests-main/update-operation-requests/update-operation-requests.component';
+import {PatientService} from '../../../services/patient/patient.service';
 
 @Component({
   selector: 'app-admin-patients-main',
@@ -22,13 +23,15 @@ import {
     FormsModule,
     AdminPatientsTableComponent,
     AdminPatientsCreateComponent,
-    AdminPatientsUpdateComponent
+    AdminPatientsUpdateComponent,
+    AdminPatientsDeleteComponent
   ],
   standalone: true
 })
 export class AdminPatientsMainComponent {
   @Output() selectedPatientToCreate!: Patient;
   @Output() selectedPatientToUpdate!: Patient;
+  @Output() selectedPatientToDelete!: Patient;
   @Output() url: string | undefined;
 
   patients!: Patient[];
@@ -41,9 +44,11 @@ export class AdminPatientsMainComponent {
 
   isCreateModalOpen: boolean = false;
   isEditModalOpen: boolean = false;
+  isDeleteModalOpen: boolean = false;
 
   constructor(
     private service: PatientsService,
+    private patientService: PatientService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
@@ -120,6 +125,12 @@ export class AdminPatientsMainComponent {
     this.isEditModalOpen = true;
     this.selectedPatientToUpdate = patient;
   }
+
+  openDeleteModal(patient: Patient) {
+    this.selectedPatientToDelete = patient;
+
+    this.isDeleteModalOpen = true;
+  }
   closeCreateModal() {
     this.isCreateModalOpen = false;
   }
@@ -145,6 +156,28 @@ export class AdminPatientsMainComponent {
     }
 
     this.isEditModalOpen = false;
+  }
+
+  closeDeleteModal() {
+    this.selectedPatientToDelete = {
+      Id: '',
+      FullName: {
+        FirstName: '',
+        LastName: ''
+      },
+      DateOfBirth: new Date,
+      Gender: '',
+      MedicalRecordNumber: '',
+      ContactInformation: {
+        Email: '',
+        PhoneNumber: 0
+      },
+      MedicalCondition: [],
+      EmergencyContact: 0,
+      AppointmentHistory: [],
+      UserId: ''
+    }
+    this.isDeleteModalOpen = false;
   }
 
   createPatient(patient: Patient) {
@@ -207,6 +240,25 @@ export class AdminPatientsMainComponent {
         }
       }).catch(error => {
         this.displayError('Failed to update patient: ' + error);
+      });
+  }
+
+  async deletePatient(patient: Patient) {
+
+    this.selectedPatientToDelete = patient;
+
+    await this.patientService.deletePatient(patient.ContactInformation.Email, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.success = true;
+          this.message = 'Patient deleted successfully!';
+
+          this.closeDeleteModal();
+          this.fetchPatients();
+          this.hideNotificationAfterDelay();
+        } else {
+          this.displayError('Failed to delete patient: ' + response.status);
+        }
       });
   }
 

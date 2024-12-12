@@ -420,7 +420,6 @@ namespace DDDNetCore.Domain.Patients
                 var (subject, body) = await _emailService.GenerateVerificationRemoveEmailContentSensitiveInfo(creatingPatientDto);
                 await _emailService.SendEmailAsync(creatingPatientDto.EmailId.Value, subject, body);
                 
-                await DeleteAsync(patient.Id);
                 return PatientMapper.ToDto(patient);
             }
             catch (Exception e)
@@ -431,27 +430,6 @@ namespace DDDNetCore.Domain.Patients
             }
         }    
         
-        public async Task<PatientDto> AdminDeleteAsync(PatientId id)
-        {
-            var patient = await _repo.GetByIdAsync(id); 
-            
-            if (patient == null)
-                return null;
-            try
-            {
-                await _emailService.SendEmailAsync(patient.ContactInformation.Email, "Subject of the email", "Body of the email");
-            }catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            _repo.Remove(patient);
-            await _unitOfWork.CommitAsync();
-            
-            //_dbLogService.LogAction(EntityType.PATIENT, DBLogType.INACTIVATE, patient);
-             
-            return PatientMapper.ToDto(patient);
-        }
-
         public async Task<PatientDto?> DeleteAsync(PatientId patientId)
         {
             try
@@ -463,7 +441,7 @@ namespace DDDNetCore.Domain.Patients
                 
                 if (patientId == null)
                     return null;
-
+                
                 _repo.Remove(patient);
                 await _unitOfWork.CommitAsync();
                 

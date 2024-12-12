@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
@@ -310,10 +311,10 @@ namespace DDDNetCore.Controllers
 
         
         
-        // DELETE: api/Patient/patient/5
-        [HttpDelete("patient/{id}")]
+        // DELETE: api/Patient/5
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Patient")]
-        public async Task<ActionResult> PatientDelete(Guid id)
+        public async Task<ActionResult> PreDelete(Guid id)
         {
             try
             {
@@ -325,32 +326,7 @@ namespace DDDNetCore.Controllers
                     await _unitOfWork.CommitAsync();
                     return NotFound();
                 }
-
-                var user = await _userService.GetByEmailAsync(patient.ContactInformation.Email);
-                if (user != null) {
-                    _ = await _userService.DeleteAsync(new UserId(user.Id));
-                }
-
-                var operationRequests = await _operationRequestService.GetByPatientAsync(patient.MedicalRecordNumber);
-                if (operationRequests == null)
-                {
-                    return BadRequest("Operation requests are null.");
-                } else if (operationRequests.Count > 0)
-                {
-                    foreach (var operationRequest in operationRequests)
-                    {
-                        var appointment = await _appointmentService.GetByRequestCodeAsync(operationRequest.RequestCode);
-                        if (appointment != null)
-                        {
-                            await _appointmentService.DeleteAsync(new AppointmentId(appointment.Id));
-                            await _operationRequestService.UpdateStatus(operationRequest.RequestCode, RequestStatus.PENDING);
-                        }
-                        await _operationRequestService.DeleteAsync(new OperationRequestId(operationRequest.Id));
-                    }
-                }
-
-                await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + patient.Id + "}");
-
+                
                 return Ok(patient);
             }
             catch (BusinessRuleValidationException ex)
@@ -362,46 +338,39 @@ namespace DDDNetCore.Controllers
         }
         
         //GET: api/Patient/removePatient/?token={token}
-        [HttpGet("removePatient")]
-        public async Task<ActionResult<PatientDto>> VerifySensitiveRemoveInfo([FromQuery] string token)
+        [HttpDelete("removePatient")]
+        [Authorize(Roles = "Admin, Patient")]
+        public async Task<ActionResult<PatientDto>> Delete([FromQuery] string email)
         {
-            var email = _emailService.DecodeToken(token);
-            
             var patientDto = await _service.GetByEmailAsync(new Email(email));
-
-            await _service.DeleteAsync(new PatientId(patientDto.Id));
-            await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + new PatientId(patientDto.Id).Value + "}");
-
+            
             var user = await _userService.GetByEmailAsync(patientDto.ContactInformation.Email);
             if (user != null) {
                 _ = await _userService.DeleteAsync(new UserId(user.Id));
             }
 
+            var operationRequests = await _operationRequestService.GetByPatientAsync(patientDto.MedicalRecordNumber);
+            if (operationRequests == null)
+            {
+                return BadRequest("Operation requests are null.");
+            } else if (operationRequests.Count > 0)
+            {
+                foreach (var operationRequest in operationRequests)
+                {
+                    var appointment = await _appointmentService.GetByRequestCodeAsync(operationRequest.RequestCode);
+                    if (appointment != null)
+                    {
+                        await _appointmentService.DeleteAsync(new AppointmentId(appointment.Id));
+                    }
+                    await _operationRequestService.UpdateStatus(operationRequest.RequestCode, RequestStatus.PENDING);
+                    await _operationRequestService.DeleteAsync(new OperationRequestId(operationRequest.Id));
+                }
+            }
+            
+            await _service.DeleteAsync(new PatientId(patientDto.Id));
+            await _dbLogService.LogAction(EntityType.Patient, DbLogType.Delete, "Deleted {" + patientDto.Id + "}");
+
             return Ok(patientDto);
         }
-
-        
-        // DELETE: api/Patient/admin/5
-        //[Authorize(Roles = "Admin")]
-        [HttpDelete("admin/{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> AdminDelete(Guid id)
-        {
-            try
-            {
-                var patient = await _service.AdminDeleteAsync(new PatientId(id));
-
-                if (patient == null)
-                {
-                    return NotFound();
-                }
-                return Ok(patient);
-            }
-            catch (BusinessRuleValidationException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-        }
-        
     }
 }

@@ -11,7 +11,8 @@
   <app-admin-patients-table
     *ngIf="patients && patients.length > 0"
     [patients]="patients"
-    (updatePatientEvent)="openUpdateModal($event)">
+    (updatePatientEvent)="openUpdateModal($event)"
+    (deletePatientEvent)="openDeleteModal($event)">
   </app-admin-patients-table>
   <p *ngIf="!patients || patients.length === 0">No patients found.</p>
 
@@ -28,4 +29,12 @@
     (close)="closeUpdateModal()"
     (update)="updatePatient($event)">
   </app-admin-patients-update>
+
+  <app-admin-patients-delete
+    *ngIf="isDeleteModalOpen"
+    [patient]="selectedPatientToDelete"
+    (close)="closeDeleteModal()"
+    (delete)="deletePatient($event)">
+
+  </app-admin-patients-delete>
 </div>
