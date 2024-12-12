@@ -23,7 +23,7 @@ public class SurgeryRoomMapper
     {
         return new SurgeryRoom(
             creating.SurgeryRoomNumber,
-            creating.RoomType,
+            creating.RoomTypeCode,
             creating.RoomCapacity,
             creating.AssignedEquipment
         );
@@ -34,7 +34,7 @@ public class SurgeryRoomMapper
         return new SurgeryRoomDto(
             entity.Id.AsGuid(),
             entity.SurgeryRoomNumber,
-            entity.RoomType,
+            entity.RoomTypeCode,
             entity.RoomCapacity,
             entity.AssignedEquipment,
             entity.CurrentStatus,

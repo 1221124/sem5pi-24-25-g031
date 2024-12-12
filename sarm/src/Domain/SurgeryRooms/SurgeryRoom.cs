@@ -8,7 +8,7 @@ namespace DDDNetCore.Domain.SurgeryRooms;
 public class SurgeryRoom: Entity<SurgeryRoomId>, IAggregateRoot
 {
     public SurgeryRoomNumber SurgeryRoomNumber { get; private set; } //room number - 
-    public RoomTypeCode RoomType { get; private set; }
+    public RoomTypeCode RoomTypeCode { get; private set; }
     public RoomCapacity RoomCapacity { get; private set; }
     public AssignedEquipment AssignedEquipment { get; private set; }
     public CurrentStatus CurrentStatus { get; private set; }
@@ -18,7 +18,7 @@ public class SurgeryRoom: Entity<SurgeryRoomId>, IAggregateRoot
     {
         Id = new SurgeryRoomId(Guid.NewGuid());
         SurgeryRoomNumber = surgeryRoomNumber;
-        RoomType = roomTypeCode;
+        RoomTypeCode = roomTypeCode;
         RoomCapacity = roomCapacity;
         AssignedEquipment = assignedEquipment;
         CurrentStatus = CurrentStatus.AVAILABLE;

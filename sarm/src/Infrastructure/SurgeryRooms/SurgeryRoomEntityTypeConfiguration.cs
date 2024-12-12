@@ -20,9 +20,9 @@ namespace DDDNetCore.Infrastructure.SurgeryRooms{
                     v => SurgeryRoomNumberUtils.FromString(v)
                 );
 
-            builder.Property(x => x.RoomType)
+            builder.Property(x => x.RoomTypeCode)
                 .IsRequired()
-                .HasColumnName("RoomType")
+                .HasColumnName("RoomTypeCode")
                 .HasConversion(
                     v => v.Value,
                     v => new RoomTypeCode(v)

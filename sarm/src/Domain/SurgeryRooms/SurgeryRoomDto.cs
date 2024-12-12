@@ -8,7 +8,7 @@ public class SurgeryRoomDto
 {
     public Guid Id { get; private set; }
     public SurgeryRoomNumber SurgeryRoomNumber { get; private set; } 
-    public RoomTypeCode RoomType { get; private set; }
+    public RoomTypeCode RoomTypeCode { get; private set; }
     public RoomCapacity RoomCapacity { get; private set; }
     public AssignedEquipment AssignedEquipment { get; private set; }
     public CurrentStatus CurrentStatus { get; private set; }
@@ -18,7 +18,7 @@ public class SurgeryRoomDto
     {
         Id = id;
         SurgeryRoomNumber = surgeryRoomNumber;
-        RoomType = roomTypeCode;
+        RoomTypeCode = roomTypeCode;
         RoomCapacity = roomCapacity;
         AssignedEquipment = assignedEquipment;
         CurrentStatus = currentStatus;
