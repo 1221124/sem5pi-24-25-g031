@@ -11,8 +11,7 @@ import {NgIf} from '@angular/common';
   standalone: true,
   styleUrl: './admin-patients-create.component.css',
   imports: [
-    FormsModule,
-    NgIf
+    FormsModule
   ]
 })
 export class AdminPatientsCreateComponent {

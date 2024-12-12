@@ -1,1 +1,35 @@
-<p>admin-patients-update works!</p>
+<div class="modal" *ngIf="patient">
+  <div class="modal-content">
+    <span type="button" class="close" (click)="emitCloseModalEvent()">&times;</span>
+    <h2>Edit Patient</h2>
+    <form class="form-group">
+      <div>
+        <label for="oldEmail">OldEmail</label>
+        <input type="text" id="oldEmail" [(ngModel)]="patient.ContactInformation.Email" name="oldEmail" readonly />
+      </div>
+      <div>
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" [(ngModel)]="patient.FullName.FirstName" name="firstName"  />
+      </div>
+      <div>
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" [(ngModel)]="patient.FullName.LastName" name="lastName"  />
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input type="text" id="email" [(ngModel)]="patient.ContactInformation.Email" name="email" />
+      </div>
+      <div>
+        <label for="phoneNumber">Phone Number</label>
+        <input type="text" id="phoneNumber" [(ngModel)]="patient.ContactInformation.PhoneNumber" name="phoneNumber" />
+      </div>
+      <div>
+        <label for="EmergencyContact">Emergency Contact</label>
+        <input type="text" id="EmergencyContact" [(ngModel)]="patient.EmergencyContact" name="EmergencyContact" placeholder="Enter Emergency Contact"/>
+      </div>
+      <div class="btn-group">
+        <button type="submit" (click)="submit()">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

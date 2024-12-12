@@ -10,7 +10,8 @@
 
   <app-admin-patients-table
     *ngIf="patients && patients.length > 0"
-    [patients]="patients">
+    [patients]="patients"
+    (updatePatientEvent)="openUpdateModal($event)">
   </app-admin-patients-table>
   <p *ngIf="!patients || patients.length === 0">No patients found.</p>
 
@@ -20,4 +21,11 @@
     (closeModalEvent)="closeCreateModal()"
     (createPatientEvent)="createPatient($event)">
   </app-admin-patients-create>
+
+  <app-admin-patients-update
+    *ngIf="isEditModalOpen"
+    [patient]="selectedPatientToUpdate"
+    (close)="closeUpdateModal()"
+    (update)="updatePatient($event)">
+  </app-admin-patients-update>
 </div>

@@ -3,8 +3,6 @@
     <thead>
     <tr class="table-filter-container">
       <th>
-        <!--button class="edit-button" (click)="editPatient(patient)">Edit</button>
-        <button class="delete-button" (click)="confirmDeletePatient(patient)">Delete </button!-->
       </th>
       <th colspan="2"><input type="text" [(ngModel)]="filter.fullName" placeholder="Search by Name" /></th>
       <th><input type="date" [(ngModel)]="filter.dateOfBirth" placeholder="Search by DOB" /></th>
@@ -35,10 +33,13 @@
     <tbody>
     <tr *ngFor="let patient of patients">
 
-      <td></td>
+      <td>
+        <button class="button-filter" (click)="updatePatientEvent.emit(patient)">Update</button>
+        <button class="button-filter" (click)="deletePatientEvent.emit(patient)">Delete</button>
+      </td>
       <td>{{ patient.FullName.FirstName }}</td>
       <td>{{ patient.FullName.LastName }}</td>
-      <td>{{ patient.DateOfBirth }}</td>
+      <td>{{ patient.DateOfBirth | date: "YYYY-MM-dd"}}</td>
       <td>{{ patient.ContactInformation.Email }}</td>
       <td>{{ patient.ContactInformation.PhoneNumber }}</td>
       <td>{{ patient.Gender}}</td>

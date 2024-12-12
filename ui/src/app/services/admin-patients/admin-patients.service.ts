@@ -150,13 +150,33 @@ export class PatientsService {
   }
 
 
-  updatePatient(patient: any, accessToken: string): Observable<any> {
+  async updatePatient(patient: any, accessToken: string){
     const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${accessToken}`
     });
-    const httpOptions = { headers };
+    const httpOptions = { headers, observe : 'response' as const };
 
-    return this.http.put(`${this.apiUrl}`, patient, httpOptions);
+    return await firstValueFrom(this.http.put<{ patient: any[]}>(`${this.apiUrl}`, patient, httpOptions))
+      .then(response => {
+        if(response.status === 200){
+          return {
+            status: response.status,
+            body: response.body
+          };
+        } else {
+          return {
+            status: response.status,
+            body: []
+          };
+        }
+      }).catch(error => {
+        console.error('Error updating patient:', error);
+        return {
+          status: error.status,
+          body: []
+        };
+      })
   }
 
   deletePatient(patientId: any, accessToken: string): Observable<any>{

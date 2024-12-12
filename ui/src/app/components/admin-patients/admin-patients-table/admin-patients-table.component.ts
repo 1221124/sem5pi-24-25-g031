@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {PatientsService} from '../../../services/admin-patients/admin-patients.service';
@@ -24,6 +24,9 @@ import {log} from 'node:util';
 export class AdminPatientsTableComponent {
   @Input() patients!: Patient[];
   @Input() accessToken!: string;
+
+  @Output() updatePatientEvent = new EventEmitter<Patient>();
+  @Output() deletePatientEvent = new EventEmitter<Patient>();
 
   selectedPatient : any = {};
 

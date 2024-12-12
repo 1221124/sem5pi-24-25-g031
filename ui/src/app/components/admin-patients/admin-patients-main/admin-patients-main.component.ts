@@ -9,6 +9,9 @@ import {AdminPatientsDeleteComponent} from '../admin-patients-delete/admin-patie
 import {AdminPatientsUpdateComponent} from '../admin-patients-update/admin-patients-update.component';
 import {AdminPatientsCreateComponent} from '../admin-patients-create/admin-patients-create.component';
 import {FormsModule} from '@angular/forms';
+import {
+  UpdateOperationRequestsComponent
+} from '../../operation-requests-main/update-operation-requests/update-operation-requests.component';
 
 @Component({
   selector: 'app-admin-patients-main',
@@ -18,12 +21,14 @@ import {FormsModule} from '@angular/forms';
     NgIf,
     FormsModule,
     AdminPatientsTableComponent,
-    AdminPatientsCreateComponent
+    AdminPatientsCreateComponent,
+    AdminPatientsUpdateComponent
   ],
   standalone: true
 })
 export class AdminPatientsMainComponent {
   @Output() selectedPatientToCreate!: Patient;
+  @Output() selectedPatientToUpdate!: Patient;
   @Output() url: string | undefined;
 
   patients!: Patient[];
@@ -35,6 +40,7 @@ export class AdminPatientsMainComponent {
   showNotification: boolean = false;
 
   isCreateModalOpen: boolean = false;
+  isEditModalOpen: boolean = false;
 
   constructor(
     private service: PatientsService,
@@ -106,11 +112,39 @@ export class AdminPatientsMainComponent {
       AppointmentHistory: [],
       UserId: ''
     }
-
   }
+  openUpdateModal(patient: Patient) {
 
+    this.selectedPatientToUpdate = patient;
+
+    this.isEditModalOpen = true;
+    this.selectedPatientToUpdate = patient;
+  }
   closeCreateModal() {
     this.isCreateModalOpen = false;
+  }
+
+  closeUpdateModal() {
+    this.selectedPatientToUpdate = {
+      Id: '',
+      FullName: {
+        FirstName: '',
+        LastName: ''
+      },
+      DateOfBirth: new Date,
+      Gender: '',
+      MedicalRecordNumber: '',
+      ContactInformation: {
+        Email: '',
+        PhoneNumber: 0
+      },
+      MedicalCondition: [],
+      EmergencyContact: 0,
+      AppointmentHistory: [],
+      UserId: ''
+    }
+
+    this.isEditModalOpen = false;
   }
 
   createPatient(patient: Patient) {
@@ -138,6 +172,41 @@ export class AdminPatientsMainComponent {
       })
       .catch(error => {
         this.displayError('Failed to create patient: ' + error);
+      });
+  }
+
+  updatePatient(patient: Patient) {
+    this.selectedPatientToUpdate = patient;
+
+    const formattedPatient = {
+      dto: {
+        emailId: patient.ContactInformation.Email,
+        firstName: patient.FullName.FirstName,
+        lastName: patient.FullName.LastName,
+        email: patient.ContactInformation.Email,
+        phoneNumber: patient.ContactInformation.PhoneNumber,
+        emergencyContact: patient.EmergencyContact?.toString(),
+        appointmentHistory: patient.AppointmentHistory,
+        medicalCondition: patient.MedicalCondition,
+        userId: patient.UserId,
+      }
+    };
+
+
+    this.service.updatePatient(formattedPatient, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.success = true;
+          this.message = 'Patient updated successfully!';
+
+          this.closeUpdateModal();
+          this.fetchPatients();
+          this.hideNotificationAfterDelay();
+        } else {
+          this.displayError('Failed to update patient: ' + response.status);
+        }
+      }).catch(error => {
+        this.displayError('Failed to update patient: ' + error);
       });
   }
 
