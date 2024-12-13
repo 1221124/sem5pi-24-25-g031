@@ -61,7 +61,7 @@ namespace Domain.Staffs
             if (staff == null)
                 return null;
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAvailability = staff.SlotAvailability };
         }
         /*public async Task<List<StaffDto>> GetBySearchCriteriaAsync(Staff staffDto)
         {
@@ -247,7 +247,7 @@ namespace Domain.Staffs
 
             await this._unitOfWork.CommitAsync();
 
-            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAppointement = staff.SlotAppointement, SlotAvailability = staff.SlotAvailability };
+            return new StaffDto { Id = staff.Id.AsGuid(), FullName = staff.FullName, ContactInformation = staff.ContactInformation, Specialization = staff.Specialization, Status = staff.Status, SlotAvailability = staff.SlotAvailability };
         }
         
         public async Task<StaffDto> SearchByEmailAsync(Email email)
@@ -388,8 +388,6 @@ namespace Domain.Staffs
 
                 if (staffEntity == null)
                     return null;
-
-                staffEntity.AddAppointmentSlot(newSlot);
 
                 await _unitOfWork.CommitAsync();
 
@@ -576,7 +574,7 @@ namespace Domain.Staffs
             }
         }
 
-        public async Task<List<StaffDto>> DeleteAppointmentAsync(AppointmentDto appointment)
+        /*public async Task<List<StaffDto>> DeleteAppointmentAsync(AppointmentDto appointment)
         {
             try {
                 var staffs = await _repo.GetAllAsync();
@@ -596,7 +594,7 @@ namespace Domain.Staffs
             } catch (Exception e) {
                 return null;
             }
-        }
+        }*/
 
         public async Task<List<StaffDto>> CreateAppointmentAsync(AppointmentDto appointment)
         {

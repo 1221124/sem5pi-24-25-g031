@@ -71,11 +71,11 @@ export class StaffsService {
               PhoneNumber: item.contactInformation.phoneNumber.value
             },
             status: item.status,
-            SlotAppointment: Array.isArray(item.slotAppointment) && item.slotAppointment !== null ?
+           /* SlotAppointment: Array.isArray(item.slotAppointment) && item.slotAppointment !== null ?
               item.slotAppointment.map((appointment: { start: string, end: string }) => ({
                 Start: appointment.start,
                 End: appointment.end
-              })) : [],
+              })) : [],*/
 
             SlotAvailability: Array.isArray(item.slotAvailability) && item.slotAvailability !== null ?
               item.slotAvailability.map((availability: { start: string, end: string }) => ({
@@ -240,7 +240,7 @@ export class StaffsService {
   //     } else {
   //       throw new Error('Estrutura de resposta inesperada ou status diferente de 200');
   //     }
-  //   });   
+  //   });
   // }
 
 }

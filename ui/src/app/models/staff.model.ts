@@ -14,10 +14,6 @@ export interface Staff {
     PhoneNumber: string;
   };
   status: string;
-  SlotAppointment: {
-    Start: string;
-    End: string;
-  }[];
   SlotAvailability: {
     Start: string;
     End: string;

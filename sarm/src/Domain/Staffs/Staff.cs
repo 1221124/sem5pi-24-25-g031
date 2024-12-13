@@ -12,7 +12,6 @@ namespace Domain.Staffs
         public StaffRole StaffRole { get; set; }
         public ContactInformation ContactInformation { get; set; }
         public Status Status { get; set; }
-        public List<Slot> SlotAppointement { get; set; }
         public List<Slot> SlotAvailability { get; set; }
 
         public Staff()
@@ -30,7 +29,6 @@ namespace Domain.Staffs
             Specialization = specialization;
             StaffRole = staffRole;
             Status = Status.Active;
-            SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
         }
 
@@ -43,7 +41,6 @@ namespace Domain.Staffs
             Specialization = specialization;
             StaffRole = staffRole;
             Status = status;
-            SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
         }
 
@@ -53,7 +50,6 @@ namespace Domain.Staffs
             ContactInformation = contactInformation;
             Specialization = specialization;
             StaffRole = staffRole;
-            SlotAppointement = new List<Slot>();
             SlotAvailability = new List<Slot>();
         }
 
@@ -107,11 +103,6 @@ namespace Domain.Staffs
             UserId = userId;
         }
 
-        public void AddAppointmentSlot(Slot slot)
-        {
-            SlotAppointement.Add(slot);
-        }
-
         public void AddAvailabilitySlot(Slot slot)
         {
             SlotAvailability.Add(slot);
@@ -129,14 +120,6 @@ namespace Domain.Staffs
                 return false;
             }
             return LicenseNumber == ((Staff)obj).LicenseNumber;
-        }
-
-        public void RemoveAppointmentSlot(Slot slot)
-        {
-            if (SlotAppointement != null && SlotAppointement.Contains(slot))
-            {
-                SlotAppointement.Remove(slot);
-            }
         }
     }
 }

@@ -17,7 +17,6 @@ namespace Domain.Staffs
                 ContactInformation = staff.ContactInformation,
                 StaffRole = staff.StaffRole,
                 Status = staff.Status,
-                SlotAppointement = staff.SlotAppointement,
                 SlotAvailability = staff.SlotAvailability
             };
         }

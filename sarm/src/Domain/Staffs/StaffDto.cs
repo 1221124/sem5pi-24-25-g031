@@ -16,7 +16,6 @@ namespace Domain.Staffs
         public Specialization Specialization { get; set; }
         public StaffRole StaffRole { get; set; }
         public Status Status { get; set; }
-        public List<Slot> SlotAppointement { get; set; }
         public List<Slot> SlotAvailability { get; set; }
 
         public StaffDto()
@@ -33,7 +32,6 @@ namespace Domain.Staffs
             Specialization = specialization;
             StaffRole = staffRole;
             Status = status;
-            SlotAppointement = slot;
             SlotAvailability = slot;
         }
     }
