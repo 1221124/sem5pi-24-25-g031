@@ -8,7 +8,6 @@ import { Staff } from '../../models/staff.model';
   providedIn: 'root'
 })
 export class StaffsService {
-
   private apiUrl = environment.staffs;
 
   currentPage = 1;
@@ -185,5 +184,63 @@ export class StaffsService {
     if (pendingEmail) params = params.set('pendingEmail', pendingEmail);
     return await firstValueFrom(this.http.get<any>(`${environment.staffs}/sensitiveInfo`, { ...httpOptions, params: params }));
   }
+
+  // async getStaffAvailable(accessToken: string, Start: string, End: string) {
+  //   const headers = new HttpHeaders({
+  //     'content-type': 'application/json',
+  //     'Authorization': `Bearer ${accessToken}`
+  //   });
+
+  //   const params = new HttpParams()
+  //     .set('start', Start)
+  //     .set('end', End);
+
+  //   const options = { ...httpOptions, headers, params };
+
+  //   return await firstValueFrom(this.http.get<{ staff: any[], totalItems: number }>(`${environment.staffs}/availableStaff`, options))
+  //   .then(response => {
+  //     if (response.status === 200 && response.body) {
+
+  //       console.log('Resposta da API:', response.body);
+
+  //       const mappedStaffs = response.body.staff.map(item => ({
+  //         Id: item.id,
+  //         FullName: {
+  //           FirstName: item.fullName.firstName.value,
+  //           LastName: item.fullName.lastName.value
+  //         },
+  //         licenseNumber: item.licenseNumber.value,
+  //         specialization: item.specialization,
+  //         staffRole: item.staffRole,
+  //         ContactInformation: {
+  //           Email: item.contactInformation.email.value,
+  //           PhoneNumber: item.contactInformation.phoneNumber.value
+  //         },
+  //         status: item.status,
+  //         SlotAppointment: Array.isArray(item.slotAppointment) && item.slotAppointment !== null ?
+  //           item.slotAppointment.map((appointment: { start: string, end: string }) => ({
+  //             Start: appointment.start,
+  //             End: appointment.end
+  //           })) : [],
+
+  //         SlotAvailability: Array.isArray(item.slotAvailability) && item.slotAvailability !== null ?
+  //           item.slotAvailability.map((availability: { start: string, end: string }) => ({
+  //             Start: availability.start,
+  //             End: availability.end
+  //           })) : []
+  //       }));
+
+  //       return {
+  //         status: response.status,
+  //         body: {
+  //           staffs: mappedStaffs,
+  //           totalItems: response.body.totalItems
+  //         }
+  //       };
+  //     } else {
+  //       throw new Error('Estrutura de resposta inesperada ou status diferente de 200');
+  //     }
+  //   });   
+  // }
 
 }

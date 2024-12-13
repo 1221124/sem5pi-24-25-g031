@@ -594,7 +594,7 @@ namespace Domain.Staffs
             }
         }
 
-        public async Task<List<StaffDto>> CreateAppointmentAsync(Appointment appointment)
+        public async Task<List<StaffDto>> CreateAppointmentAsync(AppointmentDto appointment)
         {
             try {
                 List<StaffDto> staffs = new List<StaffDto>();

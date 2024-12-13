@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, RouterOutlet} from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-menu',
@@ -37,6 +36,10 @@ export class AdminMenuComponent implements OnInit {
 
       return;
     }
+  }
+
+  navigateToAppointments() {
+    this.router.navigateByUrl('/appointments');
   }
 
   navigateTo(path: string) {

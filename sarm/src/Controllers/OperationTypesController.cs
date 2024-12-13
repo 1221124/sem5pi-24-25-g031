@@ -32,7 +32,7 @@ namespace Controllers
 
             if (operationTypes == null)
             {
-                return Ok(new { operationTypes = new List<OperationTypeDto>{}, totalItems = 0 });
+                operationTypes = [];
             }
 
             return Ok(new { operationTypes = operationTypes, totalItems = operationTypes.Count });
@@ -44,6 +44,21 @@ namespace Controllers
         public async Task<ActionResult<OperationTypeDto>> GetById(Guid id)
         {
             var operationType = await _service.GetByIdAsync(new OperationTypeId(id));
+
+            if (operationType == null)
+            {
+                return NotFound();
+            }
+
+            return Ok (new { operationType });
+        }
+
+        // GET: api/OperationTypes/code/{code}
+        [HttpGet("code/{code}")]
+        [Authorize]
+        public async Task<ActionResult<OperationTypeDto>> GetByCode(string code)
+        {
+            var operationType = await _service.GetByCodeAsync(new OperationTypeCode(code));
 
             if (operationType == null)
             {

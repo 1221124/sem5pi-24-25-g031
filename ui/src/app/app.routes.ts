@@ -47,7 +47,7 @@ export const routes: Route[] = [
       }
     ]
   },
-  { path: 'admin/appointments', component: AppointmentsComponent },
+  { path: 'appointments', component: AppointmentsComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/users', component: AdminUsersComponent },

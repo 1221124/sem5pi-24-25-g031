@@ -7,11 +7,11 @@ namespace DDDNetCore.Domain.Appointments;
 
 public class Appointment : Entity<AppointmentId>, IAggregateRoot
 {
-    public RequestCode RequestCode { get; private set; }
-    public SurgeryRoomNumber SurgeryRoomNumber { get; private set; }
-    public AppointmentNumber AppointmentNumber { get; private set; }
-    public Slot AppointmentDate { get; private set; }
-    public List<LicenseNumber> AssignedStaff { get; private set; }
+    public RequestCode RequestCode { get; set; }
+    public SurgeryRoomNumber SurgeryRoomNumber { get; set; }
+    public AppointmentNumber AppointmentNumber { get; set; }
+    public Slot AppointmentDate { get; set; }
+    public List<LicenseNumber> AssignedStaff { get; set; }
 
     public Appointment()
     {

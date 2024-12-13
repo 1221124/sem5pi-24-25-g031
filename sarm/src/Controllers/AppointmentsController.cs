@@ -32,36 +32,25 @@ namespace DDDNetCore.Controllers {
             _operationRequestService = operationRequestService;
         }
 
-        // GET: api/Appointments?pageNumber={pageNumber}
+        // GET: api/Appointments
         [HttpGet]
         [Authorize(Roles = "Admin,Doctor")]
-        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAll([FromQuery] string? pageNumber)
+        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAll()
         {
             var appointments = await _service.GetAll();
 
             if (appointments == null)
             {
-                return NotFound();
+                appointments = [];
             }
 
-            var totalItems = appointments.Count;
-
-            if (pageNumber != null && int.TryParse(pageNumber, out int page))
-            {
-                var paginatedAppointments = appointments
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-                appointments = paginatedAppointments;
-            }
-
-            return Ok(new { appointments = appointments, totalItems = totalItems });
+            return Ok(new { appointments = appointments, totalItems = appointments.Count });
         }
 
         // POST: api/Appointments
         [HttpPost]
         [Authorize(Roles = "Admin,Doctor")]
-        public async Task<ActionResult<AppointmentDto>> PostAppointment(CreatingAppointmentDto creatingAppointment)
+        public async Task<ActionResult<AppointmentDto>> Create(CreatingAppointmentDto creatingAppointment)
         {
             var appointment = await _service.AddAsync(creatingAppointment);
 
@@ -92,10 +81,49 @@ namespace DDDNetCore.Controllers {
             return Ok(new { Message = "Appointment created successfully!" });
         }
 
+        // PUT: api/Appointments/{id}
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<ActionResult<AppointmentDto>> Update(Guid id, AppointmentDto dto)
+        {
+            if (id != dto.Id)
+            {
+                return BadRequest("Appointment id mismatch!");
+            }
+
+            var appointment = await _service.UpdateAsync(dto);
+
+            if (appointment == null)
+            {
+                return NotFound("Appointment not found!");
+            }
+
+            var operationRequest = await _operationRequestService.UpdateStatus(appointment.RequestCode, RequestStatus.ACCEPTED);
+            if (operationRequest == null)
+            {
+                return NotFound("Operation request not found!");
+            }
+
+            // var staff = await _staffService.UpdateAppointmentAsync(appointment);
+            // if (staff == null || staff.Count == 0)
+            // {
+            //     return BadRequest("An exception occurred while updating the appointment slots in all staffs!");
+            // }
+
+            // var patient = await _patientService.UpdateAppointmentAsync(operationRequest, appointment);
+            // if (patient == null)
+            // {
+            //     return NotFound("Patient not found!");
+            // }
+
+            _ = await _logService.CreateLogAsync(new DbLog(new EntityTypeName(EntityType.Appointment), new DbLogTypeName(DbLogType.Update), new Message($"Appointment {appointment.AppointmentNumber} updated.")));
+            return Ok(new { Message = "Appointment updated successfully!" });
+        }
+
         // DELETE: api/Appointments/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Doctor")]
-        public async Task<ActionResult<AppointmentDto>> DeleteAppointment(Guid id)
+        public async Task<ActionResult<AppointmentDto>> Delete(Guid id)
         {
             var appointment = await _service.DeleteAsync(new AppointmentId(id));
 

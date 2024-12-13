@@ -14,10 +14,6 @@ public class AppointmentDto
     public Slot AppointmentDate { get; set; }
     public List<LicenseNumber> AssignedStaff { get; set; }
 
-    public AppointmentDto()
-    {
-    }
-
     public AppointmentDto(Guid id, RequestCode requestCode, SurgeryRoomNumber surgeryRoomNumber, AppointmentNumber appointmentNumber, Slot appointmentDate, List<LicenseNumber> assignedStaff)
     {
         Id = id;

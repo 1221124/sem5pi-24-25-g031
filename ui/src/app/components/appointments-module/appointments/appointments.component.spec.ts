@@ -2,6 +2,6 @@ import { AppointmentsComponent } from './appointments.component'
 
 describe('AppointmentsComponent', () => {
   it('should mount', () => {
-    expect(true).toBeTruthy()
+    expect(AppointmentsComponent).toBeTruthy()
   })
 })

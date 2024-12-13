@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment, httpOptions } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
+import { Appointment } from '../../models/appointment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,8 @@ export class AppointmentsService {
     private http: HttpClient
   ) {}
 
-  async getAll(filter: any, accessToken: string) {
+  async getAll(accessToken: string) {
     let params = new HttpParams();
-
-    // if (filter.pageNumber > 0) params = params.set('pageNumber', filter.pageNumber.toString());
-    // if (filter.surgeryRoomNumber) params = params.set('surgeryRoomNumber', filter.surgeryRoomNumber);
-    if (filter.date) params = params.set('date', filter.date);
-    if (filter.staff) params = params.set('staff', filter.staff);
-    if (filter.patient) params = params.set('patient', filter.patient);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -65,5 +60,62 @@ export class AppointmentsService {
         }
       }
     );
+  }
+
+  async create(appointment: Appointment, accessToken: string) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const dto = {
+      "RequestCode": {
+        "Value": appointment.RequestCode
+      },
+      "SurgeryRoomNumber": appointment.SurgeryRoomNumber,
+      "AppointmentDate": {
+        "Start": appointment.AppointmentDate.Start,
+        "End": appointment.AppointmentDate.End
+      },
+      "AssignedStaff": appointment.AssignedStaff.map(staff => ({
+        "Value": staff
+      }))
+    };
+
+    const options = { ...httpOptions, headers};
+    return await firstValueFrom(this.http.post(`${environment.appointments}`, dto, options));
+  }
+
+  async update(id: string, appointment: Appointment, accessToken: string) {
+    const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    if (!guidRegex.test(id)) {
+      throw new Error('Invalid ID format. Please provide a valid GUID.');
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const dto = {
+      "Id": id,
+      "RequestCode": {
+        "Value": appointment.RequestCode
+      },
+      "SurgeryRoomNumber": appointment.SurgeryRoomNumber,
+      "AppointmentNumber": {
+        "Value": appointment.AppointmentNumber
+      },
+      "AppointmentDate": {
+        "Start": appointment.AppointmentDate.Start,
+        "End": appointment.AppointmentDate.End
+      },
+      "AssignedStaff": appointment.AssignedStaff.map(staff => ({
+        "Value": staff
+      }))
+    };
+
+    const options = { ...httpOptions, headers};
+    return await firstValueFrom(this.http.put(`${environment.appointments}/${appointment.Id}`, dto, options));
   }
 }

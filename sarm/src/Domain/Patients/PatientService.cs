@@ -501,7 +501,7 @@ namespace DDDNetCore.Domain.Patients
             }
         }
 
-        public async Task<PatientDto> CreateAppointmentAsync(OperationRequestDto operationRequest, Appointment appointment)
+        public async Task<PatientDto> CreateAppointmentAsync(OperationRequestDto operationRequest, AppointmentDto appointment)
         {
             try {
                 var patient = await _repo.GetByMedicalRecordNumberAsync(operationRequest.Patient);

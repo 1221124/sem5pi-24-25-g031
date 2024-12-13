@@ -3,6 +3,8 @@ import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { routes } from "./appointments.route";
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { AppointmentsFormComponent } from './appointments-form/appointments-form.component';
+import { AppointmentsListComponent } from './appointments-list/appointments-list.component';
 
 @NgModule({
   imports: [
@@ -11,16 +13,16 @@ import { AppointmentsComponent } from './appointments/appointments.component';
     NgFor,
     NgIf,
     AppointmentsComponent,
-    // AppointmentsFormComponent,
+    AppointmentsFormComponent,
     // AppointmentsListComponent
   ],
   exports: [
     AppointmentsComponent,
-    // AppointmentsFormComponent,
+    AppointmentsFormComponent,
     // AppointmentsListComponent
   ],
   declarations: [
-    AppointmentsComponent
+    AppointmentsListComponent
   ]
 })
 export class OperationTypesModule {}

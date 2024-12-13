@@ -52,7 +52,7 @@ export class AppointmentsComponent implements OnInit {
     this.accessToken = this.authService.getToken() as string;
 
     if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')
-    || !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
+    && !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
       this.authService.updateMessage(
         'You are not authenticated or are not an admin or doctor! Redirecting to login...'
       );
@@ -116,7 +116,7 @@ export class AppointmentsComponent implements OnInit {
 
   async loadAppointments() {
     try {
-      const response = await this.service.getAll(this.filter, this.accessToken);
+      const response = await this.service.getAll(this.accessToken);
       this.appointments = response.body?.appointments || [];
       this.appointments.sort((a, b) => a.AppointmentNumber.localeCompare(b.AppointmentNumber));
       if (this.filter.surgeryRoomNumber) {

@@ -1,1 +1,35 @@
-<p>appointments works!</p>
+<!-- <div class="appointments-container">
+    <h1>Appointments</h1>
+  
+    <button *ngIf="showList" (click)="showAppointmentsForm()" class="btn btn-primary">Schedule an Appointment</button>
+    <button *ngIf="showForm" (click)="showAppointmentsList()" class="btn btn-secondary">Show Appointments</button>
+    <button (click)="back()" class="btn btn-back">Back</button>
+  
+    <div *ngIf="!showList && !showForm" class="loading-spinner">
+      <div class="spinner"></div>
+      <h1>LOADING</h1>
+      <p>Please wait...</p>
+    </div>
+  
+    <div *ngIf="showList">
+      <app-appointments-list
+        [appointments]="appointments"
+        [totalItems]="totalItems"
+        [totalPages]="totalPages"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [isDoctor]="isDoctor"
+        (edit)="onEdit($event)"
+        (filterChange)="onFilterChange($event)">
+      </app-appointments-list>
+    </div>
+  
+    <div *ngIf="showForm">
+      <app-appointments-form
+        [appointment]="selectedAppointment"
+        (submit)="onSubmit()"
+        (cancel)="onCancel()">
+      </app-appointments-form>
+    </div>
+  </div> -->
+<div>appointments works!</div>

@@ -32,7 +32,7 @@ namespace DDDNetCore.Domain.Appointments
             return AppointmentMapper.ToDtoList(appointments);
         }
 
-        public async Task<Appointment> AddAsync(CreatingAppointmentDto appointment)
+        public async Task<AppointmentDto> AddAsync(CreatingAppointmentDto appointment)
         {
             try
             {
@@ -44,13 +44,40 @@ namespace DDDNetCore.Domain.Appointments
                 await _appointmentRepository.AddAsync(newAppointment);
                 await _unitOfWork.CommitAsync();
 
-                return newAppointment;
+                return AppointmentMapper.ToDto(newAppointment);
             }
             catch (Exception)
             {
                 return null;
             }
-            
+        }
+
+        public async Task<AppointmentDto> UpdateAsync(AppointmentDto dto)
+        {
+            try
+            {
+                if (dto == null)
+                    throw new ArgumentNullException(nameof(dto));
+
+                var appointment = await _appointmentRepository.GetByIdAsync(new AppointmentId(dto.Id));
+
+                if (appointment == null)
+                    return null;
+
+                appointment.RequestCode = dto.RequestCode;
+                appointment.SurgeryRoomNumber = dto.SurgeryRoomNumber;
+                appointment.AppointmentNumber = dto.AppointmentNumber;
+                appointment.AppointmentDate = dto.AppointmentDate;
+                appointment.AssignedStaff = dto.AssignedStaff;
+
+                await _unitOfWork.CommitAsync();
+
+                return AppointmentMapper.ToDto(appointment);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<(List<RequestCode> requestCodes, List<AppointmentNumber> appointmentNumbers)> CreateAppointmentsAutomatically(SurgeryRoomNumber surgeryRoomNumber, DateTime dateTime, PrologResponse response)

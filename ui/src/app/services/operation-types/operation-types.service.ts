@@ -172,6 +172,47 @@ export class OperationTypesService {
       });
   }
 
+  async getByCode(code: string, accessToken: string) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { ...httpOptions, headers};
+
+    return await firstValueFrom(this.http.get<{ operationType: any }>(`${environment.operationTypes}/code/${code}`, options))
+    .then(response => {
+      if (response.status === 200 && response.body) {
+        const operationType = response.body.operationType;
+        return {
+          status: response.status,
+          body: {
+            Id: operationType.id,
+            OperationTypeCode: operationType.operationTypeCode.value,
+            Name: operationType.name.value,
+            Specialization: operationType.specialization.toString(),
+            RequiredStaff: operationType.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: boolean; isRequiredInSurgery: boolean; isRequiredInCleaning: boolean; }) => ({
+              Role: staff.role,
+              Specialization: staff.specialization,
+              Quantity: staff.quantity.value,
+              IsRequiredInPreparation: staff.isRequiredInPreparation,
+              IsRequiredInSurgery: staff.isRequiredInSurgery,
+              
+            })),
+            PhasesDuration: {
+              Preparation: operationType.phasesDuration.phases.preparation.value,
+              Surgery: operationType.phasesDuration.phases.surgery.value,
+              Cleaning: operationType.phasesDuration.phases.cleaning.value
+            },
+            Status: operationType.status.toString(),
+            Version: operationType.version.value
+          }
+        };
+      } else {
+        throw new Error('Unexpected response structure or status');
+      }
+    }); 
+  }
+
   async deleteOperationType(id: string, accessToken: string) {
     const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     if (!guidRegex.test(id)) {
