@@ -251,6 +251,27 @@ namespace DDDNetCore.Domain.Appointments
                 return null;
             }
         }
+
+        public async Task<List<AppointmentDto>> GetByRequestCodesAsync(List<RequestCode> requestCodes)
+        {
+            try {
+                List<Appointment> appointments = new List<Appointment>();
+
+                foreach (var requestCode in requestCodes)
+                {
+                    var appointment = await _appointmentRepository.GetByRequestCodeAsync(requestCode);
+                    if (appointment != null)
+                        appointments.Add(appointment);
+                }
+
+                if (appointments == null || appointments.Count == 0)
+                    return [];
+
+                return AppointmentMapper.ToDtoList(appointments);
+            } catch (Exception) {
+                return null;
+            }
+        }
     }
 }
             

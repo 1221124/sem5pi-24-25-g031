@@ -3,6 +3,7 @@ using DDDNetCore.Domain.DbLogs;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
+using Domain.Patients;
 using Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +58,28 @@ namespace DDDNetCore.Controllers {
             if (appointments == null)
             {
                 appointments = [];
+            }
+
+            return Ok(new { appointments = appointments, totalItems = appointments.Count });
+        }
+
+        // GET: api/Appointments/patient?medicalRecordNumber={medicalRecordNumber}
+        [HttpGet("patient")]
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetByPatient([FromQuery] string medicalRecordNumber)
+        {
+            var requests = await _operationRequestService.GetByPatientAsync(int.Parse(medicalRecordNumber));
+            var appointments = new List<AppointmentDto>();
+            if (requests == null || requests.Count == 0)
+            {
+                appointments = [];
+            } else {
+                appointments = await _service.GetByRequestCodesAsync(requests.Select(r => r.RequestCode).ToList());
+
+                if (appointments == null)
+                {
+                    appointments = [];
+                }
             }
 
             return Ok(new { appointments = appointments, totalItems = appointments.Count });

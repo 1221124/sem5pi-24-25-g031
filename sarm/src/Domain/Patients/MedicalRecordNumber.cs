@@ -20,6 +20,17 @@ namespace Domain.Patients
     {
       return medicalRecordNumber;
     }
-    
-  }
+
+    public static implicit operator MedicalRecordNumber(int medicalRecordNumber)
+    {
+      return new MedicalRecordNumber(medicalRecordNumber.ToString());
+    }
+
+      public override bool Equals(object? obj)
+      {
+          return obj is MedicalRecordNumber number &&
+                 Value == number.Value;
+      }
+
+    }
 }
