@@ -90,23 +90,6 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
                 v => StatusUtils.FromString(v)
             );
 
-        builder.OwnsMany(o => o.SlotAppointement, slot =>
-        {
-            slot.Property(s => s.Start)
-                .HasColumnName("Start")
-                .HasConversion(
-                    v => v.ToString("yyyy-MM-dd HH:mm"),
-                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
-                );
-
-            slot.Property(s => s.End)
-                .HasColumnName("End")
-                .HasConversion(
-                    v => v.ToString("yyyy-MM-dd HH:mm"),
-                    v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
-                );
-        });
-
         builder.OwnsMany(o => o.SlotAvailability, slot =>
         {
             slot.Property(s => s.Start)
