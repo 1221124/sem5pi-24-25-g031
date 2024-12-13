@@ -13,11 +13,6 @@ export interface Patient {
     Email: string,
     PhoneNumber: number
   },
-  MedicalCondition: string[];
   EmergencyContact: number;
-  AppointmentHistory: {
-    Start: Date,
-    End: Date
-  }[],
   UserId: string;
 }

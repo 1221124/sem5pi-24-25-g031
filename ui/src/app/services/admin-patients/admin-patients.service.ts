@@ -126,14 +126,7 @@ export class PatientsService {
               Email: item.contactInformation.email.value,
               PhoneNumber: item.contactInformation.phoneNumber.value
             },
-            MedicalCondition: item.medicalConditions.map((patient: { condition: any; }) => ({
-              Condition: patient.condition
-            })),
             EmergencyContact: item.emergencyContact?.number?.value || null,
-            AppointmentHistory: item.appointmentHistory.map((slot: { start: any; end: any; }) => ({
-              Start: slot.start,
-              End: slot.end
-            })),
             UserId: item.userId || null
           }));
           return {

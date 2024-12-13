@@ -36,9 +36,7 @@ export class PatientComponent {
       Email: '',
       PhoneNumber: 0
     },
-    MedicalCondition: [],
     EmergencyContact: 0,
-    AppointmentHistory: [],
     UserId: ''
   }
 

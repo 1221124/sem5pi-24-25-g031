@@ -112,9 +112,7 @@ export class AdminPatientsMainComponent {
         Email: '',
         PhoneNumber: 0
       },
-      MedicalCondition: [],
       EmergencyContact: 0,
-      AppointmentHistory: [],
       UserId: ''
     }
   }
@@ -149,9 +147,7 @@ export class AdminPatientsMainComponent {
         Email: '',
         PhoneNumber: 0
       },
-      MedicalCondition: [],
       EmergencyContact: 0,
-      AppointmentHistory: [],
       UserId: ''
     }
 
@@ -172,9 +168,7 @@ export class AdminPatientsMainComponent {
         Email: '',
         PhoneNumber: 0
       },
-      MedicalCondition: [],
       EmergencyContact: 0,
-      AppointmentHistory: [],
       UserId: ''
     }
     this.isDeleteModalOpen = false;
@@ -219,8 +213,6 @@ export class AdminPatientsMainComponent {
         email: patient.ContactInformation.Email,
         phoneNumber: patient.ContactInformation.PhoneNumber,
         emergencyContact: patient.EmergencyContact?.toString(),
-        appointmentHistory: patient.AppointmentHistory,
-        medicalCondition: patient.MedicalCondition,
         userId: patient.UserId,
       }
     };
