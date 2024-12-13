@@ -77,19 +77,8 @@ namespace DDDNetCore.Controllers {
             var operationRequest = await _operationRequestService.UpdateStatus(appointment.RequestCode, RequestStatus.ACCEPTED);
             if (operationRequest == null)
             {
+                await _service.DeleteAsync(new AppointmentId(appointment.Id));
                 return NotFound("Operation request not found!");
-            }
-
-            var staff = await _staffService.CreateAppointmentAsync(appointment);
-            if (staff == null || staff.Count == 0)
-            {
-                return BadRequest("An exception occurred while creating the appointment slots in all staffs!");
-            }
-
-            var patient = await _patientService.CreateAppointmentAsync(operationRequest, appointment);
-            if (patient == null)
-            {
-                return NotFound("Patient not found!");
             }
 
             _ = await _logService.CreateLogAsync(new DbLog(new EntityTypeName(EntityType.Appointment), new DbLogTypeName(DbLogType.Create), new Message($"Appointment {appointment.AppointmentNumber} created.")));
@@ -116,20 +105,9 @@ namespace DDDNetCore.Controllers {
             var operationRequest = await _operationRequestService.UpdateStatus(appointment.RequestCode, RequestStatus.ACCEPTED);
             if (operationRequest == null)
             {
+                await _service.DeleteAsync(new AppointmentId(appointment.Id));
                 return NotFound("Operation request not found!");
             }
-
-            // var staff = await _staffService.UpdateAppointmentAsync(appointment);
-            // if (staff == null || staff.Count == 0)
-            // {
-            //     return BadRequest("An exception occurred while updating the appointment slots in all staffs!");
-            // }
-
-            // var patient = await _patientService.UpdateAppointmentAsync(operationRequest, appointment);
-            // if (patient == null)
-            // {
-            //     return NotFound("Patient not found!");
-            // }
 
             _ = await _logService.CreateLogAsync(new DbLog(new EntityTypeName(EntityType.Appointment), new DbLogTypeName(DbLogType.Update), new Message($"Appointment {appointment.AppointmentNumber} updated.")));
             return Ok(new { Message = "Appointment updated successfully!" });
@@ -151,18 +129,6 @@ namespace DDDNetCore.Controllers {
             if (operationRequest == null)
             {
                 return NotFound("Operation request not found!");
-            }
-
-            var staff = await _staffService.DeleteAppointmentAsync(appointment);
-            if (staff == null || staff.Count == 0)
-            {
-                return BadRequest("An exception occurred while deleting the appointment slots in all staffs!");
-            }
-
-            var patient = await _patientService.DeleteAppointmentAsync(operationRequest, appointment);
-            if (patient == null)
-            {
-                return NotFound("Patient not found!");
             }
 
             _ = await _logService.CreateLogAsync(new DbLog(new EntityTypeName(EntityType.Appointment), new DbLogTypeName(DbLogType.Delete), new Message($"Appointment {appointment.AppointmentNumber} deleted.")));
