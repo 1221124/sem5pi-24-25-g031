@@ -47,6 +47,21 @@ namespace DDDNetCore.Controllers {
             return Ok(new { appointments = appointments, totalItems = appointments.Count });
         }
 
+        // GET: api/Appointments/staff?licenseNumber={licenseNumber}
+        [HttpGet("staff")]
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetByStaff([FromQuery] LicenseNumber licenseNumber)
+        {
+            var appointments = await _service.GetByStaff(licenseNumber);
+
+            if (appointments == null)
+            {
+                appointments = [];
+            }
+
+            return Ok(new { appointments = appointments, totalItems = appointments.Count });
+        }
+
         // POST: api/Appointments
         [HttpPost]
         [Authorize(Roles = "Admin,Doctor")]
