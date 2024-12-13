@@ -52,15 +52,15 @@ export class MedicalConditionService {
    */
   public async createMedicalCondition(dto: CreatingMedicalConditionDto): Promise<Result<MedicalConditionDto>> {
     try {
-      const creatingMedicalCondition = MedicalConditionMap.toEntityFromCreating(dto);
+      const creatingMedicalCondition = MedicalConditionMap.toDomain(dto);
 
       if (!creatingMedicalCondition) {
         return Result.fail<MedicalConditionDto>(creatingMedicalCondition);
       }
 
-      await this.medicalConditionRepo.save(creatingMedicalCondition);
+      await this.medicalConditionRepo.save(await creatingMedicalCondition);
 
-      const medicalConditionDTO = MedicalConditionMap.toDto(creatingMedicalCondition);
+      const medicalConditionDTO = MedicalConditionMap.toDto(await creatingMedicalCondition);
       return Result.ok<MedicalConditionDto>(medicalConditionDTO);
     } catch (error) {
       return Result.fail<MedicalConditionDto>(error);
@@ -79,7 +79,8 @@ export class MedicalConditionService {
       }
 
       // Update fields on the existing medical condition entity.
-      medicalCondition.updateFromRequest(dto);
+      console.log("fake update");
+      //medicalCondition.updateFromRequest(dto);
       
 
       // Save the updated medical condition entity.
