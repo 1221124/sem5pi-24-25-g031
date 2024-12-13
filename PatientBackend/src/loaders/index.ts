@@ -4,6 +4,7 @@ import mongooseLoader from './mongoose';
 import Logger from './logger';
 
 import config from '../../config';
+import path from 'path';
 
 export default async ({ expressApp }) => {
   const mongoConnection = await mongooseLoader();
@@ -41,21 +42,50 @@ export default async ({ expressApp }) => {
     path: config.services.role.path
   }
 
+    /*** MEDICAL CONDITION ***/
+
+  const medicalConditionSchema = {
+    name: 'medicalConditionSchema',
+    schema: '../persistence/schemas/medicalConditionSchema',
+  };
+
+  const medicalConditionController = {
+    name: config.controllers.medicalCondition.name,
+    path: config.controllers.medicalCondition.path
+  }
+
+  const medicalConditionRepo = {
+    name: config.repos.medicalCondition.name,
+    path: config.repos.medicalCondition.path
+  }
+
+  const medicalConditionService = {
+    name: config.services.medicalCondition.name,
+    path: config.services.medicalCondition.path
+  }
+
+
+    /*** DEPENDENCY INJECTOR ***/
+
   await dependencyInjectorLoader({
     mongoConnection,
     schemas: [
       userSchema,
-      roleSchema
+      roleSchema,
+      medicalConditionSchema
     ],
     controllers: [
-      roleController
+      roleController,
+      medicalConditionController
     ],
     repos: [
       roleRepo,
-      userRepo
+      userRepo,
+      medicalConditionRepo
     ],
     services: [
-      roleService
+      roleService,
+      medicalConditionService
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');
