@@ -1,0 +1,1 @@
+{"version":3,"file":"UpdatingMedicalConditionDto.js","sourceRoot":"","sources":["../../../../src/dto/medical-condition/UpdatingMedicalConditionDto.ts"],"names":[],"mappings":";;;AAKA,MAAa,2BAA2B;IAKpC,YAAa,EAAsB,EAAE,WAAwB,EAAE,cAA+B;QAC1F,IAAI,CAAC,EAAE,GAAG,EAAE,CAAC;QACb,IAAI,CAAC,WAAW,GAAG,WAAW,CAAC;QAC/B,IAAI,CAAC,cAAc,GAAG,cAAc,CAAC;IACzC,CAAC;CACJ;AAVD,kEAUC"}

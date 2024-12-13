@@ -1,0 +1,1 @@
+{"version":3,"file":"Description.js","sourceRoot":"","sources":["../../../../src/domain/shared/Description.ts"],"names":[],"mappings":";;;AAAA,MAAa,WAAW;IAGpB,YAAY,WAAmB;QAC3B,IAAI,CAAC,WAAW,GAAG,WAAW,CAAC;IACnC,CAAC;IAEM,cAAc;QACjB,OAAO,IAAI,CAAC,WAAW,CAAC;IAC5B,CAAC;IAEM,cAAc,CAAC,WAAmB;QACrC,IAAI,CAAC,WAAW,GAAG,WAAW,CAAC;IACnC,CAAC;CACJ;AAdD,kCAcC"}

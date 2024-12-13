@@ -1,0 +1,1 @@
+{"version":3,"file":"ICD11Code.js","sourceRoot":"","sources":["../../../../src/domain/shared/ICD11Code.ts"],"names":[],"mappings":";;;AAAA,MAAa,SAAS;IAGlB,YAAY,KAAa;QACrB,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;IACvB,CAAC;IAEM,OAAO;QACV,OAAO,IAAI,CAAC,KAAK,CAAC;IACtB,CAAC;IAEM,OAAO,CAAC,KAAa;QACxB,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;IACvB,CAAC;CACJ;AAdD,8BAcC"}

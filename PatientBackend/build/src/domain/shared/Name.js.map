@@ -1,0 +1,1 @@
+{"version":3,"file":"Name.js","sourceRoot":"","sources":["../../../../src/domain/shared/Name.ts"],"names":[],"mappings":";;;AAAA,MAAa,IAAI;IAGb,YAAY,KAAa;QACrB,IAAI,CAAC,KAAK,EAAE,CAAC;YACT,MAAM,IAAI,KAAK,CAAC,8BAA8B,CAAC,CAAC;QACpD,CAAC;QACD,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;IACvB,CAAC;IAEM,QAAQ;QACX,OAAO,IAAI,CAAC,KAAK,CAAC;IACtB,CAAC;CACJ;AAbD,oBAaC"}
