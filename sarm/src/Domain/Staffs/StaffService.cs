@@ -4,6 +4,7 @@ using DDDNetCore.PrologIntegrations;
 using Domain.DbLogs;
 using Domain.Shared;
 using Domain.Users;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Domain.Staffs
 {
@@ -613,6 +614,56 @@ namespace Domain.Staffs
                 return staffs;
             } catch (Exception e) {
                 return null;
+            }
+        }
+
+        public async Task<List<StaffDto>> GetByRoleAndSpecialization(StaffRole role, Specialization specialization)
+        {
+            try {
+                var staffs = await _repo.GetByRoleAsync(role);
+
+                staffs = staffs.Where(s => s.Specialization == specialization).ToList();
+
+                if (staffs == null) {
+                    return null;
+                }
+
+                return StaffMapper.ToDtoList(staffs);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        public bool IsStaffAvailable(StaffDto staff, DateTime startTime, DateTime endTime, List<AppointmentDto> appointments)
+        {
+            try {
+                if (staff == null) {
+                    return false;
+                }
+
+                if (staff.SlotAvailability == null || staff.SlotAvailability.Count == 0) {
+                    return false;
+                }
+
+                if (appointments == null || appointments.Count == 0) {
+                    return true;
+                }
+
+                foreach (var slot in staff.SlotAvailability) {
+                    if (Slot.FullyOverlaps(slot, new Slot(startTime, endTime))) {
+                        foreach (var appointment in appointments) {
+                            if (appointment.AssignedStaff.Contains(staff.LicenseNumber)
+                            && Slot.Overlaps(appointment.AppointmentDate, slot)
+                            && Slot.Overlaps(appointment.AppointmentDate, new Slot(startTime, endTime))) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            } catch (Exception e) {
+                return false;
             }
         }
     }

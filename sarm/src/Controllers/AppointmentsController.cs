@@ -4,6 +4,7 @@ using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
 using Domain.DbLogs;
 using Domain.Patients;
+using Domain.Shared;
 using Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

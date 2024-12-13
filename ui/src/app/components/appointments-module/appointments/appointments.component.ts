@@ -6,11 +6,13 @@ import { AppointmentsService } from '../../../services/appointments/appointments
 import { AuthService } from '../../../services/auth/auth.service';
 import { Appointment } from '../../../models/appointment';
 import { OperationRequestsService } from '../../../services/operation-requests/operation-requests.service';
+import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
+import { AppointmentsFormComponent } from '../appointments-form/appointments-form.component';
 
 @Component({
   selector: 'app-appointments',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIf, NgForOf, RouterOutlet],
+  imports: [CommonModule, FormsModule, NgIf, NgForOf, RouterOutlet, AppointmentsListComponent, AppointmentsFormComponent],
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css'
 })

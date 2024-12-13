@@ -104,5 +104,15 @@ namespace Domain.Shared
                    this.Start.Date.Month == slot.Start.Date.Month &&
                    this.Start.Date.Day == slot.Start.Date.Day;
         }
+
+        public static bool Overlaps(Slot slot1, Slot slot2)
+        {
+            return slot1.Start < slot2.End && slot2.Start < slot1.End;
+        }
+
+        public static bool FullyOverlaps(Slot slot1, Slot slot2)
+        {
+            return slot1.Start <= slot2.Start && slot1.End >= slot2.End;
+        }
     }
 }
