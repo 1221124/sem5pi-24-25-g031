@@ -449,9 +449,13 @@ namespace Domain.Staffs
                 return null;
             }
 
-            staff.UserId = new UserId(id);
+            var userId = new UserId(id);
 
-            await _unitOfWork.CommitAsync();
+            if (staff.UserId == null || staff.UserId != userId)
+            {
+                staff.UserId = new UserId(id);
+                await _unitOfWork.CommitAsync();
+            }
 
             return StaffMapper.ToDto(staff);
         }

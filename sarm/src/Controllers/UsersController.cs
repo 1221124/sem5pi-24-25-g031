@@ -94,6 +94,13 @@ namespace Controllers
                     return BadRequest(new { Message = "Email not found in access token." });
                 }
 
+                Role role = RoleUtils.FromString(emailAndRole.Roles[0]);
+                if (RoleUtils.IsPatient(role)) {
+                    if (await _patientService.GetByEmailAsync(email) == null) {
+                        return NotFound(new { Message = "Patient does not exist or does not have its user assigned correctly." });
+                    }
+                }
+
                 var user = await _service.GetByEmailAsync(email);
 
                 if (user == null)
@@ -108,15 +115,10 @@ namespace Controllers
                 if (!_service.Login(user)) return Unauthorized("You are not active. Please contact the system administrator.");
 
                 if (RoleUtils.IsStaff(user.Role)) {
-                    if (!await _staffService.IsActive(user.Email) || await _staffService.InvalidUserId(user.Email, user.Id)) {
-                        return BadRequest(new { Message = "Staff is not active or does not have its user assigned." });
+                    if (!await _staffService.IsActive(user.Email)) {
+                        return Unauthorized(new { Message = "Staff is not active or does not have its user assigned correctly." });
                     }
-                }
-
-                if (RoleUtils.IsPatient(user.Role)) {
-                    if (await _patientService.InvalidUserId(user.Email, user.Id)) {
-                        return BadRequest(new { Message = "Patient does not have its user assigned." });
-                    }
+                    await _staffService.AddUserId(user.Email, user.Id);
                 }
 
                 if (emailAndRole.Roles == null || emailAndRole.Roles.Count == 0 || emailAndRole.Roles[0] == null) {
@@ -162,10 +164,9 @@ namespace Controllers
                 await _emailService.SendEmailAsync(dto.Email.Value, subject, body);
             }
             else
-            {
+            {   
                 user.UserStatus = UserStatus.Active;
                 await _service.UpdateAsync(user);
-                
                 if (RoleUtils.IsPatient(dto.Role))
                 {
                     var patientDto = await _patientService.GetByEmailAsync(dto.Email);

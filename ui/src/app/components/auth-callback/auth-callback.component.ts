@@ -51,24 +51,18 @@ export class AuthCallbackComponent implements OnInit {
               this.authService.redirectBasedOnRole(accessToken);
               return;
             } else {
-              console.log('User does not exist. Creating user...');
               this.authService.updateMessage('User does not exist. Creating user...');
               this.authService.updateIsError(false);
               this.createUser(accessToken, response.body?.message);
               return;
             }
-          } else {
-            console.log('Unexpected response during user callback: ' + response.body);
-            this.authService.updateMessage('Unexpected response during user callback: ' + response.body);  
-            this.authService.updateIsError(true);
-            return;
           }
         }).catch(error => {
           if (error.status == 400) {
             this.authService.updateMessage('Bad request during user callback: ' + error.body); 
           } else if (error.status == 404) {
-            this.authService.updateMessage('User not found');
-          } else if (error.status == 401) {
+            this.authService.updateMessage('Patient not found in our system. Please contact the system administrator.');
+          } else if (error.status == 401 || error.status == 403) {
             this.authService.updateMessage('You are not active. Please contact your system administrator.');
           }
           this.authService.updateIsError(true);
@@ -119,13 +113,18 @@ export class AuthCallbackComponent implements OnInit {
         this.authService.updateIsError(false);
         this.authService.redirectBasedOnRole(accessToken);
         return;
-      } else {
-        this.authService.updateMessage('Bad request during user creation: ' + response?.body);  
-        this.authService.updateIsError(true);
       }
     } catch (error) {
-      this.authService.updateMessage('Error during user creation');  
-      this.authService.updateIsError(true);
+      if ((error as any).status == 400) {
+        this.authService.updateMessage('Error during user creation: ' + error); 
+      } else if ((error as any).status == 404) {
+        this.authService.updateMessage('Patient not found in our system. Please contact the system administrator.');
+        this.authService.updateIsError(true);
+        setTimeout(() => {
+          this.authService.redirectToLogin();
+        }, 3000);
+        return;
+      }
     }
   }
 
