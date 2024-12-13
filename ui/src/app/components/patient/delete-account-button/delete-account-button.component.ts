@@ -41,7 +41,7 @@ export class DeleteAccountButtonComponent{
     await this.patientService.preDeletePatient(this.patient.Id, this.accessToken)
       .then((response) => {
         if (response.status === 200) {
-          this.message = 'Patient deleted successfully!';
+          this.message = 'We sent you an email in order for you to confirm the deletion of your account. Please check your email (including spam inbox) and follow the instructions.';
           this.success = true;
           this.patient = { ...this.patient };
           this.patientDeleted.emit(this.patient);
@@ -52,7 +52,7 @@ export class DeleteAccountButtonComponent{
             this.router.navigate(['/']);
           }, 5000);
         } else {
-          this.displayError('Failed to delete patient profile.');
+          this.displayError('Failed to pre-delete patient profile.');
           this.closeDeleteModal();
           setTimeout(() => {
             this.router.navigate(['/']);
