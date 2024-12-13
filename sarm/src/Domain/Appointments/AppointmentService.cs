@@ -234,6 +234,23 @@ namespace DDDNetCore.Domain.Appointments
                 return null;
             }
         }
+
+        public async Task<List<AppointmentDto>> GetByStaff(LicenseNumber licenseNumber)
+        {
+            try {
+                if (licenseNumber == null)
+                    throw new ArgumentNullException(nameof(licenseNumber));
+
+                var appointments = await _appointmentRepository.GetByLicenseNumberAsync(licenseNumber);
+
+                if (appointments == null || appointments.Count == 0)
+                    return [];
+
+                return AppointmentMapper.ToDtoList(appointments);
+            } catch (Exception) {
+                return null;
+            }
+        }
     }
 }
             
