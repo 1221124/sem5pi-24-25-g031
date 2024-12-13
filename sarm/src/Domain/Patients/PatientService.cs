@@ -336,14 +336,8 @@ namespace DDDNetCore.Domain.Patients
                 if(dto.EmergencyContact != null)
                     patient.ChangeEmergencyContact(dto.EmergencyContact);
                 
-                if(dto.MedicalConditions != null)
-                    patient.ChangeMedicalConditions(dto.MedicalConditions);
-            
                 if(dto is { FirstName: not null, LastName: not null })
                         patient.ChangeFullName(new FullName(dto.FirstName, dto.LastName));
-
-                if(dto.AppointmentHistory != null)
-                    patient.ChangeAppointmentHistory(dto.AppointmentHistory);
             
                 await _unitOfWork.CommitAsync();
             
@@ -461,7 +455,6 @@ namespace DDDNetCore.Domain.Patients
                 {
                     var patient = await _repo.GetByMedicalRecordNumberAsync(appointmentRequests[appointment].Patient);
                     if (patient == null) return false;
-                    patient.AddAppointmentHistory(appointment.AppointmentDate);
                 }
                 return true;
             } catch (Exception e) {
@@ -493,7 +486,6 @@ namespace DDDNetCore.Domain.Patients
                 {
                     return null;
                 }
-                patient.RemoveAppointmentHistory(appointment.AppointmentDate);
                 await _unitOfWork.CommitAsync();
                 return PatientMapper.ToDto(patient);
             } catch (Exception e) {
@@ -509,7 +501,7 @@ namespace DDDNetCore.Domain.Patients
                 {
                     return null;
                 }
-                patient.AddAppointmentHistory(appointment.AppointmentDate);
+                
                 await _unitOfWork.CommitAsync();
                 return PatientMapper.ToDto(patient);
             } catch (Exception e) {

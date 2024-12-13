@@ -13,12 +13,11 @@ namespace Domain.Patients
         public Gender? Gender { get; set; }
         public MedicalRecordNumber MedicalRecordNumber { get; set; }
         public ContactInformation ContactInformation { get; set; }
-        public List<MedicalConditions>? MedicalConditions { get; set; }
         public EmergencyContact? EmergencyContact { get; set; }
         public List<Slot> AppointmentHistory { get; set; }
         public UserId? UserId { get; set; }
         
-        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions>? medicalConditions, EmergencyContact? emergencyContact,UserId? userId)
+        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, EmergencyContact? emergencyContact,UserId? userId)
         {
             Id = id; 
             FullName = fullName;
@@ -26,12 +25,11 @@ namespace Domain.Patients
             Gender = gender;
             MedicalRecordNumber = medicalRecordNumber;
             ContactInformation = contactInformation;
-            MedicalConditions = medicalConditions;
             EmergencyContact = emergencyContact;
             UserId = userId;
         }
         
-        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, List<MedicalConditions> medicalConditions, EmergencyContact emergencyContact,List<Slot> appointmentHistory,UserId userId)
+        public PatientDto(Guid id,FullName fullName, DateOfBirth dateOfBirth, Gender? gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, EmergencyContact emergencyContact,List<Slot> appointmentHistory,UserId userId)
         {
             Id = id; 
             FullName = fullName;
@@ -39,7 +37,6 @@ namespace Domain.Patients
             Gender = gender;
             MedicalRecordNumber = medicalRecordNumber;
             ContactInformation = contactInformation;
-            MedicalConditions = medicalConditions;
             EmergencyContact = emergencyContact;
             AppointmentHistory = appointmentHistory;
             UserId = userId;

@@ -28,7 +28,6 @@ namespace Domain.Patients
                 dto.ContactInformation.PhoneNumber,
                 dto.EmergencyContact,
                 dto.AppointmentHistory,
-                dto.MedicalConditions,
                 dto.UserId
             );
         }
@@ -55,9 +54,7 @@ namespace Domain.Patients
                 patient.Gender,
                 patient.MedicalRecordNumber,
                 patient.ContactInformation,
-                patient.MedicalConditions,
                 patient.EmergencyContact,
-                patient.AppointmentHistory,
                 patient.UserId
             );
         }
@@ -69,8 +66,7 @@ namespace Domain.Patients
                 dto.FirstName,
                 dto.LastName,
                 dto.Email,
-                dto.PhoneNumber,
-                dto.MedicalConditions
+                dto.PhoneNumber
             );
         }
 
@@ -83,7 +79,6 @@ namespace Domain.Patients
                 dto.Gender,
                 dto.MedicalRecordNumber,
                 dto.ContactInformation,
-                dto.MedicalConditions,
                 dto.EmergencyContact,
                 dto.UserId
             );

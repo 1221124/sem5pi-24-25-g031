@@ -16,12 +16,11 @@ namespace DDDNetCore.Domain.Patients
         public PhoneNumber? PhoneNumber { get; set; }
         public EmergencyContact? EmergencyContact { get; set; }
         public List<Slot>? AppointmentHistory { get; set; }
-        public List<MedicalConditions>? MedicalConditions { get; set; }
         public UserId? UserId { get; set; }
         public PhoneNumber? PendingPhoneNumber { get; set; }
         public Email? PendingEmail { get; set; }
         
-        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, EmergencyContact? emergencyContact ,List<Slot> appointmentHistory, List<MedicalConditions>? medicalConditions, UserId? userId)
+        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, EmergencyContact? emergencyContact ,List<Slot> appointmentHistory,UserId? userId)
         {
             EmailId = emailId;
             FirstName = firstName;
@@ -30,7 +29,6 @@ namespace DDDNetCore.Domain.Patients
             PhoneNumber = phoneNumber;
             EmergencyContact = emergencyContact;
             AppointmentHistory = appointmentHistory;
-            MedicalConditions = medicalConditions;
             UserId = userId;
         }
         

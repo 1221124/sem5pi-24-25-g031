@@ -80,14 +80,6 @@ namespace Infrastructure.Patients
                         v=> new Email(v));
             });
             
-            builder.OwnsMany(p => p.MedicalConditions, medicalConditions =>
-            {
-                medicalConditions.Property(m => m.Condition)
-                    .HasColumnName("MedicalCondition")
-                    .HasMaxLength(100)
-                    .IsRequired(false);
-            });
-            
             builder.OwnsOne(p => p.EmergencyContact, emergencyContact =>
             {
                 emergencyContact.Property(e => e.Number)
@@ -101,22 +93,7 @@ namespace Infrastructure.Patients
 
             builder.Property(p => p.MedicalRecordNumber)
                 .HasColumnName("MedicalRecordNumber");
-
-            builder.OwnsMany(p => p.AppointmentHistory, history =>
-            {
-                history.Property(h => h.Start)
-                    .HasColumnName("Start")
-                    .HasConversion(
-                        v => v.ToString("yyyy-MM-dd HH:mm"),
-                        v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
-                    );
-                history.Property(h => h.End)
-                    .HasColumnName("End")
-                    .HasConversion(
-                        v => v.ToString("yyyy-MM-dd HH:mm"),
-                        v => DateTime.ParseExact(v, "yyyy-MM-dd HH:mm", null)
-                    );
-            });
+            
 
             builder.Property(p => p.UserId)
                 .HasColumnName("UserId")
