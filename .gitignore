@@ -18,3 +18,11 @@ ui/dist/
 **/*.userosscache
 **/*.sln.docstates
 # PlanningModule/lapr5/knowledge_base
+DDDNetCore.Tests/obj/DDDNetCore.Tests.csproj.nuget.dgspec.json
+DDDNetCore.Tests/obj/DDDNetCore.Tests.csproj.nuget.g.props
+DDDNetCore.Tests/obj/project.assets.json
+DDDNetCore.Tests/obj/project.nuget.cache
+sarm/obj/DDDNetCore.csproj.nuget.dgspec.json
+sarm/obj/DDDNetCore.csproj.nuget.g.props
+sarm/obj/project.assets.json
+sarm/obj/project.nuget.cache
