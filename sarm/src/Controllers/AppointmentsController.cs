@@ -50,7 +50,7 @@ namespace DDDNetCore.Controllers {
         // GET: api/Appointments/staff?licenseNumber={licenseNumber}
         [HttpGet("staff")]
         [Authorize(Roles = "Admin,Doctor")]
-        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetByStaff([FromQuery] LicenseNumber licenseNumber)
+        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetByStaff([FromQuery] string licenseNumber)
         {
             var appointments = await _service.GetByStaff(licenseNumber);
 
