@@ -14,15 +14,12 @@ import { AppointmentsListComponent } from './appointments-list/appointments-list
     NgIf,
     AppointmentsComponent,
     AppointmentsFormComponent,
-    // AppointmentsListComponent
+    AppointmentsListComponent
   ],
   exports: [
     AppointmentsComponent,
     AppointmentsFormComponent,
-    // AppointmentsListComponent
-  ],
-  declarations: [
     AppointmentsListComponent
   ]
 })
-export class OperationTypesModule {}
+export class AppointmentsModule {}

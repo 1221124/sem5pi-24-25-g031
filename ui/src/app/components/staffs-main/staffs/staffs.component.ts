@@ -36,12 +36,6 @@ export class StaffsComponent implements OnInit {
       PhoneNumber: ''
     },
     status: '',
-    SlotAppointment: [
-      {
-        Start: '',
-        End: ''
-      }
-    ],
     SlotAvailability: [
       {
         Start: '',
@@ -284,12 +278,6 @@ export class StaffsComponent implements OnInit {
         PhoneNumber: ''
       },
       status: '',
-      SlotAppointment: [
-        {
-          Start: '',
-          End: ''
-        }
-      ],
       SlotAvailability: [
         {
           Start: '',

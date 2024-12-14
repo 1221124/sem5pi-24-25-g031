@@ -1,79 +1,35 @@
 <div class="container">
-    <div class="table-responsive">
-      <table class="table table-striped table-bordered">
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Request Code</th>
-            <th>
-              Specialization
-              <select 
-                [(ngModel)]="filter.specialization" 
-                (change)="onFilterChange()">
-                <option value="">All Specializations</option>
-                <option *ngFor="let specialization of specializations" [value]="specialization">
-                  {{ specialization }}
-                </option>
-              </select>
-            </th>
-            <th>Required Staff</th>
-            <th>Phases Duration</th>
-            <th>
-              Status
-              <select 
-                [(ngModel)]="filter.status" 
-                (change)="onFilterChange()">
-                <option value="">All Statuses</option>
-                <option *ngFor="let status of statuses" [value]="status">
-                  {{ status }}
-                </option>
-              </select>
-            </th>
-            <th>Version</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let appointment of getPaginatedAppointments()">
-            <td>{{ appointment.AppointmentNumber.toUpperCase() }}</td>
-            <td>{{ appointment.RequestCode }}</td>
-            <td class="specialization-column">{{ appointment.Specialization }}</td>
-            <td class="required-staff-column">
-              <ul class="staff-list">
-                <li *ngFor="let staff of sortedStaff(appointment.RequiredStaff)" class="staff-item">
-                  <span class="staff-role">{{ staff.Role }}</span>
-                  <span class="staff-specialization">({{ staff.Specialization }} - {{ staff.Quantity }})</span>
-                  <div class="staff-requirements">
-                    <span *ngIf="staff.IsRequiredInPreparation" class="badge preparation">Preparation</span>
-                    <span *ngIf="staff.IsRequiredInSurgery" class="badge surgery">Surgery</span>
-                    <span *ngIf="staff.IsRequiredInCleaning" class="badge cleaning">Cleaning</span>
-                  </div>
-                </li>
-              </ul>
-            </td>
-            <td class="phases-column">
-              <div *ngFor="let phase of appointment.PhasesDuration | keyvalue" class="phase-info">
-                <strong>{{ phase.key }}:</strong> {{ phase.value }} min
-              </div>
-            </td>
-            <td>{{ appointment.Status }}</td>
-            <td>v{{ appointment.Version }}</td>
-            <td>
-              <div class="button-container">
-                <button class="btn btn-primary btn-sm" (click)="edit.emit(appointment)">Update</button>
-                <button class="btn btn-secondary btn-sm" (click)="statusToggle.emit(appointment)">
-                  {{ appointment.Status === 'Active' ? 'Inactivate' : 'Activate' }}
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <div class="pagination">
-      <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }}</span>
-      <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
-    </div>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Request Code</th>
+          <th>Surgery Room</th>
+          <th>Appointment Date</th>
+          <th>Assigned Staff</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of getPaginatedAppointments()">
+          <td>{{ appointment.AppointmentNumber.toUpperCase() }}</td>
+          <td>{{ appointment.RequestCode }}</td>
+          <td>{{ appointment.SurgeryRoomNumber }}</td>
+          <td>
+            <div>
+              <strong>Start:</strong> {{ appointment.AppointmentDate.Start | date:'short' }}<br>
+              <strong>End:</strong> {{ appointment.AppointmentDate.End | date:'short' }}
+            </div>
+          </td>
+          <td>
+            <ul>
+              <li *ngFor="let staff of appointment.AssignedStaff">
+                {{ staff }}
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+</div>

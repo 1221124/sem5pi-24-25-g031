@@ -1,11 +1,12 @@
 ﻿import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { AppointmentsFormComponent } from './appointments-form/appointments-form.component';
 
 export const routes: Route[] = [
   { path: '', component: AppointmentsComponent },
-  // { path: 'create', component: AppointmentsFormComponent},
-  // { path: 'update', component: AppointmentsFormComponent}
+  { path: 'create', component: AppointmentsFormComponent},
+  { path: 'update', component: AppointmentsFormComponent}
 ];
 
 @NgModule({

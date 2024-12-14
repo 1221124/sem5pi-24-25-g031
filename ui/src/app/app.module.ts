@@ -34,6 +34,7 @@ import {
 } from './components/operation-requests-main/operation-requests/operation-requests.component';
 import {AdminPatientsModule} from './components/admin-patients/admin-patients.module';
 import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
+import { AppointmentsModule } from './components/appointments-module/appointments.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,7 @@ import { AppointmentsComponent } from './components/appointments-module/appointm
     FormsModule,
     AdminUsersComponent,
     AppComponent,
-    AppointmentsComponent,
+    AppointmentsModule,
     AuthCallbackComponent,
     OperationTypesModule,
     StaffsComponent,

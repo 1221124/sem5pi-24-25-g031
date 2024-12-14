@@ -47,7 +47,24 @@ export const routes: Route[] = [
       }
     ]
   },
-  { path: 'appointments', component: AppointmentsComponent },
+  { 
+    path: 'appointments',
+    component: AppointmentsComponent,
+    children: [
+      {
+        path: 'create',
+        loadChildren: () =>
+          import('./components/appointments-module/appointments.module')
+            .then((m) => m.AppointmentsModule),
+      },
+      {
+        path: 'update',
+        loadChildren: () =>
+          import('./components/appointments-module/appointments.module')
+            .then((m) => m.AppointmentsModule),
+      },
+    ],
+  },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/users', component: AdminUsersComponent },

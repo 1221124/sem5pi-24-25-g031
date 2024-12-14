@@ -52,21 +52,19 @@ namespace DDDNetCore.Domain.Appointments
             }
         }
 
-        public async Task<AppointmentDto> UpdateAsync(AppointmentDto dto)
+        public async Task<AppointmentDto> UpdateAsync(AppointmentId id, UpdatingAppointmentDto dto)
         {
             try
             {
                 if (dto == null)
                     throw new ArgumentNullException(nameof(dto));
 
-                var appointment = await _appointmentRepository.GetByIdAsync(new AppointmentId(dto.Id));
+                var appointment = await _appointmentRepository.GetByIdAsync(id);
 
                 if (appointment == null)
                     return null;
 
-                appointment.RequestCode = dto.RequestCode;
                 appointment.SurgeryRoomNumber = dto.SurgeryRoomNumber;
-                appointment.AppointmentNumber = dto.AppointmentNumber;
                 appointment.AppointmentDate = dto.AppointmentDate;
                 appointment.AssignedStaff = dto.AssignedStaff;
 

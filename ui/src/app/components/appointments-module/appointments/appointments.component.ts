@@ -113,7 +113,11 @@ export class AppointmentsComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/' + this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase()]);
+    if (this.isDoctor) {
+      this.router.navigate(['/doctor']);
+    } else {
+      this.router.navigate(['/admin']);
+    }
   }
 
   async loadAppointments() {
@@ -182,6 +186,14 @@ export class AppointmentsComponent implements OnInit {
     } else {
       this.router.navigate(['/appointments/create']);
     }
+  }
+
+  async onFilterChange(filters: { surgeryRoomNumber: string; date: string; staff: string; patient: string }) {
+    this.filter.surgeryRoomNumber = filters.surgeryRoomNumber;
+    this.filter.date = filters.date;
+    this.filter.staff = filters.staff;
+    this.filter.patient = filters.patient;
+    await this.loadAppointments();
   }
 
   async onSubmit() {

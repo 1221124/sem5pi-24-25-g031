@@ -27,12 +27,6 @@ export class AdminUsersComponent implements OnInit {
       PhoneNumber: ''
     },
     status: '',
-    SlotAppointment: [
-      {
-        Start: '',
-        End: ''
-      }
-    ],
     SlotAvailability: [
       {
         Start: '',

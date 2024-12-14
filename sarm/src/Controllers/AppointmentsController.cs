@@ -109,17 +109,12 @@ namespace DDDNetCore.Controllers {
             return Ok(new { Message = "Appointment created successfully!" });
         }
 
-        // PUT: api/Appointments/{id}
-        [HttpPut("{id}")]
+        // PATCH: api/Appointments/{id}
+        [HttpPatch("{id}")]
         [Authorize(Roles = "Admin,Doctor")]
-        public async Task<ActionResult<AppointmentDto>> Update(Guid id, AppointmentDto dto)
-        {
-            if (id != dto.Id)
-            {
-                return BadRequest("Appointment id mismatch!");
-            }
-
-            var appointment = await _service.UpdateAsync(dto);
+        public async Task<ActionResult<AppointmentDto>> Update(Guid id, UpdatingAppointmentDto dto)
+        {   
+            var appointment = await _service.UpdateAsync(new AppointmentId(id), dto);
 
             if (appointment == null)
             {
