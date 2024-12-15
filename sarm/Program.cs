@@ -28,6 +28,8 @@ using DDDNetCore.Infrastructure.SurgeryRooms;
 using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using DDDNetCore.PrologIntegrations;
+using DDDNetCore.src.Domain.RoomTypes;
+using DDDNetCore.src.Infrastructure.RoomTypes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -117,6 +119,9 @@ builder.Services.AddTransient<AppointmentService>();
 
 builder.Services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
 builder.Services.AddTransient<SurgeryRoomService>();
+
+builder.Services.AddTransient<IRoomTypeRepository, RoomTypeRepository>();
+builder.Services.AddTransient<RoomTypeService>();
 
 builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
 

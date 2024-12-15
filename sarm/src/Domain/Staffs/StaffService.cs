@@ -645,10 +645,6 @@ namespace Domain.Staffs
                     return false;
                 }
 
-                if (appointments == null || appointments.Count == 0) {
-                    return true;
-                }
-
                 foreach (var slot in staff.SlotAvailability) {
                     if (Slot.FullyOverlaps(slot, new Slot(startTime, endTime))) {
                         foreach (var appointment in appointments) {

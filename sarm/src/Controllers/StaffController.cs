@@ -171,21 +171,25 @@ namespace Controllers
         [Authorize(Roles = "Admin, Doctor")]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetByAvailabilityAsync([FromQuery] string start, [FromQuery] string end)
         {
+            start = start.Replace("T", " ");
+            end = end.Replace("T", " ");
+
             var startTime = DateTime.ParseExact(start, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
             var endTime = DateTime.ParseExact(end, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
             
             var staffList = await _service.GetAllAsync();
+            var availableStaff = new List<StaffDto>();
 
             foreach (var staff in staffList)
             {
                 var appointments = await _appointmentService.GetByLicenseNumberAsync(staff.LicenseNumber);
-                if (!_service.IsStaffAvailable(staff, startTime, endTime, appointments))
+                if (_service.IsStaffAvailable(staff, startTime, endTime, appointments))
                 {
-                    staffList.Remove(staff);
+                    availableStaff.Add(staff);
                 }
             }
 
-            return Ok(new { staff = staffList, totalItems = staffList.Count });
+            return Ok(new { staff = availableStaff, totalItems = availableStaff.Count });
         }
 
         //GET: api/Staff/licenseNumber?role=role

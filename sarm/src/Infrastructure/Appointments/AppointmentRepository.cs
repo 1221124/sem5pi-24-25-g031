@@ -19,7 +19,13 @@ namespace Infrastructure.Appointments
 
         public async Task<List<Appointment>> GetByRoomAndDateAsync(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
         {
-            return await _objs.Where(x => x.SurgeryRoomNumber == surgeryRoomNumber && x.AppointmentDate.Start.Date == date.Date).ToListAsync();
+            var startOfDay = date.Date;
+            var endOfDay = date.Date.AddDays(1).AddTicks(-1);
+
+            return await _objs.Where(x => x.SurgeryRoomNumber == surgeryRoomNumber 
+                && x.AppointmentDate.Start >= startOfDay 
+                && x.AppointmentDate.Start <= endOfDay)
+                .ToListAsync();
         }
 
         public async Task<Appointment> GetByNumberAsync(AppointmentNumber appointmentNumber)
