@@ -1,9 +1,11 @@
 ﻿import { Route, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { StaffsMainComponent } from './staffs/staffs.component';
+import {CreateStaffsComponent} from './create-staffs/create-staffs.component';
+import {UpdateStaffsComponent} from './update-staffs/update-staffs.component';
 
 export const routes: Route[] = [
-  { path: '', component: StaffsMainComponent },
+  { path: 'create', component: CreateStaffsComponent },
+  { path: 'update', component: UpdateStaffsComponent },
 ];
 
 @NgModule({
