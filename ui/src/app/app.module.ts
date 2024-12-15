@@ -35,6 +35,7 @@ import {
 import {AdminPatientsModule} from './components/admin-patients/admin-patients.module';
 import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
 import { AppointmentsModule } from './components/appointments-module/appointments.module';
+import { SucessModalStaffsComponent } from './components/staffs-main/sucess-modal-staffs/sucess-modal-staffs.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { AppointmentsModule } from './components/appointments-module/appointment
     VerifyStaffSensitiveInfoComponent,
     VerifyRemovePatientComponent,
     AdminPatientsModule,
-    AdminMenuComponent
+    AdminMenuComponent,
+    SucessModalStaffsComponent
   ],
   providers: [],
   bootstrap: []
