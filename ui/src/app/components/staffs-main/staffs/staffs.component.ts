@@ -49,6 +49,7 @@ export class StaffsComponent implements OnInit {
   totalPages: number = 1;
   currentPage: number = 1;
   itemsPerPage: number = 1;
+  showMessage: boolean = false;
   constructor(private staffService: StaffsService, private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
 
   staff: Staff = {
@@ -73,7 +74,7 @@ export class StaffsComponent implements OnInit {
     ]
   };
 
-  selectedStaff: any = null;
+  selectedStaff: Staff | null = null;
   searchName: string = '';
   searchEmail: string = '';
   searchSpecialization: string = '';
@@ -91,7 +92,6 @@ export class StaffsComponent implements OnInit {
   isSlotAvailabilityModal = false;
 
   accessToken: string = '';
-  staffToDelete: Staff | null = null;
 
 
   filter = {
@@ -433,13 +433,6 @@ export class StaffsComponent implements OnInit {
     this.isSlotAvailabilityModal = false;
   }
 
-  addConditionAvailability() {
-    this.selectedStaff.slotAvailability.conditions.push({
-      start: '',
-      end: ''
-    });
-  }
-
  /* async editStaff(staff: Staff) {
     console.log("Open modal editing...");
     this.staff = JSON.parse(JSON.stringify(staff));
@@ -451,95 +444,16 @@ export class StaffsComponent implements OnInit {
 
   }*/
 
-
-  addSlotAvailability() {
-    if (!this.selectedStaff.slotAvailability) {
-      this.selectedStaff.slotAvailability = [];
-    }
-
-    // Only add a new slot if there is no ongoing slot creation
-    const hasEmptySlot = this.selectedStaff.slotAvailability.some(
-      (slot: { start: string; end: string; }) => slot.start === '' && slot.end === ''
-    );
-
-    if (!hasEmptySlot) {
-      this.selectedStaff.slotAvailability.push({ start: '', end: '' });
-      this.editingSlotAvailabilityIndex = this.selectedStaff.slotAvailability.length - 1;
-    }
-  }
-
-  addNewSlotAvailability() {
-    if (this.newSlotStart && this.newSlotEnd) {
-      // Create a new slot object
-      const newSlot = {
-        start: this.newSlotStart,
-        end: this.newSlotEnd
-      };
-
-      // Add the new slot to the patient-main's appointment history
-      if (!this.selectedStaff.slotAvailability) {
-        this.selectedStaff.slotAvailability = [];
-      }
-      this.selectedStaff.slotAvailability.push(newSlot);
-
-      // Reset the form fields and hide the Add Slot form
-      this.newSlotStart = '';
-      this.newSlotEnd = '';
-      this.isAddSlotAvailabilityFormVisible = false;
-    } else {
-      alert("Please select both start and end dates for the slot.");
-    }
-  }
-
-  openAddSlotAvailabilityForm() {
-    this.isAddSlotAvailabilityFormVisible = true;
-  }
-
-  deleteSlotAvailability(staff: Staff, slotIndex: number) {
-    if (!staff) {
-      console.warn('Staff object is null or undefined.');
-      return;
-    }
-
-    if (!Array.isArray(staff.SlotAvailability)) {
-      console.warn('SlotAvailability is not a valid array.');
-      return;
-    }
-
-    if (slotIndex < 0 || slotIndex >= staff.SlotAvailability.length) {
-      console.warn('Invalid slot index.');
-      return;
-    }
-
-    staff.SlotAvailability.splice(slotIndex, 1);
-    console.log("Updated Staff", staff);
-
-    this.staffService.update(staff.Id, staff, this.accessToken)
-      .then(response => {
-        if (response.status === 200) {
-          this.message = 'Slot removed successfully!';
-          this.success = true;
-
-          this.fetchStaffs();
-        } else {
-          this.message = 'Failed to update staff: ' + response.status;
-          this.success = false;
-        }
-      })
-      .catch(error => {
-        console.error('Error updating staff:', error);
-        this.message = 'An error occurred while updating the staff!';
-        this.success = false;
-      });
-  }
-
-
   goToAdmin() {
     this.router.navigate(['/admin']);
   }
 
   async showStaffsList() {
+    this.showForm = false;
+    this.showMessage = true;
+    this.message = "Activate with successfully.";
     this.staffs = [];
+    this.selectedStaff = null;
     await this.fetchStaffs().then(() => {
       this.router.navigate(["/admin/staffs"], { queryParams: { page: 1 } });
       this.showList = true;
@@ -559,6 +473,10 @@ export class StaffsComponent implements OnInit {
 
   onStatusToggle(staff: Staff) {
       this.selectedStaff = staff;
+  }
+
+  async onStatusToggled() {
+    await this.showStaffsList();
   }
 
 }

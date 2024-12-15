@@ -13,8 +13,11 @@
       <p>Please wait...</p>
     </div>
 
+    <div *ngIf="success && message" class="alert alert-success alert-top-right">
+      <strong>Success!</strong> {{ message }}
+    </div>
 
-    <app-list-staffs
+  <app-list-staffs
       [staffs]="staffs"
       [totalItems]="totalItems"
       [totalPages]="totalPages"
@@ -43,6 +46,7 @@
     <app-delete-staffs
       *ngIf="selectedStaff"
       [staff]="selectedStaff"
+      (statusToggled)="onStatusToggled()"
       (cancel)="selectedStaff = null"></app-delete-staffs>
     <router-outlet></router-outlet>
 
