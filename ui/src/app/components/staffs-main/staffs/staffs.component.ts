@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StaffsService } from '../../../services/staffs/staffs.service';
-import { Router, RouterModule } from '@angular/router';
+import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Staff } from '../../../models/staff.model';
@@ -9,18 +9,48 @@ import { response } from 'express';
 import { Console } from 'console';
 import {OperationType} from '../../../models/operation-type.model';
 import { ListStaffsComponent } from '../list-staffs/list-staffs.component';
+import {
+  CreateOperationRequestComponent
+} from '../../operation-requests-main/create-operation-requests/create-operation-requests.component';
+import {OperationRequest} from '../../../models/operation-request.model';
+import {CreateStaffsComponent} from '../create-staffs/create-staffs.component';
+import {UpdateStaffsComponent} from '../update-staffs/update-staffs.component';
+import {
+  OperationRequestsTableComponent
+} from '../../operation-requests-main/operation-requests-table/operation-requests-table.component';
+import {SucessModalStaffsComponent} from '../sucess-modal-staffs/sucess-modal-staffs.component';
+import {
+  OperationTypesListComponent
+} from '../../operation-types-module/operation-types-list/operation-types-list.component';
+import {DeleteStaffsComponent} from '../delete-staffs/delete-staffs.component';
+import {
+  ToggleOperationTypeStatusComponent
+} from '../../operation-types-module/toggle-operation-type-status/toggle-operation-type-status.component';
 
 
 @Component({
   selector: 'app-staffs',
-  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf,ListStaffsComponent],
+  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf, ListStaffsComponent, CreateStaffsComponent, UpdateStaffsComponent, OperationRequestsTableComponent, SucessModalStaffsComponent, OperationTypesListComponent, DeleteStaffsComponent, ToggleOperationTypeStatusComponent],
   templateUrl: './staffs.component.html',
   styleUrl: './staffs.component.css',
   standalone: true
 })
 export class StaffsComponent implements OnInit {
+  @Output() updateStaffEvent = new EventEmitter<Staff>();
+  @Output() selectedStaffToUpdate!: Staff;
+  @Output() selectedStaffToCreate!: Staff;
+  @Output() url: string | undefined;
 
-  constructor(private staffService: StaffsService, private authService: AuthService, private router: Router) { }
+
+  staffs: Staff[] = [];
+  showList : boolean = false;
+  showForm : boolean = false;
+
+  totalItems: number = 0;
+  totalPages: number = 1;
+  currentPage: number = 1;
+  itemsPerPage: number = 1;
+  constructor(private staffService: StaffsService, private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
 
   staff: Staff = {
     Id: '',
@@ -44,26 +74,17 @@ export class StaffsComponent implements OnInit {
     ]
   };
 
-  staffs: Staff[] = [];
   selectedStaff: any = null;
-
   searchName: string = '';
   searchEmail: string = '';
   searchSpecialization: string = '';
-  currentPage: number = 1;
-  itemsPerPage: number = 5;  // Número de itens por página
+
 
   editingSlotAvailabilityIndex: number | null = null;
   isAddSlotAvailabilityFormVisible = false;  // Controls visibility of the Add Slot form
   newSlotStart: string = '';  // To bind the start datetime of the new slot
   newSlotEnd: string = '';    // To bind the end datetime of the new slot
 
-
-  firstNameTouched = false;
-  lastNameTouched = false;
-  emailTouched = false;
-  phoneNumberTouched = false;
-  specializationTouched = false;
   isEditModalOpen = false;
   isCreateModalOpen = false;
   isDeleteModalOpen = false;
@@ -80,8 +101,6 @@ export class StaffsComponent implements OnInit {
     email: '',
     specialization: ''
   }
-  totalItems: number = 0;
-  totalPages: number = 1;
 
   message: string = '';
   success: boolean = true;
@@ -137,7 +156,9 @@ export class StaffsComponent implements OnInit {
           if (response.body) {
             this.staffs = response.body.staffs;
             this.totalItems = response.body.totalItems || 0;
-            this.totalPages = Math.ceil(this.totalItems / 2);
+            console.log(this.totalItems);
+            this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+            this.showList = true;
           } else {
             this.staffs = [];
             this.message = 'Response body is null: ' + response.body;
@@ -180,13 +201,16 @@ export class StaffsComponent implements OnInit {
 
 
 
-  async submitRequest() {
-    console.log("Staff:", this.staffs);
+  async submitRequest(staff : Staff) {
+    console.log("Staff:", staff);
+
+    this.selectedStaffToCreate = staff;
+
     if (this.isEditMode) {
       console.log("Updating staff:", this.staff.Id);
-      await this.update(this.staff.Id);
+      await this.update(this.selectedStaffToUpdate);
     } else {
-      this.staffService.post(this.staff, this.accessToken)
+      this.staffService.post(this.selectedStaffToCreate, this.accessToken)
         .then(response => {
           if (response.status === 201) {
             this.message = 'Staff successfully created!';
@@ -218,30 +242,14 @@ export class StaffsComponent implements OnInit {
       await this.fetchStaffs();
     }
   }
-  // this.staffService.createStaff(creatingStaffDto).pipe(first()).subscribe(
-  //this.staffService.createStaff(this.firstName, this.lastName, this.phoneNumber, this.email, this.specialization, this.role);
 
-  //console.log("Staff profile submitted");
+  async update(staff: Staff) {
 
-  // response => {
-  //   this.message = 'Staff profile submitted successfully!';
-  //   this.clearForm();
-  // },
-  // error => {
-  //   this.message = 'Error submitting staff profile. Please try again.';
-  // }
-  //);
-
-  async update(id: string) {
-    await this.staffService.update(id, this.staff, this.accessToken)
+    await this.staffService.update(staff.Id, staff, this.accessToken)
       .then(response => {
         if (response.status === 200) {
           this.message = 'Staff successfully updated!';
           this.success = true;
-          setTimeout(() => {
-            this.clearForm();
-            this.showCreateForm = false;
-          }, 3000);
         } else {
           this.message = 'Unexpected response status: ' + response.status;
           this.success = false;
@@ -259,6 +267,7 @@ export class StaffsComponent implements OnInit {
         this.message = 'There was an error updating the Staff: ' + error;
         this.success = false;
       });
+    if(this.success) this.closeModal();
     await this.fetchStaffs();
   }
 
@@ -291,11 +300,24 @@ export class StaffsComponent implements OnInit {
   }
 
   openModal() {
+    console.log('Opening create modal...');
     this.selectedStaff = null;
+
     this.isCreateModalOpen = true;
     this.isEditModalOpen = false;
     this.isDeleteModalOpen = false;
     this.isEditMode = false;
+
+    this.navigateTo('create', { queryParams: { request: JSON.stringify(this.selectedStaffToCreate) } });
+  }
+
+  openUpdateModal(staff: Staff) {
+    console.log('Opening update modal...');
+
+    this.selectedStaffToUpdate = staff;
+
+    this.isEditModalOpen = true;
+    this.navigateTo('update', { queryParams: { id: JSON.stringify(this.selectedStaffToUpdate.Id) } });
   }
 
   closeModal() {
@@ -334,18 +356,6 @@ export class StaffsComponent implements OnInit {
     await this.fetchStaffs();
   }
 
-
-  // This method is triggered when the user clicks the "edit" button
-  editStaff(staff: Staff) {
-    this.staff = JSON.parse(JSON.stringify(staff));
-    this.isEditModalOpen = true;
-    this.isCreateModalOpen = false;
-    this.isEditMode = true; // Configura para o modo de edição
-    console.log("Editing staff:", this.staff); // Log para debug
-
-    //this.isCreateModalOpen = false;
-  }
-
   startEditStaff(staff: Staff, isActivate: boolean): void {
     this.staff = { ...staff };
     if (isActivate) {
@@ -355,6 +365,7 @@ export class StaffsComponent implements OnInit {
       this.showCreateForm = true;
     }
     this.isEditMode = true;
+
   }
 
   async inactivate(staff: string) {
@@ -384,8 +395,9 @@ export class StaffsComponent implements OnInit {
   }
 
   async activate(staff: Staff) {
+    this.selectedStaffToUpdate = staff;
     this.startEditStaff(staff, true);
-    await this.update(staff.Id);
+    await this.update(staff);
   }
 
   deleteConfirmed() {
@@ -428,6 +440,18 @@ export class StaffsComponent implements OnInit {
       end: ''
     });
   }
+
+ /* async editStaff(staff: Staff) {
+    console.log("Open modal editing...");
+    this.staff = JSON.parse(JSON.stringify(staff));
+    console.log("Editing staff:", this.staff);
+
+    await this.staffService.update(this.selectedStaffToUpdate.Id, this.staff, this.accessToken);
+
+
+
+  }*/
+
 
   addSlotAvailability() {
     if (!this.selectedStaff.slotAvailability) {
@@ -514,9 +538,28 @@ export class StaffsComponent implements OnInit {
   goToAdmin() {
     this.router.navigate(['/admin']);
   }
-  saveStaff() { }
 
-}
+  async showStaffsList() {
+    this.staffs = [];
+    await this.fetchStaffs().then(() => {
+      this.router.navigate(["/admin/staffs"], { queryParams: { page: 1 } });
+      this.showList = true;
+    });
+  }
 
-export class StaffsMainComponent {
+
+  navigateTo(route: string, options?: { queryParams?: any }) {
+    this.router
+      .navigate([route], {
+        relativeTo: this.route,
+        queryParams: options?.queryParams,
+      })
+      .then(r => console.log('Navigated to:', r))
+      .catch(err => console.error('Navigation Error:', err));
+  }
+
+  onStatusToggle(staff: Staff) {
+      this.selectedStaff = staff;
+  }
+
 }
