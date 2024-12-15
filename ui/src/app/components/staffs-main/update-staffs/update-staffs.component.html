@@ -1,15 +1,15 @@
-<div *ngIf="isEditModalOpen" class="modal">
+<div class="modal">
   <div class="modal-content">
     <span type="button" class="close" (click)="closeModal()">&times;</span>
     <h2>Edit Staff</h2>
 
     <form (ngSubmit)="saveStaff()">
       <div>
-        <label for="emailEdit">Email</label>
+        <label>Email</label>
         <input type="text" id="emailEdit" [(ngModel)]="staff.ContactInformation.Email" name="email" />
       </div>
       <div>
-        <label for="phoneNumberEdit">Phone Number</label>
+        <label>Phone Number</label>
         <input type="text" id="phoneNumberEdit" [(ngModel)]="staff.ContactInformation.PhoneNumber"
                name="phoneNumber" />
       </div>
@@ -20,16 +20,41 @@
         </select>
       </div>
 
-      <!-- <div *ngFor="let spec of specializations; let i = index">
-        <label [for]="'specialization' + i">Specialization {{ i + 1 }}</label>
-        <input type="text" [id]="'specialization' + i" [(ngModel)]="staff.ContactInformation.specializations[i]" name="specialization{{i}}" />
-      </div>-->
+      <h3>Slots Availability</h3>
 
-      <app-slot-availability [staff]="staff"></app-slot-availability>
+      <div *ngIf="!staff.SlotAvailability || staff.SlotAvailability.length === 0" class="no-slots">
+        <p>No slots available.</p>
+      </div>
+
+      <div>
+        <div *ngIf="staff.SlotAvailability && staff.SlotAvailability.length > 0">
+          <table class="slots-table">
+            <thead>
+            <tr>
+              <th>Start Date</th>
+              <th>End Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let slot of staff.SlotAvailability; let i = index">
+              <td>
+                <input type="datetime-local" [(ngModel)]="slot.Start" name="slotStart{{i}}" />
+              </td>
+              <td>
+                <input type="datetime-local" [(ngModel)]="slot.End" name="slotEnd{{i}}" />
+              </td>
+              <!-- <td>
+                  <button type="button" (click)="removeSlot(i)">Remove</button> </td>
+                  -->
+
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <div class="button-group">
-        <button type="submit" (click)="submitRequest()">{{ isEditMode ? 'Update' : 'Submit' }}
-          Save</button>
+        <button type="submit">Save</button>
       </div>
     </form>
   </div>
