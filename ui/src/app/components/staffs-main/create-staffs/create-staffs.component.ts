@@ -21,7 +21,8 @@ import {Router} from '@angular/router';
 export class CreateStaffsComponent implements OnInit {
   @Input() staff!: Staff;
 
-  @Output() createRequestEvent = new EventEmitter<Staff>();
+  @Output() createStaffEvent = new EventEmitter<Staff>();
+  @Output() updateStaffEvent = new EventEmitter<Staff>();
   @Output() closeModalEvent = new EventEmitter<unknown>();
 
   specializations: string[] = [];
@@ -52,7 +53,6 @@ export class CreateStaffsComponent implements OnInit {
         staffRole: '',
         ContactInformation: {Email: '', PhoneNumber: ''},
         status: '',
-        SlotAppointment: [{Start: '', End: ''}],
         SlotAvailability: [{Start: '', End: ''}],
       };
     }
@@ -96,7 +96,7 @@ export class CreateStaffsComponent implements OnInit {
   }
 
   submitRequest() {
-     this.createRequestEvent.emit(this.staff);
+     this.createStaffEvent.emit(this.staff);
   }
 
   clearForm() {
@@ -108,7 +108,6 @@ export class CreateStaffsComponent implements OnInit {
       staffRole: '',
       ContactInformation: { Email: '', PhoneNumber: '' },
       status: '',
-      SlotAppointment: [{ Start: '', End: '' }],
       SlotAvailability: [{ Start: '', End: '' }],
     };
 
