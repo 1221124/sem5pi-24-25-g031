@@ -1,1 +1,76 @@
-<p>list-staffs works!</p>
+<div *ngIf="staffs.length > 0">
+    <table>
+        <thead>
+        <tr>
+            <th colspan="2">
+                Name
+                <input type="text" [(ngModel)]="filter.name" name="name" placeholder="Filter by Name" />
+            <th>
+                Email
+                <input type="text" [(ngModel)]="filter.email" name="email" placeholder="Filter by Email" />
+            </th>
+            <th colspan="2">
+                Specialization
+                <select [(ngModel)]="filter.specialization" name="specialization" id="specialization">
+                    <option *ngFor="let spec of specializations" [value]="spec">
+                        {{ spec }}
+                    </option>
+                </select>
+            </th>
+            <th>
+                <div class="filter-buttons">
+                    <button (click)="applyFilter()">Apply Filters</button>
+                    <button (click)="clearFilters()">Clear Filters</button>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>License Number</th>
+            <th>Specialization</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Slots Appointment</th>
+            <th>Slots Availability</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let staff of staffs">
+            <td>{{ staff.FullName.FirstName }}</td>
+            <td>{{ staff.FullName.LastName }}</td>
+            <td>{{ staff.ContactInformation.Email }}</td>
+            <td>{{ staff.ContactInformation.PhoneNumber }}</td>
+            <td>{{ staff.licenseNumber || 'N/A' }}</td>
+            <td>{{ staff.specialization || 'N/A' }}</td>
+            <td>{{ staff.staffRole || 'N/A' }}</td>
+            <td>{{ staff.status || 'N/A' }}</td>
+            <td>
+              <app-slot
+                [Staff]="staff"
+                (openSlotAppointmentModal)="openSlotAppointmentModal($event)">
+              </app-slot>
+              </td>
+            <td>
+              <button type="button" (click)="openSlotAvailabilityModal(staff)">View</button>
+            </td>
+            <td>
+                <button *ngIf="staff.status === 'Active'" (click)="updateStaffEvent.emit(staff)"
+                        class="action-btn edit-btn">
+                    Edit
+                </button>
+                <button *ngIf="staff.status === 'Active'" (click)="inactivate(staff.Id)">
+                    Inactivate
+                </button>
+                <button *ngIf="staff.status === 'Inactive'" (click)="activate(staff)">
+                    Activate
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
