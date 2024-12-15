@@ -183,15 +183,13 @@ export class StaffsService {
     return await firstValueFrom(this.http.get<any>(`${environment.staffs}/sensitiveInfo`, { ...httpOptions, params: params }));
   }
 
-  async getStaffAvailable(accessToken: string, requiredStaff: {role: string, specialization: string, number: number}, start: string, end: string) {
+  async getStaffAvailable(accessToken: string, start: string, end: string) {
     const headers = new HttpHeaders({
       'content-type': 'application/json',
       'Authorization': `Bearer ${accessToken}`
     });
 
     const params = new HttpParams()
-      .set('role', requiredStaff.role)
-      .set('specialization', requiredStaff.specialization)
       .set('start', start)
       .set('end', end);
 

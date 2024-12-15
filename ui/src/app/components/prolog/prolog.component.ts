@@ -4,6 +4,7 @@ import {Router, RouterModule} from '@angular/router';
 import {PrologService} from '../../services/prolog/prolog.service';
 import {FormsModule} from '@angular/forms';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import { SurgeryRoomsService } from '../../services/surgery-rooms/surgery-rooms.service';
 
 @Component({
   standalone: true,
@@ -21,7 +22,7 @@ export class PrologComponent implements OnInit {
 
   accessToken: string = '';
 
-  constructor(private authService: AuthService, private prologService: PrologService, private router: Router) { }
+  constructor(private authService: AuthService, private prologService: PrologService, private surgeryRoomService: SurgeryRoomsService, private router: Router) { }
 
   async ngOnInit() {
     if (!this.authService.isAuthenticated()) {
@@ -53,7 +54,8 @@ export class PrologComponent implements OnInit {
 
   async fetchSurgeryRooms() {
     try {
-      this.surgeryRooms = await this.prologService.getSurgeryRooms(this.accessToken);
+      const rooms = await this.surgeryRoomService.get(this.accessToken);
+      this.surgeryRooms = rooms.body.surgeryRooms.map((room: { SurgeryRoomNumber: any; }) => room.SurgeryRoomNumber);
     } catch (error) {
       alert('Error fetching surgery room numbers: ' + error);
     }

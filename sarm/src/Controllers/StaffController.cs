@@ -166,18 +166,15 @@ namespace Controllers
             return paginatedStaff;
         }
 
-        //GET: api/Staff/availability?role={role}/?specialization={role}/?start={start}/?end={end}
+        //GET: api/Staff/availability?start={start}&?end={end}
         [HttpGet("availability")]
         [Authorize(Roles = "Admin, Doctor")]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetByAvailabilityAsync([FromQuery] string role, [FromQuery] string specialization, [FromQuery] string start, [FromQuery] string end)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetByAvailabilityAsync([FromQuery] string start, [FromQuery] string end)
         {
-            var staffRole = StaffRoleUtils.FromString(role);
-            var staffSpecialization = SpecializationUtils.FromString(specialization);
-
             var startTime = DateTime.ParseExact(start, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
             var endTime = DateTime.ParseExact(end, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
             
-            var staffList = await _service.GetByRoleAndSpecialization(staffRole, staffSpecialization);
+            var staffList = await _service.GetAllAsync();
 
             foreach (var staff in staffList)
             {
@@ -189,30 +186,6 @@ namespace Controllers
             }
 
             return Ok(new { staff = staffList, totalItems = staffList.Count });
-        }
-
-        // GET: api/Appointments/staffAgenda?role={role}&specialization={specialization}&start={start}&end={end}
-        [HttpGet("staffAgenda")]
-        [Authorize(Roles = "Admin,Doctor")]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetStaffAgenda([FromQuery] string role, [FromQuery] string specialization, [FromQuery] string start, [FromQuery] string end)
-        {
-            var staffs = await _service.GetByRoleAndSpecialization(StaffRoleUtils.FromString(role), SpecializationUtils.FromString(specialization));
-
-            if (staffs == null || staffs.Count == 0)
-            {
-                return NotFound("Staff not found!");
-            }
-
-            foreach (var staff in staffs)
-            {
-                var appointments = await _appointmentService.GetByLicenseNumberAsync(staff.LicenseNumber);
-                if (appointments == null || appointments.Count > 0)
-                {
-                    staffs.Remove(staff);
-                }
-            }
-
-            return Ok(new { staffs = staffs, totalItems = staffs.Count });
         }
 
         //GET: api/Staff/licenseNumber?role=role

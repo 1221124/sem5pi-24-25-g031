@@ -196,12 +196,12 @@ export class OperationTypesService {
               Quantity: staff.quantity.value,
               IsRequiredInPreparation: staff.isRequiredInPreparation,
               IsRequiredInSurgery: staff.isRequiredInSurgery,
-              
+              IsRequiredInCleaning: staff.isRequiredInCleaning
             })),
             PhasesDuration: {
-              Preparation: operationType.phasesDuration.phases.preparation.value,
-              Surgery: operationType.phasesDuration.phases.surgery.value,
-              Cleaning: operationType.phasesDuration.phases.cleaning.value
+              Preparation: operationType.phasesDuration.preparation.value,
+              Surgery: operationType.phasesDuration.surgery.value,
+              Cleaning: operationType.phasesDuration.cleaning.value
             },
             Status: operationType.status.toString(),
             Version: operationType.version.value

@@ -1,147 +1,44 @@
-<!-- <form *ngIf="appointment" (ngSubmit)="submitForm()">
-    <div *ngIf="appointment">
-      <label for="operationName">Operation Name:</label>
-      <input
-        type="text"
-        id="operationName"
-        name="operationName"
-        [(ngModel)]="appointment.Name"
-        placeholder="Enter Operation Name"
-        required
-      />
+<form (ngSubmit)="submitForm()">
+  <div class="form-group">
+    <label for="requestCode">Request Code</label>
+    <select [(ngModel)]="appointment.RequestCode" name="requestCode" class="form-control" (change)="onRequestCodeChange()">
+      <option *ngFor="let request of requests" [value]="request.requestCode">{{ request?.requestCode }}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="appointmentDateStart">Appointment Date</label>
+    <input type="datetime-local" class="form-control" [(ngModel)]="appointment.AppointmentDate.Start" name="appointmentDateStart" required />
+  </div>
+
+  <div class="form-group">
+    <label for="surgeryRoom">Surgery Room</label>
+    <select [(ngModel)]="appointment.SurgeryRoomNumber" name="surgeryRoom" class="form-control">
+      <option *ngFor="let room of surgeryRooms" [value]="room.SurgeryRoomNumber">{{ room.SurgeryRoomNumber }}</option>
+    </select>
+  </div>
+
+  <div *ngFor="let staff of requiredStaff">
+    <div *ngFor="let available of getAvailableStaffForRole(staff)">
+      <label>
+        <input type="checkbox" [(ngModel)]="appointment.AssignedStaff" [value]="available.licenseNumber" />
+        {{ available.name }} (License: {{ available.licenseNumber }})
+      </label>
     </div>
   
-    <div *ngIf="appointment">
-      <label for="specialization">Specialization:</label>
-      <select
-        id="specialization"
-        name="specialization"
-        [(ngModel)]="appointment.Specialization"
-        required
-      >
-        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
-      </select>
+    <div *ngIf="getAvailableStaffForRole(staff).length < staff.quantity">
+      Not enough staff available for role: {{ staff.role }} with specialization: {{ staff.specialization }}
     </div>
-  
-    <div *ngIf="appointment?.RequiredStaff">
-      <h3>Add Required Staff</h3>
-      <div>
-        <label for="newStaffRole">Role:</label>
-        <select
-          id="newStaffRole"
-          name="newStaffRole"
-          [(ngModel)]="newRequiredStaff.Role"
-          required
-        >
-          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-        </select>
-      </div>
-  
-      <div>
-        <label for="newStaffSpecialization">Specialization:</label>
-        <select
-          id="newStaffSpecialization"
-          name="newStaffSpecialization"
-          [(ngModel)]="newRequiredStaff.Specialization"
-          required
-        >
-          <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
-        </select>
-      </div>
-  
-      <div>
-        <label for="newStaffQuantity">Quantity:</label>
-        <input
-          type="number"
-          id="newStaffQuantity"
-          name="newStaffQuantity"
-          [(ngModel)]="newRequiredStaff.Quantity"
-          min="1"
-          required
-        />
-      </div>
-  
-      <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <label>
-          <input
-            type="checkbox"
-            [(ngModel)]="newRequiredStaff.IsRequiredInPreparation"
-            name="newStaffIsRequiredInPreparation"
-          />
-          Preparation
-        </label>
-  
-        <label>
-          <input
-            type="checkbox"
-            [(ngModel)]="newRequiredStaff.IsRequiredInSurgery"
-            name="newStaffIsRequiredInSurgery"
-          />
-          Surgery
-        </label>
-  
-        <label>
-          <input
-            type="checkbox"
-            [(ngModel)]="newRequiredStaff.IsRequiredInCleaning"
-            name="newStaffIsRequiredInCleaning"
-          />
-          Cleaning
-        </label>
-      </div>
-  
-      <button type="button" (click)="addRequiredStaff()">Add Staff</button>
-    </div>
-  
-    <div *ngFor="let staff of appointment?.RequiredStaff; let i = index" class="required-staff">
-      <h3>Required Staff {{ i + 1 }}</h3>
-      <p>Role: {{ staff.Role }}</p>
-      <p>Specialization: {{ staff.Specialization }}</p>
-      <p>Quantity: {{ staff.Quantity }}</p>
-      <p>Required in:</p>
-      <ul>
-        <li *ngIf="staff.IsRequiredInPreparation">Preparation</li>
-        <li *ngIf="staff.IsRequiredInSurgery">Surgery</li>
-        <li *ngIf="staff.IsRequiredInCleaning">Cleaning</li>
-      </ul>
-      <button type="button" class="cancel" (click)="removeRequiredStaff(i)">Remove Staff</button>
-    </div>
-  
-    <div *ngIf="appointment?.PhasesDuration">
-      <div class="duration-field">
-        <label for="preparationDuration">Preparation Duration (minutes):</label>
-        <input
-          type="number"
-          [(ngModel)]="appointment.PhasesDuration.Preparation"
-          name="preparationDuration"
-          id="preparationDuration"
-          min="1"
-        />
-      </div>
-  
-      <div class="duration-field">
-        <label for="surgeryDuration">Surgery Duration (minutes):</label>
-        <input
-          type="number"
-          [(ngModel)]="appointment.PhasesDuration.Surgery"
-          name="surgeryDuration"
-          id="surgeryDuration"
-          min="1"
-        />
-      </div>
-  
-      <div class="duration-field">
-        <label for="cleaningDuration">Cleaning Duration (minutes):</label>
-        <input
-          type="number"
-          [(ngModel)]="appointment.PhasesDuration.Cleaning"
-          name="cleaningDuration"
-          id="cleaningDuration"
-          min="1"
-        />
-      </div>
-    </div>
-  
-    <button type="submit">{{ appointment.Id ? 'Update' : 'Submit' }} Operation Type</button>
-    <button type="button" class="cancel" (click)="cancelForm()">Cancel</button>
-  </form> -->
+  </div>
+
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary" 
+      [disabled]="!appointment.RequestCode || !appointment.SurgeryRoomNumber || !appointment.AppointmentDate.Start">
+      {{ appointment.Id ? 'Update Appointment' : 'Create Appointment' }}
+    </button>
+  </div>
+
+  <div class="form-group">
+    <button type="button" class="btn btn-secondary" (click)="cancelForm()">Cancel</button>
+  </div>
+</form>

@@ -9,6 +9,9 @@ import { OperationRequestsService } from '../../../services/operation-requests/o
 import { OperationTypesService } from '../../../services/operation-types/operation-types.service';
 import { StaffsService } from '../../../services/staffs/staffs.service';
 import { Staff } from '../../../models/staff.model';
+import { SurgeryRoomsService } from '../../../services/surgery-rooms/surgery-rooms.service';
+import { OperationRequest } from '../../../models/operation-request.model';
+import { SurgeryRoom } from '../../../models/surgery-room';
 
 @Component({
   selector: 'app-appointments-form',
@@ -26,19 +29,37 @@ import { Staff } from '../../../models/staff.model';
   styleUrls: ['./appointments-form.component.css']
 })
 export class AppointmentsFormComponent implements OnInit {
-  @Input() appointment: Appointment | null = null;
+  @Input() appointment: Appointment = {
+    Id: '',
+    RequestCode: '',
+    SurgeryRoomNumber: '',
+    AppointmentNumber: '',
+    AppointmentDate: {
+      Start: '',
+      End: ''
+    },
+    AssignedStaff: []
+  }
   @Output() submit = new EventEmitter<Appointment>();
   @Output() cancel = new EventEmitter<void>();
 
   accessToken = '';
 
+  requiredStaff: {
+    role: string;
+    specialization: string;
+    quantity: number;
+  }[] = [];
+  requests: OperationRequest[] = [];
   availableStaff: Staff[] = [];
+  surgeryRooms: SurgeryRoom[] = [];
 
   constructor(
     private service: AppointmentsService,
     private operationRequestService: OperationRequestsService,
     private operationTypeService: OperationTypesService,
     private staffService: StaffsService,
+    private surgeryRoomService: SurgeryRoomsService,
     private authService: AuthService,
     private router: Router
   ) {}
@@ -59,22 +80,31 @@ export class AppointmentsFormComponent implements OnInit {
       return;
     }
 
-    this.initializeAppointment();
+    await this.getOperationRequests();
+    await this.getSurgeryRooms();
   }
 
-  initializeAppointment() {
-    if (!this.appointment) {
-      this.appointment = {
-        Id: '',
-        RequestCode: '',
-        SurgeryRoomNumber: '',
-        AppointmentNumber: '',
-        AppointmentDate: {
-          Start: '',
-          End: ''
-        },
-        AssignedStaff: []
-      };
+  async getOperationRequests() {
+    try {
+      const pendingRequests = await this.operationRequestService.get(this.accessToken, '', '', '', '', '', '', 'pending');
+      const rejectedRequests = await this.operationRequestService.get(this.accessToken, '', '', '', '', '', '', 'rejected');
+      if (pendingRequests.body && rejectedRequests.body) {
+        this.requests = pendingRequests.body;
+        this.requests.push(...rejectedRequests.body);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getSurgeryRooms() {
+    try {
+      const response = await this.surgeryRoomService.get(this.accessToken);
+      if (response.body) {
+        this.surgeryRooms = response.body.surgeryRooms;
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -89,7 +119,9 @@ export class AppointmentsFormComponent implements OnInit {
             const operationType = response.body;
             if (operationType) {
               const duration = operationType.PhasesDuration.Preparation + operationType.PhasesDuration.Surgery + operationType.PhasesDuration.Cleaning;
-              this.appointment.AppointmentDate.End = new Date(new Date(this.appointment.AppointmentDate.Start).getTime() + duration * 60000).toISOString();
+              //TODO: Review this
+              //add duration in minutes to the start date and set it as the end date
+              this.appointment.AppointmentDate.End = new Date(this.appointment.AppointmentDate.Start).setMinutes(new Date(this.appointment.AppointmentDate.Start).getMinutes() + duration).toString();
             }
           }
         }
@@ -99,18 +131,65 @@ export class AppointmentsFormComponent implements OnInit {
     }
   }
 
-  async getStaffsAvailable() {
+  async getRequiredStaff() {
+    this.requiredStaff = [];
     try {
-      if (this.appointment?.AppointmentDate.Start && this.appointment?.AppointmentDate.End) {
-        // const staffs = await this.staffService.getStaffAvailable(this.accessToken, this.appointment.AppointmentDate.Start, this.appointment.AppointmentDate.End);
-        // if (staffs.body) {
-        //   staffs.body.staffs.forEach(element => {
-        //     this.availableStaff.push(element);
-        //   });
-        // }
+      const opReqResponse = await this.operationRequestService.get(this.accessToken, this.appointment!.RequestCode, '', '', '', '', '', '');
+      if (opReqResponse.body) {
+        const request = opReqResponse.body[0];
+        const opTypeResponse = await this.operationTypeService.getByCode(request.operationType, this.accessToken);
+        if (opTypeResponse.body) {
+          const operationType = opTypeResponse.body;
+          if (operationType) {
+            operationType.RequiredStaff.forEach(async (staff: { role: string; specialization: string; number: number; }) => {
+              this.requiredStaff.push({ role: staff.role, specialization: staff.specialization, quantity: staff.number });
+            });
+          }
+        }
       }
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async getStaffsAvailable() {
+    this.availableStaff = [];
+    try {
+      if (this.appointment?.AppointmentDate.Start && this.appointment?.AppointmentDate.End) {
+        // const opRequestResponse = await this.operationRequestService.get(this.accessToken, this.appointment.RequestCode, '', '', '', '', '', '');
+        // if (opRequestResponse.body) {
+        //   const request = opRequestResponse.body[0];
+        //   const opTypeResponse = await this.operationTypeService.getByCode(request.operationType, this.accessToken);
+        //   if (opTypeResponse.body) {
+        //     const operationType = opTypeResponse.body;
+        //     if (operationType) {
+        //       operationType.RequiredStaff.forEach(async (staff: { role: string; specialization: string; number: number; }) => {
+        //         const response = await this.staffService.getStaffAvailable(this.accessToken, staff, this.appointment!.AppointmentDate.Start, this.appointment!.AppointmentDate.End);
+        //         if (response.body) {
+        //           response.body.staffs.forEach(element => {
+        //             this.availableStaff.push(element);
+        //           });
+        //         }
+        //       });
+        //     }
+        //   }
+        const response = await this.staffService.getStaffAvailable(this.accessToken, this.appointment.AppointmentDate.Start, this.appointment.AppointmentDate.End);
+        if (response.body) {
+          this.availableStaff = response.body.staffs;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  getAvailableStaffForRole(staff: any): any[] {
+    return this.availableStaff.filter(a => a.staffRole === staff.role && a.specialization === staff.specialization);
+  }
+
+  async addStaff(staff: Staff) {
+    if (this.appointment) {
+      this.appointment.AssignedStaff.push(staff.licenseNumber);
     }
   }
 
@@ -130,5 +209,10 @@ export class AppointmentsFormComponent implements OnInit {
 
   cancelForm() {
     this.cancel.emit();
+  }
+
+  async onRequestCodeChange() {
+    await this.getRequiredStaff();
+    await this.getStaffsAvailable();
   }
 }

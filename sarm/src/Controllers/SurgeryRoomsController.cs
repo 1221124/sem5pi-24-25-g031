@@ -19,34 +19,16 @@ namespace DDDNetCore.Controllers {
             _logService = logService;
         }
 
-        [HttpGet ("roomNumbers")]
-        //[Authorize]
-        public async Task<ActionResult<List<SurgeryRoomNumber>>> GetSurgeryRoomNumbers()
-        {
-            try{
-                var rooms = await _surgeryRoomService.GetAll();
-                
-                if(rooms == null || rooms.Count == 0)
-                    return NotFound();
-
-                var roomNumbers = rooms.Select(room => SurgeryRoomNumberUtils.ToString(room.SurgeryRoomNumber)).ToList();
-
-                return Ok(new { roomNumbers });
-            }
-            catch(Exception ex){
-                return BadRequest(new { error = "Error fetching surgery room numbers", details = ex.Message });
-            }
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<SurgeryRoom>>> GetAll()
         {
             try
             {
-                var rooms = await _surgeryRoomService.GetAll();
-                if (rooms == null || rooms.Count == 0)
-                    return NotFound();
-                return Ok(new { rooms = rooms });
+                var surgeryRooms = await _surgeryRoomService.GetAll();
+                if (surgeryRooms == null || surgeryRooms.Count == 0)
+                    surgeryRooms = [];
+
+                return Ok(new { surgeryRooms = surgeryRooms, totalItems = surgeryRooms.Count });
             }
             catch (Exception ex)
             {
@@ -54,13 +36,11 @@ namespace DDDNetCore.Controllers {
             }
         }
         
-        
-
         [HttpPost]
         [Authorize (Roles = "Admin")]
         public async Task<ActionResult<SurgeryRoom>> Create(
             [FromQuery] string surgeryRoomNumber,
-            [FromQuery] string roomType, 
+            [FromQuery] string roomType,
             [FromQuery] string roomCapacity,
             [FromQuery] string assignedEquipment
             )

@@ -1,7 +1,7 @@
 <div class="appointments-container">
     <h1>Appointments</h1>
   
-    <button *ngIf="showList" (click)="showAppointmentsForm()" class="btn btn-primary">Schedule an Appointment</button>
+    <button *ngIf="showList && isDoctor" (click)="showAppointmentsForm()" class="btn btn-primary">Schedule an Appointment</button>
     <button *ngIf="showForm" (click)="showAppointmentsList()" class="btn btn-secondary">Show Appointments</button>
     <button (click)="back()" class="btn btn-back">Back</button>
   

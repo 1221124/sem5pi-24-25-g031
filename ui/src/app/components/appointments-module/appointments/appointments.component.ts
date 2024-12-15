@@ -20,7 +20,17 @@ export class AppointmentsComponent implements OnInit {
   accessToken: string = '';
   showList : boolean = false;
   showForm : boolean = false;
-  selectedAppointment: Appointment | null = null;
+  selectedAppointment: Appointment = {
+    Id: '',
+    RequestCode: '',
+    SurgeryRoomNumber: '',
+    AppointmentNumber: '',
+    AppointmentDate: {
+      Start: '',
+      End: ''
+    },
+    AssignedStaff: []
+  }
   appointments: Appointment[] = [];
   currentPage: number = 1;
   totalItems: number = 0;
@@ -98,8 +108,9 @@ export class AppointmentsComponent implements OnInit {
       this.route.queryParams.subscribe((params) => {
         const number = params['number'];
         if (number) {
-          this.selectedAppointment = this.appointments.find((ap) => ap.AppointmentNumber === number) || null;
-          if (this.selectedAppointment) {
+          const appointment = this.appointments.find((ap) => ap.AppointmentNumber === number);
+          if (appointment?.Id) {
+            this.selectedAppointment = appointment;
             this.showAppointmentsForm();
           }
         } else {
@@ -165,7 +176,17 @@ export class AppointmentsComponent implements OnInit {
   async showAppointmentsList() {
     this.showForm = false;
     this.appointments = [];
-    this.selectedAppointment = null;
+    this.selectedAppointment = {
+      Id: '',
+      RequestCode: '',
+      SurgeryRoomNumber: '',
+      AppointmentNumber: '',
+      AppointmentDate: {
+        Start: '',
+        End: ''
+      },
+      AssignedStaff: []
+    };
     this.filter.surgeryRoomNumber = '';
     this.filter.date = '';
     this.filter.staff = '';
@@ -179,7 +200,7 @@ export class AppointmentsComponent implements OnInit {
   async showAppointmentsForm() {
     this.showList = false;
     this.showForm = true;
-    if (this.selectedAppointment) {
+    if (this.selectedAppointment.Id) {
       this.router.navigate(['/appointments/update'], {
         queryParams: { number: this.selectedAppointment.AppointmentNumber }
       });
