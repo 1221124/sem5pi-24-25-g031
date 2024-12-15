@@ -1,7 +1,9 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {OperationType} from '../../../models/operation-type.model';
 import {Staff} from '../../../models/staff.model';
 import {StaffsService} from '../../../services/staffs/staffs.service';
+import {AuthService} from '../../../services/auth/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-delete-staffs',
@@ -9,13 +11,34 @@ import {StaffsService} from '../../../services/staffs/staffs.service';
   standalone: true,
   styleUrl: './delete-staffs.component.css'
 })
-export class DeleteStaffsComponent {
+export class DeleteStaffsComponent implements OnInit {
   @Input() staff!: Staff;
   @Output() statusToggled = new EventEmitter<void>();
+  @Output() notification = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
   accessToken = '';
-  constructor(private service: StaffsService) {}
+  constructor(private service: StaffsService, private authService: AuthService, private router: Router) {}
+
+  async ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateIsError(true);
+      setTimeout(() => this.router.navigate(['']), 3000);
+      return;
+    }
+
+    this.accessToken = this.authService.getToken() as string;
+
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+      this.authService.updateMessage(
+        'You are not authenticated or are not an admin! Redirecting to login...'
+      );
+      this.authService.updateIsError(true);
+      setTimeout(() => this.router.navigate(['']), 3000);
+      return;
+    }
+  }
 
   async toggleStatus() {
     try {
