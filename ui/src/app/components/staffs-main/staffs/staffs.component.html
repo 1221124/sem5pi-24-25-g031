@@ -7,5 +7,25 @@
     <button (click)="goToAdmin()" class="btn btn-outline-primary back-btn">Back to Admin Home</button>
     <button type="button" class="create-staff-btn" (click)="openModal()">Create Staff</button>
 
-    <app-list-staffs></app-list-staffs>
+    <app-list-staffs
+      (updateStaffEvent)="openUpdateModal($event)">
+    </app-list-staffs>
+
+    <!-- CREATE MODAL -->
+    <app-create-staffs
+      *ngIf="isCreateModalOpen"
+      [staff]="selectedStaffToCreate"
+      (closeModalEvent)="closeModal()"
+      (createStaffEvent)="submitRequest($event)">
+    </app-create-staffs>
+
+    <app-update-staffs
+      *ngIf="isEditModalOpen"
+      [staff]="selectedStaffToUpdate"
+      [specializations]="specializations"
+      (closeModalEvent)="closeModal()"
+      (update)="update($event)">
+    </app-update-staffs>
+
+    <router-outlet></router-outlet>
 </div>
