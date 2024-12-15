@@ -33,13 +33,12 @@
             <th>Specialization</th>
             <th>Role</th>
             <th>Status</th>
-            <th>Slots Appointment</th>
             <th>Slots Availability</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let staff of staffs">
+        <tr *ngFor="let staff of getPaginatedStaff()">
             <td>{{ staff.FullName.FirstName }}</td>
             <td>{{ staff.FullName.LastName }}</td>
             <td>{{ staff.ContactInformation.Email }}</td>
@@ -47,30 +46,37 @@
             <td>{{ staff.licenseNumber || 'N/A' }}</td>
             <td>{{ staff.specialization || 'N/A' }}</td>
             <td>{{ staff.staffRole || 'N/A' }}</td>
-            <td>{{ staff.status || 'N/A' }}</td>
+          <td>
+            <span class="status-circle" [ngClass]="{'active-status': staff.status === 'Active', 'inactive-status': staff.status === 'Inactive'}">
+              {{ staff.status || 'N/A' }}
+            </span>
+          </td>
             <td>
               <app-slot
                 [Staff]="staff"
                 (openSlotAppointmentModal)="openSlotAppointmentModal($event)">
               </app-slot>
-              </td>
-            <td>
-              <button type="button" (click)="openSlotAvailabilityModal(staff)">View</button>
             </td>
             <td>
                 <button *ngIf="staff.status === 'Active'" (click)="updateStaffEvent.emit(staff)"
                         class="action-btn edit-btn">
                     Edit
                 </button>
-                <button *ngIf="staff.status === 'Active'" (click)="inactivate(staff.Id)">
+                <button *ngIf="staff.status === 'Active'" class="action-btn inactivate-btn" (click)="statusToggle.emit(staff)">
                     Inactivate
                 </button>
-                <button *ngIf="staff.status === 'Inactive'" (click)="activate(staff)">
+                <button *ngIf="staff.status === 'Inactive'" class="action-btn activate-btn" (click)="statusToggle.emit(staff)">
                     Activate
                 </button>
             </td>
         </tr>
         </tbody>
     </table>
+
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
+  </div>
 
 </div>

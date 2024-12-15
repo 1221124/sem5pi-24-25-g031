@@ -1,3 +1,4 @@
+/* Global Styles */
 html,
 body {
   height: 100%;
@@ -22,6 +23,7 @@ h1 {
   color: #0073e6;
 }
 
+/* Form Styles */
 form {
   display: flex;
   flex-direction: column;
@@ -53,6 +55,7 @@ label {
   font-weight: bold;
 }
 
+/* Button Styles */
 .button-group {
   display: flex;
   justify-content: space-between;
@@ -88,6 +91,7 @@ label {
   background-color: #005bb5;
 }
 
+/* Radio Button Styling */
 .radio-staff {
   display: flex;
   flex-direction: row;
@@ -95,7 +99,7 @@ label {
   margin-bottom: 15px;
 }
 
-
+/* Modal Styles */
 .modal {
   display: flex;
   position: fixed;
@@ -107,13 +111,11 @@ label {
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
-
 }
 
 .modal.show {
   visibility: visible;
   opacity: 1;
-  /* Shows the modal */
 }
 
 .modal-content {
@@ -125,7 +127,7 @@ label {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* General table styling */
+/* Table Styles */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -140,7 +142,7 @@ td {
 }
 
 th {
-  background-color: #85a585;
+  background-color: #343a40;
   color: white;
   font-weight: bold;
 }
@@ -153,8 +155,8 @@ tr:hover {
   background-color: #934a4a;
 }
 
+/* Responsive Styles */
 @media screen and (max-width: 768px) {
-
   table,
   th,
   td {
@@ -171,6 +173,7 @@ tr:hover {
   }
 }
 
+/* Action Button Styles */
 .action-btn {
   padding: 5px 10px;
   font-size: 14px;
@@ -181,28 +184,40 @@ tr:hover {
   margin-right: 8px;
 }
 
-/* Edit button styling */
+/* Edit Button */
 .edit-btn {
-  background-color: #4CAF50;
+  background-color: #007bff; /* Azul */
   color: white;
 }
 
 .edit-btn:hover {
-  background-color: #45a049;
+  background-color: #0056b3; /* Azul mais escuro */
+  transform: scale(1.05);
 }
 
-/* Delete button styling */
-.delete-btn {
-  background-color: #f44336;
+/* Inactivate Button */
+.inactivate-btn {
+  background-color: #dc3545; /* Vermelho */
   color: white;
 }
 
-.delete-btn:hover {
-  background-color: #d32f2f;
+.inactivate-btn:hover {
+  background-color: #b02a37; /* Vermelho mais escuro */
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
-/*PAGINAÇÃO*/
+/* Activate Button */
+.activate-btn {
+  background-color: #28a745; /* Verde */
+  color: white;
+}
 
+.activate-btn:hover {
+  background-color: #218838; /* Verde mais escuro */
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Pagination Styles */
 .pagination {
   margin-top: 20px;
   text-align: center;
@@ -234,6 +249,7 @@ tr:hover {
   font-size: 16px;
 }
 
+/* Alert Styles */
 .alert {
   padding: 15px;
   margin-bottom: 20px;
@@ -257,15 +273,12 @@ tr:hover {
   top: 100px;
   right: 100px;
   z-index: 1050;
-  /* Garante que o alert fique acima de outros elementos */
   max-width: 300px;
-  /* Define um tamanho máximo, opcional */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  /* Adiciona uma leve sombra */
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Animação opcional para o alert aparecer suavemente */
+/* Alert FadeIn Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -277,3 +290,47 @@ tr:hover {
     transform: translateX(0);
   }
 }
+
+/* Botões Redondos */
+.circular-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px; /* Largura do botão */
+  height: 40px; /* Altura do botão */
+  border-radius: 20px; /* Bordas arredondadas */
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.circular-btn.active-btn {
+  background-color: #28a745; /* Verde para Ativo */
+}
+
+.circular-btn.inactive-btn {
+  background-color: #dc3545; /* Vermelho para Inativo */
+}
+
+/* Indicador de Status */
+.status-circle {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.active-status {
+  background-color: #28a745; /* Verde para Ativo */
+}
+
+.inactive-status {
+  background-color: #dc3545; /* Vermelho para Inativo */
+}
+
