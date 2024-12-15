@@ -479,4 +479,8 @@ export class StaffsComponent implements OnInit {
     await this.showStaffsList();
   }
 
+  async onCancel() {
+    await this.showStaffsList();
+  }
+
 }

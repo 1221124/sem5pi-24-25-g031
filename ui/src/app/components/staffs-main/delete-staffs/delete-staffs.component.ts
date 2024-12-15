@@ -45,6 +45,7 @@ export class DeleteStaffsComponent implements OnInit {
       if (this.staff.status.trim().toLowerCase() === 'active') {
         await this.service.deleteStaff(this.staff.Id, this.accessToken).then(() => {
           this.statusToggled.emit();
+          this.notification.emit();
         });
       } else {
         await this.service.update(
@@ -61,6 +62,6 @@ export class DeleteStaffsComponent implements OnInit {
   }
 
   onCancel() {
-
+    this.cancel.emit();
   }
 }
