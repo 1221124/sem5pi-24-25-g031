@@ -1,14 +1,8 @@
 <form (ngSubmit)="submitForm()">
-  <div class="form-group">
-    <label for="requestCode">Request Code</label>
-    <select [(ngModel)]="appointment.RequestCode" name="requestCode" class="form-control" (change)="onRequestCodeChange()">
-      <option *ngFor="let request of requests" [value]="request.requestCode">{{ request?.requestCode }}</option>
-    </select>
-  </div>
 
   <div class="form-group">
     <label for="appointmentDateStart">Appointment Date</label>
-    <input type="datetime-local" class="form-control" [(ngModel)]="appointment.AppointmentDate.Start" name="appointmentDateStart" required />
+    <input type="datetime-local" class="form-control" [(ngModel)]="appointment.AppointmentDate.Start" name="appointmentDateStart" required (change)="onAppointmentDateChange()" />
   </div>
 
   <div class="form-group">

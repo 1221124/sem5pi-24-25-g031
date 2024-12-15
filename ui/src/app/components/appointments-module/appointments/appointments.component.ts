@@ -1,4 +1,4 @@
-import { CommonModule, NgIf, NgForOf } from '@angular/common';
+import { CommonModule, NgIf, NgForOf, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -8,11 +8,13 @@ import { Appointment } from '../../../models/appointment';
 import { OperationRequestsService } from '../../../services/operation-requests/operation-requests.service';
 import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
 import { AppointmentsFormComponent } from '../appointments-form/appointments-form.component';
+import { OperationRequest } from '../../../models/operation-request.model';
+import { OperationRequestsTableComponent } from '../../operation-requests-main/operation-requests-table/operation-requests-table.component';
 
 @Component({
   selector: 'app-appointments',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIf, NgForOf, RouterOutlet, AppointmentsListComponent, AppointmentsFormComponent],
+  imports: [CommonModule, FormsModule, NgIf, NgForOf, RouterOutlet, AppointmentsListComponent, AppointmentsFormComponent, OperationRequestsTableComponent],
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css'
 })
@@ -20,6 +22,8 @@ export class AppointmentsComponent implements OnInit {
   accessToken: string = '';
   showList : boolean = false;
   showForm : boolean = false;
+  showOperationRequests: boolean = false;
+
   selectedAppointment: Appointment = {
     Id: '',
     RequestCode: '',
@@ -30,6 +34,16 @@ export class AppointmentsComponent implements OnInit {
       End: ''
     },
     AssignedStaff: []
+  }
+  selectedRequest: OperationRequest = {
+    id: '',
+    staff: '',
+    patient: '',
+    operationType: '',
+    deadlineDate: '',
+    priority: '',
+    status: '',
+    requestCode: ''
   }
   appointments: Appointment[] = [];
   currentPage: number = 1;
@@ -44,13 +58,15 @@ export class AppointmentsComponent implements OnInit {
   };
 
   isDoctor: boolean = false;
+  requests: OperationRequest[] = [];
 
   constructor(
     private service: AppointmentsService,
     private authService: AuthService,
     private requestService: OperationRequestsService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
   ) {}
 
   async ngOnInit() {
@@ -187,6 +203,16 @@ export class AppointmentsComponent implements OnInit {
       },
       AssignedStaff: []
     };
+    this.selectedRequest = {
+      id: '',
+      staff: '',
+      patient: '',
+      operationType: '',
+      deadlineDate: '',
+      priority: '',
+      status: '',
+      requestCode: ''
+    };
     this.filter.surgeryRoomNumber = '';
     this.filter.date = '';
     this.filter.staff = '';
@@ -209,12 +235,47 @@ export class AppointmentsComponent implements OnInit {
     }
   }
 
+  async showRequests() {
+    this.showList = false;
+    await this.getOperationRequests();
+    this.location.go('/doctor/operation-requests');
+    this.showOperationRequests = true;
+  }
+
+  async getOperationRequests() {
+    try {
+      this.requests = [];
+      const response = await this.requestService.getAll(this.accessToken);
+      this.requests = response.body || [];
+      // this.requests.filter((req) => (req.status.toLowerCase() == 'pending' || req.status.toLowerCase() == 'rejected'));
+    } catch (error) {
+      console.error('Error fetching operation requests:', error);
+    }
+  }
+
   async onFilterChange(filters: { surgeryRoomNumber: string; date: string; staff: string; patient: string }) {
     this.filter.surgeryRoomNumber = filters.surgeryRoomNumber;
     this.filter.date = filters.date;
     this.filter.staff = filters.staff;
     this.filter.patient = filters.patient;
     await this.loadAppointments();
+  }
+
+  async onMakeAppointment(request: OperationRequest) {
+    this.showOperationRequests = false;
+    this.selectedRequest = request;
+    this.selectedAppointment = {
+      Id: '',
+      RequestCode: request.requestCode,
+      SurgeryRoomNumber: '',
+      AppointmentNumber: '',
+      AppointmentDate: {
+        Start: '',
+        End: ''
+      },
+      AssignedStaff: []
+    };
+    await this.showAppointmentsForm();
   }
 
   async onSubmit() {

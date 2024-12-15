@@ -40,6 +40,16 @@ export class AppointmentsFormComponent implements OnInit {
     },
     AssignedStaff: []
   }
+  @Input() request: OperationRequest = {
+    id: '',
+    staff: '',
+    patient: '',
+    operationType: '',
+    deadlineDate: '',
+    priority: '',
+    status: '',
+    requestCode: ''
+  }
   @Output() submit = new EventEmitter<Appointment>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -50,7 +60,6 @@ export class AppointmentsFormComponent implements OnInit {
     specialization: string;
     quantity: number;
   }[] = [];
-  requests: OperationRequest[] = [];
   availableStaff: Staff[] = [];
   surgeryRooms: SurgeryRoom[] = [];
 
@@ -80,20 +89,16 @@ export class AppointmentsFormComponent implements OnInit {
       return;
     }
 
-    await this.getOperationRequests();
-    await this.getSurgeryRooms();
+    await this.initializeData();
   }
 
-  async getOperationRequests() {
-    try {
-      const pendingRequests = await this.operationRequestService.get(this.accessToken, '', '', '', '', '', '', 'pending');
-      const rejectedRequests = await this.operationRequestService.get(this.accessToken, '', '', '', '', '', '', 'rejected');
-      if (pendingRequests.body && rejectedRequests.body) {
-        this.requests = pendingRequests.body;
-        this.requests.push(...rejectedRequests.body);
-      }
-    } catch (error) {
-      console.error(error);
+  async initializeData() {
+    await this.getSurgeryRooms();
+    if (this.request.requestCode) {
+      this.appointment.RequestCode = this.request.requestCode;
+    }
+    if (this.appointment.RequestCode) {
+      await this.getRequiredStaff();
     }
   }
 
@@ -102,6 +107,7 @@ export class AppointmentsFormComponent implements OnInit {
       const response = await this.surgeryRoomService.get(this.accessToken);
       if (response.body) {
         this.surgeryRooms = response.body.surgeryRooms;
+        this.surgeryRooms.sort((a, b) => a.SurgeryRoomNumber.localeCompare(b.SurgeryRoomNumber));
       }
     } catch (error) {
       console.error(error);
@@ -121,7 +127,10 @@ export class AppointmentsFormComponent implements OnInit {
               const duration = operationType.PhasesDuration.Preparation + operationType.PhasesDuration.Surgery + operationType.PhasesDuration.Cleaning;
               //TODO: Review this
               //add duration in minutes to the start date and set it as the end date
-              this.appointment.AppointmentDate.End = new Date(this.appointment.AppointmentDate.Start).setMinutes(new Date(this.appointment.AppointmentDate.Start).getMinutes() + duration).toString();
+              //end format must be a string in format YYYY-mm-ddTHH:MM
+              const startDate = new Date(this.appointment.AppointmentDate.Start);
+              const endDate = new Date(startDate.getTime() + duration * 60000);
+              this.appointment.AppointmentDate.End = endDate.toISOString().slice(0, 16);
             }
           }
         }
@@ -156,23 +165,6 @@ export class AppointmentsFormComponent implements OnInit {
     this.availableStaff = [];
     try {
       if (this.appointment?.AppointmentDate.Start && this.appointment?.AppointmentDate.End) {
-        // const opRequestResponse = await this.operationRequestService.get(this.accessToken, this.appointment.RequestCode, '', '', '', '', '', '');
-        // if (opRequestResponse.body) {
-        //   const request = opRequestResponse.body[0];
-        //   const opTypeResponse = await this.operationTypeService.getByCode(request.operationType, this.accessToken);
-        //   if (opTypeResponse.body) {
-        //     const operationType = opTypeResponse.body;
-        //     if (operationType) {
-        //       operationType.RequiredStaff.forEach(async (staff: { role: string; specialization: string; number: number; }) => {
-        //         const response = await this.staffService.getStaffAvailable(this.accessToken, staff, this.appointment!.AppointmentDate.Start, this.appointment!.AppointmentDate.End);
-        //         if (response.body) {
-        //           response.body.staffs.forEach(element => {
-        //             this.availableStaff.push(element);
-        //           });
-        //         }
-        //       });
-        //     }
-        //   }
         const response = await this.staffService.getStaffAvailable(this.accessToken, this.appointment.AppointmentDate.Start, this.appointment.AppointmentDate.End);
         if (response.body) {
           this.availableStaff = response.body.staffs;
@@ -180,6 +172,13 @@ export class AppointmentsFormComponent implements OnInit {
       }
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async onAppointmentDateChange() {
+    if (this.appointment?.AppointmentDate.Start) {
+      await this.getAppointmentDuration();
+      await this.getStaffsAvailable();
     }
   }
 

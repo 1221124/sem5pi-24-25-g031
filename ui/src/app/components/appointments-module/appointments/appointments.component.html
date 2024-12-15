@@ -1,14 +1,22 @@
 <div class="appointments-container">
     <h1>Appointments</h1>
   
-    <button *ngIf="showList && isDoctor" (click)="showAppointmentsForm()" class="btn btn-primary">Schedule an Appointment</button>
+    <button *ngIf="showList && isDoctor" (click)="showRequests()" class="btn btn-primary">Schedule an Appointment</button>
     <button *ngIf="showForm" (click)="showAppointmentsList()" class="btn btn-secondary">Show Appointments</button>
     <button (click)="back()" class="btn btn-back">Back</button>
   
-    <div *ngIf="!showList && !showForm" class="loading-spinner">
+    <div *ngIf="!showList && !showForm && !showRequests" class="loading-spinner">
       <div class="spinner"></div>
       <h1>LOADING</h1>
       <p>Please wait...</p>
+    </div>
+
+    <div *ngIf="showOperationRequests">
+      <app-operation-requests-table
+        [requests]="requests"
+        [toMakeAppointment]=true
+        (createAppointmentEvent)="onMakeAppointment($event)">
+      </app-operation-requests-table>
     </div>
   
     <div *ngIf="showList">
@@ -27,6 +35,7 @@
     <div *ngIf="showForm">
       <app-appointments-form
         [appointment]="selectedAppointment"
+        [request]="selectedRequest"
         (submit)="onSubmit()"
         (cancel)="onCancel()">
       </app-appointments-form>

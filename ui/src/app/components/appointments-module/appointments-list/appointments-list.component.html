@@ -8,6 +8,7 @@
           <th>Surgery Room</th>
           <th>Appointment Date</th>
           <th>Assigned Staff</th>
+          <th *ngIf="isDoctor">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -27,6 +28,9 @@
                 {{ staff }}
               </li>
             </ul>
+          </td>
+          <td *ngIf="isDoctor">
+            <button (click)="edit.emit(appointment)">Edit</button>
           </td>
         </tr>
       </tbody>

@@ -5,12 +5,12 @@ import { AppointmentsFormComponent } from './appointments-form/appointments-form
 
 export const routes: Route[] = [
   { path: '', component: AppointmentsComponent },
-  { path: 'create', component: AppointmentsFormComponent},
-  { path: 'update', component: AppointmentsFormComponent}
+  { path: 'create', component: AppointmentsFormComponent },
+  { path: 'update', component: AppointmentsFormComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class OperationTypesRoute {}
+export class AppointmentsRoute {}

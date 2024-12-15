@@ -25,9 +25,11 @@ import {DeleteOperationRequestsComponent} from '../delete-operation-requests/del
 export class OperationRequestsTableComponent implements OnInit {
   @Input() requests!: OperationRequest[];
   @Input() accessToken!: string;
+  @Input() toMakeAppointment!: boolean;
 
   @Output() updateRequestEvent = new EventEmitter<OperationRequest>();
   @Output() deleteRequestEvent = new EventEmitter<OperationRequest>();
+  @Output() createAppointmentEvent = new EventEmitter<OperationRequest>();
 
   constructor(
     private router: Router,

@@ -11,6 +11,7 @@
   <app-operation-requests-table
     *ngIf="requests"
     [requests]="requests"
+    [toMakeAppointment]="false"
     (updateRequestEvent)="openUpdateModal($event)"
     (deleteRequestEvent)="openDeleteModal($event)">
   </app-operation-requests-table>

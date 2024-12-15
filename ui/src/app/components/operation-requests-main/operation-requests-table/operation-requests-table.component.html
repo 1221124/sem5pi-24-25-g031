@@ -50,8 +50,9 @@
       <td>{{ request.priority.toUpperCase() }}</td>
       <td>{{ request.status.toUpperCase() }}</td>
       <td>
-        <button (click)="updateRequestEvent.emit(request)">Update</button>
-        <button (click)="deleteRequestEvent.emit(request)">Delete</button>
+        <button *ngIf="!toMakeAppointment" (click)="updateRequestEvent.emit(request)">Update</button>
+        <button *ngIf="!toMakeAppointment" (click)="deleteRequestEvent.emit(request)">Delete</button>
+        <button *ngIf="toMakeAppointment && request.status.toUpperCase() != 'ACCEPTED'" (click)="createAppointmentEvent.emit(request)">Convert to Appointment</button>
       </td>
     </tr>
     </tbody>
