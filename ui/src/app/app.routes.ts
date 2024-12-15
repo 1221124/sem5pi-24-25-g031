@@ -17,7 +17,6 @@ import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import { AdminPatientsMainComponent } from './components/admin-patients/admin-patients-main/admin-patients-main.component';
 import { ListStaffsComponent } from './components/staffs-main/list-staffs/list-staffs.component';
-import { PaginationStaffsComponent } from './components/staffs-main/pagination-staffs/pagination-staffs.component';
 import {OperationTypesComponent} from './components/operation-types-module/operation-types/operation-types.component';
 import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
 
@@ -47,7 +46,7 @@ export const routes: Route[] = [
       }
     ]
   },
-  { 
+  {
     path: 'appointments',
     component: AppointmentsComponent,
     children: [
