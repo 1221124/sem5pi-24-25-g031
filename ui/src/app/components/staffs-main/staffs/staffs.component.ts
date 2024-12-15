@@ -18,7 +18,6 @@ import {UpdateStaffsComponent} from '../update-staffs/update-staffs.component';
 import {
   OperationRequestsTableComponent
 } from '../../operation-requests-main/operation-requests-table/operation-requests-table.component';
-import {SucessModalStaffsComponent} from '../sucess-modal-staffs/sucess-modal-staffs.component';
 import {
   OperationTypesListComponent
 } from '../../operation-types-module/operation-types-list/operation-types-list.component';
@@ -30,7 +29,7 @@ import {
 
 @Component({
   selector: 'app-staffs',
-  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf, ListStaffsComponent, CreateStaffsComponent, UpdateStaffsComponent, OperationRequestsTableComponent, SucessModalStaffsComponent, OperationTypesListComponent, DeleteStaffsComponent, ToggleOperationTypeStatusComponent],
+  imports: [FormsModule, RouterModule, NgIf, DatePipe, NgForOf, ListStaffsComponent, CreateStaffsComponent, UpdateStaffsComponent, OperationRequestsTableComponent, OperationTypesListComponent, DeleteStaffsComponent, ToggleOperationTypeStatusComponent],
   templateUrl: './staffs.component.html',
   styleUrl: './staffs.component.css',
   standalone: true
