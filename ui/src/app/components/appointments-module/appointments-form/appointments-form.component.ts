@@ -98,21 +98,17 @@ export class AppointmentsFormComponent implements OnInit {
   async initializeData() {
     await this.getSurgeryRooms();
     if (this.router.url.includes('create') && !this.request.requestCode) {
-      console.log('Request code:', this.request.requestCode);
-      console.log('No request code found. Redirecting to appointments initial page...');
       this.router.navigate(['/appointments'], {queryParams: {page : 1}});
       this.cancel.emit();
       return;
     }
     if (this.request.requestCode) {
-      console.log('Request code:', this.request.requestCode);
       this.appointment.RequestCode = this.request.requestCode;
-      console.log('Appointment request code:', this.appointment.RequestCode);
+      const number = this.request.requestCode.slice(3);
+      this.appointment.AppointmentNumber = `ap${number}`;
     }
     if (this.appointment.RequestCode) {
-      console.log('Appointment request code:', this.appointment.RequestCode);
       await this.getRequiredStaff();
-      console.log('Required staff:', this.requiredStaff);
     }
   }
 
@@ -193,18 +189,27 @@ export class AppointmentsFormComponent implements OnInit {
   }
 
   getAvailableStaffForRole(staff: any): any[] {
-    console.log('Getting available staff for role and specialization:', staff.Role, staff.Specialization);
     return this.availableStaff.filter(a => a.staffRole === staff.Role && a.specialization === staff.Specialization);
   }
 
-  async addStaff(staff: Staff) {
-    if (this.appointment.RequestCode && this.appointment.AssignedStaff.length < this.requiredStaff.length) {
-      this.appointment.AssignedStaff.push(staff.licenseNumber);
+  onStaffSelectionChange(staff: Staff, event: any) {
+    if (event.target.checked) {
+      this.addStaff(staff);
+    } else {
+      this.removeStaff(staff);
     }
   }
 
+  async addStaff(staff: Staff) {
+    if (this.appointment.RequestCode && !this.appointment.AssignedStaff.includes(staff.licenseNumber)) {
+      console.log('Adding staff:', staff.licenseNumber);
+      this.appointment.AssignedStaff.push(staff.licenseNumber);
+    }
+  }
+  
   async removeStaff(staff: Staff) {
     if (this.appointment.RequestCode) {
+      console.log('Removing staff:', staff.licenseNumber);
       this.appointment.AssignedStaff = this.appointment.AssignedStaff.filter(s => s !== staff.licenseNumber);
     }
   }

@@ -15,24 +15,27 @@
   <div *ngIf="requiredStaff.length > 0">
     <div *ngFor="let staff of requiredStaff">
       <ng-container *ngIf="getAvailableStaffForRole(staff) as availableStaff">
-        <div *ngFor="let available of availableStaff">
-          <label>
-            <input
-              type="checkbox"
-              [(ngModel)]="appointment.AssignedStaff"
-              [value]="available.licenseNumber"
-              name="assignedStaff_{{ available.licenseNumber }}"
-            />
-            License Number: {{ available.licenseNumber }}
-          </label>
+        <div *ngIf="availableStaff.length > 0">
+          <h5>{{ staff.Role }} - {{ staff.Specialization }}</h5>
+          
+          <div *ngFor="let available of availableStaff" class="staff-selection">
+            <input type="checkbox" 
+                   [id]="available.licenseNumber"
+                   [value]="available.licenseNumber" 
+                   (change)="onStaffSelectionChange(available, $event)" 
+                   [checked]="appointment.AssignedStaff.includes(available.licenseNumber)">
+            <label [for]="available.licenseNumber">
+              {{ available.licenseNumber }} - {{ available.FullName.FirstName }} {{ available.FullName.LastName }}
+            </label>
+          </div>
         </div>
-  
+        
         <div *ngIf="availableStaff.length < staff.Quantity">
           Not enough staff available for role: {{ staff.Role }} with specialization: {{ staff.Specialization }}
         </div>
       </ng-container>
     </div>
-  </div>  
+  </div>
 
   <div class="form-group">
     <button type="submit" class="btn btn-primary" 

@@ -167,6 +167,9 @@ export class AppointmentsService {
         "Value": appointment.RequestCode
       },
       "SurgeryRoomNumber": appointment.SurgeryRoomNumber,
+      "AppointmentNumber": {
+        "Value": appointment.AppointmentNumber
+      },
       "AppointmentDate": {
         "Start": appointment.AppointmentDate.Start,
         "End": appointment.AppointmentDate.End
