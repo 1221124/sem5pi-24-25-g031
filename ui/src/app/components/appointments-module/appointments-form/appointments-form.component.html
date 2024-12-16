@@ -16,12 +16,12 @@
     <div *ngFor="let available of getAvailableStaffForRole(staff)">
       <label>
         <input type="checkbox" [(ngModel)]="appointment.AssignedStaff" [value]="available.licenseNumber" />
-        {{ available.name }} (License: {{ available.licenseNumber }})
+        License Number: {{ available.licenseNumber }}
       </label>
     </div>
   
-    <div *ngIf="getAvailableStaffForRole(staff).length < staff.quantity">
-      Not enough staff available for role: {{ staff.role }} with specialization: {{ staff.specialization }}
+    <div *ngIf="getAvailableStaffForRole(staff).length < staff.Quantity">
+      Not enough staff available for role: {{ staff.Role }} with specialization: {{ staff.Specialization }}
     </div>
   </div>
 

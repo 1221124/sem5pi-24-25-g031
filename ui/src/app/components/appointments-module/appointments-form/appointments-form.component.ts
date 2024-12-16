@@ -56,9 +56,12 @@ export class AppointmentsFormComponent implements OnInit {
   accessToken = '';
 
   requiredStaff: {
-    role: string;
-    specialization: string;
-    quantity: number;
+    Role: string;
+    Specialization: string;
+    Quantity: number;
+    IsRequiredInPreparation: boolean;
+    IsRequiredInSurgery: boolean;
+    IsRequiredInCleaning: boolean;
   }[] = [];
   availableStaff: Staff[] = [];
   surgeryRooms: SurgeryRoom[] = [];
@@ -95,10 +98,14 @@ export class AppointmentsFormComponent implements OnInit {
   async initializeData() {
     await this.getSurgeryRooms();
     if (this.request.requestCode) {
+      console.log('Request code:', this.request.requestCode);
       this.appointment.RequestCode = this.request.requestCode;
+      console.log('Appointment request code:', this.appointment.RequestCode);
     }
     if (this.appointment.RequestCode) {
+      console.log('Appointment request code:', this.appointment.RequestCode);
       await this.getRequiredStaff();
+      console.log('Required staff:', this.requiredStaff);
     }
   }
 
@@ -125,9 +132,6 @@ export class AppointmentsFormComponent implements OnInit {
             const operationType = response.body;
             if (operationType) {
               const duration = operationType.PhasesDuration.Preparation + operationType.PhasesDuration.Surgery + operationType.PhasesDuration.Cleaning;
-              //TODO: Review this
-              //add duration in minutes to the start date and set it as the end date
-              //end format must be a string in format YYYY-mm-ddTHH:MM
               const startDate = new Date(this.appointment.AppointmentDate.Start);
               const endDate = new Date(startDate.getTime() + duration * 60000);
               this.appointment.AppointmentDate.End = endDate.toISOString().slice(0, 16);
@@ -150,9 +154,7 @@ export class AppointmentsFormComponent implements OnInit {
         if (opTypeResponse.body) {
           const operationType = opTypeResponse.body;
           if (operationType) {
-            operationType.RequiredStaff.forEach(async (staff: { role: string; specialization: string; number: number; }) => {
-              this.requiredStaff.push({ role: staff.role, specialization: staff.specialization, quantity: staff.number });
-            });
+            this.requiredStaff = operationType.RequiredStaff;
           }
         }
       }
