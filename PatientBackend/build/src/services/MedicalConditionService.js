@@ -57,12 +57,12 @@ let MedicalConditionService = class MedicalConditionService {
      */
     async createMedicalCondition(dto) {
         try {
-            const creatingMedicalCondition = MedicalConditionMap_1.MedicalConditionMap.toEntityFromCreating(dto);
+            const creatingMedicalCondition = MedicalConditionMap_1.MedicalConditionMap.toDomain(dto);
             if (!creatingMedicalCondition) {
                 return Result_1.Result.fail(creatingMedicalCondition);
             }
-            await this.medicalConditionRepo.save(creatingMedicalCondition);
-            const medicalConditionDTO = MedicalConditionMap_1.MedicalConditionMap.toDto(creatingMedicalCondition);
+            await this.medicalConditionRepo.save(await creatingMedicalCondition);
+            const medicalConditionDTO = MedicalConditionMap_1.MedicalConditionMap.toDto(await creatingMedicalCondition);
             return Result_1.Result.ok(medicalConditionDTO);
         }
         catch (error) {
@@ -79,7 +79,8 @@ let MedicalConditionService = class MedicalConditionService {
                 return Result_1.Result.fail("Medical condition not found");
             }
             // Update fields on the existing medical condition entity.
-            medicalCondition.updateFromRequest(dto);
+            console.log("fake update");
+            //medicalCondition.updateFromRequest(dto);
             // Save the updated medical condition entity.
             await this.medicalConditionRepo.save(medicalCondition);
             const updatedMedicalConditionDTO = MedicalConditionMap_1.MedicalConditionMap.toDto(medicalCondition);

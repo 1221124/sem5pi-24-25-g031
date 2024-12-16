@@ -9,10 +9,10 @@ import { Result } from "../core/logic/Result";
 
 import IMedicalConditionRepo from "../services/IRepos/IMedicalConditionRepo";
 import { UpdatingMedicalConditionDto } from '../dto/medical-condition/UpdatingMedicalConditionDto';
-import { MedicalCondition } from '../domain/medical-condition/MedicalCondition';
+import IMedicalConditionService from './IServices/IMedicalConditionService';
 
 @Service()
-export class MedicalConditionService {
+export class MedicalConditionService implements IMedicalConditionService {
   constructor(
     @Inject(config.repos.medicalCondition.name) private medicalConditionRepo: IMedicalConditionRepo
   ) {}

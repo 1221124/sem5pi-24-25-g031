@@ -1,7 +1,8 @@
 import { IMedicalConditionPersistence } from "../../dataschema/IMedicalConditionPersistence";
 import mongoose from "mongoose";
+import { Name } from "../../domain/shared/Name";
 
-const MedicalCondition = new mongoose.Schema(
+const MedicalConditionSchema = new mongoose.Schema(
     {
         id: {
             type: String,
@@ -23,11 +24,11 @@ const MedicalCondition = new mongoose.Schema(
             index: true,
         },
         commonSymptoms: {
-            type: Array,
+            type: Array<String>(),
             required: [true, 'Please enter common symptoms'],
             index: true,
         },
     }
 ); 
 
-export default mongoose.model<IMedicalConditionPersistence & mongoose.Document>('MedicalCondition', MedicalCondition);
+export default mongoose.model<IMedicalConditionPersistence & mongoose.Document>('MedicalCondition', MedicalConditionSchema);

@@ -1,15 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Description = void 0;
-class Description {
-    constructor(description) {
-        this.description = description;
+const ValueObject_1 = require("../../core/domain/ValueObject");
+const Guard_1 = require("../../core/logic/Guard");
+const Result_1 = require("../../core/logic/Result");
+class Description extends ValueObject_1.ValueObject {
+    get value() {
+        return this.props.value;
     }
-    getDescription() {
-        return this.description;
+    constructor(props) {
+        super(props);
     }
-    setDescription(description) {
-        this.description = description;
+    static create(description) {
+        const guardResult = Guard_1.Guard.againstNullOrUndefined(description, 'description');
+        if (!guardResult.succeeded) {
+            return Result_1.Result.fail(guardResult.message);
+        }
+        else {
+            return Result_1.Result.ok(new Description({ value: description }));
+        }
     }
 }
 exports.Description = Description;
