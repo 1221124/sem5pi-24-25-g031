@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Appointment } from '../../../models/appointment';
@@ -97,6 +97,13 @@ export class AppointmentsFormComponent implements OnInit {
 
   async initializeData() {
     await this.getSurgeryRooms();
+    if (this.router.url.includes('create') && !this.request.requestCode) {
+      console.log('Request code:', this.request.requestCode);
+      console.log('No request code found. Redirecting to appointments initial page...');
+      this.router.navigate(['/appointments'], {queryParams: {page : 1}});
+      this.cancel.emit();
+      return;
+    }
     if (this.request.requestCode) {
       console.log('Request code:', this.request.requestCode);
       this.appointment.RequestCode = this.request.requestCode;
@@ -170,6 +177,7 @@ export class AppointmentsFormComponent implements OnInit {
         const response = await this.staffService.getStaffAvailable(this.accessToken, this.appointment.AppointmentDate.Start, this.appointment.AppointmentDate.End);
         if (response.body) {
           this.availableStaff = response.body.staffs;
+          console.log('Available staff:', this.availableStaff);
         }
       }
     } catch (error) {
@@ -185,12 +193,19 @@ export class AppointmentsFormComponent implements OnInit {
   }
 
   getAvailableStaffForRole(staff: any): any[] {
-    return this.availableStaff.filter(a => a.staffRole === staff.role && a.specialization === staff.specialization);
+    console.log('Getting available staff for role and specialization:', staff.Role, staff.Specialization);
+    return this.availableStaff.filter(a => a.staffRole === staff.Role && a.specialization === staff.Specialization);
   }
 
   async addStaff(staff: Staff) {
-    if (this.appointment) {
+    if (this.appointment.RequestCode && this.appointment.AssignedStaff.length < this.requiredStaff.length) {
       this.appointment.AssignedStaff.push(staff.licenseNumber);
+    }
+  }
+
+  async removeStaff(staff: Staff) {
+    if (this.appointment.RequestCode) {
+      this.appointment.AssignedStaff = this.appointment.AssignedStaff.filter(s => s !== staff.licenseNumber);
     }
   }
 
