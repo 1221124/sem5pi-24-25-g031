@@ -7,6 +7,7 @@ const typedi_1 = require("typedi");
 const logger_1 = __importDefault(require("./logger"));
 exports.default = ({ mongoConnection, schemas, controllers, repos, services }) => {
     try {
+        typedi_1.Container.set('mongoConnection', mongoConnection);
         typedi_1.Container.set('logger', logger_1.default);
         /**
          * We are injecting the mongoose models into the DI container.

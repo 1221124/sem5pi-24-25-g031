@@ -38,42 +38,42 @@ exports.default = async ({ expressApp }) => {
         path: config_1.default.services.role.path
     };
     /*** MEDICAL CONDITION ***/
-    // const medicalConditionSchema = {
-    //   name: 'medicalConditionSchema',
-    //   schema: '../persistence/schemas/medicalConditionSchema',
-    // };
-    // const medicalConditionController = {
-    //   name: config.controllers.medicalCondition.name,
-    //   path: config.controllers.medicalCondition.path
-    // }
-    // const medicalConditionService = {
-    //   name: config.services.medicalCondition.name,
-    //   path: config.services.medicalCondition.path
-    // }
-    // const medicalConditionRepo = {
-    //   name: config.repos.medicalCondition.name,
-    //   path: config.repos.medicalCondition.path
-    // }
+    const medicalConditionSchema = {
+        name: 'medicalConditionSchema',
+        schema: '../persistence/schemas/medicalConditionSchema',
+    };
+    const medicalConditionController = {
+        name: config_1.default.controllers.medicalCondition.name,
+        path: config_1.default.controllers.medicalCondition.path
+    };
+    const medicalConditionService = {
+        name: config_1.default.services.medicalCondition.name,
+        path: config_1.default.services.medicalCondition.path
+    };
+    const medicalConditionRepo = {
+        name: config_1.default.repos.medicalCondition.name,
+        path: config_1.default.repos.medicalCondition.path
+    };
     /*** DEPENDENCY INJECTOR ***/
     (0, dependencyInjector_1.default)({
         mongoConnection,
         schemas: [
             userSchema,
             roleSchema,
-            // medicalConditionSchema
+            medicalConditionSchema
         ],
         controllers: [
             roleController,
-            // medicalConditionController
+            medicalConditionController
         ],
         repos: [
             roleRepo,
             userRepo,
-            // medicalConditionRepo
+            medicalConditionRepo
         ],
         services: [
             roleService,
-            // medicalConditionService
+            medicalConditionService
         ]
     });
     logger_1.default.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');

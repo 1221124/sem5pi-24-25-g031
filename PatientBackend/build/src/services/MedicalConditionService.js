@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MedicalConditionService = void 0;
 const typedi_1 = require("typedi");
 const config_1 = __importDefault(require("../../config"));
 const MedicalConditionMap_1 = require("../mappers/MedicalConditionMap");
@@ -107,10 +106,10 @@ let MedicalConditionService = class MedicalConditionService {
         }
     }
 };
-exports.MedicalConditionService = MedicalConditionService;
-exports.MedicalConditionService = MedicalConditionService = __decorate([
+MedicalConditionService = __decorate([
     (0, typedi_1.Service)(),
     __param(0, (0, typedi_1.Inject)(config_1.default.repos.medicalCondition.name)),
     __metadata("design:paramtypes", [Object])
 ], MedicalConditionService);
+exports.default = MedicalConditionService;
 //# sourceMappingURL=MedicalConditionService.js.map

@@ -8,6 +8,7 @@ export default ({ mongoConnection, schemas, controllers, repos, services}: {
                     repos: {name: string; path: string }[],
                     services: {name: string; path: string }[] }) => {
   try {
+    Container.set('mongoConnection', mongoConnection);
     Container.set('logger', LoggerInstance);
 
     /**

@@ -4,10 +4,10 @@ import config from "../../config";
 
 import { CreatingMedicalConditionDto } from '../dto/medical-condition/CreatingMedicalConditionDto';
 import { MedicalConditionDto } from '../dto/medical-condition/MedicalConditionDto';
-import { MedicalConditionService } from "../services/MedicalConditionService";
 
 import { Result } from "../core/logic/Result";
 import { UpdatingMedicalConditionDto } from '../dto/medical-condition/UpdatingMedicalConditionDto';
+import MedicalConditionService from '../services/MedicalConditionService';
 
 @Service()
 export default class MedicalConditionController {

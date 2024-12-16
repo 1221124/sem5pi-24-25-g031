@@ -44,25 +44,25 @@ export default async ({ expressApp }) => {
 
     /*** MEDICAL CONDITION ***/
 
-  // const medicalConditionSchema = {
-  //   name: 'medicalConditionSchema',
-  //   schema: '../persistence/schemas/medicalConditionSchema',
-  // };
+  const medicalConditionSchema = {
+    name: 'medicalConditionSchema',
+    schema: '../persistence/schemas/medicalConditionSchema',
+  };
 
-  // const medicalConditionController = {
-  //   name: config.controllers.medicalCondition.name,
-  //   path: config.controllers.medicalCondition.path
-  // }
+  const medicalConditionController = {
+    name: config.controllers.medicalCondition.name,
+    path: config.controllers.medicalCondition.path
+  }
   
-  // const medicalConditionService = {
-  //   name: config.services.medicalCondition.name,
-  //   path: config.services.medicalCondition.path
-  // }
+  const medicalConditionService = {
+    name: config.services.medicalCondition.name,
+    path: config.services.medicalCondition.path
+  }
   
-  // const medicalConditionRepo = {
-  //   name: config.repos.medicalCondition.name,
-  //   path: config.repos.medicalCondition.path
-  // }
+  const medicalConditionRepo = {
+    name: config.repos.medicalCondition.name,
+    path: config.repos.medicalCondition.path
+  }
 
     /*** DEPENDENCY INJECTOR ***/
 
@@ -71,20 +71,20 @@ export default async ({ expressApp }) => {
     schemas: [
       userSchema,
       roleSchema,
-      // medicalConditionSchema
+      medicalConditionSchema
     ],
     controllers: [
       roleController,
-      // medicalConditionController
+      medicalConditionController
     ],
     repos: [
       roleRepo,
       userRepo,
-      // medicalConditionRepo
+      medicalConditionRepo
     ],
     services: [
       roleService,
-      // medicalConditionService
+      medicalConditionService
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');

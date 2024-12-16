@@ -12,7 +12,7 @@ import { UpdatingMedicalConditionDto } from '../dto/medical-condition/UpdatingMe
 import IMedicalConditionService from './IServices/IMedicalConditionService';
 
 @Service()
-export class MedicalConditionService implements IMedicalConditionService {
+export default class MedicalConditionService implements IMedicalConditionService {
   constructor(
     @Inject(config.repos.medicalCondition.name) private medicalConditionRepo: IMedicalConditionRepo
   ) {}
