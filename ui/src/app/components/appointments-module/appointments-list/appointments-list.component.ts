@@ -21,6 +21,7 @@ export class AppointmentsListComponent implements OnInit {
   @Input() isDoctor: boolean = false;
   @Input() filter: { surgeryRoomNumber: string, date: string, staff: string, patient: string } = { surgeryRoomNumber: '', date: '', staff: '', patient: '' };
   @Output() edit = new EventEmitter<Appointment>();
+  @Output() delete = new EventEmitter<Appointment>();
   @Output() filterChange = new EventEmitter<{ surgeryRoomNumber: string, date: string, staff: string, patient: string }>();
 
   accessToken = '';

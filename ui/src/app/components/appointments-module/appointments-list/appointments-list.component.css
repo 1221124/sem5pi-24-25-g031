@@ -184,6 +184,28 @@
     text-align: left;
     vertical-align: middle;
   }
+
+.btn-update {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.btn-delete {
+  background-color: red; 
+  border-color: red;
+  color: white;
+}
+
+.btn-update:hover {
+  background-color: #1e7e34;
+  border-color: #1e7e34;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+}
   
   @media (max-width: 768px) {
     .table thead {

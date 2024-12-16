@@ -14,12 +14,12 @@
       <tbody>
         <tr *ngFor="let appointment of getPaginatedAppointments()">
           <td>{{ appointment.AppointmentNumber.toUpperCase() }}</td>
-          <td>{{ appointment.RequestCode }}</td>
+          <td>{{ appointment.RequestCode.toUpperCase() }}</td>
           <td>{{ appointment.SurgeryRoomNumber }}</td>
           <td>
             <div>
-              <strong>Start:</strong> {{ appointment.AppointmentDate.Start | date:'short' }}<br>
-              <strong>End:</strong> {{ appointment.AppointmentDate.End | date:'short' }}
+              <strong>Start:</strong> {{ appointment.AppointmentDate.Start | date:'yyyy-MM-dd HH:mm' }}<br>
+              <strong>End:</strong> {{ appointment.AppointmentDate.End | date:'yyyy-MM-dd HH:mm' }}                               
             </div>
           </td>
           <td>
@@ -30,10 +30,17 @@
             </ul>
           </td>
           <td *ngIf="isDoctor">
-            <button (click)="edit.emit(appointment)">Edit</button>
+            <button (click)="edit.emit(appointment)" class="btn btn-update">Edit</button>
+            <button (click)="delete.emit(appointment)" class="btn btn-delete">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
   </div>
 </div>

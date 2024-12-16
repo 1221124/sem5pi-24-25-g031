@@ -195,24 +195,28 @@ export class AppointmentsService {
     });
 
     const dto = {
-      "Id": id,
-      "RequestCode": {
-        "Value": appointment.RequestCode
-      },
       "SurgeryRoomNumber": appointment.SurgeryRoomNumber,
-      "AppointmentNumber": {
-        "Value": appointment.AppointmentNumber
-      },
       "AppointmentDate": {
         "Start": appointment.AppointmentDate.Start,
         "End": appointment.AppointmentDate.End
       },
-      "AssignedStaff": appointment.AssignedStaff.map(staff => ({
-        "Value": staff
-      }))
+      "AssignedStaff": appointment.AssignedStaff
     };
 
     const options = { ...httpOptions, headers};
-    return await firstValueFrom(this.http.put(`${environment.appointments}/${appointment.Id}`, dto, options));
+    return await firstValueFrom(this.http.patch(`${environment.appointments}/${appointment.Id}`, dto, options));
+  }
+
+  async delete(id: string, accessToken: string) {
+    const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    if (!guidRegex.test(id)) {
+      throw new Error('Invalid ID format. Please provide a valid GUID.');
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`
+    });
+    const options = { ...httpOptions, headers};
+    return await firstValueFrom(this.http.delete(`${environment.appointments}/${id}`, options));
   }
 }

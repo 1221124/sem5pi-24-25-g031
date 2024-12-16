@@ -49,7 +49,7 @@ export class AppointmentsComponent implements OnInit {
   currentPage: number = 1;
   totalItems: number = 0;
   totalPages: number = 1;
-  itemsPerPage = 2;
+  itemsPerPage = 1;
   filter = {
     surgeryRoomNumber : '',
     date: '',
@@ -175,6 +175,7 @@ export class AppointmentsComponent implements OnInit {
           requestCodes.includes(ap.RequestCode)
         );
       }
+      this.appointments.sort((a, b) => a.AppointmentNumber.localeCompare(b.AppointmentNumber));
     } catch (error) {
       if ((error as any).status === 401 || (error as any).status === 403) {
         this.authService.updateMessage('You are not authorized to view Appointments! Please log in...');
@@ -186,6 +187,10 @@ export class AppointmentsComponent implements OnInit {
         setTimeout(() => this.back(), 3000);
       }
       this.appointments = [];
+    } finally {
+      this.totalItems = this.appointments.length;
+      this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+      this.currentPage = 1;
     }
   }
 
@@ -287,6 +292,15 @@ export class AppointmentsComponent implements OnInit {
   async onEdit(appointment: Appointment) {
     this.selectedAppointment = appointment;
     await this.showAppointmentsForm();
+  }
+
+  async onDelete(appointment: Appointment) {
+    try {
+      await this.service.delete(appointment.Id, this.accessToken);
+      await this.showAppointmentsList();
+    } catch (error) {
+      console.error('Error deleting appointment:', error);
+    }
   }
 
   async onCancel() {
