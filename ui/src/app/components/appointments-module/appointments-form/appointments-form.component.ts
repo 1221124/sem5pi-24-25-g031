@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Appointment } from '../../../models/appointment';
@@ -65,6 +65,8 @@ export class AppointmentsFormComponent implements OnInit {
   }[] = [];
   availableStaff: Staff[] = [];
   surgeryRooms: SurgeryRoom[] = [];
+  staffLoading = false;
+  staffMessage = '';
 
   constructor(
     private service: AppointmentsService,
@@ -167,17 +169,25 @@ export class AppointmentsFormComponent implements OnInit {
   }
 
   async getStaffsAvailable() {
+    this.staffLoading = true;
+    this.staffMessage = '';
     this.availableStaff = [];
     try {
       if (this.appointment?.AppointmentDate.Start && this.appointment?.AppointmentDate.End) {
         const response = await this.staffService.getStaffAvailable(this.accessToken, this.appointment.AppointmentDate.Start, this.appointment.AppointmentDate.End);
         if (response.body) {
           this.availableStaff = response.body.staffs;
-          console.log('Available staff:', this.availableStaff);
         }
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setTimeout(() => {
+        if (this.availableStaff.length < this.requiredStaff.length) {
+          this.staffMessage = 'Not enough staff available for this appointment!';
+        }
+        this.staffLoading = false;
+      }, 2000);
     }
   }
 
@@ -228,12 +238,23 @@ export class AppointmentsFormComponent implements OnInit {
     }
   }
 
-  cancelForm() {
-    this.cancel.emit();
+  isFormValid(): boolean {
+    return !!this.appointment.RequestCode &&
+           !!this.appointment.SurgeryRoomNumber &&
+           !!this.appointment.AppointmentDate.Start &&
+           this.requiredStaff.every(staff => {
+             const assignedCount = this.appointment.AssignedStaff.filter(
+               licenseNumber => {
+                 const assignedStaff = this.availableStaff.find(s => s.licenseNumber === licenseNumber);
+                 return assignedStaff?.staffRole === staff.Role && assignedStaff?.specialization === staff.Specialization;
+               }
+             ).length;
+  
+             return assignedCount == staff.Quantity;
+           });
   }
 
-  async onRequestCodeChange() {
-    await this.getRequiredStaff();
-    await this.getStaffsAvailable();
+  cancelForm() {
+    this.cancel.emit();
   }
 }

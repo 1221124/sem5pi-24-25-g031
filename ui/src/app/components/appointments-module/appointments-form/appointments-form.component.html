@@ -12,34 +12,41 @@
     </select>
   </div>
 
-  <div *ngIf="requiredStaff.length > 0">
+  <div *ngIf="requiredStaff.length > 0 && appointment.AppointmentDate.Start" class="form-group">
     <div *ngFor="let staff of requiredStaff">
       <ng-container *ngIf="getAvailableStaffForRole(staff) as availableStaff">
         <div *ngIf="availableStaff.length > 0">
-          <h5>{{ staff.Role }} - {{ staff.Specialization }}</h5>
           
-          <div *ngFor="let available of availableStaff" class="staff-selection">
-            <input type="checkbox" 
-                   [id]="available.licenseNumber"
-                   [value]="available.licenseNumber" 
-                   (change)="onStaffSelectionChange(available, $event)" 
-                   [checked]="appointment.AssignedStaff.includes(available.licenseNumber)">
-            <label [for]="available.licenseNumber">
-              {{ available.licenseNumber }} - {{ available.FullName.FirstName }} {{ available.FullName.LastName }}
-            </label>
+          <div class="staff-group-container">
+            <h5 class="staff-group-title">{{ staff.Role }} - {{ staff.Specialization }}</h5>
+            
+            <div class="staff-list">
+              <div *ngFor="let available of availableStaff" class="staff-selection">
+                <input type="checkbox" 
+                       [id]="available.licenseNumber"
+                       [value]="available.licenseNumber" 
+                       (change)="onStaffSelectionChange(available, $event)" 
+                       [checked]="appointment.AssignedStaff.includes(available.licenseNumber)">
+                <label [for]="available.licenseNumber">
+                  {{ available.licenseNumber }} - {{ available.FullName.FirstName }} {{ available.FullName.LastName }}
+                </label>
+              </div>
+            </div>
           </div>
+          
         </div>
         
-        <div *ngIf="availableStaff.length < staff.Quantity">
-          Not enough staff available for role: {{ staff.Role }} with specialization: {{ staff.Specialization }}
+        <div *ngIf="staffMessage" class="alert alert-warning">
+          {{ staffMessage }}
         </div>
+        
       </ng-container>
     </div>
-  </div>
+  </div>  
 
   <div class="form-group">
     <button type="submit" class="btn btn-primary" 
-      [disabled]="!appointment.RequestCode || !appointment.SurgeryRoomNumber || !appointment.AppointmentDate.Start">
+    [disabled]="!isFormValid()">
       {{ appointment.Id ? 'Update Appointment' : 'Create Appointment' }}
     </button>
   </div>

@@ -44,6 +44,15 @@ input:disabled {
   background-color: #f9f9f9;
 }
 
+button:disabled {
+  background-color: lightgray;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: lightgray;
+}
+
 .form-buttons {
   display: flex;
   justify-content: space-between;

@@ -162,25 +162,25 @@ export class AppointmentsService {
       'Authorization': `Bearer ${accessToken}`
     });
 
-    const dto = {
-      "RequestCode": {
-        "Value": appointment.RequestCode
+    if (!appointment.RequestCode || !appointment.SurgeryRoomNumber || !appointment.AppointmentNumber || !appointment.AppointmentDate || !appointment.AssignedStaff) {
+      throw new Error('Required fields are missing');
+    }
+
+    const creatingAppointment = {
+      "requestCode": appointment.RequestCode,
+      "surgeryRoomNumber": appointment.SurgeryRoomNumber,
+      "appointmentNumber": appointment.AppointmentNumber,
+      "appointmentDate": {
+        "start": appointment.AppointmentDate.Start,
+        "end": appointment.AppointmentDate.End
       },
-      "SurgeryRoomNumber": appointment.SurgeryRoomNumber,
-      "AppointmentNumber": {
-        "Value": appointment.AppointmentNumber
-      },
-      "AppointmentDate": {
-        "Start": appointment.AppointmentDate.Start,
-        "End": appointment.AppointmentDate.End
-      },
-      "AssignedStaff": appointment.AssignedStaff.map(staff => ({
-        "Value": staff
-      }))
+      "assignedStaff": appointment.AssignedStaff
     };
 
     const options = { ...httpOptions, headers};
-    return await firstValueFrom(this.http.post(`${environment.appointments}`, dto, options));
+
+    console.log("Appointment DTO: ", creatingAppointment);
+    return await firstValueFrom(this.http.post(`${environment.appointments}`, creatingAppointment, options));
   }
 
   async update(id: string, appointment: Appointment, accessToken: string) {
