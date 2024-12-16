@@ -13,7 +13,6 @@ exports.default = ({ app }) => {
      * @TODO Explain why they are here
      */
     app.get('/status', (req, res) => {
-        console.log('status');
         res.status(200).end();
     });
     app.head('/status', (req, res) => {
