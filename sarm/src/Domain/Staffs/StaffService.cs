@@ -645,8 +645,12 @@ namespace Domain.Staffs
                     return false;
                 }
 
+                var availabilitySlotFullyOverlaps = false;
+
                 foreach (var slot in staff.SlotAvailability) {
                     if (Slot.FullyOverlaps(slot, new Slot(startTime, endTime))) {
+                        Console.WriteLine("Slot of staff with license number " + staff.LicenseNumber + " fully overlaps with the requested slot.");
+                        availabilitySlotFullyOverlaps = true;
                         foreach (var appointment in appointments) {
                             if (appointment.AssignedStaff.Contains(staff.LicenseNumber)
                             && Slot.Overlaps(appointment.AppointmentDate, slot)
@@ -654,10 +658,12 @@ namespace Domain.Staffs
                                 return false;
                             }
                         }
+                        if (availabilitySlotFullyOverlaps) break;
                     }
                 }
 
-                return true;
+                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is available for the requested slot.");
+                return availabilitySlotFullyOverlaps;
             } catch (Exception e) {
                 return false;
             }

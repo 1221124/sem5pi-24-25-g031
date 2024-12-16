@@ -162,11 +162,8 @@ namespace Controllers
         [Authorize(Roles = "Admin, Doctor")]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetByAvailabilityAsync([FromQuery] string start, [FromQuery] string end)
         {
-            start = start.Replace("T", " ");
-            end = end.Replace("T", " ");
-
-            var startTime = DateTime.ParseExact(start, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-            var endTime = DateTime.ParseExact(end, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+            var startTime = DateTime.ParseExact(start, "yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture);
+            var endTime = DateTime.ParseExact(end, "yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture);
             
             var staffList = await _service.GetAllAsync();
             var availableStaff = new List<StaffDto>();
@@ -174,6 +171,8 @@ namespace Controllers
             foreach (var staff in staffList)
             {
                 var appointments = await _appointmentService.GetByLicenseNumberAsync(staff.LicenseNumber);
+                if (appointments == null) appointments = [];
+                Console.WriteLine("Appointments count for staff " + staff.LicenseNumber.Value + ": " + appointments.Count);
                 if (_service.IsStaffAvailable(staff, startTime, endTime, appointments))
                 {
                     availableStaff.Add(staff);
