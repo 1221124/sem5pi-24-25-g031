@@ -41,10 +41,10 @@ namespace Controllers
             _operationRequestService = operationRequestService;
         }
 
-        // GET: api/Staff/?pageNumber=1
+        // GET: api/Staff/?name={name}&email={email}&specialization={specialization}
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> Get([FromQuery] string? pageNumber,[FromQuery] string? name, [FromQuery] string? email, [FromQuery] string? specialization)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> Get([FromQuery] string? name, [FromQuery] string? email, [FromQuery] string? specialization)
         {
             var staff = await _service.GetAsync(name, email, specialization);
 
@@ -54,15 +54,6 @@ namespace Controllers
             }
 
             var totalItems = staff.Count;
-            
-            if (pageNumber != null && int.TryParse(pageNumber, out int page))
-            {
-                var paginatedStaffs = staff
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-                staff = paginatedStaffs;
-            }
 
             return Ok(new { staff = staff, totalItems = totalItems });
         }

@@ -32,13 +32,9 @@ export class StaffsService {
   async getStaff(filter: any, accessToken: string) {
     let params = new HttpParams();
 
-    if (filter.pageNumber > 0) {
-      params = params.set('pageNumber', filter.pageNumber.toString());
-      if (filter.name !== '') params = params.set('name', filter.name);
-      if (filter.email !== '') params = params.set('email', filter.email);
-      if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
-
-    }
+    if (filter.name !== '') params = params.set('name', filter.name);
+    if (filter.email !== '') params = params.set('email', filter.email);
+    if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
