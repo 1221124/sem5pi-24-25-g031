@@ -28,7 +28,7 @@ namespace Controllers
 
             if (roomTypes == null)
             {
-                return Ok(new { roomTypes = new List<RoomTypeDto>{}, totalItems = 0 });
+                roomTypes = [];
             }
 
             return Ok(new { roomTypes = roomTypes, totalItems = roomTypes.Count });

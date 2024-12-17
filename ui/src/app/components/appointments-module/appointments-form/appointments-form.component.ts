@@ -3,7 +3,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Appointment } from '../../../models/appointment';
+import { Appointment } from '../../../models/appointment.model';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import { OperationRequestsService } from '../../../services/operation-requests/operation-requests.service';
 import { OperationTypesService } from '../../../services/operation-types/operation-types.service';
@@ -11,7 +11,7 @@ import { StaffsService } from '../../../services/staffs/staffs.service';
 import { Staff } from '../../../models/staff.model';
 import { SurgeryRoomsService } from '../../../services/surgery-rooms/surgery-rooms.service';
 import { OperationRequest } from '../../../models/operation-request.model';
-import { SurgeryRoom } from '../../../models/surgery-room';
+import { SurgeryRoom } from '../../../models/surgery-room.model';
 
 @Component({
   selector: 'app-appointments-form',

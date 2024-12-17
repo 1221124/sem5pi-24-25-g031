@@ -3,7 +3,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
-import { Appointment } from '../../../models/appointment';
+import { Appointment } from '../../../models/appointment.model';
 
 @Component({
   selector: 'app-appointments-list',

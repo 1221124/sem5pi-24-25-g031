@@ -16,9 +16,9 @@ import { PatientComponent } from './components/patient/patient-main/patient.comp
 import { NurseMenuComponent } from './components/nurse-menu/nurse-menu.component';
 import { TechnicianMenuComponent } from './components/technician-menu/technician-menu.component';
 import { AdminPatientsMainComponent } from './components/admin-patients/admin-patients-main/admin-patients-main.component';
-import { ListStaffsComponent } from './components/staffs-main/list-staffs/list-staffs.component';
 import {OperationTypesComponent} from './components/operation-types-module/operation-types/operation-types.component';
 import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
+import { RoomTypesComponent } from './components/room-types/room-types.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -67,6 +67,7 @@ export const routes: Route[] = [
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/users', component: AdminUsersComponent },
+  { path: 'admin/roomTypes', component: RoomTypesComponent },
   { path: 'admin/prolog', component: PrologComponent },
   {
     path: 'admin/operationTypes',

@@ -72,7 +72,7 @@ namespace DDDNetCore.src.Domain.RoomTypes
                 int lastNumber = 0;
                 if (!string.IsNullOrEmpty(lastCode) && lastCode.Trim().ToLower().StartsWith("roty"))
                 {
-                    if (int.TryParse(lastCode[3..], out var parsedNumber))
+                    if (int.TryParse(lastCode[4..], out var parsedNumber))
                     {
                         lastNumber = parsedNumber;
                     }

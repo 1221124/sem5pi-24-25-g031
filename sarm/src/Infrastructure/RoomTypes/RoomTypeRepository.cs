@@ -32,7 +32,7 @@ namespace DDDNetCore.src.Infrastructure.RoomTypes
                 .OrderByDescending(x => x.RoomTypeCode)
                 .FirstOrDefaultAsync();
 
-            return last?.RoomTypeCode.Value;
+            return last?.RoomTypeCode;
         }
 
     }

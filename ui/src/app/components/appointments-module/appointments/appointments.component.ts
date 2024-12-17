@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { Appointment } from '../../../models/appointment';
+import { Appointment } from '../../../models/appointment.model';
 import { OperationRequestsService } from '../../../services/operation-requests/operation-requests.service';
 import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
 import { AppointmentsFormComponent } from '../appointments-form/appointments-form.component';

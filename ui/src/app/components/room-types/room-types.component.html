@@ -1,0 +1,49 @@
+<div class="container">
+    <h2>Room Types</h2>
+  
+    <div *ngIf="message" class="alert" [ngClass]="{'alert-success': !isError, 'alert-danger': isError}">
+      {{ message }}
+    </div>
+  
+    <button class="btn btn-toggle" (click)="toggleForm()">
+      {{ showForm ? 'Close' : 'Add New Room Type' }}
+    </button>
+
+   <button class="btn btn-secondary" (click)="back()">
+      Back to Admin
+    </button>
+  
+    <form *ngIf="showForm" (ngSubmit)="submitForm()" class="room-type-form">
+  
+        <div class="form-group">
+            <label for="name">Nome</label>
+            <input
+              id="name"
+              [(ngModel)]="roomType.Name"
+              name="Name"
+              class="form-control"
+              type="text"
+              required
+              (ngModelChange)="isNameValid()"
+              [ngClass]="{'is-invalid': !isNameValid() && roomType.Name}"
+            />
+            <div *ngIf="!isNameValid() && roomType.Name" class="text-danger">
+              A room type with this name already exists. Please choose a different name.
+            </div>
+          </div>
+  
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" [(ngModel)]="roomType.Description" name="Description" class="form-control"></textarea>
+      </div>
+  
+      <div class="form-group form-check">
+        <input id="availableForSurgeries" [(ngModel)]="roomType.AvailableForSurgeries" name="AvailableForSurgeries" class="form-check-input" type="checkbox" />
+        <label for="availableForSurgeries" class="form-check-label">Available For Surgeries</label>
+      </div>      
+  
+      <button type="submit" [disabled]="!isFormValid()" class="btn btn-primary">
+        Submit
+      </button>
+    </form>
+  </div>  
