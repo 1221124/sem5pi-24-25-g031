@@ -35,7 +35,7 @@ export class AppointmentsListComponent implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not an admin or a doctor! Please login...');
       this.authService.updateIsError(true);
-      setTimeout(() => this.router.navigate(['']), 3000);
+      this.router.navigate(['']);
       return;
     }
 
@@ -45,7 +45,7 @@ export class AppointmentsListComponent implements OnInit {
     && !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
       this.authService.updateMessage('You are not authenticated or are not an admin or a doctor! Redirecting to login...');
       this.authService.updateIsError(true);
-      setTimeout(() => this.router.navigate(['']), 3000);
+      this.router.navigate(['']);
       return;
     }
   }

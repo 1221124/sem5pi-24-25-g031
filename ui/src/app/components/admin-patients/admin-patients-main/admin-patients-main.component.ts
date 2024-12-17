@@ -85,9 +85,7 @@ export class AdminPatientsMainComponent {
   private handleAuthenticationError(message: string) {
     this.authService.updateMessage(message);
     this.authService.updateIsError(true);
-    setTimeout(() => {
-      this.router.navigate(['']);
-    }, 3000);
+    this.router.navigate(['']);
   }
 
   displayError(errorMessage: string) {

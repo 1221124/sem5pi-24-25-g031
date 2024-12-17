@@ -17,9 +17,7 @@ export class TechnicianMenuComponent implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not a technician! Please login...');
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
+      this.router.navigate(['']);
       return;
     }
 
@@ -29,10 +27,7 @@ export class TechnicianMenuComponent implements OnInit {
         'You are not authenticated or are not a technician! Redirecting to login...'
       );
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
-
+      this.router.navigate(['']);
       return;
     }
   }

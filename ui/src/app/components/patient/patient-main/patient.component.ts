@@ -89,9 +89,7 @@ export class PatientComponent {
   private handleAuthenticationError(message: string) {
     this.authService.updateMessage(message);
     this.authService.updateIsError(true);
-    setTimeout(() => {
-      this.router.navigate(['']);
-    }, 3000);
+    this.router.navigate(['']);
   }
 
   private handleError(message: string) {

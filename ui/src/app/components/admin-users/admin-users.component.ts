@@ -61,9 +61,7 @@ export class AdminUsersComponent implements OnInit {
         'You are not authenticated or authorized! Redirecting to login...'
       );
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
+      this.router.navigate(['']);
       return;
     }
 
@@ -73,9 +71,7 @@ export class AdminUsersComponent implements OnInit {
         'You are not authenticated or authorized! Redirecting to login...'
       );
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
+      this.router.navigate(['']);
       return;
     }
     

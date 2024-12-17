@@ -22,10 +22,7 @@ export class DoctorMenuComponent implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not a doctor! Please login...');
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
-
+      this.router.navigate(['']);
       return;
     }
 
@@ -35,10 +32,7 @@ export class DoctorMenuComponent implements OnInit {
         'You are not authenticated or authorized! Redirecting to login...'
       );
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
-
+      this.router.navigate(['']);
       return;
     }
   }

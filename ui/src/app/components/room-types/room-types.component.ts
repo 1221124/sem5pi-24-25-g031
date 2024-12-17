@@ -45,7 +45,7 @@ export class RoomTypesComponent implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
       this.authService.updateIsError(true);
-      setTimeout(() => this.router.navigate(['']), 3000);
+      this.router.navigate(['']);
       return;
     }
 
@@ -53,7 +53,7 @@ export class RoomTypesComponent implements OnInit {
     if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
       this.authService.updateMessage('You are not authenticated or are not an admin! Redirecting to login...');
       this.authService.updateIsError(true);
-      setTimeout(() => this.router.navigate(['']), 3000);
+      this.router.navigate(['']);
       return;
     }
 

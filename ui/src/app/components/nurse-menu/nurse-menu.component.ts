@@ -18,9 +18,7 @@ export class NurseMenuComponent implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not a nurse! Please login...');
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
+      this.router.navigate(['']);
       return;
     }
 
@@ -30,10 +28,7 @@ export class NurseMenuComponent implements OnInit {
         'You are not authenticated or are not a nurse! Redirecting to login...'
       );
       this.authService.updateIsError(true);
-      setTimeout(() => {
-        this.router.navigate(['']);
-      }, 3000);
-
+      this.router.navigate(['']);
       return;
     }
   }
