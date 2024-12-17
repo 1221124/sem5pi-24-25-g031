@@ -40,7 +40,7 @@ namespace Infrastructure.Appointments
 
         public async Task<List<Appointment>> GetByLicenseNumberAsync(LicenseNumber licenseNumber)
         {
-            return await _objs.Where(x => x.AssignedStaff.Contains(licenseNumber)).ToListAsync();
+            return await _objs.Where(x => x.AssignedStaff.Any(y => y.Value == licenseNumber.Value)).ToListAsync();
         }
     }
 }

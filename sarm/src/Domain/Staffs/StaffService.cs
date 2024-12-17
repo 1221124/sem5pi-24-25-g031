@@ -646,15 +646,16 @@ namespace Domain.Staffs
                 }
 
                 var availabilitySlotFullyOverlaps = false;
+                var newAppointmentSlot = new Slot(startTime, endTime);
 
                 foreach (var slot in staff.SlotAvailability) {
-                    if (Slot.FullyOverlaps(slot, new Slot(startTime, endTime))) {
+                    if (Slot.FullyOverlaps(slot, newAppointmentSlot)) {
                         Console.WriteLine("Slot of staff with license number " + staff.LicenseNumber + " fully overlaps with the requested slot.");
                         availabilitySlotFullyOverlaps = true;
                         foreach (var appointment in appointments) {
-                            if (appointment.AssignedStaff.Contains(staff.LicenseNumber)
-                            && Slot.Overlaps(appointment.AppointmentDate, slot)
-                            && Slot.Overlaps(appointment.AppointmentDate, new Slot(startTime, endTime))) {
+                            if (Slot.Overlaps(appointment.AppointmentDate, slot)
+                            && Slot.Overlaps(appointment.AppointmentDate, newAppointmentSlot)) {
+                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not available for the requested slot.");
                                 return false;
                             }
                         }

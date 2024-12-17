@@ -107,7 +107,7 @@ namespace Domain.Shared
 
         public static bool Overlaps(Slot slot1, Slot slot2)
         {
-            return slot1.Start < slot2.End && slot2.Start < slot1.End;
+            return slot1.Start <= slot2.End && slot1.End >= slot2.Start;
         }
 
         public static bool FullyOverlaps(Slot slot1, Slot slot2)
