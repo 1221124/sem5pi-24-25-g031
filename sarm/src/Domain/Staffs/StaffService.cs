@@ -588,43 +588,63 @@ namespace Domain.Staffs
                 var availabilitySlotFullyOverlaps = false;
                 var newAppointmentSlot = new Slot(startTime, endTime);
 
-                foreach (var slot in staff.SlotAvailability) {
-                    if (Slot.FullyOverlaps(slot, newAppointmentSlot)) {
-                        Console.WriteLine("Slot of staff with license number " + staff.LicenseNumber + " fully overlaps with the requested slot.");
-                        availabilitySlotFullyOverlaps = true;
-                        foreach (var apReqStaff in appointments) {
-                            var appointment = apReqStaff.Key;
-                            var operationType = apReqStaff.Value;
+                foreach (var slot in staff.SlotAvailability)
+                {
+                    foreach (var apReqStaff in appointments)
+                    {
+                        var appointment = apReqStaff.Key;
+                        var operationType = apReqStaff.Value;
 
-                            var surgeryStart = appointment.AppointmentDate.Start.AddMinutes(operationType.PhasesDuration.Surgery);
-                            var cleaningStart = surgeryStart.AddMinutes(operationType.PhasesDuration.Cleaning);
+                        var surgeryStart = appointment.AppointmentDate.Start.AddMinutes(operationType.PhasesDuration.Surgery);
+                        var cleaningStart = surgeryStart.AddMinutes(operationType.PhasesDuration.Cleaning);
 
-                            var requiredStaff = operationType.RequiredStaff.Find(s => s.Role.ToString() == staff.StaffRole.ToString() && s.Specialization == staff.Specialization);                            
-                            
-                            if (requiredStaff == null) {
-                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not required for the requested operation type.");
-                                return false;
-                            }
+                        var requiredStaff = operationType.RequiredStaff
+                            .Find(s => s.Role.ToString() == staff.StaffRole.ToString() && s.Specialization == staff.Specialization);
 
-                            if (requiredStaff.IsRequiredInPreparation && Slot.Overlaps(newAppointmentSlot, new Slot(appointment.AppointmentDate.Start, surgeryStart))) {
-                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not available for the requested slot.");
-                                return false;
-                            }
-                            if (requiredStaff.IsRequiredInSurgery && Slot.Overlaps(newAppointmentSlot, new Slot(surgeryStart, cleaningStart))) {
-                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not available for the requested slot.");
-                                return false;
-                            }
-                            if (requiredStaff.IsRequiredInCleaning && Slot.Overlaps(newAppointmentSlot, new Slot(cleaningStart, appointment.AppointmentDate.End))) {
-                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not available for the requested slot.");
-                                return false;
+                        if (requiredStaff == null)
+                        {
+                            Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not required for the requested operation type.");
+                            return false;
+                        }
+
+                        var phaseIntervals = new Dictionary<string, Slot>
+                        {
+                            { "Preparation", new Slot(appointment.AppointmentDate.Start, surgeryStart) },
+                            { "Surgery", new Slot(surgeryStart, cleaningStart) },
+                            { "Cleaning", new Slot(cleaningStart, appointment.AppointmentDate.End) }
+                        };
+
+                        foreach (var phase in phaseIntervals)
+                        {
+                            var isRequiredInPhase = requiredStaff.GetType()
+                                .GetProperty($"IsRequiredIn{phase.Key}")?.GetValue(requiredStaff) as bool?;
+
+                            if (isRequiredInPhase == true)
+                            {
+                                if (Slot.FullyOverlaps(slot, phase.Value))
+                                {
+                                    Console.WriteLine($"Slot of staff with license number {staff.LicenseNumber} fully overlaps with the {phase.Key} phase.");
+                                    availabilitySlotFullyOverlaps = true;
+                                } else {
+                                    Console.WriteLine($"Slot of staff with license number {staff.LicenseNumber} does not fully overlap with the {phase.Key} phase.");
+                                    return false;
+                                }
+
+                                if (Slot.Overlaps(newAppointmentSlot, phase.Value))
+                                {
+                                    Console.WriteLine($"Staff with license number {staff.LicenseNumber} is not available for the {phase.Key} phase.");
+                                    return false;
+                                }
                             }
                         }
-                        if (availabilitySlotFullyOverlaps) break;
                     }
+
+                    if (availabilitySlotFullyOverlaps)
+                        Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is available for the requested slot.");
+                        return true;
                 }
 
-                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is available for the requested slot.");
-                return availabilitySlotFullyOverlaps;
+                return false;
             } catch (Exception e) {
                 return false;
             }
