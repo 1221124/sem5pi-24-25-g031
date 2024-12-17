@@ -1,0 +1,92 @@
+Privacy Policy for SARM G031 System
+
+Effective Date: 2024/12/17
+
+Introduction
+
+The privacy and security of your personal data are of paramount importance to us. This Privacy Policy outlines the types of personal data we collect, how it is used, stored, and retained, and your rights concerning this data. By using the SARM G031 system, you acknowledge that you have read and understood this Privacy Policy.
+
+This Privacy Policy applies to all users, including patients, administrators, and other individuals who interact with the system. Please read the following information carefully to understand our views and practices regarding your personal data and how we will treat it.
+
+1. Data We Collect
+
+We collect and process personal data in the course of providing our services. This data may include:
+
+- Personal Identification Information: Name, email address, contact details, date of birth, gender, etc.
+- Medical Data: Health records, treatments, diagnoses, and other medical information related to your healthcare.
+- Login Data: Username, password, authentication tokens, and other information required to verify your identity.
+- Usage Data: Information about how you interact with the system, including IP addresses, browser type, device information, and usage patterns.
+
+2. Purpose of Data Collection
+
+We collect and process personal data for the following purposes:
+
+- To provide and maintain healthcare services.
+- To manage user accounts and authentication.
+- To comply with legal and regulatory requirements.
+- To ensure the security of our systems and prevent fraud.
+- To improve the functionality and performance of the system.
+- To communicate with you about updates, notifications, and important information regarding your healthcare.
+
+3. Data Retention
+
+We retain your personal data for as long as necessary to fulfill the purposes for which it was collected, including compliance with legal, regulatory, or contractual obligations. The following outlines our data retention practices:
+
+- Medical Records: Your medical records will be retained for a minimum period of [X years] after the last interaction, in compliance with applicable healthcare regulations. After this period, your records will be securely deleted.
+- Personal Data: Personal data will be retained for [X years] or until your account is deleted, whichever comes first, based on legal or contractual obligations. You can request deletion of your personal data after this retention period, except for data that must be retained for legal purposes.
+- Anonymized Data: Some anonymized data may be retained for research, analysis, and statistical purposes. This data is stripped of identifiable information to ensure your privacy.
+- Deletion Requests: If you wish to delete your data, you can do so by requesting this via your profile settings, and the data will be deleted immediately upon verification of your request.
+
+4. Data Deletion Procedures
+
+- Patient-Initiated Deletion: If you wish to delete your account and personal data, you can request deletion by following the deletion process in your profile settings. Upon receiving the request, we will send a verification link to your registered email address. Once you click on the verification link, your account and all personal data will be permanently deleted from our system.
+- Admin-Initiated Deletion: If an administrator deletes your account, the deletion will be performed immediately upon confirmation by the admin, and all your personal data, including medical records, will be permanently erased.
+
+Please note that certain data may be retained for legal or contractual purposes, even after your account is deleted. This data will be securely stored and deleted when it is no longer required.
+
+5. Legal Basis for Processing Personal Data
+
+We process your personal data based on the following legal grounds:
+
+- Consent: We may process your data based on your explicit consent, particularly when you provide it during the registration process or when you make specific requests.
+- Contractual Necessity: We process data that is necessary to perform the contract between you and us, including providing healthcare services.
+- Legal Obligation: We process data to comply with legal and regulatory requirements, such as healthcare laws, tax regulations, and accounting obligations.
+- Legitimate Interests: We process data based on legitimate business interests, such as improving our services, ensuring system security, and preventing fraud.
+
+6. Sharing Your Data
+
+We may share your personal data in the following circumstances:
+
+- With Service Providers: We may share your data with trusted third-party service providers who assist us in providing our services (e.g., hosting providers, email service providers). These third parties are required to maintain the confidentiality and security of your data.
+- With Legal Authorities: We may share your data if required by law, regulation, or legal process (e.g., a subpoena or court order).
+- For Research Purposes: Some anonymized data may be used for research and statistical analysis to improve healthcare services. This data is never personally identifiable.
+
+7. Security of Your Data
+
+We take the security of your personal data seriously. We implement a range of technical, administrative, and physical measures to safeguard your data from unauthorized access, use, alteration, and destruction. These include:
+
+- Secure encryption of sensitive data (e.g., passwords, medical records).
+- Regular security audits and vulnerability assessments.
+- Access controls to ensure that only authorized personnel can access your data.
+
+However, no data transmission over the internet or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your personal data, we cannot guarantee its absolute security.
+
+8. Your Rights Regarding Your Personal Data
+
+As a user of the SARM G031 system, you have certain rights concerning your personal data. These rights include:
+
+- Right to Access: You have the right to request access to the personal data we hold about you. Upon request, we will provide a copy of your data and information regarding how it is processed.
+- Right to Rectification: You can request corrections to any inaccurate or incomplete personal data we hold about you.
+- Right to Erasure (Right to be Forgotten): You have the right to request the deletion of your personal data from our system. If you are a patient, this can be done by following the deletion process outlined above.
+- Right to Object: You have the right to object to the processing of your data in certain circumstances.
+- Right to Data Portability: You can request to receive your personal data in a commonly used format to transfer it to another service.
+
+9. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated effective date. We encourage you to review this Privacy Policy periodically to stay informed about how we protect your personal data.
+
+10. Contact Information
+
+If you have any questions about this Privacy Policy or wish to exercise your rights regarding your personal data, please contact us at sarmg031@gmail.com.
+
+By using the SARM G031 system, you consent to the terms of this Privacy Policy.
