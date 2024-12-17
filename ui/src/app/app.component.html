@@ -8,5 +8,13 @@
 
   <footer class="app-footer">
     <p>&copy; 2024 SARM G031 - All Rights Reserved</p>
+    <a href="javascript:void(0)" (click)="openPrivacyPolicy()">Privacy Policy</a>
   </footer>
+
+  <div class="modal" *ngIf="showPrivacyPolicy" (click)="closePrivacyPolicy()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close-btn" (click)="closePrivacyPolicy()">&times;</span>
+      <div [innerHTML]="privacyPolicyHtml"></div>
+    </div>
+  </div>
 </div>
