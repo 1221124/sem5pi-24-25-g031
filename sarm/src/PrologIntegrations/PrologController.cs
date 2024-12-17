@@ -16,15 +16,13 @@ namespace DDDNetCore.PrologIntegrations
         private readonly AppointmentService _appointmentService;
         private readonly StaffService _staffService;
         private readonly OperationRequestService _operationRequestService;
-        private readonly PatientService _patientService;
 
-        public PrologController(PrologService service, AppointmentService appointmentService, StaffService staffService, OperationRequestService operationRequestService, PatientService patientService)
+        public PrologController(PrologService service, AppointmentService appointmentService, StaffService staffService, OperationRequestService operationRequestService)
         {
             _service = service;
             _appointmentService = appointmentService;
             _staffService = staffService;
             _operationRequestService = operationRequestService;
-            _patientService = patientService;
         }
         
         //POST: api/Prolog?option={option}&surgeryRoom={surgeryRoom}&date={date}
@@ -69,8 +67,6 @@ namespace DDDNetCore.PrologIntegrations
 
                     appointmentsRequests.Add(appointment, operationRequest);
                 }
-
-                var patientHistory = await _patientService.AddAppointmentHistory(appointmentsRequests);
 
                 value = _service.DestroyKB(dateTime);
                 if(!value.done) return BadRequest(new {message = value.message});

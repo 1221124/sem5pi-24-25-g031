@@ -1,10 +1,9 @@
-using System.Text.RegularExpressions;
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.PrologIntegrations;
 using Domain.DbLogs;
+using Domain.OperationTypes;
 using Domain.Shared;
 using Domain.Users;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Domain.Staffs
 {
@@ -375,32 +374,6 @@ namespace Domain.Staffs
             return listDto;
         }
 
-        public async Task<StaffDto> AddSlotAppointment(StaffDto staff, Slot newSlot)
-        {
-            try
-            {
-                if (staff == null)
-                    return null;
-
-                if (newSlot == null)
-                    return null;
-
-                var staffEntity = await _repo.GetByIdAsync(new StaffId(staff.Id));
-
-                if (staffEntity == null)
-                    return null;
-
-                await _unitOfWork.CommitAsync();
-
-                return StaffMapper.ToDto(staffEntity);
-            }
-            catch (Exception e)
-            {
-                //_dbLogService.LogError(StaffEntityType, e.ToString());
-                return null;
-            }
-        }
-
         public async Task<StaffDto> AddSlotAvailability(StaffDto staff, Slot newSlot)
         {
             try
@@ -512,19 +485,6 @@ namespace Domain.Staffs
                         var appointmentNumber = new AppointmentNumber("ap" + int.Parse(opRequestCode.Substring(3)));
 
                         if (!appointments.Contains(appointmentNumber)) appointments.Add(appointmentNumber);
-
-                        string startTimeStr = ConvertMinutesToTime(int.Parse(parts[0].Trim()));
-                        string endTimeStr = ConvertMinutesToTime(int.Parse(parts[1].Trim()));
-
-                        DateTime startInHHMM = DateTime.ParseExact(startTimeStr, "HH:mm", null);
-                        DateTime endInHHMM = DateTime.ParseExact(endTimeStr, "HH:mm", null);
-
-                        var start = date.Date.Add(startInHHMM.TimeOfDay);
-                        var end = date.Date.Add(endInHHMM.TimeOfDay);
-
-                        var slotEntity = new Slot(start, end);
-
-                        await AddSlotAppointment(staffEntity, slotEntity);
                     }
 
                     staffAppointments.Add(licenseNumber, appointments);
@@ -597,26 +557,6 @@ namespace Domain.Staffs
             }
         }*/
 
-        public async Task<List<StaffDto>> CreateAppointmentAsync(AppointmentDto appointment)
-        {
-            try {
-                List<StaffDto> staffs = new List<StaffDto>();
-                foreach (var staff in appointment.AssignedStaff) {
-                    var staffEntity = await _repo.GetByLicenseNumber(staff);
-                    if (staffEntity == null) {
-                        return null;
-                    }
-
-                    await AddSlotAppointment(StaffMapper.ToDto(staffEntity), appointment.AppointmentDate);
-                    staffs.Add(StaffMapper.ToDto(staffEntity));
-                }
-
-                return staffs;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
         public async Task<List<StaffDto>> GetByRoleAndSpecialization(StaffRole role, Specialization specialization)
         {
             try {
@@ -634,7 +574,7 @@ namespace Domain.Staffs
             }
         }
 
-        public bool IsStaffAvailable(StaffDto staff, DateTime startTime, DateTime endTime, List<AppointmentDto> appointments)
+        public bool IsStaffAvailable(StaffDto staff, DateTime startTime, DateTime endTime, Dictionary<AppointmentDto, OperationTypeDto> appointments)
         {
             try {
                 if (staff == null) {
@@ -652,9 +592,29 @@ namespace Domain.Staffs
                     if (Slot.FullyOverlaps(slot, newAppointmentSlot)) {
                         Console.WriteLine("Slot of staff with license number " + staff.LicenseNumber + " fully overlaps with the requested slot.");
                         availabilitySlotFullyOverlaps = true;
-                        foreach (var appointment in appointments) {
-                            if (Slot.Overlaps(appointment.AppointmentDate, slot)
-                            && Slot.Overlaps(appointment.AppointmentDate, newAppointmentSlot)) {
+                        foreach (var apReqStaff in appointments) {
+                            var appointment = apReqStaff.Key;
+                            var operationType = apReqStaff.Value;
+
+                            var surgeryStart = appointment.AppointmentDate.Start.AddMinutes(operationType.PhasesDuration.Surgery);
+                            var cleaningStart = surgeryStart.AddMinutes(operationType.PhasesDuration.Cleaning);
+
+                            var requiredStaff = operationType.RequiredStaff.Find(s => s.Role.ToString() == staff.StaffRole.ToString() && s.Specialization == staff.Specialization);                            
+                            
+                            if (requiredStaff == null) {
+                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not required for the requested operation type.");
+                                return false;
+                            }
+
+                            if (requiredStaff.IsRequiredInPreparation && Slot.Overlaps(newAppointmentSlot, new Slot(appointment.AppointmentDate.Start, surgeryStart))) {
+                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not available for the requested slot.");
+                                return false;
+                            }
+                            if (requiredStaff.IsRequiredInSurgery && Slot.Overlaps(newAppointmentSlot, new Slot(surgeryStart, cleaningStart))) {
+                                Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not available for the requested slot.");
+                                return false;
+                            }
+                            if (requiredStaff.IsRequiredInCleaning && Slot.Overlaps(newAppointmentSlot, new Slot(cleaningStart, appointment.AppointmentDate.End))) {
                                 Console.WriteLine("Staff with license number " + staff.LicenseNumber + " is not available for the requested slot.");
                                 return false;
                             }

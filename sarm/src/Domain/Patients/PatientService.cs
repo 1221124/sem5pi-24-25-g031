@@ -448,21 +448,6 @@ namespace DDDNetCore.Domain.Patients
             
         }
 
-        public async Task<bool> AddAppointmentHistory(Dictionary<AppointmentDto, OperationRequestDto> appointmentRequests)
-        {
-            try {
-                foreach (var appointment in appointmentRequests.Keys)
-                {
-                    var patient = await _repo.GetByMedicalRecordNumberAsync(appointmentRequests[appointment].Patient);
-                    if (patient == null) return false;
-                }
-                return true;
-            } catch (Exception e) {
-                Console.WriteLine(e.Message);
-                return false;
-            }
-        }
-
         public async Task<bool> InvalidUserId(Email email, Guid userId)
         {
             try {

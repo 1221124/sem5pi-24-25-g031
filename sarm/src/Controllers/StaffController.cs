@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Appointments;
 using System.Globalization;
+using Domain.OperationTypes;
 
 namespace Controllers
 {
@@ -29,8 +30,9 @@ namespace Controllers
 
         private readonly AppointmentService _appointmentService;
         private readonly OperationRequestService _operationRequestService;
+        private readonly OperationTypeService _operationTypeService;
 
-        public StaffController(StaffService service, IEmailService emailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService, AppointmentService appointmentService, OperationRequestService operationRequestService)
+        public StaffController(StaffService service, IEmailService emailService, IStaffRepository repo, IUnitOfWork unitOfWork, DbLogService dbLogService, AppointmentService appointmentService, OperationRequestService operationRequestService, OperationTypeService operationTypeService)
         {
             _service = service;
             _emailService = emailService;
@@ -39,6 +41,7 @@ namespace Controllers
             _unitOfWork = unitOfWork;
             _appointmentService = appointmentService;
             _operationRequestService = operationRequestService;
+            _operationTypeService = operationTypeService;
         }
 
         // GET: api/Staff/?name={name}&email={email}&specialization={specialization}
@@ -172,8 +175,18 @@ namespace Controllers
             {
                 var appointments = await _appointmentService.GetByLicenseNumberAsync(staff.LicenseNumber);
                 if (appointments == null) appointments = [];
+                var appointmentRequiredStaff = new Dictionary<AppointmentDto, OperationTypeDto>();
+                foreach (var appointment in appointments) {
+                    var operationRequest = await _operationRequestService.GetByCodeAsync(appointment.RequestCode);
+                    if (operationRequest == null) continue;
+
+                    var operationType = await _operationTypeService.GetByCodeAsync(operationRequest.OperationType);
+                    if (operationType == null) continue;
+
+                    appointmentRequiredStaff.Add(appointment, operationType);
+                }
                 Console.WriteLine("Appointments count for staff " + staff.LicenseNumber.Value + ": " + appointments.Count);
-                if (_service.IsStaffAvailable(staff, startTime, endTime, appointments))
+                if (_service.IsStaffAvailable(staff, startTime, endTime, appointmentRequiredStaff))
                 {
                     availableStaff.Add(staff);
                 }
@@ -268,35 +281,6 @@ namespace Controllers
                 }
 
                 var updateStaff = await _service.AddSlotAvailability(staff, slot);
-                if (updateStaff == null)
-                {
-                    return BadRequest("Staff slot availability could not be updated.");
-                }
-
-                return Ok(updateStaff);
-            }
-            catch (BusinessRuleValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-        }
-
-        // PUT: api/Staff/5
-        [HttpPut("updateSlotAppointment/{id}")]
-        [Authorize (Roles = "Admin")]
-        public async Task<ActionResult<StaffDto>> UpdateSlotAppointment(Guid id, [FromBody] Slot slot)
-        {
-            try
-            {
-                var staff = await _service.GetByIdAsync(new StaffId(id));
-
-                if (staff == null)
-                {
-                    return NotFound("Staff not found");
-                }
-
-                var updateStaff = await _service.AddSlotAppointment(staff, slot);
                 if (updateStaff == null)
                 {
                     return BadRequest("Staff slot availability could not be updated.");
