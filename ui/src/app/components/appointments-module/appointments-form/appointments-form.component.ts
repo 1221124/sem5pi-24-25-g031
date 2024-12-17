@@ -68,6 +68,9 @@ export class AppointmentsFormComponent implements OnInit {
   staffLoading = false;
   staffMessage = '';
 
+  minDate: string = '';
+  maxDate: string = '';
+
   constructor(
     private service: AppointmentsService,
     private operationRequestService: OperationRequestsService,
@@ -104,13 +107,24 @@ export class AppointmentsFormComponent implements OnInit {
       this.cancel.emit();
       return;
     }
+
     if (this.request.requestCode) {
       this.appointment.RequestCode = this.request.requestCode;
       const number = this.request.requestCode.slice(3);
       this.appointment.AppointmentNumber = `ap${number}`;
     }
+    
     if (this.appointment.RequestCode) {
       await this.getRequiredStaff();
+    }
+
+    const now = new Date();
+    this.minDate = now.toISOString().slice(0, 16);
+    if (this.request.deadlineDate) {
+      const deadline = new Date(this.request.deadlineDate);
+      this.maxDate = deadline.toISOString().slice(0, 16);
+    } else {
+      this.maxDate = new Date(now.setFullYear(now.getFullYear() + 1)).toISOString().slice(0, 16);
     }
   }
 
@@ -184,7 +198,7 @@ export class AppointmentsFormComponent implements OnInit {
     } finally {
       setTimeout(() => {
         if (this.availableStaff.length < this.requiredStaff.length) {
-          this.staffMessage = 'Not enough staff available for this appointment!';
+          this.staffMessage = 'Not enough staff available for this appointment! Please select another date...';
         }
         this.staffLoading = false;
       }, 2000);

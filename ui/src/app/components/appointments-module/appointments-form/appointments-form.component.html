@@ -2,7 +2,14 @@
 
   <div class="form-group">
     <label for="appointmentDateStart">Appointment Date</label>
-    <input type="datetime-local" class="form-control" [(ngModel)]="appointment.AppointmentDate.Start" name="appointmentDateStart" required (change)="onAppointmentDateChange()" />
+    <input type="datetime-local" 
+           class="form-control" 
+           [(ngModel)]="appointment.AppointmentDate.Start" 
+           name="appointmentDateStart" 
+           required 
+           (change)="onAppointmentDateChange()" 
+           [min]="minDate" 
+           [max]="maxDate" />
   </div>
 
   <div class="form-group">
@@ -10,6 +17,15 @@
     <select [(ngModel)]="appointment.SurgeryRoomNumber" name="surgeryRoom" class="form-control">
       <option *ngFor="let room of surgeryRooms" [value]="room.SurgeryRoomNumber">{{ room.SurgeryRoomNumber }}</option>
     </select>
+  </div>
+
+  <div *ngIf="requiredStaff.length > 0" class="form-group">
+    <h4>Required Staff for this Appointment</h4>
+    <ul class="list-group">
+      <li *ngFor="let staff of requiredStaff" class="list-group-item">
+        {{ staff.Role }} - {{ staff.Specialization }}: {{ staff.Quantity }}
+      </li>
+    </ul>
   </div>
 
   <div *ngIf="requiredStaff.length > 0 && appointment.AppointmentDate.Start" class="form-group">
