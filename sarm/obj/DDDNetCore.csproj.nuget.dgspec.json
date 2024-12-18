@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj": {}
+    "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {}
   },
   "projects": {
-    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj": {
+    "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj",
+        "projectUniqueName": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj",
-        "packagesPath": "/Users/GuilhermeCastroRibeiro/.nuget/packages/",
-        "outputPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/obj/",
+        "projectPath": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
+        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\david\\Desktop\\ISEP\\3ano1sem\\sem5pi-24-25-g031\\sarm\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/GuilhermeCastroRibeiro/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -37,7 +44,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "all"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -115,7 +123,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
