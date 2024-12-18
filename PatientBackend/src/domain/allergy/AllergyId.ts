@@ -1,20 +1,12 @@
-import { v4 as uuidv4, validate as isUuidValid } from 'uuid';
+import {UniqueEntityID} from "../../core/domain/UniqueEntityID";
 
-export class AllergyId {
-    private readonly id: string;
+export class AllergyId extends UniqueEntityID{
     
-    constructor(id?: string) {
-        if(id && !isUuidValid(id)) {
-            throw new Error("Invalid GUID format for AllergyId");
-        }
-        this.id = id || uuidv4();
+    private constructor(id?: string) {
+        super(id);
     }
     
-    public getId(): string {
-        return this.id;
+    public static create(id?: string): AllergyId {
+        return new AllergyId(id);
     }
-    
-    public equals(other: AllergyId): boolean {
-        return this.id === other.id;
-    }  
 }

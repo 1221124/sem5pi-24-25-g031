@@ -15,9 +15,6 @@ interface AllergyProps {
 }
 
 export class Allergy extends AggregateRoot<AllergyProps>{
-    get id(): UniqueEntityID {
-        return AllergyId.caller(this.id);
-    }
     
     get allergyId(): AllergyId {
         return AllergyId.caller(this.id);
@@ -35,11 +32,11 @@ export class Allergy extends AggregateRoot<AllergyProps>{
         return this.props.description;
     }
     
-    private constructor(props: AllergyProps, id?: UniqueEntityID) {
+    private constructor(props: AllergyProps, id?: AllergyId) {
         super(props, id);
     }
     
-    public static create(props: AllergyProps, id?: UniqueEntityID): Result<Allergy> {
+    public static create(props: AllergyProps, id?: AllergyId): Result<Allergy> {
         
         const guardedProps = [
             { argument: props.code, argumentName: 'code' },
