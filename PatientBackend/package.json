@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "build/src/api/app.js",
   "scripts": {
-    "clean": "rimraf build",
+    "clean": "npx rimraf build",
     "start": "node build/src/app.js",
     "dev": "ts-node build/src/app.js",
-    "build": "tsc",
+    "build": "npx tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "express": "npm run clean && npm run build && npm run start"
   },
