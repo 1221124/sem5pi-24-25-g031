@@ -40,26 +40,37 @@ export default class MedicalConditionRepo implements IMedicalConditionRepo {
    * Save a medical condition (create or update).
    */
   public async save(medicalCondition: MedicalCondition): Promise<MedicalCondition> {
-    // const query = { domainId: medicalCondition.id.toString() };
+    console.log("Saving medical condition: ", medicalCondition);
+    
+    const query = { domainId: medicalCondition.id.toString() };
 
-    // const medicalConditionDocument = await this.medicalConditionSchema.findOne(query);
+    const schema = await this.medicalConditionSchema.findOne(query);
 
-    // try {
-    //   if (medicalConditionDocument === null) {
-    //     const rawMedicalCondition: any = MedicalConditionMap.toPersistence(medicalCondition);
+    console.log("Medical condition schema: ", schema);
+    
 
-    //     const medicalConditionCreated = await this.medicalConditionSchema.create(rawMedicalCondition);
+    try {
+      if (schema === null) {
+        const rawMedicalCondition: any = MedicalConditionMap.toPersistence(medicalCondition);
 
-    //     return MedicalConditionMap.toDomain(medicalConditionCreated);
-    //   } else {
-    //     medicalConditionDocument.name = medicalCondition.name; // Update any relevant fields
-    //     await medicalConditionDocument.save();
+        console.log("Raw medical condition: ", rawMedicalCondition);
 
-    //     return medicalCondition;
-    //   }
-    // } catch (err) {
-    //   throw err;
-    // }
+        const medicalConditionCreated = await this.medicalConditionSchema.create(rawMedicalCondition);
+
+        console.log("Medical condition created: ", medicalConditionCreated);
+
+        return MedicalConditionMap.toDomain(medicalConditionCreated);
+      } else {
+        schema.set(MedicalConditionMap.toPersistence(medicalCondition));
+
+        await schema.save();
+
+        return MedicalConditionMap.toDomain(schema);
+      }
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
 
     return null;
   }

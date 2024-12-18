@@ -4,29 +4,25 @@ import { Name } from "../../domain/shared/Name";
 
 const MedicalConditionSchema = new mongoose.Schema(
     {
-        id: {
+        medicalConditionId: {
             type: String,
             required: true
         },
         name: {
             type: String,
             required: [true, 'Please enter name'],
-            index: true,
         },
         code: {
             type: String,
             required: [true, 'Please enter code'],
-            index: true,
         },  
         description: {
             type: String,
             required: [true, 'Please enter description'],
-            index: true,
         },
         commonSymptoms: {
-            type: Array<String>(),
+            type: [String],
             required: [true, 'Please enter common symptoms'],
-            index: true,
         },
     }
 ); 

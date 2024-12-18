@@ -1,5 +1,8 @@
 
 export interface IMedicalConditionPersistence {
-    domainId: string;
+    medicalConditionId: string;
+    code: string;
     name: string;
+    description: string;
+    commonSymptoms: string[];
   }

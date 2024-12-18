@@ -10,6 +10,8 @@ import { Result } from "../core/logic/Result";
 import IMedicalConditionRepo from "../services/IRepos/IMedicalConditionRepo";
 import { UpdatingMedicalConditionDto } from '../dto/medical-condition/UpdatingMedicalConditionDto';
 import IMedicalConditionService from './IServices/IMedicalConditionService';
+import e from 'cors';
+import { MedicalCondition } from '../domain/medical-condition/MedicalCondition';
 
 @Service()
 export default class MedicalConditionService implements IMedicalConditionService {
@@ -38,7 +40,7 @@ export default class MedicalConditionService implements IMedicalConditionService
   /**
    * Lists all medical conditions.
    */
-  public async listMedicalConditions(): Promise<MedicalConditionDto[]> {
+  public async getAll(): Promise<MedicalConditionDto[]> {
     try {
       const medicalConditions = await this.medicalConditionRepo.findAll();
       return medicalConditions.map(MedicalConditionMap.toDto);
@@ -50,29 +52,40 @@ export default class MedicalConditionService implements IMedicalConditionService
   /**
    * Creates a new medical condition.
    */
-  public async createMedicalCondition(dto: CreatingMedicalConditionDto): Promise<Result<MedicalConditionDto>> {
+  /**
+   * Creates a new medical condition.
+   */
+  public async createMedicalCondition(dto: CreatingMedicalConditionDto): Promise<Result<MedicalConditionDto>> { 
     try {
-      const creatingMedicalCondition = MedicalConditionMap.toDomain(dto);
-
-      if (!creatingMedicalCondition) {
-        return Result.fail<MedicalConditionDto>(creatingMedicalCondition);
+      console.log("Creating medical condition (service): ", dto);
+  
+      const medicalConditionDto = await MedicalConditionMap.toDomain(dto);
+  
+      console.log("1 medicalConditionDto: ", medicalConditionDto);
+      
+      if (!medicalConditionDto) {
+        return Result.fail<MedicalConditionDto>("Failed to map medical condition DTO to domain.");
       }
-
-      await this.medicalConditionRepo.save(await creatingMedicalCondition);
-
-      const medicalConditionDTO = MedicalConditionMap.toDto(await creatingMedicalCondition);
+  
+      console.log("2 creatingMedicalCondition: ", medicalConditionDto);
+  
+      console.log("saving medical condition");
+      await this.medicalConditionRepo.save(medicalConditionDto);
+  
+      const medicalConditionDTO = MedicalConditionMap.toDto(medicalConditionDto);
       return Result.ok<MedicalConditionDto>(medicalConditionDTO);
     } catch (error) {
-      return Result.fail<MedicalConditionDto>(error);
+      console.log("Error: ", error);
+      return Result.fail<MedicalConditionDto>(error.message);
     }
-  }
+  }  
 
   /**
    * Updates an existing medical condition by its ID.
    */
   public async updateMedicalCondition(dto: UpdatingMedicalConditionDto): Promise<Result<MedicalConditionDto>> {
     try {
-     const medicalCondition = await this.medicalConditionRepo.findByDomainId(dto.id.getId().toString());
+     const medicalCondition = await this.medicalConditionRepo.findByDomainId(dto.id.toString());
 
       if (medicalCondition == null) {
         return Result.fail<MedicalConditionDto>("Medical condition not found");

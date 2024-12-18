@@ -11,7 +11,13 @@ const route = Router();
 export default (app: Router) => {
   app.use('/medical-condition', route);
 
-  const ctrl = Container.get(config.controllers.role.name) as IMedicalConditionController;
+  const ctrl = Container.get(config.controllers.medicalCondition.name) as IMedicalConditionController;
+  
+  if (!ctrl) {
+    console.error('Controller not found! Check Typedi setup or configuration.');
+    throw new Error('Controller dependency injection failed.');
+  }
+
   console.log("Controller loaded: ", ctrl)
 
   route.post('',
@@ -20,8 +26,11 @@ export default (app: Router) => {
         code: Joi.string().required(),
         name: Joi.string().required(),
         description: Joi.string().required(),
-        symptoms: Joi.array().items(Joi.string()).required(),
+        commonSymptoms: Joi.array().items(Joi.string()).required(),
       })
     }),
     (req, res, next) => ctrl.createMedicalCondition(req, res, next) );
+
+  
+    route.get('', (req, res, next) => ctrl.getAllMedicalConditions(req, res, next));
 };
