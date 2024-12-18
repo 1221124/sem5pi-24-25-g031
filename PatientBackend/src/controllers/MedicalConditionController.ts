@@ -23,6 +23,8 @@ export default class MedicalConditionController {
    */
   public async createMedicalCondition(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log("Creating medical condition: ", req.body);
+
       const resultOrError = await this.medicalConditionService.createMedicalCondition(req.body as CreatingMedicalConditionDto) as Result<MedicalConditionDto>;
 
       if (resultOrError.isFailure) {
@@ -32,6 +34,7 @@ export default class MedicalConditionController {
       const medicalConditionDTO = resultOrError.getValue();
       return res.status(201).json(medicalConditionDTO); 
     } catch (error) {
+      console.log("Error creating medical condition: ", error);
       return next(error); 
     }
   }
@@ -64,9 +67,9 @@ export default class MedicalConditionController {
    * @param res - Express response object.
    * @param next - Express next middleware function.
    */
-  public async listMedicalConditions(req: Request, res: Response, next: NextFunction) {
+  public async getAllMedicalConditions(req: Request, res: Response, next: NextFunction) {
     try {
-      const medicalConditions = await this.medicalConditionService.listMedicalConditions();
+      const medicalConditions = await this.medicalConditionService.getAll();
       return res.json(medicalConditions); 
     } catch (error) {
       return next(error);
