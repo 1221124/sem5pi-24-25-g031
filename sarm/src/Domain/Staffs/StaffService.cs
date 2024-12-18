@@ -590,6 +590,11 @@ namespace Domain.Staffs
 
                 foreach (var slot in staff.SlotAvailability)
                 {
+                    if (newAppointmentSlot.Start < slot.Start || newAppointmentSlot.End > slot.End)
+                    {
+                        continue;
+                    }
+                    
                     foreach (var apReqStaff in appointments)
                     {
                         var appointment = apReqStaff.Key;

@@ -101,21 +101,27 @@ export class AppointmentsFormComponent implements OnInit {
   }
 
   async initializeData() {
-    await this.getSurgeryRooms();
+    console.log('Initializing data...');
+    console.log('Request Code in initializing:', this.request.requestCode);
     if (this.router.url.includes('create') && !this.request.requestCode) {
+      console.log('No request code found! Redirecting to appointments...');
       this.router.navigate(['/appointments'], {queryParams: {page : 1}});
       this.cancel.emit();
       return;
     }
 
     if (this.request.requestCode) {
+      console.log('Request code found:', this.request.requestCode);
       this.appointment.RequestCode = this.request.requestCode;
+      console.log('Appointment Request Code:', this.appointment.RequestCode);
       const number = this.request.requestCode.slice(3);
       this.appointment.AppointmentNumber = `ap${number}`;
     }
     
     if (this.appointment.RequestCode) {
+      console.log('Request code:', this.appointment.RequestCode);
       await this.getRequiredStaff();
+      console.log('Required staff:', this.requiredStaff);
     }
 
     const now = new Date();
@@ -130,11 +136,27 @@ export class AppointmentsFormComponent implements OnInit {
 
   async getSurgeryRooms() {
     try {
-      const response = await this.surgeryRoomService.get(this.accessToken);
+      console.log('Start: ', this.appointment.AppointmentDate.Start);
+      console.log('End: ', this.appointment.AppointmentDate.End);
+      const response = await this.surgeryRoomService.getAvailable(this.appointment.AppointmentDate.Start, this.appointment.AppointmentDate.End, this.accessToken);
       if (response.body) {
         this.surgeryRooms = response.body.surgeryRooms;
-        this.surgeryRooms.sort((a, b) => a.SurgeryRoomNumber.localeCompare(b.SurgeryRoomNumber));
       }
+      if (this.router.url.includes('update')
+        && this.appointment.SurgeryRoomNumber
+        && !this.surgeryRooms.find(r => r.SurgeryRoomNumber === this.appointment.SurgeryRoomNumber)) {
+        const room = {
+          Id: '',
+          SurgeryRoomNumber: this.appointment.SurgeryRoomNumber,
+          RoomTypeCode: '',
+          RoomCapacity: '',
+          AssignedEquipment: '',
+          CurrentStatus: '',
+          MaintenanceSlots: []
+        }
+        this.surgeryRooms.push(room);
+      }
+      this.surgeryRooms.sort((a, b) => a.SurgeryRoomNumber.localeCompare(b.SurgeryRoomNumber));
     } catch (error) {
       console.error(error);
     }
@@ -166,14 +188,18 @@ export class AppointmentsFormComponent implements OnInit {
   async getRequiredStaff() {
     this.requiredStaff = [];
     try {
+      console.log('Getting required staff...');
       const opReqResponse = await this.operationRequestService.get(this.accessToken, this.appointment!.RequestCode, '', '', '', '', '', '');
       if (opReqResponse.body) {
         const request = opReqResponse.body[0];
+        console.log('Request:', request);
         const opTypeResponse = await this.operationTypeService.getByCode(request.operationType, this.accessToken);
         if (opTypeResponse.body) {
           const operationType = opTypeResponse.body;
+          console.log('Operation type:', operationType);
           if (operationType) {
             this.requiredStaff = operationType.RequiredStaff;
+            console.log('Required staff:', this.requiredStaff);
           }
         }
       }
@@ -183,14 +209,19 @@ export class AppointmentsFormComponent implements OnInit {
   }
 
   async getStaffsAvailable() {
+    console.log('Getting staffs available...');
     this.staffLoading = true;
     this.staffMessage = '';
     this.availableStaff = [];
     try {
+      console.log('Start in staffs available:', this.appointment.AppointmentDate.Start);
+      console.log('End in staffs available:', this.appointment.AppointmentDate.End);
       if (this.appointment?.AppointmentDate.Start && this.appointment?.AppointmentDate.End) {
+        console.log('Entered getStaffsAvailable');
         const response = await this.staffService.getStaffAvailable(this.accessToken, this.appointment.AppointmentDate.Start, this.appointment.AppointmentDate.End);
         if (response.body) {
           this.availableStaff = response.body.staffs;
+          console.log('Available staff:', this.availableStaff);
         }
       }
     } catch (error) {
@@ -198,6 +229,7 @@ export class AppointmentsFormComponent implements OnInit {
     } finally {
       setTimeout(() => {
         if (this.availableStaff.length < this.requiredStaff.length) {
+          console.log('Not enough! Available:', this.availableStaff.length, '. Required:', this.requiredStaff.length);
           this.staffMessage = 'Not enough staff available for this appointment! Please select another date...';
         }
         this.staffLoading = false;
@@ -208,6 +240,7 @@ export class AppointmentsFormComponent implements OnInit {
   async onAppointmentDateChange() {
     if (this.appointment?.AppointmentDate.Start) {
       await this.getAppointmentDuration();
+      await this.getSurgeryRooms();
       await this.getStaffsAvailable();
     }
   }

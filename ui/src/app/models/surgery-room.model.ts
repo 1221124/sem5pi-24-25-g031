@@ -1,5 +1,5 @@
 export interface SurgeryRoom {
-    Id: number;
+    Id: string;
     SurgeryRoomNumber: string;
     RoomTypeCode: string;
     RoomCapacity: string;

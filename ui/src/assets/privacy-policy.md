@@ -81,7 +81,7 @@ We may share your personal data in the following circumstances:
 
 We take the security of your personal data seriously and implement measures such as:
 
-- Secure encryption of sensitive data (e.g., passwords - IAM (aUTH0) responsability, medical records).
+- Secure encryption of sensitive data (e.g., passwords - Auth0 (IAM) responsability - and medical records).
 - Access controls for authorized personnel only.
 
 > *However, no method of electronic storage is 100% secure.*

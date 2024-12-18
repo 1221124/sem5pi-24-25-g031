@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
@@ -12,11 +13,13 @@ namespace DDDNetCore.Controllers {
     {
         private readonly SurgeryRoomService _surgeryRoomService;
         private readonly DbLogService _logService;
+        private readonly AppointmentService _appointmentService;
 
-        public SurgeryRoomsController(SurgeryRoomService surgeryRoomService, DbLogService logService)
+        public SurgeryRoomsController(SurgeryRoomService surgeryRoomService, DbLogService logService, AppointmentService appointmentService)
         {
             _surgeryRoomService = surgeryRoomService;
             _logService = logService;
+            _appointmentService = appointmentService;
         }
 
         [HttpGet]
@@ -35,10 +38,33 @@ namespace DDDNetCore.Controllers {
                 return BadRequest("Error: " + ex.Message);
             }
         }
+
+        [HttpGet("available")]
+        public async Task<ActionResult<IEnumerable<SurgeryRoomDto>>> GetAvailable([FromQuery] string start, [FromQuery] string end) {
+            try {
+                var appointments = await _appointmentService.GetAll();
+                var surgeryRooms = new List<SurgeryRoomDto>();
+                
+                if (appointments == null || appointments.Count == 0) {
+                    surgeryRooms = await _surgeryRoomService.GetAll();
+                } else {
+                    surgeryRooms = await _surgeryRoomService.GetAvailableAsync(start, end, appointments);
+                }
+
+                if (surgeryRooms == null || surgeryRooms.Count == 0)
+                    surgeryRooms = [];
+
+                return Ok(new { surgeryRooms = surgeryRooms, totalItems = surgeryRooms.Count });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error: " + ex.Message); 
+            }
+        }
         
         [HttpPost]
         [Authorize (Roles = "Admin")]
-        public async Task<ActionResult<SurgeryRoom>> Create(
+        public async Task<ActionResult<SurgeryRoomDto>> Create(
             [FromQuery] string surgeryRoomNumber,
             [FromQuery] string roomType,
             [FromQuery] string roomCapacity,

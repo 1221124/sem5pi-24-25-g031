@@ -12,14 +12,14 @@
            [max]="maxDate" />
   </div>
 
-  <div class="form-group">
+  <div *ngIf="appointment.AppointmentDate.End" class="form-group">
     <label for="surgeryRoom">Surgery Room</label>
     <select [(ngModel)]="appointment.SurgeryRoomNumber" name="surgeryRoom" class="form-control">
       <option *ngFor="let room of surgeryRooms" [value]="room.SurgeryRoomNumber">{{ room.SurgeryRoomNumber }}</option>
     </select>
   </div>
 
-  <div *ngIf="requiredStaff.length > 0" class="form-group">
+  <div *ngIf="requiredStaff.length > 0 && appointment.SurgeryRoomNumber" class="form-group">
     <h4>Required Staff for this Appointment</h4>
     <ul class="list-group">
       <li *ngFor="let staff of requiredStaff" class="list-group-item">
@@ -28,7 +28,7 @@
     </ul>
   </div>
 
-  <div *ngIf="requiredStaff.length > 0 && appointment.AppointmentDate.Start" class="form-group">
+  <div *ngIf="requiredStaff.length > 0 && appointment.AppointmentDate.Start && appointment.SurgeryRoomNumber" class="form-group">
     <div *ngFor="let staff of requiredStaff">
       <ng-container *ngIf="getAvailableStaffForRole(staff) as availableStaff">
         <div *ngIf="availableStaff.length > 0">
@@ -54,7 +54,7 @@
         
       </ng-container>
     </div>
-    <div *ngIf="staffMessage" class="alert alert-warning">
+    <div *ngIf="staffMessage && appointment.SurgeryRoomNumber" class="alert alert-warning">
       {{ staffMessage }}
     </div>
   </div>  
