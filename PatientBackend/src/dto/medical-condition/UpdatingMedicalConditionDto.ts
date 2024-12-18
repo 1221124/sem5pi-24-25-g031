@@ -4,13 +4,16 @@ import { MedicalConditionId } from "../../domain/medical-condition/MedicalCondit
 import { Description } from "../../domain/shared/Description";
 
 export class UpdatingMedicalConditionDto {
-    id: MedicalConditionId;
     description: Description;
     commonSymptoms: CommonSymptom[];
 
-    constructor (id: MedicalConditionId, description: Description, commonSymptoms: CommonSymptom[]) {
-        this.id = id;
-        this.description = description;
-        this.commonSymptoms = commonSymptoms;
+    constructor (description: Description, commonSymptoms: CommonSymptom[]) {
+        this.description = description ?? Description.create(null).getValue();
+        this.commonSymptoms = commonSymptoms ?? null;
     }
+
+    public static create (description: Description, commonSymptoms: CommonSymptom[]): UpdatingMedicalConditionDto {
+        return new UpdatingMedicalConditionDto(description, commonSymptoms);
+    }
+
 }

@@ -33,4 +33,18 @@ export default (app: Router) => {
 
   
     route.get('', (req, res, next) => ctrl.getAllMedicalConditions(req, res, next));
+
+    route.put('/:id',
+      celebrate({
+        params: Joi.object({
+          id: Joi.string().required()  
+        }),
+        body: Joi.object({
+          description: Joi.string(),
+          commonSymptoms: Joi.array().items(Joi.string()),
+        })
+      }),
+      
+      (req, res, next) => ctrl.updateMedicalCondition(req, res, next)
+    );
 };

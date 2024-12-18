@@ -1,5 +1,6 @@
 import { Repo } from "../../core/infra/Repo";
 import { MedicalCondition } from "../../domain/medical-condition/MedicalCondition";
+import { ICD11Code } from "../../domain/shared/ICD11Code";
 
 export default interface IMedicalConditionRepo extends Repo<MedicalCondition> {
   /**
@@ -15,6 +16,10 @@ export default interface IMedicalConditionRepo extends Repo<MedicalCondition> {
    * @returns The found medical condition, or null if not found.
    */
   findByDomainId(id: string): Promise<MedicalCondition | null>;
+
+
+  /** */
+  findByCode(code: ICD11Code): Promise<MedicalCondition> | null;
 
   /**
    * Retrieves all medical conditions from the repository.

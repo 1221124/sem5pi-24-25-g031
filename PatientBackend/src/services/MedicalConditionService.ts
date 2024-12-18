@@ -58,6 +58,11 @@ export default class MedicalConditionService implements IMedicalConditionService
   public async createMedicalCondition(dto: CreatingMedicalConditionDto): Promise<Result<MedicalConditionDto>> { 
     try {
       console.log("Creating medical condition (service): ", dto);
+
+      const existsOrNot = await this.medicalConditionRepo.findByCode(dto.code);
+      console.log("Exists or Not: " + existsOrNot);
+
+      if(existsOrNot != null) return Result.fail<MedicalConditionDto>("Medical Condition already exists.");
   
       const medicalConditionDto = await MedicalConditionMap.toDomain(dto);
   
@@ -70,7 +75,9 @@ export default class MedicalConditionService implements IMedicalConditionService
       console.log("2 creatingMedicalCondition: ", medicalConditionDto);
   
       console.log("saving medical condition");
-      await this.medicalConditionRepo.save(medicalConditionDto);
+      const saved = await this.medicalConditionRepo.save(medicalConditionDto);
+
+      if(saved == null) return Result.fail<MedicalConditionDto>("Failed to save medical condition");
   
       const medicalConditionDTO = MedicalConditionMap.toDto(medicalConditionDto);
       return Result.ok<MedicalConditionDto>(medicalConditionDTO);
@@ -83,23 +90,30 @@ export default class MedicalConditionService implements IMedicalConditionService
   /**
    * Updates an existing medical condition by its ID.
    */
-  public async updateMedicalCondition(dto: UpdatingMedicalConditionDto): Promise<Result<MedicalConditionDto>> {
+  public async updateMedicalCondition(id: string, dto: UpdatingMedicalConditionDto): Promise<Result<MedicalConditionDto>> {
     try {
-     const medicalCondition = await this.medicalConditionRepo.findByDomainId(dto.id.toString());
+      console.log("Updating medical condition "  + id + " (service): ", dto);
+      const original = await this.medicalConditionRepo.findByDomainId(id);
 
-      if (medicalCondition == null) {
+       console.log("Updating medical condition found: ", original);
+
+      if (original == null) {
+        console.log("Medical condition not found");
         return Result.fail<MedicalConditionDto>("Medical condition not found");
       }
 
-      // Update fields on the existing medical condition entity.
-      console.log("fake update");
-      //medicalCondition.updateFromRequest(dto);
+      console.log("Updating...");
+
+      if(dto.description != null) original.description = dto.description;
+      if(dto.commonSymptoms.length > 0) original.commonSymptoms = dto.commonSymptoms;
+
+      console.log("Updated medical condition: ", original);
       
 
       // Save the updated medical condition entity.
-      await this.medicalConditionRepo.save(medicalCondition);
+      await this.medicalConditionRepo.save(original);
 
-      const updatedMedicalConditionDTO = MedicalConditionMap.toDto(medicalCondition);
+      const updatedMedicalConditionDTO = MedicalConditionMap.toDto(original);
       return Result.ok<MedicalConditionDto>(updatedMedicalConditionDTO);
     } catch (error) {
       throw error;

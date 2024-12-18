@@ -1,6 +1,5 @@
 import { IMedicalConditionPersistence } from "../../dataschema/IMedicalConditionPersistence";
 import mongoose from "mongoose";
-import { Name } from "../../domain/shared/Name";
 
 const MedicalConditionSchema = new mongoose.Schema(
     {

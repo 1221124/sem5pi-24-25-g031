@@ -8,6 +8,9 @@ import { MedicalConditionDto } from '../dto/medical-condition/MedicalConditionDt
 import { Result } from "../core/logic/Result";
 import { UpdatingMedicalConditionDto } from '../dto/medical-condition/UpdatingMedicalConditionDto';
 import MedicalConditionService from '../services/MedicalConditionService';
+import { MedicalConditionId } from '../domain/medical-condition/MedicalConditionId';
+import { Description } from '../domain/shared/Description';
+import { CommonSymptom } from '../domain/medical-condition/CommonSyptom';
 
 @Service()
 export default class MedicalConditionController {
@@ -20,6 +23,7 @@ export default class MedicalConditionController {
    * @param req - Express request object.
    * @param res - Express response object.
    * @param next - Express next middleware function.
+
    */
   public async createMedicalCondition(req: Request, res: Response, next: NextFunction) {
     try {
@@ -84,7 +88,30 @@ export default class MedicalConditionController {
    */
   public async updateMedicalCondition(req: Request, res: Response, next: NextFunction) {
     try {
-      const resultOrError = await this.medicalConditionService.updateMedicalCondition(req.body as UpdatingMedicalConditionDto) as Result<MedicalConditionDto>;
+      console.log("req.body = ", req.body);
+      console.log("req.params = ", req.params);
+
+      const { id } = req.params; // Extract the ID from the query string
+      if (!id) {
+        return res.status(400).send("ID is required.");
+      }
+
+      //const { description, commonSymptoms } = req.body; 
+
+      const description = req.body.description ?? null;
+      const commonSymptoms = req.body.commonSymptoms ?? [];
+
+      // Construct the DTO explicitly with all required fields
+      const updatingMedicalConditionDto = new UpdatingMedicalConditionDto(
+        Description.create(description).getValue(),
+        commonSymptoms.map((symptom: string) => CommonSymptom.create(symptom).getValue())
+      );
+
+      console.log("Update medical condition: ", updatingMedicalConditionDto);
+
+      const resultOrError = await this.medicalConditionService.updateMedicalCondition(id, updatingMedicalConditionDto) as Result<MedicalConditionDto>;
+
+      console.log("resultOrError:> " + resultOrError);
 
       if (resultOrError.isFailure) {
         return res.status(400).send(resultOrError.errorValue()); 

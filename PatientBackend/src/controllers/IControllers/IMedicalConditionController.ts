@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 
 export interface IMedicalConditionController {
     getAllMedicalConditions(req: Request, res: Response, next: NextFunction): Promise<any>;
-    getMedicalConditionById(id: string): Promise<any>;
+    getMedicalConditionById(req: Request, res: Response, next: NextFunction): Promise<any>;
     createMedicalCondition(req: Request, res: Response, next: NextFunction): Promise<any>;
-    updateMedicalCondition(id: string, medicalCondition: any): Promise<any>;
+    updateMedicalCondition(req: Request, res: Response, next: NextFunction): Promise<any>;
     deleteMedicalCondition(id: string): Promise<any>;
 }
