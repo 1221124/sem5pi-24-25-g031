@@ -1,20 +1,11 @@
-import { v4 as uuidv4, validate as isUuidValid } from 'uuid';
+import { UniqueEntityID } from '../../core/domain/UniqueEntityID';
 
-export class MedicalConditionId {
-    private readonly id: string;
-
+export class MedicalConditionId extends UniqueEntityID {
     constructor(id?: string) {
-        if (id && !isUuidValid(id)) {
-            throw new Error("Invalid GUID format for MedicalConditionId");
-        }
-        this.id = id || uuidv4(); 
+        super(id);
     }
 
-    public getId(): string {
-        return this.id;
-    }
-
-    public equals(other: MedicalConditionId): boolean {
-        return this.id === other.id;
+    public static create(id: string): MedicalConditionId {
+        return new MedicalConditionId(id);
     }
 }

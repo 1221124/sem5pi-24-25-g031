@@ -16,9 +16,9 @@ interface MedicalConditionProps {
 }
 
 export class MedicalCondition extends AggregateRoot<MedicalConditionProps> {
-    get id(): UniqueEntityID {
-        return MedicalConditionId.caller(this.id);
-    }
+    // get id(): UniqueEntityID {
+    //     return MedicalConditionId.caller(this.id);
+    // }
 
     get medicalConditionId(): MedicalConditionId {
         return MedicalConditionId.caller(this.id);
@@ -37,23 +37,29 @@ export class MedicalCondition extends AggregateRoot<MedicalConditionProps> {
     }
 
     get commonSymptoms(): CommonSymptom[] {
-        return this.props.commonSymptoms;
+        return this.props.commonSymptoms.map((symptom) => symptom);
     }
 
-    private constructor(props: MedicalConditionProps, id?: UniqueEntityID) {
+    private constructor(props: MedicalConditionProps, id?: MedicalConditionId) {
         super(props, id);
     }
 
-    public static create(props: MedicalConditionProps, id?: UniqueEntityID): Result<MedicalCondition> {
+    public static create(props: MedicalConditionProps, id?: MedicalConditionId): Result<MedicalCondition> {
         
+        console.log("Creating medical condition: ", props);
+
         const guardedProps = [
             { argument: props.code, argumentName: 'code' },
             { argument: props.name, argumentName: 'name' },
             { argument: props.description, argumentName: 'description' },
-            { argument: props.commonSymptoms, argumentName: 'commonSymptoms' }
+            { argument: props.commonSymptoms.values, argumentName: 'commonSymptoms' }
         ];
 
+        console.log("Guarded props: ", guardedProps);
+
         const guardResult = Guard.againstNullOrUndefinedBulk(guardedProps);
+
+        console.log("Guard result: ", guardResult);
 
         if (!guardResult.succeeded) {
             return Result.fail<MedicalCondition>(guardResult.message);
