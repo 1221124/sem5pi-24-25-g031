@@ -64,27 +64,53 @@ export default async ({ expressApp }) => {
     path: config.repos.medicalCondition.path
   }
 
-    /*** DEPENDENCY INJECTOR ***/
+  /*** ALLERGY ***/
+  
+  const allergySchema = {
+    name: 'allergySchema',
+    schema: '../persistence/schemas/allergySchema',
+  }
+  
+  const allergyController = {
+    name: config.controllers.allergy.name,
+    path: config.controllers.allergy.path
+  }
+  
+  const allergyService = {
+    name: config.services.allergy.name,
+    path: config.services.allergy.path
+  }
+  
+  const allergyRepo = {
+    name: config.repos.allergy.name,
+    path: config.repos.allergy.path
+  }
+
+  /*** DEPENDENCY INJECTOR ***/
 
   dependencyInjectorLoader({
     mongoConnection,
     schemas: [
       userSchema,
       roleSchema,
-      medicalConditionSchema
+      medicalConditionSchema,
+      allergySchema
     ],
     controllers: [
       roleController,
-      medicalConditionController
+      medicalConditionController,
+      allergyController  
     ],
     repos: [
       roleRepo,
       userRepo,
-      medicalConditionRepo
+      medicalConditionRepo,
+      allergyRepo  
     ],
     services: [
       roleService,
-      medicalConditionService
+      medicalConditionService,
+      allergyService  
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');
