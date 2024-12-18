@@ -5,6 +5,7 @@
 :-dynamic agenda_operation_room/3.
 :-dynamic agenda_operation_room1/3.
 :-dynamic better_sol/5.
+:-dynamic surgery_in_room/2.
 
 free_agenda0([],[(0,1440)]).
 free_agenda0([(0,Tfin,_)|LT],LT1):-!,free_agenda1([(0,Tfin,_)|LT],LT1).
@@ -99,6 +100,14 @@ assign_staff_to_surgery_role1(NumStaff, LStaff, OpReqId) :-
     NumStaff1 is NumStaff - 1,
     assign_staff_to_surgery_role1(NumStaff1, LStaffUpdated, OpReqId).
 
+schedule_all_surgeries(Day) :-
+    findall(Room, agenda_operation_room(Room, Day, _), LRooms),
+    schedule_all_surgeries1(LRooms, Day).
+
+schedule_all_surgeries1([], _).
+schedule_all_surgeries1([Room | LRooms], Day) :-
+    schedule_all_surgeries(Room, Day),
+    schedule_all_surgeries1(LRooms, Day).
 
 schedule_all_surgeries(Room,Day):-
     retractall(agenda_staff1(_,_,_)),
@@ -107,7 +116,7 @@ schedule_all_surgeries(Room,Day):-
     findall(_,(agenda_staff(D,Day,Agenda),assertz(agenda_staff1(D,Day,Agenda))),_),
     agenda_operation_room(Or,Date,Agenda),assert(agenda_operation_room1(Or,Date,Agenda)),
     findall(_,(agenda_staff1(D,Date,L),free_agenda0(L,LFA),adapt_timetable(D,Date,LFA,LFA2),assertz(availability(D,Date,LFA2))),_),
-    findall(OpCode,surgery_id(OpCode,_),LOpCode),
+    findall(OpCode,surgery_in_room(Room,OpCode),LOpCode),
 
     availability_all_surgeries(LOpCode,Room,Day),!.
 
@@ -184,6 +193,10 @@ print_with_comma_separation([Elem|Rest]) :-
     write(', '),
     print_with_comma_separation(Rest).
 
+obtain_better_sol(Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
+    findall(Room,agenda_operation_room(Room,Day,_),LRooms),
+    obtain_better_sol(LRooms,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).
+
 obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
 		get_time(Ti),
 		(obtain_better_sol1(Room,Day);true),
@@ -202,7 +215,7 @@ obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
 
 obtain_better_sol1(Room,Day):-
     asserta(better_sol(Day,Room,_,_,1441)),
-    findall(OpCode,surgery_id(OpCode,_),LOC),!,
+    findall(OpCode,surgery_in_room(Room,OpCode),LOC),!,
     permutation(LOC,LOpCode),
     retractall(agenda_staff1(_,_,_)),
     retractall(agenda_operation_room1(_,_,_)),
@@ -240,7 +253,39 @@ remove_equals([],[]).
 remove_equals([X|L],L1):-member(X,L),!,remove_equals(L,L1).
 remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
 
-schedule_appointments(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
+schedule_appointments(Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp) :-
     assign_staff_to_surgeries,
-    schedule_all_surgeries(Room,Day),
-    obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).
+    assign_surgeries_to_rooms_automatically(Day),
+    schedule_all_surgeries(Day),
+    obtain_better_sol(Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp).
+
+assign_surgeries_to_rooms_automatically(Day) :-
+    findall(Room, agenda_operation_room(Room, Day, _), LRooms),
+    assign_surgeries_to_rooms_automatically1(LRooms, Day).
+
+assign_surgeries_to_rooms_automatically1([], _).
+assign_surgeries_to_rooms_automatically1([Room | LRooms], Day) :-
+    findall(OpCode, surgery_in_room(Room, OpCode), LOpCode),
+    surgery_times_for_room(LOpCode, TotalRequiredTime),
+    room_availability(Room, Day, TotalAvailableTime),
+    check_room_capacity(TotalRequiredTime, TotalAvailableTime),
+    assign_surgeries_to_rooms_automatically1(LRooms, Day).
+
+surgery_times_for_room(LOpCode, TotalRequiredTime) :-
+    findall(TotalTime, (member(OpCode, LOpCode), surgery_id(OpCode, OpType), surgery(OpType, TPreparation, TSurgery, TCleaning), 
+                        TotalTime is TPreparation + TSurgery + TCleaning), Times),
+    sum_list(Times, TotalRequiredTime).
+
+room_availability(Room, Day, TotalAvailableTime) :-
+    agenda_operation_room(Room, Day, Agenda),
+    free_agenda0(Agenda, FreeTimeSlots),
+    sum_free_time_slots(FreeTimeSlots, TotalAvailableTime).
+
+sum_free_time_slots([], 0).
+sum_free_time_slots([(Tin, Tfin) | Tail], TotalTime) :-
+    sum_free_time_slots(Tail, RemainingTime),
+    TotalTime is RemainingTime + (Tfin - Tin).
+
+check_room_capacity(TotalRequiredTime, TotalAvailableTime) :-
+    Ratio is TotalRequiredTime / TotalAvailableTime,
+    (Ratio < 0.8 -> true; fail).
