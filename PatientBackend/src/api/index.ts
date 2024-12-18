@@ -11,6 +11,12 @@ export default () => {
 	user(app);
 	role(app);
 	medicalCondition(app);
+
+	app.stack?.forEach((middleware) => {
+		if (middleware.route) {
+			console.log(middleware.route);
+		}
+	});
 	
 	return app
 }
