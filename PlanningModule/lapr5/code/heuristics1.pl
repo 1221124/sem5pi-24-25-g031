@@ -77,7 +77,7 @@ assign_staff_to_surgery([]) :- !.
 assign_staff_to_surgery([OpReqId | LOpReqId]) :-
     surgery_id(OpReqId, OpType),
     forall(
-        required_staff(OpType, Role, Speciality, NumStaff),
+        required_staff(OpType, Role, Speciality, NumStaff, _, _, _),
         assign_staff_to_surgery_role(NumStaff, Role, Speciality, OpReqId)
     ),
     assign_staff_to_surgery(LOpReqId).
@@ -150,21 +150,31 @@ insert_agenda_doctors(_,_,[]).
 insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
     surgery_id(OpCode, OpType),
     surgery(OpType, TPreparation, TSurgery, _),
-    staff(Doctor, _, Specialization, _),
-    (   Specialization = anaesthesiology
-    ->  NewTinS is TinS,
-        NewTfinS is TinS + TPreparation + TSurgery
-    ;   Specialization = medical_Action
-    ->  NewTinS is TinS + TPreparation + TSurgery,
-        NewTfinS is TfinS
-    ;   Specialization \= anaesthesiology, Specialization \= medical_Action
-    ->  NewTinS is TinS + TPreparation,
-        NewTfinS is TinS + TPreparation + TSurgery
-    ),
+    staff(Doctor, Role, Specialization, _),
+    required_staff(OpType, Role, Specialization, _, IsRequiredInPreparation, IsRequiredInSurgery, IsRequiredInCleaning),
+
+    (IsRequiredInPreparation -> 
+        (StartPreparation is TinS + TPreparation, 
+        act_insert_agenda_staff(Doctor, Day, (TinS, StartPreparation, OpCode))
+        ); true),
+
+    (IsRequiredInSurgery -> 
+        (StartSurgery is TinS + TPreparation, 
+        EndSurgery is StartSurgery + TSurgery, 
+        act_insert_agenda_staff(Doctor, Day, (StartSurgery, EndSurgery, OpCode))
+        ); true),
+
+    (IsRequiredInCleaning -> 
+        (StartCleaning is TinS + TPreparation + TSurgery, 
+        act_insert_agenda_staff(Doctor, Day, (StartCleaning, TfinS, OpCode))
+        ); true),
+
+    insert_agenda_doctors((TinS, TfinS, OpCode), Day, LDoctors).
+
+act_insert_agenda_staff(Doctor, Day, (NewTinS, NewTfinS, OpCode)) :-
     retract(agenda_staff1(Doctor, Day, Agenda)),
     insert_agenda((NewTinS, NewTfinS, OpCode), Agenda, Agenda1),
-    assert(agenda_staff1(Doctor, Day, Agenda1)),
-    insert_agenda_doctors((TinS, TfinS, OpCode), Day, LDoctors).
+    assert(agenda_staff1(Doctor, Day, Agenda1)).
 
 print_with_comma_separation([]).
 print_with_comma_separation([Elem]) :-
