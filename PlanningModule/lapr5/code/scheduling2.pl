@@ -174,26 +174,43 @@ insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
     insert_agenda_doctors((TinS, TfinS, OpCode), Day, LDoctors).
 
 act_insert_agenda_doctors(Doctor, Day, (NewTinS, NewTfinS, OpCode)) :-
+    % write('Act_insert_agenda_doctors: Doctor='), write(Doctor), write(', Day='), write(Day), write(', NewTinS='), write(NewTinS), write(', NewTfinS='), write(NewTfinS), write(', OpCode='), write(OpCode), nl,
     retract(agenda_staff1(Doctor, Day, Agenda)),
+    % write('Agenda_staff1 before insertion: '), write(agenda_staff1(Doctor, Day, Agenda)), nl,
     insert_agenda((NewTinS, NewTfinS, OpCode), Agenda, Agenda1),
+    % write('Agenda_staff1 after insertion: '), write(agenda_staff1(Doctor, Day, Agenda1)), nl,
     assert(agenda_staff1(Doctor, Day, Agenda1)).
+    % write('Agenda_staff1 after assertion: '), write(agenda_staff1(Doctor, Day, Agenda1)), nl.
 
 % concat_agenda_doctors(OpCode, Doctor, Day) :-
-%     findall((TinS, TfinS, OpCode), agenda_staff1(Doctor, Day, (TinS, TfinS, OpCode)), Agendas),
-%     concat_agenda_helper(Agendas, [], ConcatenatedAgendas),
-%     assert(agenda_staff1(Doctor, Day, ConcatenatedAgendas)).
+%     write('Concatenating agendas for Doctor='), write(Doctor), write(' and OpCode='), write(OpCode), nl,
+
+%     findall((TinS, TfinS, OpCode),
+%         (agenda_staff1(Doctor, Day, AgendaList),
+%          member((TinS, TfinS, OpCode), AgendaList)), 
+%         Agendas),
+%     write('Agendas collected: '), write(Agendas), nl,  
+
+%     (   Agendas = [] ->
+%         write('No agendas found for this doctor and day!'), nl,
+%         fail
+%     ;   concat_agenda_helper(Agendas, [], ConcatenatedAgendas),
+%         write('ConcatenatedAgendas: '), write(ConcatenatedAgendas), nl,
+        
+%         assert(agenda_staff1(Doctor, Day, ConcatenatedAgendas)),
+%         write('Agenda_staff1 after concatenation: '), write(ConcatenatedAgendas), nl
+%     ).
 
 % concat_agenda_helper([], Acc, Acc).
-
 % concat_agenda_helper([(TinS1, TfinS1, OpCode1), (TinS2, TfinS2, OpCode2) | Rest], Acc, ConcatenatedAgendas) :-
 %     TfinS1 =:= TinS2,  
-%     OpCode1 =:= OpCode2,
+%     OpCode1 == OpCode2,
 %     !,  
 %     NewTfinS is TfinS2,  
 %     concat_agenda_helper(Rest, [(TinS1, NewTfinS, OpCode1) | Acc], ConcatenatedAgendas).
-
 % concat_agenda_helper([Head | Rest], Acc, ConcatenatedAgendas) :-
-%     concat_agenda_helper(Rest, [Head | Acc], ConcatenatedAgendas).
+%     append(Acc, [Head], NewAcc),
+%     concat_agenda_helper(Rest, NewAcc, ConcatenatedAgendas).
 
 print_with_comma_separation([]).
 print_with_comma_separation([Elem]) :-
