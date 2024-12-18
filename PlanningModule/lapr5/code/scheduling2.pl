@@ -153,11 +153,23 @@ insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
     staff(Doctor, Role, Specialization, _),
     required_staff(OpType, Role, Specialization, _, IsRequiredInPreparation, IsRequiredInSurgery, IsRequiredInCleaning),
 
-    (IsRequiredInPreparation -> act_insert_agenda_doctors(Doctor, Day, (TinS, TinS + TPreparation, OpCode)); true),
-    (IsRequiredInSurgery -> act_insert_agenda_doctors(Doctor, Day, (TinS + TPreparation, TinS + TPreparation + TSurgery, OpCode)); true),
-    (IsRequiredInCleaning -> act_insert_agenda_doctors(Doctor, Day, (TinS + TPreparation + TSurgery, TfinS, OpCode)); true),
+    (IsRequiredInPreparation -> 
+        (StartPreparation is TinS + TPreparation, 
+        act_insert_agenda_doctors(Doctor, Day, (TinS, StartPreparation, OpCode))
+        ); true),
 
-    concat_agenda_doctors(OpCode, Doctor, Day),
+    (IsRequiredInSurgery -> 
+        (StartSurgery is TinS + TPreparation, 
+        EndSurgery is StartSurgery + TSurgery, 
+        act_insert_agenda_doctors(Doctor, Day, (StartSurgery, EndSurgery, OpCode))
+        ); true),
+
+    (IsRequiredInCleaning -> 
+        (StartCleaning is TinS + TPreparation + TSurgery, 
+        act_insert_agenda_doctors(Doctor, Day, (StartCleaning, TfinS, OpCode))
+        ); true),
+
+    % concat_agenda_doctors(OpCode, Doctor, Day),
 
     insert_agenda_doctors((TinS, TfinS, OpCode), Day, LDoctors).
 
@@ -166,19 +178,22 @@ act_insert_agenda_doctors(Doctor, Day, (NewTinS, NewTfinS, OpCode)) :-
     insert_agenda((NewTinS, NewTfinS, OpCode), Agenda, Agenda1),
     assert(agenda_staff1(Doctor, Day, Agenda1)).
 
-concat_agenda_doctors(OpCode, Doctor, Day) :-
-    findall((TinS, TfinS, OpCode), agenda_staff1(Doctor, Day, (TinS, TfinS, OpCode)), Agendas),
-    concat_agenda_helper(Agendas, [], ConcatenatedAgendas),
-    assert(agenda_staff1(Doctor, Day, ConcatenatedAgendas)).
+% concat_agenda_doctors(OpCode, Doctor, Day) :-
+%     findall((TinS, TfinS, OpCode), agenda_staff1(Doctor, Day, (TinS, TfinS, OpCode)), Agendas),
+%     concat_agenda_helper(Agendas, [], ConcatenatedAgendas),
+%     assert(agenda_staff1(Doctor, Day, ConcatenatedAgendas)).
 
-concat_agenda_helper([], Acc, Acc).
-concat_agenda_helper([(TinS1, TfinS1, OpCode1), (TinS2, TfinS2, OpCode2) | Rest], Acc, ConcatenatedAgendas) :-
-    TfinS1 =:= TinS2,
-    OpCode1 =:= OpCode2,
-    NewTfinS is TfinS2,
-    concat_agenda_helper(Rest, [(TinS1, NewTfinS, OpCode1) | Acc], ConcatenatedAgendas).
-concat_agenda_helper([(TinS, TfinS, OpCode) | Rest], Acc, ConcatenatedAgendas) :-
-    concat_agenda_helper(Rest, [(TinS, TfinS, OpCode) | Acc], ConcatenatedAgendas).
+% concat_agenda_helper([], Acc, Acc).
+
+% concat_agenda_helper([(TinS1, TfinS1, OpCode1), (TinS2, TfinS2, OpCode2) | Rest], Acc, ConcatenatedAgendas) :-
+%     TfinS1 =:= TinS2,  
+%     OpCode1 =:= OpCode2,
+%     !,  
+%     NewTfinS is TfinS2,  
+%     concat_agenda_helper(Rest, [(TinS1, NewTfinS, OpCode1) | Acc], ConcatenatedAgendas).
+
+% concat_agenda_helper([Head | Rest], Acc, ConcatenatedAgendas) :-
+%     concat_agenda_helper(Rest, [Head | Acc], ConcatenatedAgendas).
 
 print_with_comma_separation([]).
 print_with_comma_separation([Elem]) :-
