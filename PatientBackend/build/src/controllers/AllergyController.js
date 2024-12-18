@@ -41,6 +41,21 @@ let AllergyController = class AllergyController {
             return next(error);
         }
     }
+    /**
+     * Retrieves all allergies.
+     * @param req
+     * @param res
+     * @param next
+     */
+    async getAllAllergies(req, res, next) {
+        try {
+            const allergies = await this.allergyService.getAll();
+            return res.json(allergies);
+        }
+        catch (error) {
+            return next(error);
+        }
+    }
 };
 AllergyController = __decorate([
     (0, typedi_1.Service)(),
