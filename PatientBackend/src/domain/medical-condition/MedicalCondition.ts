@@ -1,3 +1,4 @@
+import { set } from 'mongoose';
 import { AggregateRoot } from '../../core/domain/AggregateRoot';
 import { UniqueEntityID } from '../../core/domain/UniqueEntityID';
 import { Guard } from '../../core/logic/Guard';
@@ -7,6 +8,7 @@ import { ICD11Code } from '../shared/ICD11Code';
 import { Name } from '../shared/Name';
 import { CommonSymptom } from './CommonSyptom';
 import { MedicalConditionId } from './MedicalConditionId';
+import { UpdatingMedicalConditionDto } from '../../dto/medical-condition/UpdatingMedicalConditionDto';
 
 interface MedicalConditionProps {
     code: ICD11Code;
@@ -36,15 +38,23 @@ export class MedicalCondition extends AggregateRoot<MedicalConditionProps> {
         return this.props.description;
     }
 
+    set description(value: Description) {
+        this.props.description = value;
+    }
+
     get commonSymptoms(): CommonSymptom[] {
         return this.props.commonSymptoms.map((symptom) => symptom);
     }
 
-    private constructor(props: MedicalConditionProps, id?: MedicalConditionId) {
+    set commonSymptoms(value: CommonSymptom[]) {
+        this.props.commonSymptoms = value;
+    }
+
+    private constructor(props: MedicalConditionProps, id?: UniqueEntityID) {
         super(props, id);
     }
 
-    public static create(props: MedicalConditionProps, id?: MedicalConditionId): Result<MedicalCondition> {
+    public static create(props: MedicalConditionProps, id?: UniqueEntityID): Result<MedicalCondition> {
         
         console.log("Creating medical condition: ", props);
 
@@ -69,15 +79,6 @@ export class MedicalCondition extends AggregateRoot<MedicalConditionProps> {
             }, id);
 
             return Result.ok<MedicalCondition>(medicalCondition);
-        }
-    }
-
-    public updateFromRequest (request: MedicalCondition): void {
-        if (request.description !== null && request.description !== undefined) {
-            this.props.description = request.description;
-        }
-        if (request.commonSymptoms !== null && request.commonSymptoms !== undefined) {
-            this.props.commonSymptoms = request.commonSymptoms;
         }
     }
 }
