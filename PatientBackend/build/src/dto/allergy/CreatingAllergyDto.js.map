@@ -1,0 +1,1 @@
+{"version":3,"file":"CreatingAllergyDto.js","sourceRoot":"","sources":["../../../../src/dto/allergy/CreatingAllergyDto.ts"],"names":[],"mappings":";;;AAIA,MAAa,kBAAkB;IAK3B,YAAY,IAAe,EAAE,IAAU,EAAE,WAAwB;QAC7D,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,WAAW,GAAG,WAAW,CAAC;IACnC,CAAC;CACJ;AAVD,gDAUC"}

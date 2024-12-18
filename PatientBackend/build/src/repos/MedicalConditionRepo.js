@@ -38,21 +38,28 @@ let MedicalConditionRepo = class MedicalConditionRepo {
      * Save a medical condition (create or update).
      */
     async save(medicalCondition) {
-        // const query = { domainId: medicalCondition.id.toString() };
-        // const medicalConditionDocument = await this.medicalConditionSchema.findOne(query);
-        // try {
-        //   if (medicalConditionDocument === null) {
-        //     const rawMedicalCondition: any = MedicalConditionMap.toPersistence(medicalCondition);
-        //     const medicalConditionCreated = await this.medicalConditionSchema.create(rawMedicalCondition);
-        //     return MedicalConditionMap.toDomain(medicalConditionCreated);
-        //   } else {
-        //     medicalConditionDocument.name = medicalCondition.name; // Update any relevant fields
-        //     await medicalConditionDocument.save();
-        //     return medicalCondition;
-        //   }
-        // } catch (err) {
-        //   throw err;
-        // }
+        console.log("Saving medical condition: ", medicalCondition);
+        const query = { domainId: medicalCondition.id.toString() };
+        const schema = await this.medicalConditionSchema.findOne(query);
+        console.log("Medical condition schema: ", schema);
+        try {
+            if (schema === null) {
+                const rawMedicalCondition = MedicalConditionMap_1.MedicalConditionMap.toPersistence(medicalCondition);
+                console.log("Raw medical condition: ", rawMedicalCondition);
+                const medicalConditionCreated = await this.medicalConditionSchema.create(rawMedicalCondition);
+                console.log("Medical condition created: ", medicalConditionCreated);
+                return MedicalConditionMap_1.MedicalConditionMap.toDomain(medicalConditionCreated);
+            }
+            else {
+                schema.set(MedicalConditionMap_1.MedicalConditionMap.toPersistence(medicalCondition));
+                await schema.save();
+                return MedicalConditionMap_1.MedicalConditionMap.toDomain(schema);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
         return null;
     }
     /**

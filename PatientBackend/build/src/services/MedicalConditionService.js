@@ -42,7 +42,7 @@ let MedicalConditionService = class MedicalConditionService {
     /**
      * Lists all medical conditions.
      */
-    async listMedicalConditions() {
+    async getAll() {
         try {
             const medicalConditions = await this.medicalConditionRepo.findAll();
             return medicalConditions.map(MedicalConditionMap_1.MedicalConditionMap.toDto);
@@ -54,18 +54,26 @@ let MedicalConditionService = class MedicalConditionService {
     /**
      * Creates a new medical condition.
      */
+    /**
+     * Creates a new medical condition.
+     */
     async createMedicalCondition(dto) {
         try {
-            const creatingMedicalCondition = MedicalConditionMap_1.MedicalConditionMap.toDomain(dto);
-            if (!creatingMedicalCondition) {
-                return Result_1.Result.fail(creatingMedicalCondition);
+            console.log("Creating medical condition (service): ", dto);
+            const medicalConditionDto = await MedicalConditionMap_1.MedicalConditionMap.toDomain(dto);
+            console.log("1 medicalConditionDto: ", medicalConditionDto);
+            if (!medicalConditionDto) {
+                return Result_1.Result.fail("Failed to map medical condition DTO to domain.");
             }
-            await this.medicalConditionRepo.save(await creatingMedicalCondition);
-            const medicalConditionDTO = MedicalConditionMap_1.MedicalConditionMap.toDto(await creatingMedicalCondition);
+            console.log("2 creatingMedicalCondition: ", medicalConditionDto);
+            console.log("saving medical condition");
+            await this.medicalConditionRepo.save(medicalConditionDto);
+            const medicalConditionDTO = MedicalConditionMap_1.MedicalConditionMap.toDto(medicalConditionDto);
             return Result_1.Result.ok(medicalConditionDTO);
         }
         catch (error) {
-            return Result_1.Result.fail(error);
+            console.log("Error: ", error);
+            return Result_1.Result.fail(error.message);
         }
     }
     /**
@@ -73,7 +81,7 @@ let MedicalConditionService = class MedicalConditionService {
      */
     async updateMedicalCondition(dto) {
         try {
-            const medicalCondition = await this.medicalConditionRepo.findByDomainId(dto.id.getId().toString());
+            const medicalCondition = await this.medicalConditionRepo.findByDomainId(dto.id.toString());
             if (medicalCondition == null) {
                 return Result_1.Result.fail("Medical condition not found");
             }

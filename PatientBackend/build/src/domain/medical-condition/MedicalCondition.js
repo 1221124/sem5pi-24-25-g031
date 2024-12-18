@@ -6,9 +6,9 @@ const Guard_1 = require("../../core/logic/Guard");
 const Result_1 = require("../../core/logic/Result");
 const MedicalConditionId_1 = require("./MedicalConditionId");
 class MedicalCondition extends AggregateRoot_1.AggregateRoot {
-    get id() {
-        return MedicalConditionId_1.MedicalConditionId.caller(this.id);
-    }
+    // get id(): UniqueEntityID {
+    //     return MedicalConditionId.caller(this.id);
+    // }
     get medicalConditionId() {
         return MedicalConditionId_1.MedicalConditionId.caller(this.id);
     }
@@ -22,19 +22,22 @@ class MedicalCondition extends AggregateRoot_1.AggregateRoot {
         return this.props.description;
     }
     get commonSymptoms() {
-        return this.props.commonSymptoms;
+        return this.props.commonSymptoms.map((symptom) => symptom);
     }
     constructor(props, id) {
         super(props, id);
     }
     static create(props, id) {
+        console.log("Creating medical condition: ", props);
         const guardedProps = [
             { argument: props.code, argumentName: 'code' },
             { argument: props.name, argumentName: 'name' },
             { argument: props.description, argumentName: 'description' },
-            { argument: props.commonSymptoms, argumentName: 'commonSymptoms' }
+            { argument: props.commonSymptoms.values, argumentName: 'commonSymptoms' }
         ];
+        console.log("Guarded props: ", guardedProps);
         const guardResult = Guard_1.Guard.againstNullOrUndefinedBulk(guardedProps);
+        console.log("Guard result: ", guardResult);
         if (!guardResult.succeeded) {
             return Result_1.Result.fail(guardResult.message);
         }

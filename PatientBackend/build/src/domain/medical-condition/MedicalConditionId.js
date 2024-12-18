@@ -1,19 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MedicalConditionId = void 0;
-const uuid_1 = require("uuid");
-class MedicalConditionId {
+const UniqueEntityID_1 = require("../../core/domain/UniqueEntityID");
+class MedicalConditionId extends UniqueEntityID_1.UniqueEntityID {
     constructor(id) {
-        if (id && !(0, uuid_1.validate)(id)) {
-            throw new Error("Invalid GUID format for MedicalConditionId");
-        }
-        this.id = id || (0, uuid_1.v4)();
+        super(id);
     }
-    getId() {
-        return this.id;
-    }
-    equals(other) {
-        return this.id === other.id;
+    static create(id) {
+        return new MedicalConditionId(id);
     }
 }
 exports.MedicalConditionId = MedicalConditionId;

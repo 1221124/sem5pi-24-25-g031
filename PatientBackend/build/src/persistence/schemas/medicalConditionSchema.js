@@ -5,30 +5,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const MedicalConditionSchema = new mongoose_1.default.Schema({
-    id: {
+    medicalConditionId: {
         type: String,
         required: true
     },
     name: {
         type: String,
         required: [true, 'Please enter name'],
-        index: true,
     },
     code: {
         type: String,
         required: [true, 'Please enter code'],
-        index: true,
     },
     description: {
         type: String,
         required: [true, 'Please enter description'],
-        index: true,
     },
     commonSymptoms: {
-        type: Array(),
+        type: [String],
         required: [true, 'Please enter common symptoms'],
-        index: true,
     },
 });
 exports.default = mongoose_1.default.model('MedicalCondition', MedicalConditionSchema);
-//# sourceMappingURL=MedicalConditionSchema.js.map
+//# sourceMappingURL=medicalConditionSchema.js.map

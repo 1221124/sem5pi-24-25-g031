@@ -15,49 +15,49 @@ exports.default = ({ mongoConnection, schemas, controllers, repos, services }) =
          * at the time of writing unit tests.
          */
         schemas.forEach(m => {
-            console.log("Schemas: " + m.name);
-            console.log(">>>" + m.name);
+            // console.log("Schemas: " + m.name);
+            // console.log(">>>" + m.name);
             // Notice the require syntax and the '.default'
             let schema = require(m.schema).default;
-            console.log(">>>" + schema);
+            // console.log(">>>" + schema);
             typedi_1.Container.set(m.name, schema);
-            console.log(">>>" + typedi_1.Container.get(m.name));
+            // console.log(">>>" + Container.get(m.name));
         });
         repos.forEach(m => {
-            console.log("Repos: " + m.name);
-            console.log(">>>" + m.name);
-            console.log(">>>" + m.path);
+            // console.log("Repos: " + m.name);
+            // console.log(">>>" + m.name);
+            // console.log(">>>" + m.path);
             let repoClass = require(m.path).default;
-            console.log(">>>" + repoClass);
+            // console.log(">>>" + repoClass);
             let repoInstance = typedi_1.Container.get(repoClass);
-            console.log(">>>" + repoInstance);
+            // console.log(">>>" + repoInstance);
             typedi_1.Container.set(m.name, repoInstance);
-            console.log(">>>" + typedi_1.Container.get(m.name));
+            // console.log(">>>" + Container.get(m.name));
         });
         services.forEach(m => {
-            console.log("Services: " + m.name);
-            console.log(">>>" + m.name);
-            console.log(">>>" + m.path);
+            // console.log("Services: "  + m.name);
+            // console.log(">>>" + m.name);
+            // console.log(">>>" + m.path);
             let serviceClass = require(m.path).default;
-            console.log(">>>" + serviceClass);
+            // console.log(">>>" + serviceClass);
             let serviceInstance = typedi_1.Container.get(serviceClass);
-            console.log(">>>" + serviceInstance);
+            // console.log(">>>" + serviceInstance);
             typedi_1.Container.set(m.name, serviceInstance);
-            console.log(">>>" + typedi_1.Container.get(m.name));
+            // console.log(">>>" + Container.get(m.name));
         });
         controllers.forEach(m => {
-            console.log("Controllers: " + m.name);
-            console.log(">>>" + m.name);
-            console.log(">>>" + m.path);
+            // console.log("Controllers: "+ m.name);
+            // console.log(">>>" + m.name);
+            // console.log(">>>" + m.path);
             // load the @Service() class by its path
             let controllerClass = require(m.path).default;
-            console.log(">>>" + controllerClass);
+            //console.log(">>>" + controllerClass);
             // create/get the instance of the @Service() class
             let controllerInstance = typedi_1.Container.get(controllerClass);
-            console.log(">>>" + controllerInstance);
+            //console.log(">>>" + controllerInstance);
             // rename the instance inside the container
             typedi_1.Container.set(m.name, controllerInstance);
-            console.log(">>>" + typedi_1.Container.get(m.name));
+            //console.log(">>>" + Container.get(m.name));
         });
         return;
     }
