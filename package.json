@@ -4,6 +4,7 @@
     "@types/mongoose": "^5.11.96",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "marked": "^15.0.4",
     "mongoose": "^8.8.4",
     "typedi": "^0.10.0",
     "uuid": "^11.0.3"
@@ -11,6 +12,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/marked": "^5.0.2",
     "@types/uuid": "^10.0.0"
   }
 }
