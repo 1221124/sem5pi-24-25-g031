@@ -1,24 +1,74 @@
 .admin-dashboard {
-    text-align: center;
-    margin-top: 50px;
-  }
+  text-align: center;
+  margin-top: 50px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50; /* Deep grayish-blue for text */
+}
 
+h1 {
+  margin: 20px 0;
+  color: #34495e; /* Slightly lighter blue-gray */
+}
+
+h2 {
+  margin: 15px 50%;
+  color: #34495e; /* Slightly lighter blue-gray */
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+button {
+  font-size: 16px;
+  padding: 12px 24px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s;
+  background-color: #5d6d7e; /* Muted blue-gray */
+  color: #ecf0f1; /* Light gray for text */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+button.btn-secondary {
+  background-color: #4a637b; /* Muted steel-blue */
+}
+
+button.btn-primary {
+  background-color: #4a637b; /* Bright blue for primary actions */
+}
+
+button.btn-warning {
+  background-color: #4a637b; /* A warm contrasting amber */
+}
+
+button:hover {
+  background-color: #3b5998; /* Deeper blue */
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(1.05);
+  background-color: #2a3e5a; /* Darker blue-gray */
+}
+
+button:focus {
+  outline: 2px solid #1abc9c; /* Teal for focus state */
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
   .button-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
+    flex-direction: column;
+    gap: 10px;
   }
 
   button {
-    font-size: 16px;
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: darkgrey;
-    border: none;
-    color: white;
+    width: 90%;
   }
-
-button:hover {
-  background-color: gray;
 }

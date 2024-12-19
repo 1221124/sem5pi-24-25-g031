@@ -1,12 +1,24 @@
 <div class="admin-menu">
   <h1>Hello, Admin!</h1>
-  <div class="button-container">
-    <button (click)="navigateTo('operationTypes')" class="btn btn-primary">Manage Operation Types</button>
+  
+    <div> 
+    <h2>People</h2>
+    <div class="button-container">
     <button (click)="navigateTo('staffs')" class="btn btn-secondary">Manage Staffs</button>
     <button (click)="navigateTo('patients')" class="btn btn-primary">Manage Patients</button>
-    <button (click)="navigateTo('roomTypes')" class="btn btn-secondary">Manage Room Types</button>
     <button (click)="navigateTo('users')" class="btn btn-warning">Create Backoffice Users</button>
-    <button (click)="navigateTo('prolog')" class="btn btn-warning">Generate Appointments</button>
-    <button (click)="navigateToAppointments()" class="btn btn-primary">List Appointments</button>
   </div>
+  <div>
+    <h2>Medical Data</h2>
+    <div class="button-container"></div>
+    <button (click)="navigateTo('operationTypes')" class="btn btn-primary">Manage Operation Types</button>
+    <button (click)="navigateTo('roomTypes')" class="btn btn-secondary">Manage Room Types</button>
+    <button (click)="navigateTo('medical-conditions')" class="btn btn-secondary">Manage Medical Conditions</button>
+  </div>
+  <div>
+  <h2>Appointments</h2>
+    <div class="button-container">
+      <button (click)="navigateTo('prolog')" class="btn btn-warning">Generate Appointments</button>
+      <button (click)="navigateToAppointments()" class="btn btn-primary">List Appointments</button>
+    </div>
 </div>
