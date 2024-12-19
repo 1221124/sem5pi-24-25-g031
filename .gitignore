@@ -26,3 +26,4 @@ sarm/obj/DDDNetCore.csproj.nuget.dgspec.json
 sarm/obj/DDDNetCore.csproj.nuget.g.props
 sarm/obj/project.assets.json
 sarm/obj/project.nuget.cache
+PatientBackend\node_modules
