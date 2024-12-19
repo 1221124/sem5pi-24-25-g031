@@ -12,6 +12,7 @@ import { MedicalConditionId } from "../domain/medical-condition/MedicalCondition
 export class MedicalConditionMap {
     public  static toDto(medicalCondition: MedicalCondition): MedicalConditionDto {
       return {
+        id: medicalCondition.id.toString(),
         code: medicalCondition.code, 
         name: medicalCondition.name, 
         description: medicalCondition.description, 
