@@ -1,47 +1,47 @@
 import { expressjwt as jwt } from 'express-jwt';
-import jwtDecode, { Jwt, JwtHeader, JwtPayload } from 'jsonwebtoken'; // Usando o pacote jsonwebtoken para decodificar o token
+import jwtDecode, { Jwt, JwtHeader, JwtPayload } from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { Request, Response, NextFunction } from 'express';
+import dotenv from 'dotenv';
 
-// Configuração do JWKS (JSON Web Key Set)
+dotenv.config();
+
 const client = jwksClient({
-  jwksUri: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/.well-known/jwks.json', // Substitua com a URL do seu JWKS
+  jwksUri: process.env.JWKS_URI!
 });
 
-// Função para recuperar a chave pública do JWKS
 const getKey = async (header: any) => {
   try {
-    const token = getTokenFromHeader(header); // Pegando o token do cabeçalho de autorização
+    const token = getTokenFromHeader(header);
 
     if (!token) {
-      console.error('Token não fornecido'); // Log para depurar
+      console.error('Token not provided');
       throw new Error('Token not provided');
     }
 
-    const kid = getKidFromToken(token); // Pegando o kid do token
+    const kid = getKidFromToken(token);
 
     if (!kid) {
-      console.error('Kid não encontrado no token'); // Log para depurar
+      console.error('Kid not found in token');
       throw new Error('Kid not found in token');
     }
 
     const keys = await client.getSigningKeys();
-    console.log('Chaves obtidas do JWKS:', keys); // Log para depurar
+    console.log('Keys obtained from JWKS:', keys);
 
     const signingKey = keys.find((k: any) => k.kid === kid);
     if (!signingKey) {
-      console.error('Chave não encontrada para o kid:', kid); // Log para depurar
+      console.error('Key not found for kid:', kid);
       throw new Error('Key not found');
     }
     
     return signingKey.getPublicKey();
   } catch (err) {
-    console.error('Erro ao obter a chave pública:', err); // Log de erro
+    console.error('Error getting public key:', err);
     throw new Error('Error getting public key');
   }
 };
 
-// Função para pegar o token do cabeçalho Authorization
 const getTokenFromHeader = (req: Request) => {
   const authHeader = req.headers.authorization;
 
@@ -66,33 +66,30 @@ const getTokenFromHeader = (req: Request) => {
 
 const getKidFromToken = (token: string) => {
   try {
-    // Decodificar o token com complete: true para incluir tanto o header quanto o payload
     const decodedToken = jwtDecode.decode(token, { complete: true });
 
-    console.log('Decoded JWT:', decodedToken);  // Log para verificar o cabeçalho e o payload
+    console.log('Decoded JWT:', decodedToken);
 
-    // Verificar se o header contém o 'kid'
     if (decodedToken && decodedToken.header) {
       return decodedToken.header.kid;
     }
 
-    console.error('Kid não encontrado no cabeçalho do token');
+    console.error('Kid not found in token header');
     return null;
   } catch (err) {
-    console.error('Erro ao obter o kid do token', err);
+    console.error('Error getting kid from token', err);
     return null;
   }
 };
 
-
-// Função para extrair roles do payload do token
 const getRolesFromToken = (token: string): string[] | null => {
   try {
-    // Usando jsonwebtoken.decode() para decodificar o token e acessar o payload
     const decodedToken: any = jwtDecode.decode(token);
 
-    if (decodedToken && decodedToken["https://api.sarmg031.com/roles"]) {
-      return decodedToken["https://api.sarmg031.com/roles"];
+    const rolesKey = process.env.ROLES_KEY;
+
+    if (decodedToken && decodedToken[rolesKey]) {
+      return decodedToken[rolesKey];
     }
 
     return null;
@@ -102,31 +99,28 @@ const getRolesFromToken = (token: string): string[] | null => {
   }
 };
 
-// Middleware de autenticação e verificação de roles
 const isAuth = (roles: string[]) => {
   return [
-    // 1. Validação do token JWT
     jwt({
       getToken: getTokenFromHeader,
-      secret: getKey, // Aqui, pegamos o token do cabeçalho de autorização
-      algorithms: ['RS256'], // Algoritmo RS256 para validação do token
+      secret: getKey,
+      algorithms: ['RS256'],
     }),
 
-    // 2. Verificação de roles
     (req: Request, res: Response, next: NextFunction) => {
-      const token = req.headers.authorization?.split(' ')[1]; // Pegando o token do cabeçalho
+      const token = req.headers.authorization?.split(' ')[1];
 
       if (!token) {
-        return res.status(401).json({ message: 'Token não fornecido.' });
+        return res.status(401).json({ message: 'Token not provided.' });
       }
 
-      const rolesFromToken = getRolesFromToken(token); // Pegando os roles do payload do token
+      const rolesFromToken = getRolesFromToken(token);
 
       if (!rolesFromToken || !rolesFromToken.some((role) => roles.includes(role))) {
-        return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para esta ação.' });
+        return res.status(403).json({ message: 'Access denied. You do not have permission for this action.' });
       }
 
-      next(); // Se o usuário tiver os roles necessários, continuar com a requisição
+      next();
     },
   ];
 };
