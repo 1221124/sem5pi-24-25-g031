@@ -34,13 +34,13 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
   }
 
   /**
-   * Lists all medical conditions.
+   * Lists all patient medical records.
    */
   public async getAll(): Promise<Result<PatientMedicalRecordDto[]>> {
     try {
       let patientMedicalRecords = await this.patientMedicalRecordRepo.findAll();
       if (patientMedicalRecords == null) patientMedicalRecords = new Array<PatientMedicalRecord>();
-      return Result.ok<PatientMedicalRecordDto[]>(patientMedicalRecords);
+      return Result.ok<PatientMedicalRecordDto[]>(patientMedicalRecords.map(PatientMedicalRecordMap.toDto));
     } catch (error) {
       throw error;
     }
