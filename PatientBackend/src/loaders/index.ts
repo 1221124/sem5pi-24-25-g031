@@ -4,7 +4,6 @@ import mongooseLoader from './mongoose';
 import Logger from './logger';
 
 import config from '../../config';
-import path from 'path';
 
 export default async ({ expressApp }) => {
   const mongoConnection = await mongooseLoader();
@@ -86,6 +85,28 @@ export default async ({ expressApp }) => {
     path: config.repos.allergy.path
   }
 
+  /*** PATIENT MEDICAL RECORD ***/
+
+  const patientMedicalRecordSchema = {
+    name: 'patientMedicalRecordSchema',
+    schema: '../persistence/schemas/patientMedicalRecordSchema',
+  }
+
+  const patientMedicalRecordController = {
+    name: config.controllers.patientMedicalRecord.name,
+    path: config.controllers.patientMedicalRecord.path
+  }
+
+  const patientMedicalRecordService = {
+    name: config.services.patientMedicalRecord.name,
+    path: config.services.patientMedicalRecord.path
+  }
+
+  const patientMedicalRecordRepo = {
+    name: config.repos.patientMedicalRecord.name,
+    path: config.repos.patientMedicalRecord.path
+  }
+
   /*** DEPENDENCY INJECTOR ***/
 
   dependencyInjectorLoader({
@@ -94,23 +115,27 @@ export default async ({ expressApp }) => {
       userSchema,
       roleSchema,
       medicalConditionSchema,
-      allergySchema
+      allergySchema,
+      patientMedicalRecordSchema
     ],
     controllers: [
       roleController,
       medicalConditionController,
-      allergyController  
+      allergyController,
+      patientMedicalRecordController  
     ],
     repos: [
       roleRepo,
       userRepo,
       medicalConditionRepo,
-      allergyRepo  
+      allergyRepo,
+      patientMedicalRecordRepo  
     ],
     services: [
       roleService,
       medicalConditionService,
-      allergyService  
+      allergyService,
+      patientMedicalRecordService  
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');

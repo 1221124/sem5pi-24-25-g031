@@ -1,0 +1,12 @@
+import { Result } from "../../core/logic/Result";
+import { CreatingPatientMedicalRecordDto } from "../../dto/patient-medical-record/CreatingPatientMedicalRecordDto";
+import { PatientMedicalRecordDto } from "../../dto/patient-medical-record/PatientMedicalRecordDto";
+import { UpdatingPatientMedicalRecordDto } from "../../dto/patient-medical-record/UpdatingPatientMedicalRecordDto";
+
+export default interface IPatientMedicalRecordService  {
+    getAll(): Promise<Result<PatientMedicalRecordDto[]>>;
+    getById(id: string): Promise<Result<PatientMedicalRecordDto>>;
+    create(creatingPatientMedicalRecord: CreatingPatientMedicalRecordDto): Promise<Result<PatientMedicalRecordDto>>;
+    update(id: string, updatingPatientMedicalRecord: UpdatingPatientMedicalRecordDto): Promise<Result<PatientMedicalRecordDto>>;
+    delete(id: string): Promise<Result<void>>;
+}
