@@ -26,13 +26,14 @@ import { AdminPatientsAppointmentHistComponent } from './components/admin-patien
 import {AdminPatientsModule} from './components/admin-patients/admin-patients.module';
 import { AppointmentsModule } from './components/appointments-module/appointments.module';
 import { RoomTypesComponent } from './components/room-types/room-types.component';
+import { MedicalConditionModule } from './components/medical-condition-module/medical-condition.module';
 
 @NgModule({
   declarations: [
     HomeComponent,
     NurseMenuComponent,
     TechnicianMenuComponent,
-    AdminPatientsAppointmentHistComponent
+    AdminPatientsAppointmentHistComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +58,8 @@ import { RoomTypesComponent } from './components/room-types/room-types.component
     VerifyRemovePatientComponent,
     AdminPatientsModule,
     AdminMenuComponent,
-    RoomTypesComponent
+    RoomTypesComponent,
+    MedicalConditionModule
   ],
   providers: [],
   bootstrap: []

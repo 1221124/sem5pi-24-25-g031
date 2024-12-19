@@ -19,6 +19,7 @@ import { AdminPatientsMainComponent } from './components/admin-patients/admin-pa
 import {OperationTypesComponent} from './components/operation-types-module/operation-types/operation-types.component';
 import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
 import { RoomTypesComponent } from './components/room-types/room-types.component';
+import { MedicalConditionComponent } from './components/medical-condition-module/medical-condition/medical-condition.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -65,7 +66,6 @@ export const routes: Route[] = [
     ],
   },
   { path: 'admin/patients', component: AdminPatientsMainComponent },
-  { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/users', component: AdminUsersComponent },
   { path: 'admin/roomTypes', component: RoomTypesComponent },
   { path: 'admin/prolog', component: PrologComponent },
@@ -87,6 +87,30 @@ export const routes: Route[] = [
       },
     ],
   },
+    {
+      path: 'admin/medical-conditions',
+      component: MedicalConditionComponent,
+      children: [
+        {
+          path: 'create',
+          loadChildren: () =>
+            import('./components/medical-condition-module/medical-condition.module')
+              .then((m) => m.MedicalConditionModule),
+        },
+        {
+          path: 'update',
+          loadChildren: () =>
+            import('./components/medical-condition-module/medical-condition.module')
+              .then((m) => m.MedicalConditionModule),
+        },
+        {
+          path: 'delete',
+          loadChildren: () =>
+            import('./components/medical-condition-module/medical-condition.module')
+              .then((m) => m.MedicalConditionModule),
+        }
+      ]
+    },
   {
     path: 'doctor/operation-requests',
     component: OperationRequestsComponent,
