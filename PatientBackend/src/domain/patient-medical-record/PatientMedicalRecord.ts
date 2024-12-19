@@ -73,57 +73,21 @@ export class PatientMedicalRecord extends AggregateRoot<PatientMedicalRecordProp
         }
     }
 
-    public addMedicalCondition(medicalCondition: MedicalRecordEntry) {
-        const index = this.props.medicalConditions.findIndex((mc) => mc.code.value === medicalCondition.code.value);
-        if (index === -1) {
-            this.props.medicalConditions.push(medicalCondition);
-        } else {
-            throw new Error("Medical condition already exists.");
-        }
-    }
-
-    public updateMedicalCondition(medicalCondition: MedicalRecordEntry) {
+    public addOrUpdateMedicalConditionEntry(medicalCondition: MedicalRecordEntry) {
         const index = this.props.medicalConditions.findIndex((mc) => mc.code.value === medicalCondition.code.value);
         if (index !== -1) {
             this.props.medicalConditions[index] = medicalCondition;
         } else {
-            throw new Error("Medical condition not found.");
+            this.props.medicalConditions.push(medicalCondition);
         }
     }
 
-    public deleteMedicalCondition(medicalCondition: MedicalRecordEntry) {
-        const index = this.props.medicalConditions.findIndex((mc) => mc.code.value === medicalCondition.code.value);
-        if (index !== -1) {
-            this.props.medicalConditions.splice(index, 1);
-        } else {
-            throw new Error("Medical condition not found.");
-        }
-    }
-
-    public addAllergy(allergy: MedicalRecordEntry) {
-        const index = this.props.allergies.findIndex((a) => a.code.value === allergy.code.value);
-        if (index === -1) {
-            this.props.allergies.push(allergy);
-        } else {
-            throw new Error("Allergy already exists.");
-        }
-    }
-
-    public updateAllergy(allergy: MedicalRecordEntry) {
+    public addOrUpdateAllergyEntry(allergy: MedicalRecordEntry) {
         const index = this.props.allergies.findIndex((a) => a.code.value === allergy.code.value);
         if (index !== -1) {
             this.props.allergies[index] = allergy;
         } else {
-            throw new Error("Allergy not found.");
-        }
-    }
-
-    public deleteAllergy(allergy: MedicalRecordEntry) {
-        const index = this.props.allergies.findIndex((a) => a.code.value === allergy.code.value);
-        if (index !== -1) {
-            this.props.allergies.splice(index, 1);
-        } else {
-            throw new Error("Allergy not found.");
+            this.props.allergies.push(allergy);
         }
     }
 }

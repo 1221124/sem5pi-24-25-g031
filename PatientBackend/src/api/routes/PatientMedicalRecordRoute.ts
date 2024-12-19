@@ -65,7 +65,7 @@ export default (app: Router) => {
     (req, res, next) => ctrl.updatePatientMedicalRecord(req, res, next)
   );
 
-  //Update Medical Condition Entry
+  //Add or Update Medical Condition Entry
   route.patch('/medical-condition/:id',
     isAuth(['Doctor']) as unknown as RequestHandler,
     celebrate({
@@ -77,10 +77,10 @@ export default (app: Router) => {
         date: Joi.date().required()
       })
     }),
-    (req, res, next) => ctrl.updateMCEntry(req, res, next)
+    (req, res, next) => ctrl.addOrUpdateMedicalConditionEntry(req, res, next)
   );
 
-  //Update Allergy Entry
+  //Add or Update Allergy Entry
   route.patch('/allergy/:id',
     isAuth(['Doctor']) as unknown as RequestHandler,
     celebrate({
@@ -92,7 +92,7 @@ export default (app: Router) => {
         date: Joi.date().required()
       })
     }),
-    (req, res, next) => ctrl.updateAllergyEntry(req, res, next)
+    (req, res, next) => ctrl.addOrUpdateAllergyEntry(req, res, next)
   );
 
   //Delete

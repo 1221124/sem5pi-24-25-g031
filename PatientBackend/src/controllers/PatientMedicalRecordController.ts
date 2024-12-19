@@ -116,14 +116,14 @@ export default class PatientMedicalRecordController {
       return next(error);
     }
   }
-
+  
   /**
-   * Add a new medical condition entry to a patient medical record.
+   * Adds or updates an existing medical condition entry in a patient medical record by its ID.
    * @param req - Express request object.
    * @param res - Express response object.
    * @param next - Express next middleware function.
    */
-  public async addMedicalConditionEntry(req: Request, res: Response, next: NextFunction) {
+  public async addOrUpdateMedicalConditionEntry(req: Request, res: Response, next: NextFunction) {
     try {
       console.log("req.body = ", req.body);
       console.log("req.params = ", req.params);
@@ -135,40 +135,7 @@ export default class PatientMedicalRecordController {
 
       const medicalCondition = req.body.medicalCondition;
 
-      const resultOrError = await this.patientMedicalRecordService.addMedicalConditionEntry(id, medicalCondition) as Result<PatientMedicalRecordDto>;
-
-      console.log("resultOrError:> " + resultOrError);
-
-      if (resultOrError.isFailure) {
-        return res.status(400).send(resultOrError.errorValue()); 
-      }
-
-      const updatedPatientMedicalRecordDto = resultOrError.getValue();
-      return res.json(updatedPatientMedicalRecordDto); 
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-    /**
-   * Updates an existing medical condition entry in a patient medical record by its ID.
-   * @param req - Express request object.
-   * @param res - Express response object.
-   * @param next - Express next middleware function.
-   */
-  public async updateMedicalConditionEntry(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log("req.body = ", req.body);
-      console.log("req.params = ", req.params);
-
-      const { id } = req.params;
-      if (!id) {
-        return res.status(400).send("ID is required.");
-      }
-
-      const medicalCondition = req.body.medicalCondition;
-
-      const resultOrError = await this.patientMedicalRecordService.updateMedicalConditionEntry(id, medicalCondition) as Result<PatientMedicalRecordDto>;
+      const resultOrError = await this.patientMedicalRecordService.addOrUpdateMedicalConditionEntry(id, medicalCondition) as Result<PatientMedicalRecordDto>;
 
       console.log("resultOrError:> " + resultOrError);
 
@@ -184,45 +151,12 @@ export default class PatientMedicalRecordController {
   }
 
   /**
-   * Deletes a medical condition entry in a patient medical record by its ID.
+   * Adds or updates an existing allergy entry in a patient medical record by its ID.
    * @param req - Express request object.
    * @param res - Express response object.
    * @param next - Express next middleware function.
    */
-  public async deleteMedicalConditionEntry(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log("req.body = ", req.body);
-      console.log("req.params = ", req.params);
-
-      const { id } = req.params;
-      if (!id) {
-        return res.status(400).send("ID is required.");
-      }
-
-      const medicalCondition = req.body.medicalCondition;
-
-      const resultOrError = await this.patientMedicalRecordService.deleteMedicalConditionEntry(id, medicalCondition) as Result<PatientMedicalRecordDto>;
-
-      console.log("resultOrError:> " + resultOrError);
-
-      if (resultOrError.isFailure) {
-        return res.status(400).send(resultOrError.errorValue()); 
-      }
-
-      const updatedPatientMedicalRecordDto = resultOrError.getValue();
-      return res.json(updatedPatientMedicalRecordDto); 
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-  /**
-   * Add a new allergy entry to a patient medical record.
-   * @param req - Express request object.
-   * @param res - Express response object.
-   * @param next - Express next middleware function.
-   */
-  public async addAllergyEntry(req: Request, res: Response, next: NextFunction) {
+  public async addOrUpdateAllergyEntry(req: Request, res: Response, next: NextFunction) {
     try {
       console.log("req.body = ", req.body);
       console.log("req.params = ", req.params);
@@ -234,73 +168,7 @@ export default class PatientMedicalRecordController {
 
       const allergy = req.body.allergy;
 
-      const resultOrError = await this.patientMedicalRecordService.addAllergyEntry(id, allergy) as Result<PatientMedicalRecordDto>;
-
-      console.log("resultOrError:> " + resultOrError);
-
-      if (resultOrError.isFailure) {
-        return res.status(400).send(resultOrError.errorValue()); 
-      }
-
-      const updatedPatientMedicalRecordDto = resultOrError.getValue();
-      return res.json(updatedPatientMedicalRecordDto); 
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-  /**
-   * Updates an existing allergy entry in a patient medical record by its ID.
-   * @param req - Express request object.
-   * @param res - Express response object.
-   * @param next - Express next middleware function.
-   */
-  public async updateAllergyEntry(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log("req.body = ", req.body);
-      console.log("req.params = ", req.params);
-
-      const { id } = req.params;
-      if (!id) {
-        return res.status(400).send("ID is required.");
-      }
-
-      const allergy = req.body.allergy;
-
-      const resultOrError = await this.patientMedicalRecordService.updateAllergyEntry(id, allergy) as Result<PatientMedicalRecordDto>;
-
-      console.log("resultOrError:> " + resultOrError);
-
-      if (resultOrError.isFailure) {
-        return res.status(400).send(resultOrError.errorValue()); 
-      }
-
-      const updatedPatientMedicalRecordDto = resultOrError.getValue();
-      return res.json(updatedPatientMedicalRecordDto); 
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-  /**
-   * Deletes an allergy entry in a patient medical record by its ID.
-   * @param req - Express request object.
-   * @param res - Express response object.
-   * @param next - Express next middleware function.
-   */
-  public async deleteAllergyEntry(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log("req.body = ", req.body);
-      console.log("req.params = ", req.params);
-
-      const { id } = req.params;
-      if (!id) {
-        return res.status(400).send("ID is required.");
-      }
-
-      const allergy = req.body.allergy;
-
-      const resultOrError = await this.patientMedicalRecordService.deleteAllergyEntry(id, allergy) as Result<PatientMedicalRecordDto>;
+      const resultOrError = await this.patientMedicalRecordService.addOrUpdateAllergyEntry(id, allergy) as Result<PatientMedicalRecordDto>;
 
       console.log("resultOrError:> " + resultOrError);
 
