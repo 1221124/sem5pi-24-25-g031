@@ -10,7 +10,6 @@ import {FormsModule} from '@angular/forms';
 import {DeleteOperationRequestsComponent} from '../delete-operation-requests/delete-operation-requests.component';
 import {UpdateOperationRequestsComponent} from '../update-operation-requests/update-operation-requests.component';
 import {StaffsService} from '../../../services/staffs/staffs.service';
-import { query } from 'express';
 
 @Component({
   selector: 'app-operation-requests',

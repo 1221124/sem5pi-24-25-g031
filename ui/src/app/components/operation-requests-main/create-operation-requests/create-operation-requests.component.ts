@@ -9,7 +9,6 @@ import {FormsModule} from '@angular/forms';
 import {OperationRequest} from '../../../models/operation-request.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
-import { spec } from 'node:test/reporters';
 
 @Component({
   selector: 'app-create-operation-requests',

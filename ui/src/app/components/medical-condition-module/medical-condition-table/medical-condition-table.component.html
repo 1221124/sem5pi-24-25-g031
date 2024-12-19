@@ -1,0 +1,33 @@
+<div class="get-medical-conditions">
+    <div class="filter-container">
+        <input type="text" [(ngModel)]="filter.searchCode" placeholder="Enter Code" />
+        <input type="text" [(ngModel)]="filter.searchName" placeholder="Enter Name" />
+        <input type="text" [(ngModel)]="filter.searchDescription" placeholder="Enter Description" />
+        <input type="text" [(ngModel)]="filter.searchSymptoms" placeholder="Enter Common Symptom" />
+        <button type="button" (click)="filterMedicalConditions()">Filter</button>
+        <button type="button" (click)="clear()">Clear</button>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Common Symptoms</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let medicalCondition of displayMedicalConditions">
+                <td>{{ medicalCondition.code }}</td>
+                <td>{{ medicalCondition.name }}</td>
+                <td>{{ medicalCondition.description }}</td>
+                <td>{{ medicalCondition.commonSymptoms }}</td>    
+                <td>
+                    <button (click)="updateMedicalConditionEvent.emit(medicalCondition)">Update</button>
+                    <button (click)="deleteMedicalConditionEvent.emit(medicalCondition)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

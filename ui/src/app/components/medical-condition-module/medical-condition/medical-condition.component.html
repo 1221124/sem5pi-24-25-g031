@@ -1,0 +1,36 @@
+<div class="medical-condition">
+    <p>medical-condition works!</p>
+    <h1>Medical Conditions</h1>
+    <button (click)="openCreateModal()" class="btn btn-primary">Add Medical Condition</button>
+  
+    <button (click)="navigateToAdminMenu()" class="btn btn-secondary">Back to Menu</button>
+  
+    <app-medical-condition-table
+      *ngIf="medicalConditions"
+      [medicalConditions]="medicalConditions"
+      (updateMedicalConditionEvent)="openUpdateModal($event)"
+      (deleteMedicalConditionEvent)="openDeleteModal($event)">
+    </app-medical-condition-table>
+
+    <app-delete-medical-condition
+      *ngIf="isDeleteModalOpen"
+      [medicalCondition]="selectedMedicalConditionToDelete"
+      (close)="closeDeleteModal()"
+      (delete)="deleteMedicalCondition()">
+    </app-delete-medical-condition>
+
+    <app-update-medical-condition
+      *ngIf="isUpdateModalOpen"
+      [medicalCondition]="selectedMedicalConditionToUpdate"
+      (close)="closeUpdateModal()"
+      (update)="updateMedicalCondition()">
+    </app-update-medical-condition>
+
+    <app-create-medical-condition
+      *ngIf="isCreateModalOpen"
+      [medicalCondition]="selectedMedicalConditionToCreate"
+      (closeModalEvent)="closeCreateModal()"
+      (createMedicalConditionEvent)="openCreateModal()">
+    </app-create-medical-condition>
+
+</div>
