@@ -117,9 +117,31 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
   }
 
   /**
+   * Adds a new medical condition entry to a Patient medical record by its ID.
+   */
+  public async addMedicalConditionEntry(id: string, medicalCondition: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+    try {
+      const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
+
+      if (!patientMedicalRecord) {
+        return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
+      }
+
+      patientMedicalRecord.addMedicalCondition(medicalCondition);
+
+      await this.patientMedicalRecordRepo.save(patientMedicalRecord);
+
+      const updatedPatientMedicalRecordDto = PatientMedicalRecordMap.toDto(patientMedicalRecord);
+      return Result.ok<PatientMedicalRecordDto>(updatedPatientMedicalRecordDto);
+    } catch (error) {
+      return Result.fail<PatientMedicalRecordDto>(error.message);
+    }
+  }
+
+  /**
    * Updates an existing medical condition entry in a Patient medical record by its ID.
    */
-  public async updateMCEntry(id: string, medicalCondition: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+  public async updateMedicalConditionEntry(id: string, medicalCondition: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
     try {
       const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
 
@@ -128,6 +150,50 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
       }
 
       patientMedicalRecord.updateMedicalCondition(medicalCondition);
+
+      await this.patientMedicalRecordRepo.save(patientMedicalRecord);
+
+      const updatedPatientMedicalRecordDto = PatientMedicalRecordMap.toDto(patientMedicalRecord);
+      return Result.ok<PatientMedicalRecordDto>(updatedPatientMedicalRecordDto);
+    } catch (error) {
+      return Result.fail<PatientMedicalRecordDto>(error.message);
+    }
+  }
+
+  /**
+   * Deletes a medical condition entry from a Patient medical record by its ID.
+   */
+  public async deleteMedicalConditionEntry(id: string, medicalCondition: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+    try {
+      const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
+
+      if (!patientMedicalRecord) {
+        return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
+      }
+
+      patientMedicalRecord.deleteMedicalCondition(medicalCondition);
+
+      await this.patientMedicalRecordRepo.save(patientMedicalRecord);
+
+      const updatedPatientMedicalRecordDto = PatientMedicalRecordMap.toDto(patientMedicalRecord);
+      return Result.ok<PatientMedicalRecordDto>(updatedPatientMedicalRecordDto);
+    } catch (error) {
+      return Result.fail<PatientMedicalRecordDto>(error.message);
+    }
+  }
+
+  /**
+   * Adds a new allergy entry to a Patient medical record by its ID.
+   */
+  public async addAllergyEntry(id: string, allergy: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+    try {
+      const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
+
+      if (!patientMedicalRecord) {
+        return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
+      }
+
+      patientMedicalRecord.addAllergy(allergy);
 
       await this.patientMedicalRecordRepo.save(patientMedicalRecord);
 
@@ -150,6 +216,28 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
       }
 
       patientMedicalRecord.updateAllergy(allergy);
+
+      await this.patientMedicalRecordRepo.save(patientMedicalRecord);
+
+      const updatedPatientMedicalRecordDto = PatientMedicalRecordMap.toDto(patientMedicalRecord);
+      return Result.ok<PatientMedicalRecordDto>(updatedPatientMedicalRecordDto);
+    } catch (error) {
+      return Result.fail<PatientMedicalRecordDto>(error.message);
+    }
+  }
+
+  /**
+   * Deletes an allergy entry from a Patient medical record by its ID.
+   */
+  public async deleteAllergyEntry(id: string, allergy: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+    try {
+      const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
+
+      if (!patientMedicalRecord) {
+        return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
+      }
+
+      patientMedicalRecord.deleteAllergy(allergy);
 
       await this.patientMedicalRecordRepo.save(patientMedicalRecord);
 
