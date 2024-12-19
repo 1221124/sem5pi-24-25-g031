@@ -101,5 +101,5 @@ export default (app: Router) => {
 
   app.use('/users', route);
 
-  route.get('/me', middlewares.isAuth, middlewares.attachCurrentUser, user_controller.getMe);
+  route.get('/me', middlewares.attachCurrentUser, user_controller.getMe);
 };

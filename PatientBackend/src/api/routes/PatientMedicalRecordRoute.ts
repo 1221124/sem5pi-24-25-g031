@@ -1,10 +1,11 @@
-import { Router } from 'express';
+import { RequestHandler, Router } from 'express';
 import { celebrate, Joi } from 'celebrate';
 
 import { Container } from 'typedi';
 
 import config from "../../../config";
 import { IPatientMedicalRecordController } from '../../controllers/IControllers/IPatientMedicalRecordController';
+import isAuth from '../middlewares/isAuth';
 
 const route = Router();
 
@@ -22,6 +23,7 @@ export default (app: Router) => {
 
   //Create
   route.post('',
+    isAuth(['Admin','Doctor']) as unknown as RequestHandler,
     celebrate({
       body: Joi.object({
         medicalRecordNumber: Joi.string().required()
@@ -31,10 +33,15 @@ export default (app: Router) => {
   );
   
   //Get all
-  route.get('', (req, res, next) => ctrl.getAllPatientMedicalRecords(req, res, next));
+  route.get(
+    '',
+    isAuth(['Admin','Doctor']) as unknown as RequestHandler,
+    (req, res, next) => ctrl.getAllPatientMedicalRecords(req, res, next)
+  );
 
   //Get by id
   route.get('/:id',
+    isAuth(['Admin','Doctor']) as unknown as RequestHandler,
     celebrate({
       params: Joi.object({
         id: Joi.string().required()
@@ -45,6 +52,7 @@ export default (app: Router) => {
 
   //Update
   route.put('/:id',
+    isAuth(['Admin','Doctor']) as unknown as RequestHandler,
     celebrate({
       params: Joi.object({
         id: Joi.string().required()  
@@ -60,6 +68,7 @@ export default (app: Router) => {
 
   //Delete
   route.delete('/:id',
+    isAuth(['Admin','Doctor']) as unknown as RequestHandler,
     celebrate({
       params: Joi.object({
         id: Joi.string().required()
