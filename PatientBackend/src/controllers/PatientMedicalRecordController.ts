@@ -92,10 +92,6 @@ export default class PatientMedicalRecordController {
         return res.status(400).send("ID is required.");
       }
 
-      // if (!mongoose.Types.ObjectId.isValid(id)) {
-      //   return res.status(400).json({ message: "Invalid ID format" });
-      // }
-
       const allergies = req.body.allergies ?? [];
       const medicalConditions = req.body.medicalConditions ?? [];
 
@@ -107,6 +103,72 @@ export default class PatientMedicalRecordController {
       console.log("Update patient medical record: ", updatingMedicalConditionDto);
 
       const resultOrError = await this.patientMedicalRecordService.update(id, updatingMedicalConditionDto) as Result<PatientMedicalRecordDto>;
+
+      console.log("resultOrError:> " + resultOrError);
+
+      if (resultOrError.isFailure) {
+        return res.status(400).send(resultOrError.errorValue()); 
+      }
+
+      const updatedPatientMedicalRecordDto = resultOrError.getValue();
+      return res.json(updatedPatientMedicalRecordDto); 
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+    /**
+   * Updates an existing medical condition entry in a patient medical record by its ID.
+   * @param req - Express request object.
+   * @param res - Express response object.
+   * @param next - Express next middleware function.
+   */
+  public async updateMedicalConditionEntry(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("req.body = ", req.body);
+      console.log("req.params = ", req.params);
+
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).send("ID is required.");
+      }
+
+      const medicalCondition = req.body.medicalCondition;
+
+      const resultOrError = await this.patientMedicalRecordService.updateMCEntry(id, medicalCondition) as Result<PatientMedicalRecordDto>;
+
+      console.log("resultOrError:> " + resultOrError);
+
+      if (resultOrError.isFailure) {
+        return res.status(400).send(resultOrError.errorValue()); 
+      }
+
+      const updatedPatientMedicalRecordDto = resultOrError.getValue();
+      return res.json(updatedPatientMedicalRecordDto); 
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
+   * Updates an existing allergy entry in a patient medical record by its ID.
+   * @param req - Express request object.
+   * @param res - Express response object.
+   * @param next - Express next middleware function.
+   */
+  public async updateAllergyEntry(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("req.body = ", req.body);
+      console.log("req.params = ", req.params);
+
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).send("ID is required.");
+      }
+
+      const allergy = req.body.allergy;
+
+      const resultOrError = await this.patientMedicalRecordService.updateAllergyEntry(id, allergy) as Result<PatientMedicalRecordDto>;
 
       console.log("resultOrError:> " + resultOrError);
 

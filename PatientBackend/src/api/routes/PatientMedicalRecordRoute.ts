@@ -23,7 +23,7 @@ export default (app: Router) => {
 
   //Create
   route.post('',
-    isAuth(['Admin','Doctor']) as unknown as RequestHandler,
+    isAuth(['Admin']) as unknown as RequestHandler,
     celebrate({
       body: Joi.object({
         medicalRecordNumber: Joi.string().required()
@@ -63,6 +63,36 @@ export default (app: Router) => {
       })
     }),
     (req, res, next) => ctrl.updatePatientMedicalRecord(req, res, next)
+  );
+
+  //Update Medical Condition Entry
+  route.patch('/medical-condition/:id',
+    isAuth(['Doctor']) as unknown as RequestHandler,
+    celebrate({
+      params: Joi.object({
+        id: Joi.string().required()
+      }),
+      body: Joi.object({
+        code: Joi.string().required(),
+        date: Joi.date().required()
+      })
+    }),
+    (req, res, next) => ctrl.updateMCEntry(req, res, next)
+  );
+
+  //Update Allergy Entry
+  route.patch('/allergy/:id',
+    isAuth(['Doctor']) as unknown as RequestHandler,
+    celebrate({
+      params: Joi.object({
+        id: Joi.string().required()
+      }),
+      body: Joi.object({
+        code: Joi.string().required(),
+        date: Joi.date().required()
+      })
+    }),
+    (req, res, next) => ctrl.updateAllergyEntry(req, res, next)
   );
 
   //Delete

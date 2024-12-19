@@ -14,6 +14,7 @@ interface PatientMedicalRecordProps {
 }
 
 export class PatientMedicalRecord extends AggregateRoot<PatientMedicalRecordProps> {
+
     get id(): UniqueEntityID {
         return this._id;
     }
@@ -70,6 +71,24 @@ export class PatientMedicalRecord extends AggregateRoot<PatientMedicalRecordProp
             }, id);
 
             return Result.ok<PatientMedicalRecord>(patientMedicalRecord);
+        }
+    }
+
+    public updateMedicalCondition(medicalCondition: MedicalRecordEntry) {
+        const index = this.props.medicalConditions.findIndex((mc) => mc.code === medicalCondition.code);
+        if (index !== -1) {
+            this.props.medicalConditions[index] = medicalCondition;
+        } else {
+            throw new Error("Medical condition not found.");
+        }
+    }
+
+    public updateAllergy(allergy: MedicalRecordEntry) {
+        const index = this.props.allergies.findIndex((a) => a.code === allergy.code);
+        if (index !== -1) {
+            this.props.allergies[index] = allergy;
+        } else {
+            throw new Error("Allergy not found.");
         }
     }
 }

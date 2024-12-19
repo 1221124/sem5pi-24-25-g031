@@ -8,6 +8,7 @@ import { PatientMedicalRecordMap } from '../mappers/PatientMedicalRecordMap';
 import { PatientMedicalRecord } from '../domain/patient-medical-record/PatientMedicalRecord';
 import { CreatingPatientMedicalRecordDto } from '../dto/patient-medical-record/CreatingPatientMedicalRecordDto';
 import { UpdatingPatientMedicalRecordDto } from '../dto/patient-medical-record/UpdatingPatientMedicalRecordDto';
+import { MedicalRecordEntry } from '../domain/medical-record-entry/MedicalRecordEntry';
 
 @Service()
 export default class PatientMedicalRecordService implements IPatientMedicalRecordService {
@@ -112,6 +113,50 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
       return Result.ok<PatientMedicalRecordDto>(updatedPatientMedicalRecordDto);
     } catch (error) {
       throw error;
+    }
+  }
+
+  /**
+   * Updates an existing medical condition entry in a Patient medical record by its ID.
+   */
+  public async updateMCEntry(id: string, medicalCondition: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+    try {
+      const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
+
+      if (!patientMedicalRecord) {
+        return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
+      }
+
+      patientMedicalRecord.updateMedicalCondition(medicalCondition);
+
+      await this.patientMedicalRecordRepo.save(patientMedicalRecord);
+
+      const updatedPatientMedicalRecordDto = PatientMedicalRecordMap.toDto(patientMedicalRecord);
+      return Result.ok<PatientMedicalRecordDto>(updatedPatientMedicalRecordDto);
+    } catch (error) {
+      return Result.fail<PatientMedicalRecordDto>(error.message);
+    }
+  }
+
+  /**
+   * Updates an existing allergy entry in a Patient medical record by its ID.
+   */
+  public async updateAllergyEntry(id: string, allergy: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+    try {
+      const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
+
+      if (!patientMedicalRecord) {
+        return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
+      }
+
+      patientMedicalRecord.updateAllergy(allergy);
+
+      await this.patientMedicalRecordRepo.save(patientMedicalRecord);
+
+      const updatedPatientMedicalRecordDto = PatientMedicalRecordMap.toDto(patientMedicalRecord);
+      return Result.ok<PatientMedicalRecordDto>(updatedPatientMedicalRecordDto);
+    } catch (error) {
+      return Result.fail<PatientMedicalRecordDto>(error.message);
     }
   }
 

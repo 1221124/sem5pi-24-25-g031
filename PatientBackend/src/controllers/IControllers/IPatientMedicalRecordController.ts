@@ -5,5 +5,7 @@ export interface IPatientMedicalRecordController {
     getPatientMedicalRecordById(req: Request, res: Response, next: NextFunction): Promise<any>;
     createPatientMedicalRecord(req: Request, res: Response, next: NextFunction): Promise<any>;
     updatePatientMedicalRecord(req: Request, res: Response, next: NextFunction): Promise<any>;
+    updateMCEntry(req: Request, res: Response, next: NextFunction): Promise<any>;
+    updateAllergyEntry(req: Request, res: Response, next: NextFunction): Promise<any>;
     deletePatientMedicalRecord(req: Request, res: Response, next: NextFunction): Promise<any>;
 }
