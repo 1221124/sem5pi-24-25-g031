@@ -8,6 +8,7 @@ import { MedicalRecordNumber } from '../domain/patient-medical-record/MedicalRec
 import { PatientMedicalRecord } from '../domain/patient-medical-record/PatientMedicalRecord';
 import { PatientMedicalRecordId } from '../domain/patient-medical-record/PatientMedicalRecordId';
 import { PatientMedicalRecordMap } from '../mappers/PatientMedicalRecordMap';
+import { Console } from 'console';
 
 @Service()
 export default class PatientMedicalRecordRepo implements IPatientMedicalRecordRepo {
@@ -26,10 +27,10 @@ export default class PatientMedicalRecordRepo implements IPatientMedicalRecordRe
   /**
    * Check if a patient medical record exists.
    */
-  public async exists(PatientMedicalRecord: PatientMedicalRecord): Promise<boolean> {
-    const idX = PatientMedicalRecord.id instanceof PatientMedicalRecordId ? (<PatientMedicalRecordId>PatientMedicalRecord.id).toValue() : PatientMedicalRecord.id;
+  public async exists(patientMedicalRecord: PatientMedicalRecord): Promise<boolean> {
+    const idX = patientMedicalRecord.id instanceof PatientMedicalRecordId ? (<PatientMedicalRecordId>patientMedicalRecord.id).toValue() : patientMedicalRecord.id;
 
-    const query = { PatientMedicalRecordId: idX };
+    const query = { patientMedicalRecordId: idX };
     const patientMedicalRecordDocument = await this.patientMedicalRecordSchema.findOne(query as FilterQuery<IPatientMedicalRecordPersistence & Document>);
 
     return !!patientMedicalRecordDocument === true;
@@ -38,23 +39,28 @@ export default class PatientMedicalRecordRepo implements IPatientMedicalRecordRe
   /**
    * Save a patient medical record (create or update).
    */
-  public async save(PatientMedicalRecord: PatientMedicalRecord): Promise<PatientMedicalRecord> {
-    console.log("Saving patient medical record: ", PatientMedicalRecord);
+  public async save(patientMedicalRecord: PatientMedicalRecord): Promise<PatientMedicalRecord> {
+    console.log("Saving patient medical record: ", patientMedicalRecord);
     
-    const exists = await this.exists(PatientMedicalRecord);
+    const exists = await this.exists(patientMedicalRecord);
     console.log("patient medical record ", exists);
     
 
     try {
       if (exists) {
-        const query = { PatientMedicalRecordId : PatientMedicalRecord.id };
-        const update = PatientMedicalRecordMap.toPersistence(PatientMedicalRecord);
+        console.log("Exists = true!!!");
+        const query = { patientMedicalRecordId : patientMedicalRecord.id };
 
+        console.log("Query: ", query);
+        const update = PatientMedicalRecordMap.toPersistence(patientMedicalRecord);
+        
+        console.log("Update: ", update);
         const patientMedicalRecordRecord = await this.patientMedicalRecordSchema.findOneAndUpdate(query as FilterQuery<IPatientMedicalRecordPersistence & Document>, update, { new: true });
-
+        
+        console.log("Record: ", patientMedicalRecordRecord);
         return PatientMedicalRecordMap.toDomain(patientMedicalRecordRecord);
       } else {
-        const newPatientMedicalRecord = PatientMedicalRecordMap.toPersistence(PatientMedicalRecord);
+        const newPatientMedicalRecord = PatientMedicalRecordMap.toPersistence(patientMedicalRecord);
 
         const patientMedicalRecordRecord = await this.patientMedicalRecordSchema.create(newPatientMedicalRecord);
 

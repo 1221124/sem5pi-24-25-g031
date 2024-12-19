@@ -20,6 +20,7 @@ export default (app: Router) => {
 
   console.log("Controller loaded: ", ctrl)
 
+  //Create
   route.post('',
     celebrate({
       body: Joi.object({
@@ -29,8 +30,20 @@ export default (app: Router) => {
     (req, res, next) => ctrl.createPatientMedicalRecord(req, res, next)
   );
   
+  //Get all
   route.get('', (req, res, next) => ctrl.getAllPatientMedicalRecords(req, res, next));
 
+  //Get by id
+  route.get('/:id',
+    celebrate({
+      params: Joi.object({
+        id: Joi.string().required()
+      })
+    }),
+    (req, res, next) => ctrl.getPatientMedicalRecordById(req, res, next)
+  );
+
+  //Update
   route.put('/:id',
     celebrate({
       params: Joi.object({
@@ -43,5 +56,15 @@ export default (app: Router) => {
     }),
     
     (req, res, next) => ctrl.updatePatientMedicalRecord(req, res, next)
+  );
+
+  //Delete
+  route.delete('/:id',
+    celebrate({
+      params: Joi.object({
+        id: Joi.string().required()
+      })
+    }),
+    (req, res, next) => ctrl.deletePatientMedicalRecord(req, res, next)
   );
 };

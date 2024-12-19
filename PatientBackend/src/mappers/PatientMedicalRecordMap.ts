@@ -81,7 +81,7 @@ export class PatientMedicalRecordMap {
     }
 s
     public static fromPersistence(raw: any){
-        const patientMedicalRecordId = PatientMedicalRecordId.create(raw.patientMedicalRecordId.toString());
+        const patientMedicalRecordId = PatientMedicalRecordId.create(raw.patientMedicalRecordId);
       
         const medicalRecordNumberOrError = MedicalRecordNumber.create(raw.medicalRecordNumber);
         if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
