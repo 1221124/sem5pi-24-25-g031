@@ -60,24 +60,7 @@ export default class MedicalConditionRepo implements IMedicalConditionRepo {
 
         return MedicalConditionMap.toDomain(medicalConditionRecord);
       }
-      
-      // if (schema === null) {
-      //   const rawMedicalCondition: any = MedicalConditionMap.toPersistence(medicalCondition);
 
-      //   console.log("Raw medical condition: ", rawMedicalCondition);
-
-      //   const medicalConditionCreated = await this.medicalConditionSchema.create(rawMedicalCondition);
-
-      //   console.log("Medical condition created: ", medicalConditionCreated);
-
-      //   return MedicalConditionMap.toDomain(medicalConditionCreated);
-      // } else {
-      //   schema.set(MedicalConditionMap.toPersistence(medicalCondition));
-
-      //   await schema.save();
-
-      //   return MedicalConditionMap.toDomain(schema);
-      // }
     } catch (err) {
       console.log(err);
       throw err;

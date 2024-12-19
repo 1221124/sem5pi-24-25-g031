@@ -38,7 +38,7 @@ export default class MedicalConditionController {
       const medicalConditionDTO = resultOrError.getValue();
       return res.status(201).json(medicalConditionDTO); 
     } catch (error) {
-      console.log("Error creating medical condition: ", error);
+      console.error("Error creating medical condition: ", error);
       return next(error); 
     }
   }
