@@ -50,19 +50,18 @@ export default (app: Router) => {
     (req, res, next) => ctrl.getPatientMedicalRecordById(req, res, next)
   );
 
-  //Update
+  // Update
   route.put('/:id',
-    isAuth(['Admin','Doctor']) as unknown as RequestHandler,
+    isAuth(['Admin', 'Doctor']) as unknown as RequestHandler,
     celebrate({
       params: Joi.object({
-        id: Joi.string().required()  
+        id: Joi.string().required()
       }),
       body: Joi.object({
-        allergies: Joi.array().items(Joi.string()),
-        medicalConditions: Joi.array().items(Joi.string())
+        allergies: Joi.array(),
+        medicalConditions: Joi.array(),
       })
     }),
-    
     (req, res, next) => ctrl.updatePatientMedicalRecord(req, res, next)
   );
 

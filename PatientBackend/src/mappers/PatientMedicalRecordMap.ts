@@ -4,6 +4,7 @@ import { PatientMedicalRecordDto } from "../dto/patient-medical-record/PatientMe
 import { PatientMedicalRecord } from "../domain/patient-medical-record/PatientMedicalRecord";
 import { PatientMedicalRecordId } from "../domain/patient-medical-record/PatientMedicalRecordId";
 import { MedicalRecordNumber } from "../domain/patient-medical-record/MedicalRecordNumber";
+import { MedicalRecordEntry } from "../domain/medical-record-entry/MedicalRecordEntry";
 
 export class PatientMedicalRecordMap {
     public static toDto(patientMedicalRecord: PatientMedicalRecord): PatientMedicalRecordDto {
@@ -23,17 +24,17 @@ export class PatientMedicalRecordMap {
         if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
         const medicalRecordNumber = medicalRecordNumberOrError.getValue();
 
-        const allergiesOrError = raw.allergies.map((allergy: any) => ICD11Code.create(allergy));
+        const allergiesOrError = raw.allergies.map((allergy: any) => MedicalRecordEntry.create(ICD11Code.create(allergy.split("_")[0]).getValue(), new Date(allergy.split("_")[1])));
         if (allergiesOrError.some((result: any) => result.isFailure)) {
             throw new Error("One or more allergies failed validation.");
         }
-        const allergies = allergiesOrError.map((result: any) => result.getValue());
+        const allergies = allergiesOrError.map((result: any) => result);
 
-        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => ICD11Code.create(medicalCondition));
+        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => MedicalRecordEntry.create(ICD11Code.create(medicalCondition.split("_")[0]).getValue(), new Date(medicalCondition.split("_")[1])));
         if (medicalConditionsOrError.some((result: any) => result.isFailure)) {
             throw new Error("One or more medical conditions failed validation.");
         }
-        const medicalConditions = medicalConditionsOrError.map((result: any) => result.getValue());
+        const medicalConditions = medicalConditionsOrError.map((result: any) => result);
 
         const patientMedicalRecordOrError = PatientMedicalRecord.create({
             medicalRecordNumber: medicalRecordNumber,
@@ -53,8 +54,8 @@ export class PatientMedicalRecordMap {
         if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
         const medicalRecordNumber = medicalRecordNumberOrError.getValue();
 
-        const allergies = new Array<ICD11Code>();
-        const medicalConditions = new Array<ICD11Code>();
+        const allergies = new Array<MedicalRecordEntry>();
+        const medicalConditions = new Array<MedicalRecordEntry>();
 
         const patientMedicalRecordOrError = PatientMedicalRecord.create({
             medicalRecordNumber: medicalRecordNumber,
@@ -73,8 +74,8 @@ export class PatientMedicalRecordMap {
       const a = {
         patientMedicalRecordId: patientMedicalRecord.id.toString(),
         medicalRecordNumber: patientMedicalRecord.medicalRecordNumber.value,
-        allergies: patientMedicalRecord.allergies.map((allergy) => allergy.value),
-        medicalConditions: patientMedicalRecord.medicalConditions.map((medicalCondition) => medicalCondition.value)
+        allergies: patientMedicalRecord.allergies.map((allergy) => allergy.code.value + "_" + allergy.date.toString()),
+        medicalConditions: patientMedicalRecord.medicalConditions.map((medicalCondition) => medicalCondition.code.value + "_" + medicalCondition.date.toString())
       }
 
       return a;
@@ -87,17 +88,17 @@ s
         if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
         const medicalRecordNumber = medicalRecordNumberOrError.getValue();
 
-        const allergiesOrError = raw.allergies.map((allergy: any) => ICD11Code.create(allergy));
+        const allergiesOrError = raw.allergies.map((allergy: any) => MedicalRecordEntry.create(ICD11Code.create(allergy.split("_")[0]).getValue(), new Date(allergy.split("_")[1])));
         if (allergiesOrError.some((result: any) => result.isFailure)) {
             throw new Error("One or more allergies failed validation.");
         }
-        const allergies = allergiesOrError.map((result: any) => result.getValue());
+        const allergies = allergiesOrError.map((result: any) => result);
 
-        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => ICD11Code.create(medicalCondition));
+        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => MedicalRecordEntry.create(medicalCondition.split("_")[0], new Date(medicalCondition.split("_")[1])));
         if (medicalConditionsOrError.some((result: any) => result.isFailure)) {
             throw new Error("One or more medical conditions failed validation.");
         }
-        const medicalConditions = medicalConditionsOrError.map((result: any) => result.getValue());
+        const medicalConditions = medicalConditionsOrError.map((result: any) => result);
 
         const a = PatientMedicalRecord.create({
             medicalRecordNumber: medicalRecordNumber,

@@ -1,5 +1,4 @@
 ﻿import {ICD11Code} from "../shared/ICD11Code";
-import {AggregateRoot} from "../../core/domain/AggregateRoot";
 import {ValueObject} from "../../core/domain/ValueObject";
 
 export class MedicalRecordEntryProps {
@@ -7,8 +6,7 @@ export class MedicalRecordEntryProps {
     date: Date;
 }
 
-export class CommonSymptom extends ValueObject<MedicalRecordEntryProps> {
-
+export class MedicalRecordEntry extends ValueObject<MedicalRecordEntryProps> {
     get code (): ICD11Code {
         return this.props.code;
     }
@@ -19,5 +17,9 @@ export class CommonSymptom extends ValueObject<MedicalRecordEntryProps> {
     
     constructor(props: MedicalRecordEntryProps) {
         super(props);
+    }
+
+    public static create(arg0: ICD11Code, arg1: Date) {
+        return new MedicalRecordEntry({code: arg0, date: arg1});
     }
 }

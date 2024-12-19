@@ -1,13 +1,13 @@
+import { MedicalRecordEntry } from "../../domain/medical-record-entry/MedicalRecordEntry";
 import { MedicalRecordNumber } from "../../domain/patient-medical-record/MedicalRecordNumber";
-import { ICD11Code } from "../../domain/shared/ICD11Code";
 
 export class PatientMedicalRecordDto {
     id: string;
     medicalRecordNumber: MedicalRecordNumber;
-    allergies: ICD11Code[];
-    medicalConditions: ICD11Code[];
+    allergies: MedicalRecordEntry[];
+    medicalConditions: MedicalRecordEntry[];
 
-    constructor (id: string, medicalRecordNumber: MedicalRecordNumber, allergies: ICD11Code[], medicalConditions: ICD11Code[]) {
+    constructor (id: string, medicalRecordNumber: MedicalRecordNumber, allergies: MedicalRecordEntry[], medicalConditions: MedicalRecordEntry[]) {
         this.id = id;
         this.medicalRecordNumber = medicalRecordNumber;
         this.allergies = allergies;

@@ -1,15 +1,15 @@
-import { ICD11Code } from "../../domain/shared/ICD11Code";
+import { MedicalRecordEntry } from "../../domain/medical-record-entry/MedicalRecordEntry";
 
 export class UpdatingPatientMedicalRecordDto {
-    allergies: ICD11Code[];
-    medicalConditions: ICD11Code[];
+    allergies: MedicalRecordEntry[];
+    medicalConditions: MedicalRecordEntry[];
 
-    constructor (allergies: ICD11Code[], medicalConditions: ICD11Code[]) {
+    constructor (allergies: MedicalRecordEntry[], medicalConditions: MedicalRecordEntry[]) {
         this.allergies = allergies;
         this.medicalConditions = medicalConditions;
     }
 
-    public static create (allergies: ICD11Code[], medicalConditions: ICD11Code[]): UpdatingPatientMedicalRecordDto {
+    public static create (allergies: MedicalRecordEntry[], medicalConditions: MedicalRecordEntry[]): UpdatingPatientMedicalRecordDto {
         return new UpdatingPatientMedicalRecordDto(allergies, medicalConditions);
     }
 

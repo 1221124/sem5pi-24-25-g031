@@ -2,14 +2,15 @@ import { AggregateRoot } from "../../core/domain/AggregateRoot";
 import { UniqueEntityID } from "../../core/domain/UniqueEntityID";
 import { Guard } from "../../core/logic/Guard";
 import { Result } from '../../core/logic/Result';
+import { MedicalRecordEntry } from "../medical-record-entry/MedicalRecordEntry";
 import { ICD11Code } from "../shared/ICD11Code";
 import { MedicalRecordNumber } from "./MedicalRecordNumber";
 import { PatientMedicalRecordId } from "./PatientMedicalRecordId";
 
 interface PatientMedicalRecordProps {
     medicalRecordNumber: MedicalRecordNumber;
-    allergies: ICD11Code[];
-    medicalConditions: ICD11Code[];
+    allergies: MedicalRecordEntry[];
+    medicalConditions: MedicalRecordEntry[];
 }
 
 export class PatientMedicalRecord extends AggregateRoot<PatientMedicalRecordProps> {
@@ -25,19 +26,19 @@ export class PatientMedicalRecord extends AggregateRoot<PatientMedicalRecordProp
         return this.props.medicalRecordNumber;
     }
 
-    get allergies(): ICD11Code[] {
+    get allergies(): MedicalRecordEntry[] {
         return this.props.allergies.map((allergy) => allergy);
     }
 
-    set allergies(value: ICD11Code[]) {
+    set allergies(value: MedicalRecordEntry[]) {
         this.props.allergies = value;
     }
 
-    get medicalConditions(): ICD11Code[] {
+    get medicalConditions(): MedicalRecordEntry[] {
         return this.props.medicalConditions.map((condition) => condition);
     }
 
-    set medicalConditions(value: ICD11Code[]) {
+    set medicalConditions(value: MedicalRecordEntry[]) {
         this.props.medicalConditions = value;
     }
 
