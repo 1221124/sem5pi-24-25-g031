@@ -13,8 +13,12 @@ interface PatientMedicalRecordProps {
 }
 
 export class PatientMedicalRecord extends AggregateRoot<PatientMedicalRecordProps> {
+    get id(): UniqueEntityID {
+        return this._id;
+    }
+
     get patientMedicalRecordId(): PatientMedicalRecordId {
-        return PatientMedicalRecordId.caller(this.id);
+        return new PatientMedicalRecordId(this.patientMedicalRecordId.toValue());
     }
     
     get medicalRecordNumber(): MedicalRecordNumber {

@@ -1,6 +1,5 @@
-
 export interface IPatientMedicalRecordPersistence {
-    patientMedicalRecordId: string;
+    domainId: string;
     medicalRecordNumber: string;
     allergies: string[];
     medicalConditions: string[];

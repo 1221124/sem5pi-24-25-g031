@@ -6,6 +6,7 @@ import IPatientMedicalRecordService from '../services/IServices/IPatientMedicalR
 import { CreatingPatientMedicalRecordDto } from '../dto/patient-medical-record/CreatingPatientMedicalRecordDto';
 import { PatientMedicalRecordDto } from '../dto/patient-medical-record/PatientMedicalRecordDto';
 import { UpdatingPatientMedicalRecordDto } from '../dto/patient-medical-record/UpdatingPatientMedicalRecordDto';
+import mongoose from 'mongoose';
 
 @Service()
 export default class PatientMedicalRecordController {
@@ -90,6 +91,10 @@ export default class PatientMedicalRecordController {
       if (!id) {
         return res.status(400).send("ID is required.");
       }
+
+      // if (!mongoose.Types.ObjectId.isValid(id)) {
+      //   return res.status(400).json({ message: "Invalid ID format" });
+      // }
 
       const allergies = req.body.allergies ?? [];
       const medicalConditions = req.body.medicalConditions ?? [];

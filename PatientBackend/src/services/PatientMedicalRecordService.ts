@@ -61,22 +61,22 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
 
       if(existsOrNot != null) return Result.fail<PatientMedicalRecordDto>("Patient medical record already exists.");
       
-      const patientMedicalRecordDto = await PatientMedicalRecordMap.toDomainfromCreating(dto);
+      const patientMedicalRecord = await PatientMedicalRecordMap.toDomainfromCreating(dto);
   
-      console.log("1 patientMedicalRecordDto: ", patientMedicalRecordDto);
+      console.log("1 patientMedicalRecord: ", patientMedicalRecord);
       
-      if (!patientMedicalRecordDto) {
+      if (!patientMedicalRecord) {
         return Result.fail<PatientMedicalRecordDto>("Failed to map Patient medical record DTO to domain.");
       }
   
-      console.log("2 creatingMedicalCondition: ", patientMedicalRecordDto);
+      console.log("2 creatingMedicalCondition: ", patientMedicalRecord);
   
       console.log("saving Patient medical record");
-      const saved = await this.patientMedicalRecordRepo.save(patientMedicalRecordDto);
+      const saved = await this.patientMedicalRecordRepo.save(patientMedicalRecord);
 
       if(saved == null) return Result.fail<PatientMedicalRecordDto>("Failed to save Patient medical record");
   
-      const patientMedicalRecordDTO = PatientMedicalRecordMap.toDto(patientMedicalRecordDto);
+      const patientMedicalRecordDTO = PatientMedicalRecordMap.toDto(patientMedicalRecord);
       return Result.ok<PatientMedicalRecordDto>(patientMedicalRecordDTO);
     } catch (error) {
       console.log("Error: ", error);

@@ -8,6 +8,7 @@ import { MedicalRecordNumber } from "../domain/patient-medical-record/MedicalRec
 export class PatientMedicalRecordMap {
     public static toDto(patientMedicalRecord: PatientMedicalRecord): PatientMedicalRecordDto {
       return {
+        id: patientMedicalRecord.id.toString(),
         medicalRecordNumber: patientMedicalRecord.medicalRecordNumber,
         allergies: patientMedicalRecord.allergies,
         medicalConditions: patientMedicalRecord.medicalConditions
@@ -16,10 +17,10 @@ export class PatientMedicalRecordMap {
 
     public static toDomain(raw: any): PatientMedicalRecord {
         const patientMedicalRecordIdOrError = PatientMedicalRecordId.create(raw.patientMedicalRecordId);
-        if (patientMedicalRecordIdOrError == null) throw new Error("medicalConditionId failed validation.")
+        if (patientMedicalRecordIdOrError == null) throw new Error("patientMedicalRecordId failed validation.")
 
-        const medicalRecordNumberOrError = MedicalRecordNumber.create(raw.code);
-        if (medicalRecordNumberOrError.isFailure) throw new Error("ICD11 code failed validation.");
+        const medicalRecordNumberOrError = MedicalRecordNumber.create(raw.medicalRecordNumber);
+        if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
         const medicalRecordNumber = medicalRecordNumberOrError.getValue();
 
         const allergiesOrError = raw.allergies.map((allergy: any) => ICD11Code.create(allergy));
@@ -38,7 +39,7 @@ export class PatientMedicalRecordMap {
             medicalRecordNumber: medicalRecordNumber,
             allergies: allergies,
             medicalConditions: medicalConditions
-            }, patientMedicalRecordIdOrError.id);
+            }, patientMedicalRecordIdOrError);
 
         if (patientMedicalRecordOrError.isFailure) {
             throw new Error(patientMedicalRecordOrError.error.toString());
@@ -70,7 +71,7 @@ export class PatientMedicalRecordMap {
 
     public static toPersistence(patientMedicalRecord: PatientMedicalRecord): any {
       const a = {
-        patientMedicalRecordNumber: patientMedicalRecord.id.toString(),
+        patientMedicalRecordId: patientMedicalRecord.id.toString(),
         medicalRecordNumber: patientMedicalRecord.medicalRecordNumber.value,
         allergies: patientMedicalRecord.allergies.map((allergy) => allergy.value),
         medicalConditions: patientMedicalRecord.medicalConditions.map((medicalCondition) => medicalCondition.value)
@@ -102,7 +103,7 @@ s
             medicalRecordNumber: medicalRecordNumber,
             allergies: allergies,
             medicalConditions: medicalConditions
-        }, patientMedicalRecordId.id).getValue();
+        }, patientMedicalRecordId).getValue();
 
         console.log("Patient medical record from persistence: " + a);
         

@@ -27,7 +27,7 @@ export default class PatientMedicalRecordRepo implements IPatientMedicalRecordRe
    * Check if a patient medical record exists.
    */
   public async exists(PatientMedicalRecord: PatientMedicalRecord): Promise<boolean> {
-    const idX = PatientMedicalRecord.id instanceof PatientMedicalRecordId ? (<PatientMedicalRecordId>PatientMedicalRecord.id) : PatientMedicalRecord.id;
+    const idX = PatientMedicalRecord.id instanceof PatientMedicalRecordId ? (<PatientMedicalRecordId>PatientMedicalRecord.id).toValue() : PatientMedicalRecord.id;
 
     const query = { PatientMedicalRecordId: idX };
     const patientMedicalRecordDocument = await this.patientMedicalRecordSchema.findOne(query as FilterQuery<IPatientMedicalRecordPersistence & Document>);
@@ -92,7 +92,7 @@ export default class PatientMedicalRecordRepo implements IPatientMedicalRecordRe
     const patientMedicalRecordId = PatientMedicalRecordId.create(id);
     
     console.log("Finding by domain ID: ", patientMedicalRecordId);
-    const idx = patientMedicalRecordId instanceof PatientMedicalRecordId ? (<PatientMedicalRecordId>patientMedicalRecordId).id.toValue() : patientMedicalRecordId;
+    const idx = patientMedicalRecordId instanceof PatientMedicalRecordId ? (<PatientMedicalRecordId>patientMedicalRecordId).toValue() : patientMedicalRecordId;
 console.log("IDX: ", idx);
     const query = { patientMedicalRecordId: idx };
     console.log("Query: ", query);
