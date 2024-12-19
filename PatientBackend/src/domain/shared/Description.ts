@@ -2,6 +2,8 @@ import { ValueObject } from "../../core/domain/ValueObject";
 import { Guard } from "../../core/logic/Guard";
 import { Result } from "../../core/logic/Result";
 
+const MAX_CHARS = 2048;
+
 interface DescriptionProps {
     value: string;
 }
@@ -19,7 +21,7 @@ export class Description extends ValueObject<DescriptionProps> {
         const guardResult = Guard.againstNullOrUndefined(description, 'description');
         if (!guardResult.succeeded) {
             return Result.fail<Description>(guardResult.message);
-        } else {
+        } else if (description.trim().length < MAX_CHARS) {
             return Result.ok<Description>(new Description({ value: description}))
         }
     }
