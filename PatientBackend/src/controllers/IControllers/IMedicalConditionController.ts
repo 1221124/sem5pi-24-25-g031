@@ -5,5 +5,5 @@ export interface IMedicalConditionController {
     getMedicalConditionById(req: Request, res: Response, next: NextFunction): Promise<any>;
     createMedicalCondition(req: Request, res: Response, next: NextFunction): Promise<any>;
     updateMedicalCondition(req: Request, res: Response, next: NextFunction): Promise<any>;
-    deleteMedicalCondition(id: string): Promise<any>;
+    deleteMedicalCondition(req: Request, res: Response, next: NextFunction): Promise<any>;
 }

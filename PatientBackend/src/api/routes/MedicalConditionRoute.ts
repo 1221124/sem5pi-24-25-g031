@@ -47,4 +47,13 @@ export default (app: Router) => {
       
       (req, res, next) => ctrl.updateMedicalCondition(req, res, next)
     );
+
+    route.delete('/:id',
+      celebrate({
+      params: Joi.object({
+        id: Joi.string().required()
+      })
+      }),
+      (req, res, next) => ctrl.deleteMedicalCondition(req, res, next)
+    );
 };

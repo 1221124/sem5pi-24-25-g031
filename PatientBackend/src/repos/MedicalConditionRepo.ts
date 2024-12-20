@@ -118,8 +118,16 @@ console.log("Medical condition record: ", medicalConditionRecord);
    * Delete a medical condition by its ID.
    */
   public async delete(medicalCondition: MedicalCondition): Promise<void> {
-    const query = { domainId: medicalCondition.id.toString() };
-
-    await this.medicalConditionSchema.deleteOne(query as FilterQuery<IMedicalConditionPersistence & Document>);
+    try {
+      console.log("Medical Condition: ", medicalCondition);
+      const query = { medicalConditionId: medicalCondition.id.toString() };
+      console.log("Query: ", query);
+      await this.medicalConditionSchema.deleteOne(query as FilterQuery<IMedicalConditionPersistence & Document>);
+      console.log("Deletion successful.");
+    } catch (err) {
+      console.error("Error deleting medical condition:", err);
+      throw err; 
+    }
   }
+  
 }
