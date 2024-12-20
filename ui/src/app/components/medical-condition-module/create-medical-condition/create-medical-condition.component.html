@@ -1,1 +1,27 @@
-<p>create-medical-condition works!</p>
+<div>
+    <h1>Create Medical Condition</h1>
+    <div class="modal-content">
+        <span type="button" class="close" (click)="emitCloseModalEvent()">&times;</span>
+        <h2>Medical Condition Form</h2>
+        <form class="form-group">
+            <div>
+                <input type="text" id="code" name="code" [(ngModel)]="selectedMedicalConditionCode"
+                    (focus)="codeTouched = true" placeholder="Code" />
+            </div>
+            <div>
+                <input type="text" id="name" name="name" [(ngModel)]="selectedMedicalConditionName"
+                    (focus)="nameTouched = true" placeholder="Name" />
+            </div>
+            <div>
+                <input type="text" id="description" name="description" [(ngModel)]="selectedMedicalConditionDescription"
+                    (focus)="descriptionTouched = true" placeholder="Description" />
+            </div>
+            <div>
+                <input type="text" id="commonSymptom" name="commonSymptom" [(ngModel)]="selectedMedicalConditionCommonSymptoms"
+                    (focus)="commonSymptomsTouched = true" placeholder="Common Symptom" />
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn-create-request" (click)="submit()">Submit</button>
+            </div>
+        </form>
+</div>

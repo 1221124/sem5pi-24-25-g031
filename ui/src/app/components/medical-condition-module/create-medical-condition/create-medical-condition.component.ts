@@ -40,6 +40,11 @@ export class CreateMedicalConditionComponent implements OnInit {
   descriptionTouched: boolean = false;
   commonSymptomsTouched: boolean = false;
 
+  selectedMedicalConditionCode: string = '';
+  selectedMedicalConditionName: string = '';
+  selectedMedicalConditionDescription: string = '';
+  selectedMedicalConditionCommonSymptoms: string[] = [];
+
   ngOnInit() {
     // Authentication checks
     if (!this.authService.isAuthenticated()) {
@@ -58,5 +63,58 @@ export class CreateMedicalConditionComponent implements OnInit {
       this.router.navigate(['']);
       return;
     }  
+  }
+
+  submit() {
+    if (this.isProcessing) {
+      console.log('Already processing...');
+      return;
+    }
+
+    this.isProcessing = true;
+
+    if(!this.selectedMedicalConditionCode || 
+      !this.selectedMedicalConditionName || 
+      !this.selectedMedicalConditionDescription || 
+      !this.selectedMedicalConditionCommonSymptoms
+    ) { 
+      this.isProcessing = false;
+      console.log('Missing fields...');
+      console.log('Medical Condition Code: ', this.selectedMedicalConditionCode);
+      console.log('Medical Condition Name: ', this.selectedMedicalConditionName);
+      console.log('Medical Condition Description: ', this.selectedMedicalConditionDescription);
+      console.log('Medical Condition Common Symptoms: ', this.selectedMedicalConditionCommonSymptoms);
+      return; 
+    }
+
+    this.medicalCondition.code = this.selectedMedicalConditionCode;
+    this.medicalCondition.name = this.selectedMedicalConditionName;
+    this.medicalCondition.description = this.selectedMedicalConditionDescription;
+    // this.medicalCondition.commonSymptoms = this.selectedMedicalConditionCommonSymptoms;
+    this.medicalCondition.commonSymptoms = [];
+
+    console.log('Medical Condition: ', this.medicalCondition);
+    this.createNewMedicalConditionEvent.emit(this.medicalCondition);
+
+
+    console.log('Updating query params...');
+    this.router.navigate([],{
+      relativeTo: this.route,
+      queryParams: {
+        code: this.medicalCondition.code,
+        name: this.medicalCondition.name,
+        description: this.medicalCondition.description,
+        commonSymptoms: this.medicalCondition.commonSymptoms
+      },
+      queryParamsHandling: 'merge'
+    });
+
+    setTimeout(() => {
+      this.isProcessing = false;
+    }, 5000);
+  }
+
+  emitCloseModalEvent() {
+    this.closeModalEvent.emit();
   }
 }
