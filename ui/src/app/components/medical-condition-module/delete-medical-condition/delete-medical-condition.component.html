@@ -1,1 +1,6 @@
-<p>delete-medical-condition works!</p>
+<div class="delete-medical-condition">
+    <h2>Delete Medical Condition: {{ medicalCondition.code }}</h2>
+    <p>Are you sure you want to delete this medical condition?</p>
+    <button (click)="confirmDelete()">Yes, Delete</button>
+    <button (click)="closeDelete()">Cancel</button>
+</div>

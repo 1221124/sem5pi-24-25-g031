@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MedicalCondition } from '../../../models/medical-condition.model';
@@ -20,6 +20,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class DeleteMedicalConditionComponent implements OnInit {
   @Input() medicalCondition!: MedicalCondition;
+
+  @Output() confirmDeleteEvent = new EventEmitter();
+  @Output() closeDeleteEvent = new EventEmitter();
 
   constructor(
     private authService: AuthService,
@@ -47,6 +50,14 @@ export class DeleteMedicalConditionComponent implements OnInit {
       this.router.navigate(['']);
       return;
     }  
+  }
+
+  confirmDelete() {
+    this.confirmDeleteEvent.emit(this.medicalCondition);
+  }
+
+  closeDelete() {
+    this.closeDeleteEvent.emit();
   }
 
 }
