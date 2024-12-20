@@ -6,6 +6,7 @@ import { UpdatingPatientMedicalRecordDto } from "../../dto/patient-medical-recor
 
 export default interface IPatientMedicalRecordService  {
     getAll(): Promise<Result<PatientMedicalRecordDto[]>>;
+    getByMedicalRecordNumber(medicalRecordNumber: string): Promise<Result<PatientMedicalRecordDto>>;
     getById(id: string): Promise<Result<PatientMedicalRecordDto>>;
     create(creatingPatientMedicalRecord: CreatingPatientMedicalRecordDto): Promise<Result<PatientMedicalRecordDto>>;
     update(id: string, updatingPatientMedicalRecord: UpdatingPatientMedicalRecordDto): Promise<Result<PatientMedicalRecordDto>>;

@@ -9,7 +9,7 @@ import { OperationTypesFormComponent } from '../operation-types-form/operation-t
 import { OperationTypesListComponent } from '../operation-types-list/operation-types-list.component';
 import { ToggleOperationTypeStatusComponent } from '../toggle-operation-type-status/toggle-operation-type-status.component';
 import { EnumsService } from '../../../services/enums/enums.service';
-import { interval, Subscription, switchMap } from 'rxjs';
+
 @Component({
   selector: 'app-operation-types',
   standalone: true,

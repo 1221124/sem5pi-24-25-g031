@@ -39,6 +39,17 @@ export default (app: Router) => {
     (req, res, next) => ctrl.getAllPatientMedicalRecords(req, res, next)
   );
 
+  //Get by medical record number
+  route.get('/medical-record-number',
+    isAuth(['Admin','Doctor','Patient']) as unknown as RequestHandler,
+    celebrate({
+      query: Joi.object({
+        medicalRecordNumber: Joi.string().required()
+      })
+    }),
+    (req, res, next) => ctrl.getPatientMedicalRecordByMedicalRecordNumber(req, res, next)
+  );
+
   //Get by id
   route.get('/:id',
     isAuth(['Admin','Doctor']) as unknown as RequestHandler,

@@ -40,6 +40,28 @@ export default class PatientMedicalRecordController {
   }
 
   /**
+   * Retrieves a patient medical record by its medical record number.
+   * @param req - Express request object.
+   * @param res - Express response object.
+   * @param next - Express next middleware function.
+   */
+  public async getPatientMedicalRecordByMedicalRecordNumber(req: Request, res: Response, next: NextFunction) {
+    try {
+      const medicalRecordNumber = req.query.medicalRecordNumber as string; 
+      const resultOrError = await this.patientMedicalRecordService.getByMedicalRecordNumber(medicalRecordNumber) as Result<PatientMedicalRecordDto>;
+
+      if (resultOrError.isFailure) {
+        return res.status(404).send(resultOrError.errorValue()); 
+      }
+
+      const patientMedicalRecordDto = resultOrError.getValue();
+      return res.json(patientMedicalRecordDto); 
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
    * Retrieves a patient medical record by its ID.
    * @param req - Express request object.
    * @param res - Express response object.

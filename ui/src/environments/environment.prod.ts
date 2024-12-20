@@ -1,27 +1,34 @@
 export const environment = {
     production: true,
-    homeUrl: 'https://black-bush-0ea41ce03.4.azurestaticapps.net/',
-    tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
-    loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=https://black-bush-0ea41ce03.4.azurestaticapps.net/callback&scope=openid%20profile%20email&prompt=login',
-    usersApiUrl: 'https://sarmg031.azurewebsites.net/api/Users',
-    operationRequests: 'https://sarmg031.azurewebsites.net/api/OperationRequest',
-    operationTypes: 'https://sarmg031.azurewebsites.net/api/OperationTypes',
-    enums: 'https://sarmg031.azurewebsites.net/api/Enums',
-    staffs: 'https://sarmg031.azurewebsites.net/api/Staff',
-    patients: 'https://sarmg031.azurewebsites.net/api/Patient',
-    surgeryRooms: 'https://sarmg031.azurewebsites.net/api/SurgeryRooms',
-    roomTypes: 'https://sarmg031.azurewebsites.net/api/RoomType',
-    prolog: 'https://sarmg031.azurewebsites.net/api/Prolog',
-    appointments: 'https://sarmg031.azurewebsites.net/api/Appointments',
-    three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=fpr539t4ojcdr8oac0bkehc8j1&_ij_reload=RELOAD_ON_SAVE',
+    homeUrl: 'http://localhost:4200',
+    patientBackend: 'http://localhost:4000/api',
+    /*sarm*/
+    usersApiUrl: 'http://localhost:5500/api/Users',
+    operationRequests: 'http://localhost:5500/api/OperationRequest',
+    operationTypes: 'http://localhost:5500/api/OperationTypes',
+    enums: 'http://localhost:5500/api/Enums',
+    staffs: 'http://localhost:5500/api/Staff',
+    patients: 'http://localhost:5500/api/Patient',
+    surgeryRooms: 'http://localhost:5500/api/SurgeryRooms',
+    roomTypes: 'http://localhost:5500/api/RoomType',
+    /*patient backend*/
+    medicalConditions: 'http://localhost:4000/api/medical-condition',
+    patientMedicalRecord: 'http://localhost:4000/api/patient-medical-record',
+    /*algav*/
+    prolog: 'http://localhost:5500/api/Prolog',
+    appointments: 'http://localhost:5500/api/Appointments',
+    three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=m86s9d2mdo8vjm4a4bb9u7udi7&_ij_reload=RELOAD_ON_SAVE',
+    /*auth0*/
     authConfig: {
-        clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
-        clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
-        redirectUri: 'https://black-bush-0ea41ce03.4.azurestaticapps.net/callback',
-        authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
-        audience: 'https://api.sarmg031.com',
-        logoutUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/v2/logout?client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&returnTo=https://black-bush-0ea41ce03.4.azurestaticapps.net'
-    }
+      clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
+      clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
+      redirectUri: 'http://localhost:4200/callback',
+      authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
+      audience: 'https://api.sarmg031.com',
+      logoutUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/v2/logout?client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&returnTo=http://localhost:4200'
+    },
+    tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
+    loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:4200/callback&scope=openid%20profile%20email&prompt=login'
 };
 
 export const httpOptions = {

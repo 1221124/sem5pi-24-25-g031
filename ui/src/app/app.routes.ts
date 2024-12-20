@@ -20,6 +20,7 @@ import {OperationTypesComponent} from './components/operation-types-module/opera
 import { AppointmentsComponent } from './components/appointments-module/appointments/appointments.component';
 import { RoomTypesComponent } from './components/room-types/room-types.component';
 import { MedicalConditionComponent } from './components/medical-condition-module/medical-condition/medical-condition.component';
+import { PatientMedicalRecordComponent } from './components/patient-medical-record-module/patient-medical-record/patient-medical-record.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },

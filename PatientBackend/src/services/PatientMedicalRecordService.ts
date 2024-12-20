@@ -9,6 +9,7 @@ import { PatientMedicalRecord } from '../domain/patient-medical-record/PatientMe
 import { CreatingPatientMedicalRecordDto } from '../dto/patient-medical-record/CreatingPatientMedicalRecordDto';
 import { UpdatingPatientMedicalRecordDto } from '../dto/patient-medical-record/UpdatingPatientMedicalRecordDto';
 import { MedicalRecordEntry } from '../domain/medical-record-entry/MedicalRecordEntry';
+import { MedicalRecordNumber } from '../domain/patient-medical-record/MedicalRecordNumber';
 
 @Service()
 export default class PatientMedicalRecordService implements IPatientMedicalRecordService {
@@ -31,6 +32,30 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
       return Result.ok<PatientMedicalRecordDto>(patientMedicalRecordDto);
     } catch (error) {
       throw error; // Rethrow to be handled by the controller.
+    }
+  }
+
+  /**
+   * Retrieves a Patient medical record by its medical record number.
+   */
+  public async getByMedicalRecordNumber(medicalRecordNumber: string): Promise<Result<PatientMedicalRecordDto>> {
+    try {
+      const number = MedicalRecordNumber.create(medicalRecordNumber);
+
+      if (number.isFailure) {
+        return Result.fail<PatientMedicalRecordDto>("Invalid medical record number");
+      }
+
+      const patientMedicalRecord = await this.patientMedicalRecordRepo.findByMedicalRecordNumber(number.getValue());
+
+      if (!patientMedicalRecord) {
+        return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
+      }
+
+      const patientMedicalRecordDto = PatientMedicalRecordMap.toDto(patientMedicalRecord);
+      return Result.ok<PatientMedicalRecordDto>(patientMedicalRecordDto);
+    } catch (error) {
+      throw error;
     }
   }
 

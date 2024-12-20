@@ -1,0 +1,23 @@
+<div class="patient-medical-record">
+    <h2>Patient Medical Record</h2>
+    <p><strong>ID:</strong> {{ patientMedicalRecord.Id }}</p>
+    <p><strong>Medical Record Number:</strong> {{ patientMedicalRecord.MedicalRecordNumber }}</p>
+  
+    <h3>Allergies</h3>
+    <ul>
+      <li *ngFor="let allergy of patientMedicalRecord.Allergies">
+        <p><strong>ICD-11 Code:</strong> {{ allergy.ICD11Code }}</p>
+        <p><strong>Date:</strong> {{ allergy.Date | date: 'medium' }}</p>
+        <p><strong>Not Meaningful Anymore:</strong> {{ allergy.notMeaningfulAnymore ? 'Yes' : 'No' }}</p>
+      </li>
+    </ul>
+  
+    <h3>Medical Conditions</h3>
+    <ul>
+      <li *ngFor="let condition of patientMedicalRecord.MedicalConditions">
+        <p><strong>ICD-11 Code:</strong> {{ condition.ICD11Code }}</p>
+        <p><strong>Date:</strong> {{ condition.Date | date: 'medium' }}</p>
+        <p><strong>Not Meaningful Anymore:</strong> {{ condition.notMeaningfulAnymore ? 'Yes' : 'No' }}</p>
+      </li>
+    </ul>
+  </div>  

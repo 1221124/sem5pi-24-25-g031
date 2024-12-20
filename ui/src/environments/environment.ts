@@ -2,10 +2,8 @@ export const environment = {
   production: false,
   homeUrl: 'http://localhost:4200',
   patientBackend: 'http://localhost:4000/api',
-  tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
-  loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:4200/callback&scope=openid%20profile%20email&prompt=login',
-  usersApiUrl: 'http://localhost:5500/api/Users',
   /*sarm*/
+  usersApiUrl: 'http://localhost:5500/api/Users',
   operationRequests: 'http://localhost:5500/api/OperationRequest',
   operationTypes: 'http://localhost:5500/api/OperationTypes',
   enums: 'http://localhost:5500/api/Enums',
@@ -15,10 +13,12 @@ export const environment = {
   roomTypes: 'http://localhost:5500/api/RoomType',
   /*patient backend*/
   medicalConditions: 'http://localhost:4000/api/medical-condition',
+  patientMedicalRecord: 'http://localhost:4000/api/patient-medical-record',
   /*algav*/
   prolog: 'http://localhost:5500/api/Prolog',
   appointments: 'http://localhost:5500/api/Appointments',
   three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=m86s9d2mdo8vjm4a4bb9u7udi7&_ij_reload=RELOAD_ON_SAVE',
+  /*auth0*/
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
     clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
@@ -26,7 +26,9 @@ export const environment = {
     authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
     audience: 'https://api.sarmg031.com',
     logoutUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/v2/logout?client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&returnTo=http://localhost:4200'
-  }
+  },
+  tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
+  loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=http://localhost:4200/callback&scope=openid%20profile%20email&prompt=login'
 };
 
 export const httpOptions = {

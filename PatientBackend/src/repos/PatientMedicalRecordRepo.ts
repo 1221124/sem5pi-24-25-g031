@@ -115,7 +115,7 @@ console.log("patient medical record record: ", patientMedicalRecordRecord);
    * Find a patient medical record by its medical record number.
    */
   public async findByMedicalRecordNumber(number: MedicalRecordNumber): Promise<PatientMedicalRecord | null> {
-    const query = { medicalRecordNumber: number.toString() };
+    const query = { medicalRecordNumber: number.value };
     const patientMedicalRecordRecord = await this.patientMedicalRecordSchema.findOne(query as FilterQuery<IPatientMedicalRecordPersistence & Document>);
 
     if (patientMedicalRecordRecord != null) {
