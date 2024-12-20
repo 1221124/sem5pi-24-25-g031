@@ -31,3 +31,9 @@
         </tbody>
     </table>
 </div>
+
+<div class="pagination">
+    <button (click)="changePage(pages.currentPage - 1)" [disabled]="pages.currentPage <= 1">Previous</button>
+    <span>Page {{ pages.currentPage }} of {{ pages.totalPages }}</span>
+    <button (click)="changePage(pages.currentPage + 1)" [disabled]="pages.currentPage >= pages.totalPages">Next</button>
+  </div>
