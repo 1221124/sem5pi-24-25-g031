@@ -75,10 +75,10 @@ export class MedicalConditionComponent {
       } catch (error) {
         console.error('Error during initialization:', error);
       }
-    }
+    } 
 
     async loadInitialData() {
-      const response = await this.service.getMedicalConditions(this.accessToken);
+      const response = await this.service.get(this.accessToken);
 
       if (response.status !== 200) {
         this.message = 'Error loading medical conditions!';
@@ -98,6 +98,7 @@ export class MedicalConditionComponent {
     }
 
     openCreateModal() {
+      console.log('Opening create modal...');
       this.isCreateModalOpen = true;
       this.selectedMedicalConditionToCreate = {
         id: '',
@@ -108,6 +109,45 @@ export class MedicalConditionComponent {
       };
 
       this.navigateTo('create');
+    }
+
+    async createMedicalCondition(){
+      console.log("TODO: CREATE -> ", this.selectedMedicalConditionToCreate);
+      
+      try {
+        const response = await this.service.post(this.accessToken, this.selectedMedicalConditionToCreate);
+
+        console.log('Response:', response);
+
+        if (response.status !== 201 || !response.body) {
+          this.message = 'Error creating medical condition!';
+          this.success = false;
+          console.log('Error creating medical condition:', response);
+          return;
+        }
+
+        this.medicalConditions = [{
+          id: response.body.id,
+          code: response.body.code,
+          name: response.body.name,
+          description: response.body.description,
+          commonSymptoms: response.body.commonSymptoms
+        }];
+
+        this.message = 'Medical condition created successfully!';
+        this.success = true;
+      }
+      catch (error) {
+        this.message = 'Error creating medical condition!';
+        this.success = false;
+        console.error('Error creating medical condition:', error);
+      }finally{
+        if(this.success){
+          await this.loadInitialData();
+          this.closeCreateModal();
+        }
+        else console.error('Error creating medical condition:', this.message);
+      }
     }
 
     closeCreateModal() {
@@ -131,7 +171,25 @@ export class MedicalConditionComponent {
     }
 
     async updateMedicalCondition() {
-      console.log("TODO: UPDATE -> ", this.selectedMedicalConditionToUpdate);
+      try{
+        console.log("UPDATE -> ", this.selectedMedicalConditionToUpdate);
+      
+        await this.service.put(this.accessToken, this.selectedMedicalConditionToUpdate);
+      
+        await this.loadInitialData();
+
+        this.message = 'Medical condition updated successfully!';
+        this.success = true;
+      } catch (error) {
+        this.message = 'Error updating medical condition!';
+        this.success = false;
+        console.error('Error updating medical condition:', error);
+      } finally {
+        if(this.success){
+          this.closeUpdateModal();
+        }
+        else console.error('Error updating medical condition:', this.message);
+      }
     }
 
     closeUpdateModal() {

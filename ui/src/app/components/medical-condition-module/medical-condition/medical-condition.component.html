@@ -30,7 +30,6 @@
       *ngIf="isCreateModalOpen"
       [medicalCondition]="selectedMedicalConditionToCreate"
       (closeModalEvent)="closeCreateModal()"
-      (createMedicalConditionEvent)="openCreateModal()">
+      (createNewMedicalConditionEvent)="createMedicalCondition()">
     </app-create-medical-condition>
-
 </div>
