@@ -3,6 +3,8 @@ import {Injectable} from '@angular/core';
 
 import {firstValueFrom, throwError} from 'rxjs';
 import { environment } from '../../environments/environment';
+import { MedicalCondition } from '../models/medical-condition.model';
+import { MedicalConditionResponse } from '../components/medical-condition-module/medical-condition-response';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,7 @@ export class MedicalConditionService {
     private http: HttpClient
   ) { }
 
-  async getMedicalConditions(
+  async get(
       /*pageFilter: any,*/
       accessToken: string
     ) {
@@ -39,14 +41,108 @@ export class MedicalConditionService {
                     code: medicalCondition.code.props.value,
                     name: medicalCondition.name.props.value,
                     description: medicalCondition.description.props.value,
-                    commonSymptoms: medicalCondition.commonSymptoms.props
-                };
+                    commonSymptoms: medicalCondition.commonSymptoms.map((symptom: { props: { value: any; }; }) => symptom.props.value)
+                  };
               })
             };
           } else {
             return {
               status: response.status,
               body: []
+            };
+          }
+        });
+    }
+
+  async post(
+      accessToken: string,
+      medicalCondition: MedicalCondition
+    ) {
+      // const dto = {
+      //   "code": `${medicalCondition.code}`,
+      //   "name": `${medicalCondition.name}`,
+      //   "description": `${medicalCondition.description}`,
+      //   "commonSymptoms": `${medicalCondition.commonSymptoms}`
+      // };
+
+      const dto = {
+        "code": "AB02",
+        "name": "name",
+        "description": "description",
+        "commonSymptoms": ["symptom1", "symptom2"]
+      }
+
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      const options = {headers, observe: 'response' as const};
+
+      console.log('DTO:', dto);
+
+      return await firstValueFrom(this.http.post<any>(environment.medicalConditions, dto, options))
+        .then(response => { 
+          console.log("response: ", response);
+
+          if (response.status === 201 && response.body) {
+            return {
+              status: response.status,
+              body: {
+                id: response.body.id,
+                code: response.body.code.props.value,
+                name: response.body.name.props.value,
+                description: response.body.description.props.value,
+                commonSymptoms: medicalCondition.commonSymptoms
+              }
+            };
+          } else {
+            return {
+              status: response.status,
+              body: null
+            };
+          }
+        });
+
+      }
+
+    async put(
+      accessToken: string,
+      medicalCondition: MedicalCondition
+    ) {
+      const dto = {
+        "description": `${medicalCondition.description}`,
+        "commonSymptoms": `${medicalCondition.commonSymptoms}`.split(',')
+    };
+
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      const options = {headers, observe: 'response' as const};
+
+      console.log('DTO:', dto);
+
+      return await firstValueFrom(this.http.put<any>(`${environment.medicalConditions}/${medicalCondition.id}`, dto, options))
+        .then(response => {
+          console.log(response);
+
+          if (response.status === 200 && response.body) {
+            return {
+              status: response.status,
+              body: {
+                id: response.body.id,
+                code: response.body.code.props.value,
+                name: response.body.name.props.value,
+                description: response.body.description.props.value,
+                commonSymptoms: medicalCondition.commonSymptoms
+              }
+            };
+          } else {
+            return {
+              status: response.status,
+              body: null
             };
           }
         });

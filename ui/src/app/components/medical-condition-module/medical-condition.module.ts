@@ -11,8 +11,7 @@ import { MedicalConditionTableComponent } from "./medical-condition-table/medica
 
 
 @NgModule({
-  declarations: [
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
