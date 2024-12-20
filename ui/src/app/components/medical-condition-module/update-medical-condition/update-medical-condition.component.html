@@ -1,1 +1,22 @@
-<p>update-medical-condition works!</p>
+<div class="modal" *ngIf="medicalCondition">
+    <h2>Update Medical Condition</h2>
+    <form (ngSubmit)="submit()">
+        <div>
+            <label for="description">Description:</label>
+            <input type="text" id="description" [(ngModel)]="updatedDescription" name="description">
+        </div>
+        <div *ngFor="let symptom of medicalCondition.commonSymptoms; let i = index">
+            <label for="symptom-{{i}}">{{i + 1}}. Symptom:</label>
+            <input
+                type="text"
+                id="symptom-{{i}}"
+                [(ngModel)]="editableCommonSymptoms[i]"
+                name="symptom-{{i}}"
+            >
+        </div>
+        <div>
+            <button type="submit">Save</button>
+            <button type="button" (click)="close.emit()">Cancel</button>
+        </div>
+    </form>
+</div>
