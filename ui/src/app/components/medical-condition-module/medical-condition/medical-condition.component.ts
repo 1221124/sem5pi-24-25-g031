@@ -213,7 +213,25 @@ export class MedicalConditionComponent {
     }
 
     async deleteMedicalCondition() {
-      console.log("TODO: DELETE -> ", this.selectedMedicalConditionToDelete);
+      console.log("DELETE -> ", this.selectedMedicalConditionToDelete);
+
+      try{
+        const response = await this.service.delete(this.accessToken, this.selectedMedicalConditionToDelete)
+      
+        if(response.status !== 204) console.error("Error!");
+
+        await this.loadInitialData();
+
+        this.message = 'Medical Condition deleted successfully';
+        this.success = true;
+      } catch(err){
+        console.error('Error deleting Medical Condition: ', err);
+        this.message = 'Error deleting Medical Condition';
+        this.success = false;
+      } finally {
+        if (this.success) this.closeDeleteModal();
+        else console.error('Error!');
+      }
     }
 
     closeDeleteModal() {

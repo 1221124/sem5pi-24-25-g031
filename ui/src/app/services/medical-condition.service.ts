@@ -4,7 +4,6 @@ import {Injectable} from '@angular/core';
 import {firstValueFrom, throwError} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MedicalCondition } from '../models/medical-condition.model';
-import { MedicalConditionResponse } from '../components/medical-condition-module/medical-condition-response';
 
 @Injectable({
   providedIn: 'root'
@@ -147,4 +146,35 @@ export class MedicalConditionService {
           }
         });
     }
+
+
+  async delete(
+    accessToken: string,
+    medicalCondition: MedicalCondition
+  ){
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const };
+
+    return await firstValueFrom(this.http.delete<any>(`${environment.medicalConditions}/${medicalCondition.id}`, options))
+      .then(response => {
+        console.log("Response: ", response);
+
+        if (response.status === 204) {
+          return {
+            status: response.status,
+            body: null
+          };
+        } else {
+          return {
+            status: response.status,
+            body: null
+          };
+        }
+      });
+
+  }
 }

@@ -15,8 +15,8 @@
     <app-delete-medical-condition
       *ngIf="isDeleteModalOpen"
       [medicalCondition]="selectedMedicalConditionToDelete"
-      (close)="closeDeleteModal()"
-      (delete)="deleteMedicalCondition()">
+      (closeDeleteEvent)="closeDeleteModal()"
+      (confirmDeleteEvent)="deleteMedicalCondition()">
     </app-delete-medical-condition>
 
     <app-update-medical-condition

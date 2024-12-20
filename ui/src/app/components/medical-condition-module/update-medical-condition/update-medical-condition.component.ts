@@ -45,9 +45,11 @@ export class UpdateMedicalConditionComponent implements OnInit {
     this.message = 'Updating medical condition...';
 
     // Sync changes back to medicalCondition
-    this.medicalCondition.description = this.updatedDescription;
+    if(this.updatedDescription !== this.medicalCondition.description && this.updatedDescription != '') this.medicalCondition.description = this.updatedDescription;
+    
+    this.editableCommonSymptoms = this.editableCommonSymptoms.filter(element => element !== '');
     this.medicalCondition.commonSymptoms = [...this.editableCommonSymptoms];
-
+    
     console.log('Updated medical condition:', this.medicalCondition);
 
     this.isProcessing = false;
