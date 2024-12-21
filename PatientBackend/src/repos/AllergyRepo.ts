@@ -24,49 +24,54 @@ export default class AllergyRepo implements IAllergyRepo {
 
     public async exists(allergy: Allergy): Promise<boolean> {
 
-        // const idX = medicalCondition.id instanceof MedicalConditionId ? (<MedicalConditionId>medicalCondition.id).toValue() : medicalCondition.id;
+        const idX = allergy.id instanceof AllergyId ? (<AllergyId>allergy.id) : allergy.id;
 
-        // const query = { domainId: idX };
-        // const medicalConditionDocument = await this.medicalConditionSchema.findOne(query as FilterQuery<IMedicalConditionPersistence & Document>);
+        const query = { allergyId: idX };
 
-        // return !!medicalConditionDocument === true;
+        const allergyDocument = await this.allergySchema.findOne(query as FilterQuery<IAllergyPersistence & Document>);
 
-        return false;
+        return !!allergyDocument === true;
     }
 
     public async save(allergy: Allergy): Promise<Allergy> {
-        const query = { domainId: allergy.id.toString()};
 
-        const schema = await this.allergySchema.findOne(query);
+        const exists = await this.exists(allergy);
 
         try {
-            if (schema === null) {
-                const rawAllergy: any = AllergyMap.toPersistence(allergy);
+            if (exists) {
+                const query = { allergyId : allergy.id };
+                const update = AllergyMap.toPersistence(allergy);
 
-                const allergyCreated = await this.allergySchema.create(rawAllergy);
+                const allergyRecord = await this.allergySchema.findOneAndUpdate(query as FilterQuery<IAllergyPersistence & Document>, update, { new: true });
 
-                return AllergyMap.toDomain(allergyCreated);
+                return AllergyMap.toDomain(allergyRecord);
             } else {
-                schema.set(AllergyMap.toPersistence(allergy));
+                const newAllergy = AllergyMap.toPersistence(allergy);
 
-                await schema.save();
+                const allergyRecord = await this.allergySchema.create(newAllergy);
 
-                return AllergyMap.toDomain(schema);
+                return AllergyMap.toDomain(allergyRecord);
             }
         } catch (error) {
             throw error;
         }
     }
 
-    public async findByDomainId(allergyId: AllergyId | string): Promise<Allergy> {
-        const query = { domainId: allergyId };
-        const allergy = await this.allergySchema.findOne(query as FilterQuery<IAllergyPersistence & Document>);
+    public async findByDomainId(id: string): Promise<Allergy> {
+        const allergyId = AllergyId.create(id);
 
-        if (allergy != null) {
-            return AllergyMap.toDomain(allergy);
+        const idx = allergyId instanceof AllergyId ? (<AllergyId>allergyId).id.toValue() : allergyId;
+
+        const query = { allergyId: idx };
+
+        const allergy = await this.allergySchema.findOne( query );
+
+        if(allergy != null) {
+            return AllergyMap.fromPersistence(allergy);
         } else {
             return null;
         }
+
     }
 
     public async findAll(): Promise<Allergy[]> {
