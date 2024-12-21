@@ -37,6 +37,10 @@ export class Allergy extends AggregateRoot<AllergyProps>{
         return this.props.description;
     }
 
+    set description(value: Description) {
+        this.props.description = value
+    }
+
     private constructor(props: AllergyProps, id?: UniqueEntityID) {
         super(props, id);
     }
