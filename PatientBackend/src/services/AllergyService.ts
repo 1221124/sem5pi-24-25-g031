@@ -7,6 +7,7 @@ import {CreatingAllergyDto} from "../dto/allergy/CreatingAllergyDto";
 import {Result} from "../core/logic/Result";
 import {AllergyDto} from "../dto/allergy/AllergyDto";
 import {AllergyMap} from "../mappers/AllergyMap";
+import {UpdatingAllergyDto} from "../dto/allergy/UpdatingAllergyDto";
 
 @Service()
 
@@ -40,6 +41,27 @@ export default class AllergyService implements IAllergyService {
             return allergies.map(AllergyMap.toDto);
         } catch (error) {
             console.log("\nSERVICE: Error getting all allergies." + error);
+            throw error;
+        }
+    }
+
+    public async updateAllergy(id: string, dto: UpdatingAllergyDto): Promise<Result<AllergyDto>> {
+        try {
+            const originalAllergy = await this.allergyRepo.findByDomainId(id);
+
+            if (!originalAllergy) {
+                return Result.fail<AllergyDto>("Allergy not found");
+            }
+
+            if (dto.description != null) {
+                originalAllergy.description = dto.description;
+            }
+
+            await this.allergyRepo.save(originalAllergy);
+
+            const allergyDTO = AllergyMap.toDto(originalAllergy);
+            return Result.ok<AllergyDto>(allergyDTO);
+        } catch (error) {
             throw error;
         }
     }
