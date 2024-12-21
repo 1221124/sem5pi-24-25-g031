@@ -1,6 +1,6 @@
 
 export interface IAllergyPersistence {
-    _id: string;
+    allergyId: string;
     code: string;
     name: string;
     description: string;

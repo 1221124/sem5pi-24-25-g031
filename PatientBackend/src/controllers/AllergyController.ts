@@ -10,9 +10,10 @@ import {CreatingAllergyDto} from "../dto/allergy/CreatingAllergyDto";
 
 @Service()
 export default class AllergyController {
-  constructor(
-    @Inject(config.services.allergy.name) private allergyService: AllergyService
-  ) {}
+    constructor(
+        @Inject(config.services.allergy.name) private allergyService: AllergyService
+    ) {
+    }
 
     /**
      * Handles the creation of a new allergy.
@@ -21,18 +22,38 @@ export default class AllergyController {
      * @param next
      */
     public async createAllergy(req: Request, res: Response, next: NextFunction) {
-      try {
-          const resultOrError = await this.allergyService.createAllergy(req.body as CreatingAllergyDto) as Result<AllergyDto>;
-          
-          if (resultOrError.isFailure) {
-              return res.status(400).send(resultOrError.errorValue()); 
-          }
-    
-          const allergyDTO = resultOrError.getValue();
-          return res.status(201).json(allergyDTO); 
-      } catch (error) {
-          return next(error); 
-      }
+        console.log("CONTROLLER: Creating allergy: ", req.body);
+        try {
+
+            const resultOrError = await this.allergyService.createAllergy(req.body as CreatingAllergyDto) as Result<AllergyDto>;
+
+            if (resultOrError.isFailure) {
+                return res.status(400).send(resultOrError.errorValue());
+            }
+
+            const allergyDTO = resultOrError.getValue();
+            return res.status(201).json(allergyDTO);
+        } catch (error) {
+            console.error("CONTROLLER: Error creating allergy: ", error);
+            return next(error);
+        }
     }
-  
+
+    /**
+     * Retrieves all allergies.
+     * @param req
+     * @param res
+     * @param next
+     */
+    public async getAllAllergies(req: Request, res: Response, next: NextFunction) {
+        try {
+            const allergies = await this.allergyService.getAll();
+            console.log("\nCONTROLLER: Getting all allergies." + allergies);
+            return res.json(allergies);
+        } catch (error) {
+            console.log("\nCONTROLLER: Error getting all allergies." + error);
+            return next(error);
+        }
+    }
+
 }

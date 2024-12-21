@@ -3,7 +3,7 @@ import {IAllergyPersistence} from "../../dataschema/IAllergyPersistence";
 
 const AllergySchema = new mongoose.Schema(
     {
-        id: {
+        allergyId: {
             type: String,
             required: true
         },

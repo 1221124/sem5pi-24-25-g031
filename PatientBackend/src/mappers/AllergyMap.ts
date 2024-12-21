@@ -4,30 +4,46 @@ import {ICD11Code} from "../domain/shared/ICD11Code";
 import {Name} from "../domain/shared/Name";
 import {Description} from "../domain/shared/Description";
 import {UniqueEntityID} from "../core/domain/UniqueEntityID";
+import {AllergyId} from "../domain/allergy/AllergyId";
 
 export class AllergyMap {
     public static toDto (allergy: Allergy): AllergyDto {
+        console.log("MAPPER: Mapping allergy to dto: ", allergy);
         return {
+            id: allergy.id.toString(),
             code: allergy.code,
             name: allergy.name,
             description: allergy.description
         } as AllergyDto;
     }
     
-    public static async toDomain (raw: any): Promise<Allergy> {
+    public static toDomain (raw: any): Allergy {
+        const allergyIdOrError = AllergyId.create(raw.allergyId);
+        if (allergyIdOrError == null) throw new Error("AllergyId failed validation.");
+
         const codeOrError = ICD11Code.create(raw.code);
+        if (codeOrError.isFailure) throw new Error("ICD11 code failed validation.");
+        const code = codeOrError.getValue();
+
         const nameOrError = Name.create(raw.name);
+        if (nameOrError.isFailure) throw new Error("Name failed validation.");
+        const name = nameOrError.getValue();
+
         const descriptionOrError = Description.create(raw.description);
+        if (descriptionOrError.isFailure) throw new Error("Description failed validation.");
+        const description = descriptionOrError.getValue();
         
         const allergyOrError = Allergy.create({
-            code: codeOrError.getValue(),
-            name: nameOrError.getValue(),
-            description: descriptionOrError.getValue()
-        }, new UniqueEntityID(raw.allergyId));
+            code: code,
+            name: name,
+            description: description
+        }, allergyIdOrError.id);
         
-        allergyOrError.isFailure ? console.log(allergyOrError.error) : '';
-        
-        return allergyOrError.isSuccess ? allergyOrError.getValue() : null;
+        if (allergyOrError.isFailure) {
+            throw new Error(allergyOrError.error.toString());
+        }
+
+        return allergyOrError.getValue();
     }
     
     public static toPersistence (allergy: Allergy): any {
