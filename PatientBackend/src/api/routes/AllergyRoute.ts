@@ -29,4 +29,16 @@ export default (app: Router) => {
         (req, res, next) => ctrl.createAllergy(req, res, next) );
 
     route.get('', (req, res, next) => ctrl.getAllAllergies(req, res, next));
+
+    route.put('/:id',
+        celebrate({
+            params: Joi.object({
+                id: Joi.string().required()
+            }),
+            body: Joi.object({
+                description: Joi.string(),
+            })
+        }),
+        (req, res, next) => ctrl.updateAllergy(req, res, next)
+    );
 };
