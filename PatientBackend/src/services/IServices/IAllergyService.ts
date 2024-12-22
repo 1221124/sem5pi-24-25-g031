@@ -5,6 +5,6 @@ import {UpdatingAllergyDto} from "../../dto/allergy/UpdatingAllergyDto";
 
 export default interface IAllergyService  {
     createAllergy(dto: CreatingAllergyDto): Promise<Result<AllergyDto>>;
-    getAll(): Promise<AllergyDto[]>;
+    getAll(filters: {code?: string, name?: string, description?: string}): Promise<AllergyDto[]>;
     updateAllergy(id: string, dto: UpdatingAllergyDto): Promise<Result<AllergyDto>>;
 }

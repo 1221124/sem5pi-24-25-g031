@@ -49,8 +49,14 @@ export default class AllergyController {
      */
     public async getAllAllergies(req: Request, res: Response, next: NextFunction) {
         try {
-            const allergies = await this.allergyService.getAll();
-            console.log("\nCONTROLLER: Getting all allergies." + allergies);
+            const filters = {
+                code: req.query.code as string,
+                name: req.query.name as string,
+                description: req.query.description as string
+            }
+
+            const allergies = await this.allergyService.getAll(filters);
+
             return res.json(allergies);
         } catch (error) {
             console.log("\nCONTROLLER: Error getting all allergies." + error);

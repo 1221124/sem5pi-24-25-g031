@@ -74,11 +74,25 @@ export default class AllergyRepo implements IAllergyRepo {
 
     }
 
-    public async findAll(): Promise<Allergy[]> {
-        const allergy = await this.allergySchema.find();
-        console.log("REPO: allergies" + allergy);
-        if(allergy.length === 0) return [];
-        else return Promise.all(allergy.map(AllergyMap.toDomain));
+    public async findAll(filters: { code?: string; name?: string; description?: string }): Promise<Allergy[]> {
+        try {
+            const query: any = {};
+
+            if (filters.code) query['code'] = filters.code;
+            if (filters.name) query['name'] = { $regex: new RegExp(filters.name, 'i') }; // Busca parcial, case-insensitive
+            if (filters.description) query['description'] = { $regex: new RegExp(filters.description, 'i') }; // Busca parcial, case-insensitive
+
+            console.log("REPO: Applying filters to query.", query);
+
+            const allergies = await this.allergySchema.find(query);
+            console.log("REPO: allergies found", allergies);
+
+            if (allergies.length === 0) return [];
+            else return Promise.all(allergies.map(AllergyMap.toDomain));
+        } catch (error) {
+            console.log("REPO: Error finding allergies.", error);
+            throw error;
+        }
     }
 
     public async delete(allergy: Allergy): Promise<void> {

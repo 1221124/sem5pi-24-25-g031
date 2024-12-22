@@ -5,7 +5,7 @@ export default interface IAllergyRepo extends Repo<Allergy> {
 
     save(allergy: Allergy): Promise<Allergy>;
 
-    findAll(): Promise<Allergy[]>;
+    findAll(filters: { code?: string; name?: string; description?: string }): Promise<Allergy[]>;
 
     findByDomainId(id: string): Promise<Allergy | null>;
 
