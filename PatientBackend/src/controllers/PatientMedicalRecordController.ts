@@ -7,6 +7,7 @@ import { CreatingPatientMedicalRecordDto } from '../dto/patient-medical-record/C
 import { PatientMedicalRecordDto } from '../dto/patient-medical-record/PatientMedicalRecordDto';
 import { UpdatingPatientMedicalRecordDto } from '../dto/patient-medical-record/UpdatingPatientMedicalRecordDto';
 import mongoose from 'mongoose';
+import { MedicalRecordEntry } from '../domain/medical-record-entry/MedicalRecordEntry';
 
 @Service()
 export default class PatientMedicalRecordController {
@@ -155,7 +156,15 @@ export default class PatientMedicalRecordController {
         return res.status(400).send("ID is required.");
       }
 
-      const medicalCondition = req.body.medicalCondition;
+      const code = req.body.code;
+      const notMeaningfulAnymore = req.body.notMeaningfulAnymore;
+      const date = new Date();
+
+      const medicalCondition = {
+        ICD11Code: code,
+        Date: date,
+        notMeaningfulAnymore: notMeaningfulAnymore
+      } as unknown as MedicalRecordEntry;
 
       const resultOrError = await this.patientMedicalRecordService.addOrUpdateMedicalConditionEntry(id, medicalCondition) as Result<PatientMedicalRecordDto>;
 
@@ -188,7 +197,15 @@ export default class PatientMedicalRecordController {
         return res.status(400).send("ID is required.");
       }
 
-      const allergy = req.body.allergy;
+      const code = req.body.code;
+      const notMeaningfulAnymore = req.body.notMeaningfulAnymore;
+      const date = new Date();
+
+      const allergy = {
+        ICD11Code: code,
+        Date: date,
+        notMeaningfulAnymore: notMeaningfulAnymore
+      } as unknown as MedicalRecordEntry;
 
       const resultOrError = await this.patientMedicalRecordService.addOrUpdateAllergyEntry(id, allergy) as Result<PatientMedicalRecordDto>;
 

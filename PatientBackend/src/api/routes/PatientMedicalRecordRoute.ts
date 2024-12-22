@@ -85,7 +85,6 @@ export default (app: Router) => {
       }),
       body: Joi.object({
         code: Joi.string().required(),
-        date: Joi.date().required(),
         notMeaningfulAnymore: Joi.boolean().required()
       })
     }),
@@ -101,7 +100,7 @@ export default (app: Router) => {
       }),
       body: Joi.object({
         code: Joi.string().required(),
-        date: Joi.date().required()
+        notMeaningfulAnymore: Joi.boolean().required()
       })
     }),
     (req, res, next) => ctrl.addOrUpdateAllergyEntry(req, res, next)

@@ -33,11 +33,6 @@ import { AddSpecializationComponent } from './components/specializations/add-spe
 import { ListSpecializationComponent } from './components/specializations/list-specialization/list-specialization.component';
 
 @NgModule({
-  declarations: [
-    HomeComponent,
-    NurseMenuComponent,
-    TechnicianMenuComponent,
-  ],
   imports: [
     BrowserModule,
     CommonModule,
@@ -46,6 +41,9 @@ import { ListSpecializationComponent } from './components/specializations/list-s
     FormsModule,
     AdminUsersComponent,
     AppComponent,
+    HomeComponent,
+    NurseMenuComponent,
+    TechnicianMenuComponent,
     AppointmentsModule,
     AuthCallbackComponent,
     OperationTypesModule,

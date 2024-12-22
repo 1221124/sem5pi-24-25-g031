@@ -3,12 +3,12 @@ import { Component, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { MedicalCondition } from '../../../models/medical-condition.model';
-import { MedicalConditionService } from '../../../services/medical-condition.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CreateMedicalConditionComponent } from '../create-medical-condition/create-medical-condition.component';
 import { UpdateMedicalConditionComponent } from '../update-medical-condition/update-medical-condition.component';
 import { DeleteMedicalConditionComponent } from '../delete-medical-condition/delete-medical-condition.component';
 import { MedicalConditionTableComponent } from '../medical-condition-table/medical-condition-table.component';
+import { MedicalConditionService } from '../../../services/medical-condition/medical-condition.service';
 
 @Component({
   selector: 'app-medical-condition',

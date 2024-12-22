@@ -81,6 +81,22 @@ export default class MedicalConditionController {
   }
 
   /**
+   * Validates an ICD-11 code.
+   * @param req - Express request object.
+   * @param res - Express response object.
+   * @param next - Express next middleware function.
+   */
+  public async validateICD11Code(req: Request, res: Response, next: NextFunction) {
+    try {
+      const code = req.query.code as string;
+      const isValid = await this.medicalConditionService.validateICD11Code(code);
+      return res.json({ isValid }); 
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
    * Updates an existing medical condition by its ID.
    * @param req - Express request object.
    * @param res - Express response object.

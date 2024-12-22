@@ -2,10 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MedicalCondition } from '../../../models/medical-condition.model';
 import { NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MedicalConditionService } from '../../../services/medical-condition.service';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { MedicalConditionService } from '../../../services/medical-condition/medical-condition.service';
 
 @Component({
   selector: 'app-medical-condition-table',

@@ -12,9 +12,11 @@ import { UpdatingMedicalConditionDto } from '../dto/medical-condition/UpdatingMe
 import IMedicalConditionService from './IServices/IMedicalConditionService';
 import e from 'cors';
 import { MedicalCondition } from '../domain/medical-condition/MedicalCondition';
+import { ICD11Code } from '../domain/shared/ICD11Code';
 
 @Service()
 export default class MedicalConditionService implements IMedicalConditionService {
+
   constructor(
     @Inject(config.repos.medicalCondition.name) private medicalConditionRepo: IMedicalConditionRepo
   ) {}
@@ -44,6 +46,23 @@ export default class MedicalConditionService implements IMedicalConditionService
     try {
       const medicalConditions = await this.medicalConditionRepo.findAll();
       return medicalConditions.map(MedicalConditionMap.toDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Validates an ICD-11 code.
+   */
+  public async validateICD11Code(code: string): Promise<Result<boolean>> {
+    try {
+      const icd11Code = ICD11Code.create(code);
+      if (icd11Code.isFailure) {
+        return Result.fail<boolean>(icd11Code.error);
+      }
+      const exists = await this.medicalConditionRepo.findByCode(icd11Code.getValue());
+      //returns true if the code exists, false otherwise
+      return Result.ok<boolean>(exists != null);
     } catch (error) {
       throw error;
     }

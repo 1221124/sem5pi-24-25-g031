@@ -71,7 +71,6 @@ export class PatientMedicalRecordService {
 
       const dto = {
         "ICD11Code": medicalCondition.ICD11Code,
-        "Date": medicalCondition.Date,
         "notMeaningfulAnymore": medicalCondition.notMeaningfulAnymore
       };
 
