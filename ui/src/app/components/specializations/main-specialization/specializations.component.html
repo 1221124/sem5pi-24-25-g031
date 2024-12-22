@@ -4,8 +4,10 @@
   <button class="btn btn-back">Back to Admin Home</button>
 </div>
 
-<app-list-specialization>
+<app-list-specialization
+        [specializations]="specializations">
 </app-list-specialization>
+
 
 <app-add-specialization
   *ngIf="isCreateModalOpen"

@@ -63,9 +63,12 @@ export class SpecializationsComponent {
   }
 
 
-  async submitRequest(specialization: Specialization) {
+  async submitRequest(specialization : Specialization) {
     console.log("Specialization:", specialization);
-    await this.service.post(this.specialization, this.accessToken)
+
+    this.selectedSpecializationToCreate = specialization;
+
+    await this.service.post(this.selectedSpecializationToCreate, this.accessToken)
         .then((response) => {
           if (response.status === 201) {
             this.message = 'Specialization added successfully!';
