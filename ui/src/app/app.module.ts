@@ -31,6 +31,7 @@ import { PatientMedicalRecordModule } from './components/patient-medical-record-
 import { PatientMedicalRecordComponent } from './components/patient-medical-record-module/patient-medical-record/patient-medical-record.component';
 import { SpecializationsComponent } from './components/specializations/specializations.component';
 import { AddSpecializationComponent } from './components/specializations/add-specialization/add-specialization.component';
+import { ListSpecializationComponent } from './components/specializations/list-specialization/list-specialization.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { AddSpecializationComponent } from './components/specializations/add-spe
     TechnicianMenuComponent,
     AdminPatientsAppointmentHistComponent,
     SpecializationsComponent,
-    AddSpecializationComponent
+    AddSpecializationComponent,
+    ListSpecializationComponent
   ],
   imports: [
     BrowserModule,
