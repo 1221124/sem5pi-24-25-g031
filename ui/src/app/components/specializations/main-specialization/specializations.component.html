@@ -9,5 +9,7 @@
 
 <app-add-specialization
   *ngIf="isCreateModalOpen"
+  [specialization]="selectedSpecializationToCreate"
   (closeModalEvent)="closeModal()"
+  (createSpecializationEvent)="submitRequest($event)">
 ></app-add-specialization>
