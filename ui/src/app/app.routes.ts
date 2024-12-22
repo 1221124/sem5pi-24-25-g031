@@ -21,6 +21,7 @@ import { AppointmentsComponent } from './components/appointments-module/appointm
 import { RoomTypesComponent } from './components/room-types/room-types.component';
 import { MedicalConditionComponent } from './components/medical-condition-module/medical-condition/medical-condition.component';
 import { PatientMedicalRecordComponent } from './components/patient-medical-record-module/patient-medical-record/patient-medical-record.component';
+import {SpecializationsComponent} from './components/specializations/specializations.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -69,6 +70,7 @@ export const routes: Route[] = [
   { path: 'admin/patients', component: AdminPatientsMainComponent },
   { path: 'admin/users', component: AdminUsersComponent },
   { path: 'admin/roomTypes', component: RoomTypesComponent },
+  { path: 'admin/specializations', component: SpecializationsComponent },
   { path: 'admin/prolog', component: PrologComponent },
   {
     path: 'admin/operationTypes',

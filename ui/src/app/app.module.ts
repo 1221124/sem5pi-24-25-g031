@@ -29,13 +29,17 @@ import { RoomTypesComponent } from './components/room-types/room-types.component
 import { MedicalConditionModule } from './components/medical-condition-module/medical-condition.module';
 import { PatientMedicalRecordModule } from './components/patient-medical-record-module/patient-medical-record.module';
 import { PatientMedicalRecordComponent } from './components/patient-medical-record-module/patient-medical-record/patient-medical-record.component';
+import { SpecializationsComponent } from './components/specializations/specializations.component';
+import { AddSpecializationComponent } from './components/specializations/add-specialization/add-specialization.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
     NurseMenuComponent,
     TechnicianMenuComponent,
-    AdminPatientsAppointmentHistComponent
+    AdminPatientsAppointmentHistComponent,
+    SpecializationsComponent,
+    AddSpecializationComponent
   ],
   imports: [
     BrowserModule,
