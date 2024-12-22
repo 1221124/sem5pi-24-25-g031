@@ -1,0 +1,34 @@
+<div class="medical-condition-entry-form">
+    <h2>{{ medicalCondition.ICD11Code ? 'Edit' : 'Add' }} Medical Condition Entry</h2>
+  
+    <div class="form-group">
+      <label for="icd11Code">ICD-11 Code:</label>
+      <input
+        id="icd11Code"
+        type="text"
+        [(ngModel)]="medicalCondition.ICD11Code"
+        placeholder="Enter ICD-11 Code"
+        class="form-control"
+        [class.invalid]="!validateICD11Code(medicalCondition.ICD11Code) && medicalCondition.ICD11Code !== ''"
+        [disabled]="medicalCondition.ICD11Code !== ''"
+      />
+      <div *ngIf="!validateICD11Code(medicalCondition.ICD11Code) && medicalCondition.ICD11Code !== ''" class="error-message">
+        Invalid ICD-11 Code.
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="medicalCondition.notMeaningfulAnymore"
+        />
+        Mark as not meaningful anymore
+      </label>
+    </div>
+  
+    <div class="form-actions">
+      <button class="btn btn-primary" (click)="saveMedicalCondition()">Save</button>
+      <button class="btn btn-secondary" (click)="close.emit()">Cancel</button>
+    </div>
+  </div>  

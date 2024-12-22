@@ -1,0 +1,61 @@
+.patient-medical-record-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .patient-medical-record {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    overflow-y: auto;
+    max-height: 80%;
+    position: relative;
+  }
+  
+  .patient-medical-record h2 {
+    margin-top: 0;
+    color: #2c3e50;
+  }
+  
+  .patient-medical-record h3 {
+    margin-top: 20px;
+    color: #34495e;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 5px;
+  }
+  
+  .patient-medical-record p {
+    margin: 5px 0;
+    color: #2c3e50;
+  }
+  
+  .patient-medical-record ul {
+    padding-left: 20px;
+  }
+  
+  .patient-medical-record li {
+    margin-bottom: 15px;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #7f8c8d;
+  }
+  

@@ -3,9 +3,15 @@ import {StaffsService} from '../../services/staffs/staffs.service';
 import {AuthService} from '../../services/auth/auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Staff} from '../../models/staff.model';
+import { ListSpecializationComponent } from './list-specialization/list-specialization.component';
+import { AddSpecializationComponent } from './add-specialization/add-specialization.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-specializations',
+  standalone: true,
+  imports: [ListSpecializationComponent, AddSpecializationComponent, CommonModule, FormsModule],
   templateUrl: './specializations.component.html',
   styleUrl: './specializations.component.css'
 })

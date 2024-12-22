@@ -1,10 +1,11 @@
 ﻿import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
+import { PatientMedicalRecordComponent } from './patient-medical-record/patient-medical-record.component';
+import { MedicalConditionEntryFormComponent } from './medical-condition-entry-form/medical-condition-entry-form.component';
 
 export const routes: Route[] = [
-  // { path: '', component: OperationTypesComponent },
-  // { path: 'create', component: OperationTypesFormComponent},
-  // { path: 'update', component: OperationTypesFormComponent}
+  { path: '', component: PatientMedicalRecordComponent },
+  { path: 'medical-condition', component: MedicalConditionEntryFormComponent },
 ];
 
 @NgModule({

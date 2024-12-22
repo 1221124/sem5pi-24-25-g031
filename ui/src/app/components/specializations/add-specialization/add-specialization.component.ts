@@ -1,8 +1,12 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Staff} from '../../../models/staff.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-specialization',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './add-specialization.component.html',
   styleUrl: './add-specialization.component.css'
 })

@@ -2,21 +2,25 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Patient } from '../../../models/patient.model';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
-import { PatientService } from '../../../services/patient/patient.service';
 import { PatientMedicalRecord } from '../../../models/patient-medical-record.model';
 import { CommonModule } from '@angular/common';
+import { MedicalRecordEntry } from '../../../models/medical-record-entry';
+import { MedicalConditionEntryFormComponent } from '../medical-condition-entry-form/medical-condition-entry-form.component';
+import { PatientMedicalRecordService } from '../../../services/patient-medical-record/patient-medical-record.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-patient-medical-record',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    MedicalConditionEntryFormComponent
   ],
   templateUrl: './patient-medical-record.component.html',
   styleUrl: './patient-medical-record.component.css'
 })
 export class PatientMedicalRecordComponent implements OnInit {
-  patient: Patient = {
+  @Input() patient: Patient = {
     Id: '',
     FullName: {
       FirstName: '',
@@ -24,7 +28,7 @@ export class PatientMedicalRecordComponent implements OnInit {
     },
     DateOfBirth: new Date(),
     Gender: '',
-    MedicalRecordNumber: '202412000001',
+    MedicalRecordNumber: '',
     ContactInformation: {
       Email: '',
       PhoneNumber: 0
@@ -54,30 +58,44 @@ export class PatientMedicalRecordComponent implements OnInit {
     ]
   };
 
+  allergyPopup = false;
+  medicalConditionPopup = false;
+
+  allergy: MedicalRecordEntry = {
+    ICD11Code: '',
+    Date: new Date(),
+    notMeaningfulAnymore: false
+  };
+
+  medicalCondition: MedicalRecordEntry = {
+    ICD11Code: '',
+    Date: new Date(),
+    notMeaningfulAnymore: false
+  };
+
   constructor(
+    private service: PatientMedicalRecordService,
     private authService: AuthService,
-    private patientService: PatientService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
 
   async ngOnInit() {
     if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateMessage('You are not authenticated or are not an admin, a doctor or a patient! Please login...');
       this.authService.updateIsError(true);
       this.router.navigate(['']);
       return;
     }
 
     this.accessToken = this.authService.getToken() as string;
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Redirecting to login...');
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')
+    || !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')
+    || !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('patient')) {
+      this.authService.updateMessage('You are not authenticated or are not an admin, a doctor or a patient! Redirecting to login...');
       this.authService.updateIsError(true);
       this.router.navigate(['']);
       return;
-    }
-
-    if (!this.patient.MedicalRecordNumber) {
-      this.patient.MedicalRecordNumber = '202412000001';
     }
 
     await this.getPatientMedicalRecord();
@@ -85,7 +103,7 @@ export class PatientMedicalRecordComponent implements OnInit {
 
   async getPatientMedicalRecord() {
     try {
-      const patient = await this.patientService.getPatientMedicalRecord(this.patient.MedicalRecordNumber, this.accessToken);
+      const patient = await this.service.getPatientMedicalRecord(this.patient.MedicalRecordNumber, this.accessToken);
       if (patient.status === 200 && patient.body) {
         this.patientMedicalRecord = patient.body.patientMedicalRecord;
       } else {
@@ -96,6 +114,47 @@ export class PatientMedicalRecordComponent implements OnInit {
       this.authService.updateMessage('Error getting patient medical record: ' + error);
       this.authService.updateIsError(true);
     }
+  }
+
+  openAllergyPopup(allergy?: MedicalRecordEntry) {
+    if (allergy) {
+      this.allergy = allergy;
+    }
+    this.location.go('allergy');
+    this.allergyPopup = true;
+  }
+
+  closeAllergyPopup() {
+    this.allergy = {
+      ICD11Code: '',
+      Date: new Date(),
+      notMeaningfulAnymore: false
+    };
+    this.location.back();
+    this.allergyPopup = false;
+  }
+
+  openMedicalConditionPopup(medicalCondition?: MedicalRecordEntry) {
+    if (medicalCondition) {
+      this.medicalCondition = medicalCondition;
+    }
+    this.location.go('medical-condition');
+    this.medicalConditionPopup = true;
+  }
+
+  closeMedicalConditionPopup() {
+    this.medicalCondition = {
+      ICD11Code: '',
+      Date: new Date(),
+      notMeaningfulAnymore: false
+    };
+    this.location.back();
+    this.medicalConditionPopup = false;
+  }
+
+  closePopup() {
+    this.authService.updateMessage('');
+    this.authService.updateIsError(false);
   }
 
 }

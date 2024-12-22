@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { PatientService } from '../../../services/patient/patient.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Patient } from '../../../models/patient.model';
-import {AppModule} from '../../../app.module';
 import {CommonModule} from '@angular/common';
 import {PatientDetailsComponent} from '../patient-details/patient-details.component';
 import {PatientContactInfoComponent} from '../patient-contact-info/patient-contact-info.component';

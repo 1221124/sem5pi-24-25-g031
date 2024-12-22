@@ -136,7 +136,26 @@ export const routes: Route[] = [
           import('./components/operation-requests-main/operation-requests.module')
           .then((m) => m.OperationRequestsModule)
       }
-    ]},
+    ]
+  },
+  {
+    path: 'doctor/patient-medical-record',
+    component: PatientMedicalRecordComponent,
+    children: [
+      {
+        path: 'medical-condition',
+        loadChildren: () =>
+          import('./components/patient-medical-record-module/patient-medical-record.module')
+          .then((m) => m.PatientMedicalRecordModule)
+      },
+      // {
+      //   path: 'allergy',
+      //   loadChildren: () =>
+      //     import('./components/patient-medical-record-module/patient-medical-record.module')
+      //     .then((m) => m.PatientMedicalRecordModule)
+      // },
+    ]
+  },
   { path: 'patient', component: PatientComponent },
   { path: 'nurse', component: NurseMenuComponent },
   { path: 'technician', component: TechnicianMenuComponent },

@@ -1,14 +1,8 @@
+import { MedicalRecordEntry } from "./medical-record-entry";
+
 export interface PatientMedicalRecord {
     Id: string;
     MedicalRecordNumber: string;
-    Allergies: {
-        ICD11Code: string;
-        Date: Date;
-        notMeaningfulAnymore: boolean;
-    }[];
-    MedicalConditions: {
-        ICD11Code: string;
-        Date: Date;
-        notMeaningfulAnymore: boolean;
-    }[];
+    Allergies: MedicalRecordEntry[];
+    MedicalConditions: MedicalRecordEntry[];
 }
