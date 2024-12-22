@@ -11,19 +11,31 @@
       </th>
     </tr>
     <tr>
+      <th>Code</th>
       <th>Name</th>
       <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td>Example Name</td>
-      <td class="action-buttons">
-        <button class="action-btn edit-btn">Edit</button>
-        <button class="action-btn details-btn">View Details</button>
-      </td>
-    </tr>
-    <!-- Add more rows as necessary -->
+    <!-- Verifica se há especializações -->
+    <ng-container *ngIf="getPaginatedSpecializations()?.length > 0; else noSpecializations">
+      <tr *ngFor="let specialization of getPaginatedSpecializations()">
+        <td>{{ specialization.SNOMEDCTCode }}</td>
+        <td>{{ specialization.Name }}</td>
+        <td class="action-buttons">
+          <button class="action-btn edit-btn">Edit</button>
+          <button class="action-btn details-btn">View Details</button>
+        </td>
+      </tr>
+    </ng-container>
+
+    <ng-template #noSpecializations>
+      <tr>
+        <td colspan="3" style="text-align: center; padding: 20px;">
+          No specializations available.
+        </td>
+      </tr>
+    </ng-template>
     </tbody>
   </table>
 </div>
