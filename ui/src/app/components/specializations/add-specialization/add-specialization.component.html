@@ -6,12 +6,20 @@
     <section>
       <form #form="ngForm" novalidate>
         <div class="form-group">
-          <input type="text" id="name" name="name"
-                 (focus)="nameTouched = true"   placeholder="Enter Name" required/>
+          <input type="text" id="code" name="code" [(ngModel)]="specialization.SNOMEDCTCode"
+                 (focus)="codeTouched = true" #code="ngModel"  placeholder="Enter Code" required/>
+          <div *ngIf="code.invalid && code.touched" class="error-message">
+            Code is required.
+          </div>
         </div>
 
         <div class="form-group">
-          <textarea id="description" name="description"
+          <input type="text" id="name" name="name" [(ngModel)]="specialization.Name"
+                 (focus)="nameTouched = true" placeholder="Enter Name" required/>
+        </div>
+
+        <div class="form-group">
+          <textarea id="description" name="description" [(ngModel)]="specialization.Description"
                     (focus)="descriptionTouched = true" placeholder="Enter Description" required></textarea>
         </div>
 
