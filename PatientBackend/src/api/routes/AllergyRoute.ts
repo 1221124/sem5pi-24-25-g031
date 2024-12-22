@@ -41,4 +41,13 @@ export default (app: Router) => {
         }),
         (req, res, next) => ctrl.updateAllergy(req, res, next)
     );
+
+    route.delete('/:id',
+        celebrate({
+            params: Joi.object({
+                id: Joi.string().required()
+            })
+        }),
+        (req, res, next) => ctrl.deleteAllergy(req, res, next)
+    );
 };

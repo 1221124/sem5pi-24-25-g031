@@ -8,4 +8,6 @@ export default interface IAllergyRepo extends Repo<Allergy> {
     findAll(): Promise<Allergy[]>;
 
     findByDomainId(id: string): Promise<Allergy | null>;
+
+    delete(allergy: Allergy): Promise<void>;
 }

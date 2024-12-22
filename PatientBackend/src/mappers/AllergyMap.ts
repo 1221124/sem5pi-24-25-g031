@@ -7,7 +7,6 @@ import {AllergyId} from "../domain/allergy/AllergyId";
 
 export class AllergyMap {
     public static toDto (allergy: Allergy): AllergyDto {
-        console.log("MAPPER: Mapping allergy to dto: ", allergy);
         return {
             id: allergy.id.toString(),
             code: allergy.code,

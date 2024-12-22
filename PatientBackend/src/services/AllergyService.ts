@@ -65,4 +65,19 @@ export default class AllergyService implements IAllergyService {
             throw error;
         }
     }
+
+    public async deleteAllergy(id: string): Promise<Result<void>> {
+        try {
+            const allergy = await this.allergyRepo.findByDomainId(id);
+            if (!allergy) {
+                return Result.fail<void>("Allergy not found");
+            }
+
+            await this.allergyRepo.delete(allergy);
+
+            return Result.ok<void>();
+        } catch (error) {
+            throw error;
+        }
+    }
 }

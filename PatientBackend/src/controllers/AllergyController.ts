@@ -92,4 +92,31 @@ export default class AllergyController {
         }
     }
 
+    /**
+     * Deletes an allergy.
+     * @param req
+     * @param res
+     * @param next
+     */
+    public async deleteAllergy(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id;
+
+            if (!id) {
+                return res.status(400).send("Allergy ID is required.");
+            }
+
+            const resultOrError = await this.allergyService.deleteAllergy(id) as Result<void>;
+
+            if (resultOrError.isFailure) {
+                return res.status(400).send(resultOrError.errorValue());
+            }
+
+            return res.status(204).send();
+        } catch (error) {
+            console.error("Error deleting allergy: ", error);
+            return next(error);
+        }
     }
+
+}

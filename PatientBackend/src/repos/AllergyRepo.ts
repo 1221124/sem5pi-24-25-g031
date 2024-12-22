@@ -81,4 +81,12 @@ export default class AllergyRepo implements IAllergyRepo {
         else return Promise.all(allergy.map(AllergyMap.toDomain));
     }
 
+    public async delete(allergy: Allergy): Promise<void> {
+        const query = { allergyId: allergy.id.toString() };
+
+        await this.allergySchema.deleteOne(query as FilterQuery<IAllergyPersistence & Document>);
+    } catch (error: any) {
+        throw error;
+    }
+
 }
