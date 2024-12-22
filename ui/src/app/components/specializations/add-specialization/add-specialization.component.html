@@ -1,1 +1,25 @@
-<p>add-specialization works!</p>
+<div class="modal">
+  <div class="modal-content">
+    <span type="button" class="close" (click)="closeCreateModal()">&times;</span>
+    <h2>Create New Specialization</h2>
+
+    <section>
+      <form #form="ngForm" novalidate>
+        <div class="form-group">
+          <input type="text" id="name" name="name"
+                 (focus)="nameTouched = true"   placeholder="Enter Name" required/>
+        </div>
+
+        <div class="form-group">
+          <textarea id="description" name="description"
+                    (focus)="descriptionTouched = true" placeholder="Enter Description" required></textarea>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="submit-button" (click)="submitRequest()" [disabled]="form.invalid">Submit</button>
+          <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

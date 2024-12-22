@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Staff} from '../../../models/staff.model';
 
 @Component({
   selector: 'app-add-specialization',
@@ -7,4 +8,20 @@ import { Component } from '@angular/core';
 })
 export class AddSpecializationComponent {
 
+  @Output() closeModalEvent = new EventEmitter<unknown>();
+
+  nameTouched = false;
+  descriptionTouched = false;
+
+  closeCreateModal() {
+    this.closeModalEvent.emit();
+  }
+
+  submitRequest() {
+
+  }
+
+  clearForm() {
+
+  }
 }
