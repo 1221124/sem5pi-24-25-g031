@@ -28,7 +28,7 @@ import { AppointmentsModule } from './components/appointments-module/appointment
 import { RoomTypesComponent } from './components/room-types/room-types.component';
 import { MedicalConditionModule } from './components/medical-condition-module/medical-condition.module';
 import { PatientMedicalRecordModule } from './components/patient-medical-record-module/patient-medical-record.module';
-import { SpecializationsComponent } from './components/specializations/specializations.component';
+import { SpecializationsComponent } from './components/specializations/main-specialization/specializations.component';
 import { AddSpecializationComponent } from './components/specializations/add-specialization/add-specialization.component';
 import { ListSpecializationComponent } from './components/specializations/list-specialization/list-specialization.component';
 
