@@ -11,6 +11,7 @@ export const environment = {
   patients: 'http://localhost:5500/api/Patient',
   surgeryRooms: 'http://localhost:5500/api/SurgeryRooms',
   roomTypes: 'http://localhost:5500/api/RoomType',
+  specializations: 'http://localhost:5500/api/Specializations',
   /*patient backend*/
   medicalConditions: 'http://localhost:4000/api/medical-condition',
   patientMedicalRecord: 'http://localhost:4000/api/patient-medical-record',
