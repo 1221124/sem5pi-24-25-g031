@@ -1,8 +1,13 @@
 <div class="staffs-request">
   <h1>Specializations</h1>
-  <button type="button" class="btn btn-primary">Create Specializations</button>
+  <button type="button" class="btn btn-primary" (click)="openModal()">Create Specializations</button>
   <button class="btn btn-back">Back to Admin Home</button>
 </div>
 
-<app-add-specialization>
-</app-add-specialization>
+<app-list-specialization>
+</app-list-specialization>
+
+<app-add-specialization
+  *ngIf="isCreateModalOpen"
+  (closeModalEvent)="closeModal()"
+></app-add-specialization>

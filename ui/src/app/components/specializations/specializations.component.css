@@ -1,0 +1,36 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+button {
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s ease;
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+button.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+button.btn-primary:hover {
+  background-color: #0056b3;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+button.btn-back {
+  background-color: green;
+  color: white;
+}
+
+button.btn-back:hover {
+  background-color: darkgreen;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
