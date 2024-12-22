@@ -34,8 +34,9 @@
     <tr *ngFor="let patient of patients">
 
       <td>
-        <button class="button-filter" (click)="updatePatientEvent.emit(patient)">Update</button>
-        <button class="button-filter" (click)="deletePatientEvent.emit(patient)">Delete</button>
+        <button *ngIf="!isDoctor" class="button-filter" (click)="updatePatientEvent.emit(patient)">Update</button>
+        <button *ngIf="!isDoctor" class="button-filter" (click)="deletePatientEvent.emit(patient)">Delete</button>
+        <button *ngIf="isDoctor" class="button-filter" (click)="openPatientMedicalRecordModal(patient)">View Medical Record</button>
       </td>
       <td>{{ patient.FullName.FirstName }}</td>
       <td>{{ patient.FullName.LastName }}</td>
@@ -83,4 +84,15 @@
       </tr>
     </table>
   </div>
+
+  <!-- <div *ngIf="patientSelected" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="closePatientMedicalRecordModal()">&times;</span>
+      <app-patient-medical-record
+        [patient]="selectedPatient"
+        (close)="closePatientMedicalRecordModal()">
+      </app-patient-medical-record>
+    </div>
+  </div>   -->
+
 </div>

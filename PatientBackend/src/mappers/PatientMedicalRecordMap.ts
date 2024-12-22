@@ -74,13 +74,13 @@ export class PatientMedicalRecordMap {
       const a = {
         patientMedicalRecordId: patientMedicalRecord.id.toString(),
         medicalRecordNumber: patientMedicalRecord.medicalRecordNumber.value,
-        allergies: patientMedicalRecord.allergies.map((allergy) => allergy.code.value + "_" + allergy.date.toString()),
-        medicalConditions: patientMedicalRecord.medicalConditions.map((medicalCondition) => medicalCondition.code.value + "_" + medicalCondition.date.toString())
+        allergies: patientMedicalRecord.allergies.map((allergy) => allergy.code.toString() + "_" + allergy.date.toISOString() + "_" + allergy.notMeaningfulAnyMore),
+        medicalConditions: patientMedicalRecord.medicalConditions.map((medicalCondition) => medicalCondition.code.toString() + "_" + medicalCondition.date.toISOString() + "_" + medicalCondition.notMeaningfulAnyMore)
       }
 
       return a;
     }
-s
+
     public static fromPersistence(raw: any){
         const patientMedicalRecordId = PatientMedicalRecordId.create(raw.patientMedicalRecordId);
       
@@ -88,13 +88,13 @@ s
         if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
         const medicalRecordNumber = medicalRecordNumberOrError.getValue();
 
-        const allergiesOrError = raw.allergies.map((allergy: any) => MedicalRecordEntry.create(ICD11Code.create(allergy.split("_")[0]).getValue(), new Date(allergy.split("_")[1])));
+        const allergiesOrError = raw.allergies.map((allergy: any) => MedicalRecordEntry.createWithNotMeaningfulAnyMore(ICD11Code.create(allergy.split("_")[0]).getValue(), new Date(allergy.split("_")[1]), allergy.split("_")[2]));
         if (allergiesOrError.some((result: any) => result.isFailure)) {
             throw new Error("One or more allergies failed validation.");
         }
         const allergies = allergiesOrError.map((result: any) => result);
 
-        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => MedicalRecordEntry.create(medicalCondition.split("_")[0], new Date(medicalCondition.split("_")[1])));
+        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => MedicalRecordEntry.createWithNotMeaningfulAnyMore(medicalCondition.split("_")[0], new Date(medicalCondition.split("_")[1]), medicalCondition.split("_")[2]));
         if (medicalConditionsOrError.some((result: any) => result.isFailure)) {
             throw new Error("One or more medical conditions failed validation.");
         }

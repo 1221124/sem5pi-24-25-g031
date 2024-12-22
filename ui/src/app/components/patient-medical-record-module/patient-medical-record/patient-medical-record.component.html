@@ -1,8 +1,7 @@
 <div class="patient-medical-record-popup">
-  <div class="patient-medical-record">
+  <div *ngIf="medicalRecordLoaded" class="patient-medical-record">
     <button class="close-btn" (click)="closePopup()">×</button>
     <h2>Patient Medical Record</h2>
-    <p><strong>ID:</strong> {{ patientMedicalRecord.Id }}</p>
     <p><strong>Medical Record Number:</strong> {{ patientMedicalRecord.MedicalRecordNumber }}</p>
     
     <h3>Allergies</h3>
@@ -28,12 +27,12 @@
     </ul>
   </div>
 
-  <div class="overlay">
+  <div class="overlay" [ngClass]="{'active': medicalConditionPopup}">
     <app-medical-condition-entry-form
       *ngIf="medicalConditionPopup"
       [medicalCondition]="medicalCondition"
       [patientMedicalRecord]="patientMedicalRecord"
-      (close)="closeMedicalConditionPopup()">
+      (closeMedicalCondition)="closeMedicalConditionPopup()">
     </app-medical-condition-entry-form>
-  </div>
+  </div>  
 </div>

@@ -13,6 +13,7 @@ import {
   UpdateOperationRequestsComponent
 } from '../../operation-requests-main/update-operation-requests/update-operation-requests.component';
 import {PatientService} from '../../../services/patient/patient.service';
+import { PatientMedicalRecordComponent } from '../../patient-medical-record-module/patient-medical-record/patient-medical-record.component';
 
 @Component({
   selector: 'app-admin-patients-main',
@@ -24,7 +25,8 @@ import {PatientService} from '../../../services/patient/patient.service';
     AdminPatientsTableComponent,
     AdminPatientsCreateComponent,
     AdminPatientsUpdateComponent,
-    AdminPatientsDeleteComponent
+    AdminPatientsDeleteComponent,
+    PatientMedicalRecordComponent
   ],
   standalone: true
 })
@@ -32,6 +34,7 @@ export class AdminPatientsMainComponent {
   @Output() selectedPatientToCreate!: Patient;
   @Output() selectedPatientToUpdate!: Patient;
   @Output() selectedPatientToDelete!: Patient;
+  @Output() selectedPatient!: Patient;
   @Output() url: string | undefined;
 
   patients!: Patient[];
@@ -45,6 +48,9 @@ export class AdminPatientsMainComponent {
   isCreateModalOpen: boolean = false;
   isEditModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
+  isMedicalRecordModalOpen: boolean = false;
+
+  isDoctor = false;
 
   constructor(
     private service: PatientsService,
@@ -64,10 +70,12 @@ export class AdminPatientsMainComponent {
 
     const role = this.authService.extractRoleFromAccessToken(this.accessToken);
 
-    if (!role?.toLowerCase().includes('admin')) {
+    if (!role?.toLowerCase().includes('admin') && !role?.toLowerCase().includes('doctor')) {
       this.handleAuthenticationError('You are not authorized to access this resource! Redirecting to login...');
       return;
     }
+
+    this.isDoctor = role?.toLowerCase().includes('doctor');
 
     await this.fetchPatients();
   }
@@ -127,6 +135,13 @@ export class AdminPatientsMainComponent {
 
     this.isDeleteModalOpen = true;
   }
+
+  openPatientMedicalRecordModal(patient: Patient) {
+    this.selectedPatient = patient;
+    this.router.navigate(['doctor/patients/patient-medical-record'], { queryParams: { patientId: patient.Id } });
+    this.isMedicalRecordModalOpen = true;
+  }
+
   closeCreateModal() {
     this.isCreateModalOpen = false;
   }
@@ -170,6 +185,26 @@ export class AdminPatientsMainComponent {
       UserId: ''
     }
     this.isDeleteModalOpen = false;
+  }
+
+  closePatientMedicalRecordModal() {
+    this.selectedPatient = {
+      Id: '',
+      FullName: {
+        FirstName: '',
+        LastName: ''
+      },
+      DateOfBirth: new Date(),
+      Gender: '',
+      MedicalRecordNumber: '',
+      ContactInformation: {
+        Email: '',
+        PhoneNumber: 0
+      },
+      EmergencyContact: 0,
+      UserId: ''
+    }
+    this.isMedicalRecordModalOpen = false;
   }
 
   createPatient(patient: Patient) {

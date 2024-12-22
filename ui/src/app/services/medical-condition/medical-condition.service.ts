@@ -187,6 +187,6 @@ export class MedicalConditionService {
 
     const ICD11_REGEX = /^[A-HJ-NP-Z0-9][A-HJ-NP-Z][0-9][A-HJ-NP-Z0-9](\.[A-HJ-NP-Z0-9]{1,2})?$/;
 
-    return response.body ? false : ICD11_REGEX.test(code);
+    return response.body ? ICD11_REGEX.test(code) : false;
   }
 }

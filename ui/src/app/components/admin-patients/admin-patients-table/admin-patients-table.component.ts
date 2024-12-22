@@ -1,13 +1,12 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {PatientsService} from '../../../services/admin-patients/admin-patients.service';
 import {Patient} from '../../../models/patient.model';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
-import {HttpErrorResponse} from '@angular/common/http';
 import {firstValueFrom} from 'rxjs';
-import {log} from 'node:util';
+import { PatientMedicalRecordComponent } from '../../patient-medical-record-module/patient-medical-record/patient-medical-record.component';
 
 @Component({
   selector: 'app-admin-patients-table',
@@ -17,16 +16,18 @@ import {log} from 'node:util';
     NgForOf,
     FormsModule,
     DatePipe,
-    NgIf
+    NgIf,
   ],
   standalone: true
 })
 export class AdminPatientsTableComponent {
-  @Input() patients!: Patient[];
-  @Input() accessToken!: string;
+  @Input() patients: Patient[] = [];
+  @Input() accessToken: string = '';
+  @Input() isDoctor: boolean = false;
 
   @Output() updatePatientEvent = new EventEmitter<Patient>();
   @Output() deletePatientEvent = new EventEmitter<Patient>();
+  @Output() viewPatientMedicalRecordEvent = new EventEmitter<Patient>();
 
   selectedPatient : any = {};
 
@@ -46,6 +47,15 @@ export class AdminPatientsTableComponent {
     medicalRecordNumber: '',
     dateOfBirth: '',
     gender: ''
+  }
+
+  openPatientMedicalRecordModal(patient: Patient) {
+    this.selectedPatient = patient;
+    this.viewPatientMedicalRecordEvent.emit(patient);
+  }
+
+  closePatientMedicalRecordModal() {
+    this.selectedPatient = {};
   }
 
   applyFilter() {

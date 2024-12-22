@@ -27,12 +27,15 @@ export class MedicalConditionEntryFormComponent implements OnInit {
     Allergies: [],
     MedicalConditions: []
   }
-  @Output() close = new EventEmitter<void>();
+  @Output() closeMedicalCondition = new EventEmitter<void>();
   
   accessToken: string = '';
 
   message: string = '';
   isError: boolean = false;
+  isCodeValid: boolean = false;
+
+  isEdit = undefined;
 
   constructor(
     private service: PatientMedicalRecordService,
@@ -53,17 +56,23 @@ export class MedicalConditionEntryFormComponent implements OnInit {
       return;
     }
 
+    if (this.medicalCondition.ICD11Code) {
+      this.isEdit = true;
+    } else {
+      this.isEdit = false;
+    }
+
     if (!this.patientMedicalRecord.Id) {
       this.message = 'Patient medical record not found';
       this.isError = true;
-      this.close.emit();
+      this.closeMedicalCondition.emit();
     }
   }
 
   async saveMedicalCondition() {
     try {
       const response = await this.service.saveMedicalCondition(this.patientMedicalRecord.Id, this.medicalCondition, this.accessToken);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         this.message = 'Medical condition saved successfully';
         this.isError = false;
       }
@@ -71,11 +80,33 @@ export class MedicalConditionEntryFormComponent implements OnInit {
       this.message = 'Error saving medical condition';
       this.isError = true;
     } finally {
-      this.close.emit();
+      this.closeMedicalCondition.emit();
     }
   }
 
   async validateICD11Code(code: string) {
-    return await this.medicalConditionService.validateICD11Code(code, this.accessToken);
+    try {
+      if (!code) {
+        this.message = 'ICD11 code is invalid';
+        this.isError = true;
+        this.isCodeValid = false;
+        return;
+      }
+      const isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
+      
+      if (isValid) {
+        this.message = 'ICD11 code is valid';
+        this.isError = false;
+        this.isCodeValid = true; 
+      } else {
+        this.message = 'ICD11 code is invalid';
+        this.isError = true;
+        this.isCodeValid = false;
+      }
+    } catch (error) {
+      this.message = 'Error validating ICD11 code';
+      this.isError = true;
+      this.isCodeValid = false;
+    }
   }
 }

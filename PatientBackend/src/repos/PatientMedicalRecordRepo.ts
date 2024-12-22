@@ -52,6 +52,7 @@ export default class PatientMedicalRecordRepo implements IPatientMedicalRecordRe
         const query = { patientMedicalRecordId : patientMedicalRecord.id };
 
         console.log("Query: ", query);
+
         const update = PatientMedicalRecordMap.toPersistence(patientMedicalRecord);
         
         console.log("Update: ", update);

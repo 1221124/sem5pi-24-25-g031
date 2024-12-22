@@ -74,7 +74,11 @@ export class PatientMedicalRecord extends AggregateRoot<PatientMedicalRecordProp
     }
 
     public addOrUpdateMedicalConditionEntry(medicalCondition: MedicalRecordEntry) {
-        const index = this.props.medicalConditions.findIndex((mc) => mc.code.value === medicalCondition.code.value);
+        console.log("###MEDICAL CONDITION: ", medicalCondition);
+        console.log("###CODE: ", medicalCondition.code.props.value);
+        console.log("###DATE: ", medicalCondition.date);
+        console.log("###NOT MEANINGFUL ANYMORE: ", medicalCondition.notMeaningfulAnyMore);
+        const index = this.props.medicalConditions.findIndex((c) => c.props.code.props.value === medicalCondition.code.props.value);
         if (index !== -1) {
             this.props.medicalConditions[index] = medicalCondition;
         } else {

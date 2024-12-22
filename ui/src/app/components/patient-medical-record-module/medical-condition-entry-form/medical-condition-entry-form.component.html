@@ -1,5 +1,5 @@
 <div class="medical-condition-entry-form">
-  <h2>{{ medicalCondition.ICD11Code ? 'Edit' : 'Add' }} Medical Condition Entry</h2>
+  <h2>{{ isEdit ? 'Edit' : 'Add' }} Medical Condition Entry</h2>
 
   <div class="form-group">
     <label for="icd11Code">ICD-11 Code:</label>
@@ -7,15 +7,15 @@
       id="icd11Code"
       type="text"
       [(ngModel)]="medicalCondition.ICD11Code"
-      (ngModelChange)="validateICD11Code(medicalCondition.ICD11Code)"
+      (ngModelChange)="validateICD11Code($event)"
       placeholder="Enter ICD-11 Code"
       class="form-control"
-      [class.invalid]="!validateICD11Code(medicalCondition.ICD11Code) && medicalCondition.ICD11Code !== ''"
+      [class.invalid]="!isCodeValid || isError"
     />
-    <div *ngIf="!validateICD11Code(medicalCondition.ICD11Code) && medicalCondition.ICD11Code !== ''" class="error-message">
-      The provided ICD-11 code is invalid or already exists. If it already exists, you can select it to edit it.
+    <div *ngIf="!isCodeValid" class="error-message">
+      {{ message }}
     </div>
-  </div>
+  </div>  
 
   <div class="form-group">
     <label>
@@ -28,7 +28,7 @@
   </div>
 
   <div class="form-actions">
-    <button class="btn btn-primary" (click)="saveMedicalCondition()">Save</button>
-    <button class="btn btn-secondary" (click)="close.emit()">Cancel</button>
+    <button class="btn btn-primary" [disabled]="!isCodeValid" (click)="saveMedicalCondition()">Save</button>
+    <button class="btn btn-secondary" (click)="closeMedicalCondition.emit()">Cancel</button>
   </div>
 </div>

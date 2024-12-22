@@ -70,7 +70,7 @@ export class PatientMedicalRecordService {
       });
 
       const dto = {
-        "ICD11Code": medicalCondition.ICD11Code,
+        "code": medicalCondition.ICD11Code,
         "notMeaningfulAnymore": medicalCondition.notMeaningfulAnymore
       };
 

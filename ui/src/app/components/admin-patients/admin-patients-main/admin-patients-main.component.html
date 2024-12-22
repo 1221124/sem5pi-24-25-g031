@@ -6,13 +6,16 @@
 <div class="adminPatients">
   <h1>Patients</h1>
 
-  <button (click)="openCreateModal()" class="btn-open-create-modal">Create New Patient</button>
+  <button *ngIf="!isDoctor" (click)="openCreateModal()" class="btn-open-create-modal">Create New Patient</button>
 
   <app-admin-patients-table
     *ngIf="patients && patients.length > 0"
     [patients]="patients"
+    [accessToken]="accessToken"
+    [isDoctor]="isDoctor"
     (updatePatientEvent)="openUpdateModal($event)"
-    (deletePatientEvent)="openDeleteModal($event)">
+    (deletePatientEvent)="openDeleteModal($event)"
+    (viewPatientMedicalRecordEvent)="openPatientMedicalRecordModal($event)">
   </app-admin-patients-table>
   <p *ngIf="!patients || patients.length === 0">No patients found.</p>
 
@@ -37,4 +40,10 @@
     (delete)="deletePatient($event)">
 
   </app-admin-patients-delete>
+
+  <app-patient-medical-record
+    *ngIf="isMedicalRecordModalOpen"
+    [patient]="selectedPatient"
+    (close)="closePatientMedicalRecordModal()">
+  </app-patient-medical-record>
 </div>

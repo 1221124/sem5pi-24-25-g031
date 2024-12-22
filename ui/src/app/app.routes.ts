@@ -22,6 +22,7 @@ import { RoomTypesComponent } from './components/room-types/room-types.component
 import { MedicalConditionComponent } from './components/medical-condition-module/medical-condition/medical-condition.component';
 import { PatientMedicalRecordComponent } from './components/patient-medical-record-module/patient-medical-record/patient-medical-record.component';
 import {SpecializationsComponent} from './components/specializations/main-specialization/specializations.component';
+import { AdminPatientsTableComponent } from './components/admin-patients/admin-patients-table/admin-patients-table.component';
 
 export const routes: Route[] = [
   { path: '', component: HomeComponent },
@@ -149,21 +150,27 @@ export const routes: Route[] = [
     ]
   },
   {
-    path: 'doctor/patient-medical-record',
-    component: PatientMedicalRecordComponent,
+    path: 'doctor/patients',
+    component: AdminPatientsMainComponent,
     children: [
       {
-        path: 'medical-condition',
-        loadChildren: () =>
-          import('./components/patient-medical-record-module/patient-medical-record.module')
-          .then((m) => m.PatientMedicalRecordModule)
-      },
-      // {
-      //   path: 'allergy',
-      //   loadChildren: () =>
-      //     import('./components/patient-medical-record-module/patient-medical-record.module')
-      //     .then((m) => m.PatientMedicalRecordModule)
-      // },
+        path: 'patient-medical-record',
+        component: PatientMedicalRecordComponent,
+        children: [
+          {
+            path: 'medical-condition',
+            loadChildren: () =>
+              import('./components/patient-medical-record-module/patient-medical-record.module')
+              .then((m) => m.PatientMedicalRecordModule)
+          },
+          // {
+          //   path: 'allergy',
+          //   loadChildren: () =>
+          //     import('./components/patient-medical-record-module/patient-medical-record.module')
+          //     .then((m) => m.PatientMedicalRecordModule)
+          // },
+        ]
+      }
     ]
   },
   { path: 'patient', component: PatientComponent },

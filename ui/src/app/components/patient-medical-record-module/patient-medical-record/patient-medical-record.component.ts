@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Patient } from '../../../models/patient.model';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
@@ -36,6 +36,7 @@ export class PatientMedicalRecordComponent implements OnInit {
     EmergencyContact: 0,
     UserId: ''
   };
+  @Output() close = new EventEmitter<void>();
 
   accessToken: string = '';
 
@@ -73,6 +74,8 @@ export class PatientMedicalRecordComponent implements OnInit {
     notMeaningfulAnymore: false
   };
 
+  medicalRecordLoaded = false;
+
   constructor(
     private service: PatientMedicalRecordService,
     private authService: AuthService,
@@ -81,6 +84,7 @@ export class PatientMedicalRecordComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    console.log('PatientMedicalRecordComponent initialized');
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not an admin, a doctor or a patient! Please login...');
       this.authService.updateIsError(true);
@@ -90,8 +94,8 @@ export class PatientMedicalRecordComponent implements OnInit {
 
     this.accessToken = this.authService.getToken() as string;
     if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')
-    || !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')
-    || !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('patient')) {
+    && !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')
+    && !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('patient')) {
       this.authService.updateMessage('You are not authenticated or are not an admin, a doctor or a patient! Redirecting to login...');
       this.authService.updateIsError(true);
       this.router.navigate(['']);
@@ -106,6 +110,7 @@ export class PatientMedicalRecordComponent implements OnInit {
       const patient = await this.service.getPatientMedicalRecord(this.patient.MedicalRecordNumber, this.accessToken);
       if (patient.status === 200 && patient.body) {
         this.patientMedicalRecord = patient.body.patientMedicalRecord;
+        this.medicalRecordLoaded = true;
       } else {
         this.authService.updateMessage('Error getting patient medical record: ' + patient.status);
         this.authService.updateIsError(true);
@@ -138,7 +143,7 @@ export class PatientMedicalRecordComponent implements OnInit {
     if (medicalCondition) {
       this.medicalCondition = medicalCondition;
     }
-    this.location.go('medical-condition');
+    this.router.navigate(['doctor/patients/patient-medical-record/medical-condition']);
     this.medicalConditionPopup = true;
   }
 
@@ -148,13 +153,14 @@ export class PatientMedicalRecordComponent implements OnInit {
       Date: new Date(),
       notMeaningfulAnymore: false
     };
-    this.location.back();
+    console.log('Closing modal');
     this.medicalConditionPopup = false;
+    this.router.navigate(['doctor/patients/patient-medical-record']);
   }
 
   closePopup() {
-    this.authService.updateMessage('');
-    this.authService.updateIsError(false);
+    this.router.navigate(['doctor/patients']);
+    this.close.emit();
   }
 
 }

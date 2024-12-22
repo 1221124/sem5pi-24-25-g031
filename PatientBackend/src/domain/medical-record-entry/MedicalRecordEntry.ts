@@ -36,9 +36,17 @@ export class MedicalRecordEntry extends ValueObject<MedicalRecordEntryProps> {
         return new MedicalRecordEntry({code: arg0, date: arg1, notMeaningfulAnyMore: false});
     }
 
+    public static createWithNotMeaningfulAnyMore(arg0: ICD11Code, arg1: Date, arg2: boolean) {
+        return new MedicalRecordEntry({code: arg0, date: arg1, notMeaningfulAnyMore: arg2});
+    }
+
     public toggleNotMeaningfulAnyMore(notMeaningfulAnyMore: boolean) {
         if (this.props.notMeaningfulAnyMore !== notMeaningfulAnyMore) {
             this.notMeaningfulAnyMore = notMeaningfulAnyMore;
         }
+    }
+
+    public toString() {
+        return `${this.props.code.toString()}_${this.props.date.toISOString()}`;
     }
 }

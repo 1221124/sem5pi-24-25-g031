@@ -8,6 +8,7 @@ import { PatientMedicalRecordDto } from '../dto/patient-medical-record/PatientMe
 import { UpdatingPatientMedicalRecordDto } from '../dto/patient-medical-record/UpdatingPatientMedicalRecordDto';
 import mongoose from 'mongoose';
 import { MedicalRecordEntry } from '../domain/medical-record-entry/MedicalRecordEntry';
+import { ICD11Code } from '../domain/shared/ICD11Code';
 
 @Service()
 export default class PatientMedicalRecordController {
@@ -158,15 +159,8 @@ export default class PatientMedicalRecordController {
 
       const code = req.body.code;
       const notMeaningfulAnymore = req.body.notMeaningfulAnymore;
-      const date = new Date();
 
-      const medicalCondition = {
-        ICD11Code: code,
-        Date: date,
-        notMeaningfulAnymore: notMeaningfulAnymore
-      } as unknown as MedicalRecordEntry;
-
-      const resultOrError = await this.patientMedicalRecordService.addOrUpdateMedicalConditionEntry(id, medicalCondition) as Result<PatientMedicalRecordDto>;
+      const resultOrError = await this.patientMedicalRecordService.addOrUpdateMedicalConditionEntry(id, code, notMeaningfulAnymore) as Result<PatientMedicalRecordDto>;
 
       console.log("resultOrError:> " + resultOrError);
 
@@ -175,7 +169,7 @@ export default class PatientMedicalRecordController {
       }
 
       const updatedPatientMedicalRecordDto = resultOrError.getValue();
-      return res.json(updatedPatientMedicalRecordDto); 
+      return res.status(200).json(updatedPatientMedicalRecordDto); 
     } catch (error) {
       return next(error);
     }
@@ -216,7 +210,7 @@ export default class PatientMedicalRecordController {
       }
 
       const updatedPatientMedicalRecordDto = resultOrError.getValue();
-      return res.json(updatedPatientMedicalRecordDto); 
+      return res.status(200).json(updatedPatientMedicalRecordDto); 
     } catch (error) {
       return next(error);
     }

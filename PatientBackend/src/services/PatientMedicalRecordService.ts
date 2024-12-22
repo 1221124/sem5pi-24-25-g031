@@ -10,6 +10,7 @@ import { CreatingPatientMedicalRecordDto } from '../dto/patient-medical-record/C
 import { UpdatingPatientMedicalRecordDto } from '../dto/patient-medical-record/UpdatingPatientMedicalRecordDto';
 import { MedicalRecordEntry } from '../domain/medical-record-entry/MedicalRecordEntry';
 import { MedicalRecordNumber } from '../domain/patient-medical-record/MedicalRecordNumber';
+import { ICD11Code } from '../domain/shared/ICD11Code';
 
 @Service()
 export default class PatientMedicalRecordService implements IPatientMedicalRecordService {
@@ -144,7 +145,7 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
   /**
    * Adds or updates a medical condition entry in a Patient medical record by its ID.
    */
-  public async addOrUpdateMedicalConditionEntry(id: string, medicalCondition: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+  public async addOrUpdateMedicalConditionEntry(id: string, icd11Code: string, notMeaningfulAnyMore: boolean): Promise<Result<PatientMedicalRecordDto>> {
     try {
       const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
 
@@ -152,7 +153,18 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
         return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
       }
 
+      const codeOrFailure = ICD11Code.create(icd11Code);
+      if (codeOrFailure.isFailure) {
+        return Result.fail<PatientMedicalRecordDto>("Invalid ICD-11 code");
+      }
+      const code = codeOrFailure.getValue();
+      const date = new Date();
+
+      const medicalCondition = MedicalRecordEntry.createWithNotMeaningfulAnyMore(code, date, notMeaningfulAnyMore);
+
       patientMedicalRecord.addOrUpdateMedicalConditionEntry(medicalCondition);
+
+      console.log("PATIENT MEDICAL RECORD UPDATED: ", patientMedicalRecord);
 
       await this.patientMedicalRecordRepo.save(patientMedicalRecord);
 
