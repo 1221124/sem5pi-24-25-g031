@@ -3,47 +3,48 @@ using Domain.Shared;
 
 namespace DDDNetCore.Domain.Specializations;
 
-public class SNOMEDCTCode : EntityId
+public class SNOMEDCTCode : IValueObject
 {
-    [JsonConstructor]
-    public SNOMEDCTCode(Guid value) : base(value)
+    public string Value { get; }
+
+    public SNOMEDCTCode(string value)
     {
-        
-    }
-    
-    public SNOMEDCTCode(String value) : base(value)
-    {
-    }
-    
-    override
-        public  Object createFromString(String text){
-        return new Guid(text);
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("Specialization code cannot be empty");
+
+        if (!value.ToLower().StartsWith("roty"))
+            throw new ArgumentException("Specialization code must start with 'roty'");
+
+        Value = value;
     }
 
-    override
-        public String AsString(){
-        Guid obj = (Guid) base.ObjValue;
-        return obj.ToString();
+    public static implicit operator string(SNOMEDCTCode requestCode)
+    {
+        return requestCode.Value;
     }
-        
-       
-    public Guid AsGuid(){
-        return (Guid) base.ObjValue;
+
+    public static implicit operator SNOMEDCTCode(string value)
+    {
+        return new SNOMEDCTCode(value);
     }
-        
-    // Ensure that ToString() and other methods are consistent for comparisons
+
+    public override string ToString()
+    {
+        return Value;
+    }
+
     public override bool Equals(object? obj)
     {
         if (obj is SNOMEDCTCode other)
         {
-            return this.Value == other.Value;  // Ensure correct GUID comparison
+            return this.Value == other.Value;
         }
         return false;
     }
-
+    
     public override int GetHashCode()
     {
-        return Value.GetHashCode();
+        return Value != null ? Value.GetHashCode() : 0;
     }
     
 }
