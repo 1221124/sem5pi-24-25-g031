@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Domain.Shared;
+﻿using Domain.Shared;
 
 namespace DDDNetCore.Domain.Specializations;
 
@@ -12,8 +11,8 @@ public class SNOMEDCTCode : IValueObject
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Specialization code cannot be empty");
 
-        if (!value.ToLower().StartsWith("roty"))
-            throw new ArgumentException("Specialization code must start with 'roty'");
+        if (!value.ToLower().StartsWith("CT"))
+            throw new ArgumentException("Specialization code must start with 'CT'");
 
         Value = value;
     }

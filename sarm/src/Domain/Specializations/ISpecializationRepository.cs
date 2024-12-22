@@ -8,4 +8,5 @@ namespace DDDNetCore.Domain.Specializations;
         Task<Specialization> GetByCodeAsync(SNOMEDCTCode snomedcCode);
         Task<List<Specialization>> GetByNameAsync(Name name);
         Task<List<Specialization>> GetByDescriptionAsync(Description description);
+        Task<string?> GetLastCodeAsync();
     }

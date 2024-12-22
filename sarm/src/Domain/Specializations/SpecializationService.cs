@@ -37,4 +37,61 @@ public class SpecializationService
             throw;
         }
     }
+
+    public async Task<List<SpecializationDto>> GetAsync(string? name) {
+        try{
+            List<Specialization> roomTypes;
+                
+            if (string.IsNullOrEmpty(name)) {
+                roomTypes = await _repository.GetAllAsync();
+            } else {
+                roomTypes = await _repository.GetByNameAsync(name);
+            }
+
+            return SpecializationMapper.ToDtoList(roomTypes);
+        }
+        catch(Exception) {
+            return null;
+        }
+    }
+
+    public async Task<SNOMEDCTCode> AssignCodeAsync()
+    {
+        try{
+            var lastCode = await _repository.GetLastCodeAsync();
+
+            int lastNumber = 0;
+            if (!string.IsNullOrEmpty(lastCode) && lastCode.Trim().ToLower().StartsWith("CT"))
+            {
+                if (int.TryParse(lastCode[4..], out var parsedNumber))
+                {
+                    lastNumber = parsedNumber;
+                }
+            }
+
+            int nextNumber = lastNumber + 1;
+            return new SNOMEDCTCode($"CT{nextNumber}");
+        }catch (Exception)
+        {
+            return new SNOMEDCTCode("CT1");
+        }
+    }
+
+    public async Task<SpecializationDto> AddAsync(CreatingSpecializationDto dto, SNOMEDCTCode SNOMEDCTCode)
+    {
+        try {
+            if(dto == null)
+                return null;
+                
+            var specialization = new Specialization(SNOMEDCTCode, dto.Name, dto.Description);
+                
+            await _repository.AddAsync(specialization);
+            await _unitOfWork.CommitAsync();
+
+            return SpecializationMapper.ToDto(specialization);
+        }
+        catch(Exception) {
+            return null;
+        }
+    }
 }
