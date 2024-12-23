@@ -84,6 +84,14 @@
   background-color: #bbb;
 }
 
+button.btn.btn-primary:disabled {
+  background-color: #d6d6d6;
+  color: #9a9a9a;
+  cursor: not-allowed;
+  border-color: #cccccc;
+  opacity: 0.65;
+}
+
 @media (max-width: 600px) {
   .form-actions {
     flex-direction: column;

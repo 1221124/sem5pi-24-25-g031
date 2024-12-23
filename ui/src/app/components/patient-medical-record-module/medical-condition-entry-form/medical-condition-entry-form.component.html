@@ -10,9 +10,9 @@
       (ngModelChange)="validateICD11Code($event)"
       placeholder="Enter ICD-11 Code"
       class="form-control"
-      [class.invalid]="!isCodeValid || isError"
+      [class.invalid]="isError"
     />
-    <div *ngIf="!isCodeValid" class="error-message">
+    <div *ngIf="isError" class="error-message">
       {{ message }}
     </div>
   </div>  
@@ -28,7 +28,7 @@
   </div>
 
   <div class="form-actions">
-    <button class="btn btn-primary" [disabled]="!isCodeValid" (click)="saveMedicalCondition()">Save</button>
+    <button class="btn btn-primary" [disabled]="isError" (click)="saveMedicalCondition()">Save</button>
     <button class="btn btn-secondary" (click)="closeMedicalCondition.emit()">Cancel</button>
   </div>
 </div>

@@ -33,7 +33,6 @@ export class MedicalConditionEntryFormComponent implements OnInit {
 
   message: string = '';
   isError: boolean = false;
-  isCodeValid: boolean = false;
 
   isEdit = undefined;
 
@@ -87,9 +86,8 @@ export class MedicalConditionEntryFormComponent implements OnInit {
   async validateICD11Code(code: string) {
     try {
       if (!code) {
-        this.message = 'ICD11 code is invalid';
+        this.message = 'ICD11 code cannot be empty';
         this.isError = true;
-        this.isCodeValid = false;
         return;
       }
       const isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
@@ -97,16 +95,13 @@ export class MedicalConditionEntryFormComponent implements OnInit {
       if (isValid) {
         this.message = 'ICD11 code is valid';
         this.isError = false;
-        this.isCodeValid = true; 
       } else {
         this.message = 'ICD11 code is invalid';
         this.isError = true;
-        this.isCodeValid = false;
       }
     } catch (error) {
       this.message = 'Error validating ICD11 code';
       this.isError = true;
-      this.isCodeValid = false;
     }
   }
 }
