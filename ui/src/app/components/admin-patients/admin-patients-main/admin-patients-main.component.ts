@@ -51,6 +51,9 @@ export class AdminPatientsMainComponent {
   isMedicalRecordModalOpen: boolean = false;
 
   isDoctor = false;
+  role = '';
+
+  hideTable: boolean = false;
 
   constructor(
     private service: PatientsService,
@@ -68,16 +71,34 @@ export class AdminPatientsMainComponent {
 
     this.accessToken = this.authService.getToken() as string;
 
-    const role = this.authService.extractRoleFromAccessToken(this.accessToken);
+    this.role = this.authService.extractRoleFromAccessToken(this.accessToken);
 
-    if (!role?.toLowerCase().includes('admin') && !role?.toLowerCase().includes('doctor')) {
+    if (!this.role?.toLowerCase().includes('admin') && !this.role?.toLowerCase().includes('doctor')) {
       this.handleAuthenticationError('You are not authorized to access this resource! Redirecting to login...');
       return;
     }
 
-    this.isDoctor = role?.toLowerCase().includes('doctor');
+    this.isDoctor = this.role?.toLowerCase().includes('doctor');
 
     await this.fetchPatients();
+    this.handleRoute();
+  }
+
+  handleRoute() {
+    this.role = this.role.trim().toLowerCase();
+    if (this.router.url.includes('patient-medical-record')) {
+      if (!this.patients || !this.route.snapshot.queryParams['patientId']) {
+        this.router.navigate([`${this.role}/patients`]);	
+        return;
+      }
+      this.selectedPatient = this.patients.find(patient => patient.Id === this.route.snapshot.queryParams['patientId']);
+      if (this.selectedPatient === undefined) {
+        this.router.navigate([`${this.role}/patients`]);
+        return;
+      }
+      this.hideTable = true;
+      this.isMedicalRecordModalOpen = true;
+    }
   }
 
   async fetchPatients(){
@@ -139,6 +160,7 @@ export class AdminPatientsMainComponent {
   openPatientMedicalRecordModal(patient: Patient) {
     this.selectedPatient = patient;
     this.router.navigate(['doctor/patients/patient-medical-record'], { queryParams: { patientId: patient.Id } });
+    this.hideTable = true;
     this.isMedicalRecordModalOpen = true;
   }
 
@@ -205,6 +227,7 @@ export class AdminPatientsMainComponent {
       UserId: ''
     }
     this.isMedicalRecordModalOpen = false;
+    this.hideTable = false;
   }
 
   createPatient(patient: Patient) {

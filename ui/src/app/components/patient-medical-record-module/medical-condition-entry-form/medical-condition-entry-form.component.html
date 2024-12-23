@@ -6,11 +6,11 @@
     <input
       id="icd11Code"
       type="text"
-      [(ngModel)]="medicalCondition.ICD11Code"
+      [(ngModel)]="newMedicalCondition.ICD11Code"
       (ngModelChange)="validateICD11Code($event)"
       placeholder="Enter ICD-11 Code"
       class="form-control"
-      [class.invalid]="isError"
+      [class.invalid]="isError || (!isEdit && !newMedicalCondition.ICD11Code)"
     />
     <div *ngIf="isError" class="error-message">
       {{ message }}
@@ -21,14 +21,14 @@
     <label>
       <input
         type="checkbox"
-        [(ngModel)]="medicalCondition.notMeaningfulAnymore"
+        [(ngModel)]="newMedicalCondition.notMeaningfulAnymore"
       />
       Mark as not meaningful anymore
     </label>
   </div>
 
   <div class="form-actions">
-    <button class="btn btn-primary" [disabled]="isError" (click)="saveMedicalCondition()">Save</button>
+    <button class="btn btn-primary" [disabled]="isError || (!isEdit && !newMedicalCondition.ICD11Code)" (click)="saveMedicalCondition()">Save</button>
     <button class="btn btn-secondary" (click)="closeMedicalCondition.emit()">Cancel</button>
   </div>
 </div>

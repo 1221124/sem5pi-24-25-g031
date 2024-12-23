@@ -36,7 +36,12 @@ export class MedicalRecordEntry extends ValueObject<MedicalRecordEntryProps> {
         return new MedicalRecordEntry({code: arg0, date: arg1, notMeaningfulAnyMore: false});
     }
 
-    public static createWithNotMeaningfulAnyMore(arg0: ICD11Code, arg1: Date, arg2: boolean) {
+    public static createWithNotMeaningfulAnyMore(arg0: ICD11Code, arg1: Date, arg2: boolean | string) {
+        if (typeof arg2 === 'string') {
+            console.log("arg2 = " + arg2);
+            arg2 = (arg2 === 'true') ? true : false as boolean;
+        }
+        console.log("arg2 as bool = " + arg2);
         return new MedicalRecordEntry({code: arg0, date: arg1, notMeaningfulAnyMore: arg2});
     }
 

@@ -1,38 +1,53 @@
-<div class="patient-medical-record-popup">
-  <div *ngIf="medicalRecordLoaded" class="patient-medical-record">
-    <button class="close-btn" (click)="closePopup()">×</button>
-    <h2>Patient Medical Record</h2>
-    <p><strong>Medical Record Number:</strong> {{ patientMedicalRecord.MedicalRecordNumber }}</p>
-    
-    <h3>Allergies</h3>
-    <ul>
-      <li *ngFor="let allergy of patientMedicalRecord.Allergies">
-        <p><strong>ICD-11 Code:</strong> {{ allergy.ICD11Code }}</p>
-        <p><strong>Date:</strong> {{ allergy.Date | date: 'medium' }}</p>
-        <p><strong>Not Meaningful Anymore:</strong> {{ allergy.notMeaningfulAnymore ? 'Yes' : 'No' }}</p>
-        <button class="edit-btn" (click)="openAllergyPopup(allergy)">Edit</button>
-      </li>
-      <button class="add-btn" (click)="openAllergyPopup()">Add</button>
-    </ul>
-    
-    <h3>Medical Conditions</h3>
-    <ul>
-      <li *ngFor="let condition of patientMedicalRecord.MedicalConditions">
-        <p><strong>ICD-11 Code:</strong> {{ condition.ICD11Code }}</p>
-        <p><strong>Date:</strong> {{ condition.Date | date: 'medium' }}</p>
-        <p><strong>Not Meaningful Anymore:</strong> {{ condition.notMeaningfulAnymore ? 'Yes' : 'No' }}</p>
-        <button class="edit-btn" (click)="openMedicalConditionPopup(condition)">Edit</button>
-      </li>
-      <button class="add-btn" (click)="openMedicalConditionPopup()">Add</button>
-    </ul>
+<div class="patient-medical-record full-page">
+  <div>
+    <button class="back-btn" (click)="closePopup()">Back</button>
   </div>
 
-  <div class="overlay" [ngClass]="{'active': medicalConditionPopup}">
-    <app-medical-condition-entry-form
-      *ngIf="medicalConditionPopup"
-      [medicalCondition]="medicalCondition"
-      [patientMedicalRecord]="patientMedicalRecord"
-      (closeMedicalCondition)="closeMedicalConditionPopup()">
-    </app-medical-condition-entry-form>
-  </div>  
+  <h1>Patient Medical Record</h1>
+  <p><strong>Medical Record Number:</strong> {{ patientMedicalRecord.MedicalRecordNumber }}</p>
+
+  <div class="search-bar">
+    <label for="search">Search Medical Conditions (by Code or Name):</label>
+    <input
+      id="search"
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="searchMedicalConditions()"
+      placeholder="Enter code or name"
+    />
+  </div>
+
+  <table class="medical-record-table">
+    <thead>
+      <tr>
+        <th>ICD-11 Code</th>
+        <th>Name</th>
+        <th>Last Updated</th>
+        <th>Irrelevant</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let condition of filteredMedicalConditions">
+        <td>{{ condition.ICD11Code }}</td>
+        <td>{{ getMedicalConditionName(condition.ICD11Code) }}</td>
+        <td>{{ condition.Date | date: 'medium' }}</td>
+        <td>{{ condition.notMeaningfulAnymore ? 'Yes' : 'No' }}</td>
+        <td>
+          <button class="edit-btn" (click)="openMedicalConditionPopup(condition)">Edit</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button class="add-btn" (click)="openMedicalConditionPopup()">Add Medical Condition</button>
+</div>
+
+<div class="overlay" [ngClass]="{ active: medicalConditionPopup }">
+  <app-medical-condition-entry-form
+    *ngIf="medicalConditionPopup"
+    [medicalCondition]="medicalCondition"
+    [patientMedicalRecord]="patientMedicalRecord"
+    (closeMedicalCondition)="closeMedicalConditionPopup()">
+  </app-medical-condition-entry-form>
 </div>

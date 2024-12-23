@@ -34,6 +34,12 @@ export class MedicalConditionEntryFormComponent implements OnInit {
   message: string = '';
   isError: boolean = false;
 
+  newMedicalCondition: MedicalRecordEntry = {
+    ICD11Code: '',
+    Date: new Date(),
+    notMeaningfulAnymore: false
+  };
+
   isEdit = undefined;
 
   constructor(
@@ -55,8 +61,11 @@ export class MedicalConditionEntryFormComponent implements OnInit {
       return;
     }
 
-    if (this.medicalCondition.ICD11Code) {
-      this.isEdit = true;
+    if (this.medicalCondition) {
+      if (this.medicalCondition.ICD11Code) {
+        this.isEdit = true;
+        this.newMedicalCondition = { ...this.medicalCondition };
+      }
     } else {
       this.isEdit = false;
     }
@@ -70,7 +79,7 @@ export class MedicalConditionEntryFormComponent implements OnInit {
 
   async saveMedicalCondition() {
     try {
-      const response = await this.service.saveMedicalCondition(this.patientMedicalRecord.Id, this.medicalCondition, this.accessToken);
+      const response = await this.service.saveMedicalCondition(this.patientMedicalRecord.Id, this.newMedicalCondition, this.accessToken);
       if (response.status === 200 || response.status === 201) {
         this.message = 'Medical condition saved successfully';
         this.isError = false;
@@ -85,12 +94,21 @@ export class MedicalConditionEntryFormComponent implements OnInit {
 
   async validateICD11Code(code: string) {
     try {
-      if (!code) {
+      if (!code || code === '') {
         this.message = 'ICD11 code cannot be empty';
         this.isError = true;
         return;
       }
-      const isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
+      let isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
+
+      if (!this.isEdit) {
+        isValid = isValid && this.patientMedicalRecord.MedicalConditions.findIndex((mc) => mc.ICD11Code === code) === -1;
+        if (!isValid) {
+          this.message = 'ICD11 code already exists in patient medical record';
+          this.isError = true;
+          return;
+        }
+      }
       
       if (isValid) {
         this.message = 'ICD11 code is valid';

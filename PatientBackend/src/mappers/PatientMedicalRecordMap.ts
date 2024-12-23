@@ -94,7 +94,7 @@ export class PatientMedicalRecordMap {
         }
         const allergies = allergiesOrError.map((result: any) => result);
 
-        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => MedicalRecordEntry.createWithNotMeaningfulAnyMore(medicalCondition.split("_")[0], new Date(medicalCondition.split("_")[1]), medicalCondition.split("_")[2]));
+        const medicalConditionsOrError = raw.medicalConditions.map((medicalCondition: any) => MedicalRecordEntry.createWithNotMeaningfulAnyMore(ICD11Code.create(medicalCondition.split("_")[0]).getValue(), new Date(medicalCondition.split("_")[1]), medicalCondition.split("_")[2]));
         if (medicalConditionsOrError.some((result: any) => result.isFailure)) {
             throw new Error("One or more medical conditions failed validation.");
         }

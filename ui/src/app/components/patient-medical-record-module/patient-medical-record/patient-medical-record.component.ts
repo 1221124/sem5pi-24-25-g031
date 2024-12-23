@@ -7,34 +7,37 @@ import { CommonModule } from '@angular/common';
 import { MedicalRecordEntry } from '../../../models/medical-record-entry';
 import { MedicalConditionEntryFormComponent } from '../medical-condition-entry-form/medical-condition-entry-form.component';
 import { PatientMedicalRecordService } from '../../../services/patient-medical-record/patient-medical-record.service';
-import { Location } from '@angular/common';
+import { MedicalCondition } from '../../../models/medical-condition.model';
+import { MedicalConditionService } from '../../../services/medical-condition/medical-condition.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-patient-medical-record',
   standalone: true,
   imports: [
     CommonModule,
-    MedicalConditionEntryFormComponent
+    FormsModule,
+    MedicalConditionEntryFormComponent,
   ],
   templateUrl: './patient-medical-record.component.html',
-  styleUrl: './patient-medical-record.component.css'
+  styleUrls: ['./patient-medical-record.component.css'],
 })
 export class PatientMedicalRecordComponent implements OnInit {
   @Input() patient: Patient = {
     Id: '',
     FullName: {
       FirstName: '',
-      LastName: ''
+      LastName: '',
     },
     DateOfBirth: new Date(),
     Gender: '',
     MedicalRecordNumber: '',
     ContactInformation: {
       Email: '',
-      PhoneNumber: 0
+      PhoneNumber: 0,
     },
     EmergencyContact: 0,
-    UserId: ''
+    UserId: '',
   };
   @Output() close = new EventEmitter<void>();
 
@@ -43,124 +46,139 @@ export class PatientMedicalRecordComponent implements OnInit {
   patientMedicalRecord: PatientMedicalRecord = {
     Id: '',
     MedicalRecordNumber: '',
-    Allergies: [
-      {
-        ICD11Code: '',
-        Date: new Date(),
-        notMeaningfulAnymore: false
-      }
-    ],
-    MedicalConditions: [
-      {
-        ICD11Code: '',
-        Date: new Date(),
-        notMeaningfulAnymore: false
-      }
-    ]
+    Allergies: [],
+    MedicalConditions: [],
   };
 
-  allergyPopup = false;
   medicalConditionPopup = false;
+  medicalCondition: MedicalRecordEntry | null = null;
 
-  allergy: MedicalRecordEntry = {
-    ICD11Code: '',
-    Date: new Date(),
-    notMeaningfulAnymore: false
-  };
+  searchQuery: string = '';
+  filteredMedicalConditions: MedicalRecordEntry[] = [];
 
-  medicalCondition: MedicalRecordEntry = {
-    ICD11Code: '',
-    Date: new Date(),
-    notMeaningfulAnymore: false
-  };
+  allMedicalConditions: MedicalCondition[] = [];
 
   medicalRecordLoaded = false;
 
   constructor(
     private service: PatientMedicalRecordService,
+    private medicalConditionService: MedicalConditionService,
     private authService: AuthService,
     private router: Router,
-    private location: Location
   ) {}
 
   async ngOnInit() {
     console.log('PatientMedicalRecordComponent initialized');
     if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not an admin, a doctor or a patient! Please login...');
+      this.authService.updateMessage(
+        'You are not authenticated or are not an admin, a doctor, or a patient! Please login...'
+      );
       this.authService.updateIsError(true);
       this.router.navigate(['']);
       return;
     }
 
     this.accessToken = this.authService.getToken() as string;
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')
-    && !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')
-    && !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('patient')) {
-      this.authService.updateMessage('You are not authenticated or are not an admin, a doctor or a patient! Redirecting to login...');
+    const role = this.authService
+      .extractRoleFromAccessToken(this.accessToken)
+      ?.toLowerCase();
+
+    if (
+      !role?.includes('admin') &&
+      !role?.includes('doctor') &&
+      !role?.includes('patient')
+    ) {
+      this.authService.updateMessage(
+        'You are not authenticated or are not an admin, a doctor, or a patient! Redirecting to login...'
+      );
       this.authService.updateIsError(true);
       this.router.navigate(['']);
       return;
     }
 
+    await this.getAllMedicalConditions();
     await this.getPatientMedicalRecord();
   }
 
-  async getPatientMedicalRecord() {
+  async getAllMedicalConditions() {
     try {
-      const patient = await this.service.getPatientMedicalRecord(this.patient.MedicalRecordNumber, this.accessToken);
-      if (patient.status === 200 && patient.body) {
-        this.patientMedicalRecord = patient.body.patientMedicalRecord;
-        this.medicalRecordLoaded = true;
-      } else {
-        this.authService.updateMessage('Error getting patient medical record: ' + patient.status);
-        this.authService.updateIsError(true);
+      if (this.allMedicalConditions.length === 0) {
+        const medicalConditions = await this.medicalConditionService.get(this.accessToken);
+
+        if (medicalConditions.status === 200 && medicalConditions.body) {
+          this.allMedicalConditions = medicalConditions.body;
+        } else {
+          this.authService.updateMessage(
+            'Error getting all medical conditions: ' + medicalConditions.status
+          );
+          this.authService.updateIsError(true);
+        }
       }
     } catch (error) {
-      this.authService.updateMessage('Error getting patient medical record: ' + error);
+      this.authService.updateMessage(
+        'Error getting all medical conditions: ' + error
+      );
       this.authService.updateIsError(true);
     }
   }
 
-  openAllergyPopup(allergy?: MedicalRecordEntry) {
-    if (allergy) {
-      this.allergy = allergy;
+  async getPatientMedicalRecord() {
+    try {
+      const patient = await this.service.getPatientMedicalRecord(
+        this.patient.MedicalRecordNumber,
+        this.accessToken
+      );
+
+      if (patient.status === 200 && patient.body) {
+        this.patientMedicalRecord = patient.body.patientMedicalRecord;
+        this.filteredMedicalConditions = [
+          ...this.patientMedicalRecord.MedicalConditions,
+        ];
+        this.medicalRecordLoaded = true;
+      } else {
+        this.authService.updateMessage(
+          'Error getting patient medical record: ' + patient.status
+        );
+        this.authService.updateIsError(true);
+      }
+    } catch (error) {
+      this.authService.updateMessage(
+        'Error getting patient medical record: ' + error
+      );
+      this.authService.updateIsError(true);
     }
-    this.location.go('allergy');
-    this.allergyPopup = true;
   }
 
-  closeAllergyPopup() {
-    this.allergy = {
-      ICD11Code: '',
-      Date: new Date(),
-      notMeaningfulAnymore: false
-    };
-    this.location.back();
-    this.allergyPopup = false;
+  getMedicalConditionName(ICD11Code: string): string {
+    const medicalCondition = this.allMedicalConditions.find(
+      (condition) => condition.code === ICD11Code
+    );
+    return medicalCondition ? medicalCondition.name : 'Unknown';
+  }
+
+  searchMedicalConditions() {
+    const query = this.searchQuery.toLowerCase();
+
+    this.filteredMedicalConditions = this.patientMedicalRecord.MedicalConditions.filter(
+      (condition) =>
+        condition.ICD11Code.toLowerCase().includes(query.toLowerCase()) ||
+        this.allMedicalConditions.find((medicalCondition) => medicalCondition.code === condition.ICD11Code)?.name.toLowerCase().includes(query.toLowerCase())
+    );
   }
 
   openMedicalConditionPopup(medicalCondition?: MedicalRecordEntry) {
-    if (medicalCondition) {
-      this.medicalCondition = medicalCondition;
-    }
-    this.router.navigate(['doctor/patients/patient-medical-record/medical-condition']);
+    this.medicalCondition = medicalCondition || null;
     this.medicalConditionPopup = true;
   }
 
   closeMedicalConditionPopup() {
-    this.medicalCondition = {
-      ICD11Code: '',
-      Date: new Date(),
-      notMeaningfulAnymore: false
-    };
-    console.log('Closing modal');
+    this.getPatientMedicalRecord();
+    this.medicalCondition = null;
     this.medicalConditionPopup = false;
-    this.router.navigate(['doctor/patients/patient-medical-record']);
   }
 
   closePopup() {
     this.router.navigate(['doctor/patients']);
     this.close.emit();
   }
-
 }
