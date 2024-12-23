@@ -489,6 +489,67 @@ export default class ThumbRaiser {
     }
 
     mouseDown(event) {
+        if (event.buttons == 1) { // Primary button down
+            // Store current mouse position in window coordinates (mouse coordinate system: origin in the top-left corner; window coordinate system: origin in the bottom-left corner)
+            this.mousePosition = new THREE.Vector2(event.clientX, window.innerHeight - event.clientY - 1);
+
+            // Select the camera whose view is being pointed
+            const cameraView = this.getPointedViewport(this.mousePosition);
+            if (cameraView != "none") {
+                if (cameraView == "mini-map") { // Mini-map camera selected
+                    this.dragMiniMap = true;
+                } else { // One of the remaining cameras selected
+                    const cameraIndex = ["fixed", "first-person", "third-person", "top"].indexOf(cameraView);
+                    this.view.options.selectedIndex = cameraIndex;
+                    this.setActiveViewCamera([
+                        this.fixedViewCamera,
+                        this.firstPersonViewCamera,
+                        this.thirdPersonViewCamera,
+                        this.topViewCamera
+                    ][cameraIndex]);
+
+                    // Perform object picking
+                    const raycaster = new THREE.Raycaster();
+                    const normalizedMouse = new THREE.Vector2(
+                        (event.clientX / window.innerWidth) * 2 - 1,
+                        -(event.clientY / window.innerHeight) * 2 + 1
+                    );
+
+                    // Set raycaster based on the active camera
+                    raycaster.setFromCamera(normalizedMouse, [
+                        this.fixedViewCamera,
+                        this.firstPersonViewCamera,
+                        this.thirdPersonViewCamera,
+                        this.topViewCamera
+                    ][cameraIndex]);
+
+                    const intersects = raycaster.intersectObjects(this.scene.children, true);
+                    if (intersects.length > 0) {
+                        const selectedObject = intersects[0].object;
+                        if (selectedObject.userData && selectedObject.userData.type === 'surgicalTable') {
+                            // Move the camera to the room's center
+                            const roomCenter = new THREE.Vector3();
+                            selectedObject.getWorldPosition(roomCenter);
+
+                            const activeCamera = [
+                                this.fixedViewCamera,
+                                this.firstPersonViewCamera,
+                                this.thirdPersonViewCamera,
+                                this.topViewCamera
+                            ][cameraIndex];
+
+                            activeCamera.position.set(roomCenter.x, roomCenter.y + 10, roomCenter.z);
+                            activeCamera.lookAt(roomCenter);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    mouseDown(event) {
         if (event.buttons == 1 || event.buttons == 2) { // Primary or secondary button down
             // Store current mouse position in window coordinates (mouse coordinate system: origin in the top-left corner; window coordinate system: origin in the bottom-left corner)
             this.mousePosition = new THREE.Vector2(event.clientX, window.innerHeight - event.clientY - 1);
@@ -514,6 +575,8 @@ export default class ThumbRaiser {
             }
         }
     }
+
+
 
     mouseMove(event) {
         if (event.buttons == 1 || event.buttons == 2) { // Primary or secondary button down
