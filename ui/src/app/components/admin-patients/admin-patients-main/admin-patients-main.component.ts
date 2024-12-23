@@ -14,6 +14,8 @@ import {
 } from '../../operation-requests-main/update-operation-requests/update-operation-requests.component';
 import {PatientService} from '../../../services/patient/patient.service';
 import { PatientMedicalRecordComponent } from '../../patient-medical-record-module/patient-medical-record/patient-medical-record.component';
+import { PatientMedicalRecordService } from '../../../services/patient-medical-record/patient-medical-record.service';
+import { get } from 'http';
 
 @Component({
   selector: 'app-admin-patients-main',
@@ -58,6 +60,7 @@ export class AdminPatientsMainComponent {
   constructor(
     private service: PatientsService,
     private patientService: PatientService,
+    private patientMedicalRecordService: PatientMedicalRecordService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
@@ -230,10 +233,10 @@ export class AdminPatientsMainComponent {
     this.hideTable = false;
   }
 
-  createPatient(patient: Patient) {
+  async createPatient(patient: Patient) {
     this.selectedPatientToCreate = patient;
 
-    this.service.post(
+    await this.service.post(
       this.selectedPatientToCreate.FullName.FirstName,
       this.selectedPatientToCreate.FullName.LastName,
       this.selectedPatientToCreate.DateOfBirth,
@@ -245,17 +248,35 @@ export class AdminPatientsMainComponent {
         if (response.status === 200 || response.status === 201) {
           this.success = true;
           this.message = 'Patient created successfully!';
-
-          this.closeCreateModal();
-          this.fetchPatients();
-          this.hideNotificationAfterDelay();
         } else {
           this.displayError('Failed to create patient: ' + response.status);
         }
       })
       .catch(error => {
         this.displayError('Failed to create patient: ' + error);
-      });
+      }
+    );
+
+    await this.fetchPatients();
+
+    const newPatient = this.patients.find(patient => patient.ContactInformation.Email === this.selectedPatientToCreate.ContactInformation.Email);
+
+    await this.patientMedicalRecordService.create(newPatient, this.accessToken)
+      .then(response => {
+        if (response.status === 200 || response.status === 201) {
+          this.success = true;
+          this.message = 'Patient medical record created successfully!';
+
+          console.log('Hey, I am here');
+
+          this.closeCreateModal();
+          this.fetchPatients();
+          this.hideNotificationAfterDelay();
+        } else {
+          this.displayError('Failed to create patient medical record: ' + response.status);
+        }
+      }
+    );
   }
 
   updatePatient(patient: Patient) {

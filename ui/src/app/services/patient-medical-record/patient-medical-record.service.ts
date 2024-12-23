@@ -26,7 +26,7 @@ export class PatientMedicalRecordService {
       console.log('Getting patient medical record:', patient.MedicalRecordNumber);
       console.log('Options:', options);
       
-      return await firstValueFrom(this.http.get<any>(`${environment.patientMedicalRecord}`, options))
+      return await firstValueFrom(this.http.get<any>(`${environment.patientMedicalRecord}/medical-record-number`, options))
         .then(response => {
           console.log('Raw API response:', response);
       
@@ -64,6 +64,25 @@ export class PatientMedicalRecordService {
         });      
     } catch (error) {
       throw new Error('Error getting patient medical record: ' + error);
+    }
+  }
+
+  async create(patient: Patient, accessToken: string) {
+    try {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      console.log('Creating patient medical record:', patient.MedicalRecordNumber);
+      const dto = {
+        "medicalRecordNumber": patient.MedicalRecordNumber
+      };
+
+      const options = { ...httpOptions, headers };
+
+      return await firstValueFrom(this.http.post(`${environment.patientMedicalRecord}`, dto, options));
+    } catch (error) {
+      throw new Error('Error creating patient medical record: ' + error);
     }
   }
 
