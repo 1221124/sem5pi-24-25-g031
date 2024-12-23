@@ -105,4 +105,18 @@ export class PatientMedicalRecordService {
     }
   }
 
+  async deleteMedicalRecord(medicalRecord: PatientMedicalRecord, accessToken: string) {
+    try {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      const options = { ...httpOptions, headers };
+
+      return await firstValueFrom(this.http.delete(`${environment.patientMedicalRecord}/${medicalRecord.Id}`, options));
+    } catch (error) {
+      throw new Error('Error deleting patient medical record: ' + error);
+    }
+  }
+
 }

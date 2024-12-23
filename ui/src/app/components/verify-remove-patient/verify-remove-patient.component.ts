@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { CommonModule, NgIf } from '@angular/common';
 import { PatientService } from '../../services/patient/patient.service';
 import {async, firstValueFrom} from 'rxjs';
+import { PatientMedicalRecordService } from '../../services/patient-medical-record/patient-medical-record.service';
 
 @Component({
   standalone: true,
@@ -15,7 +16,7 @@ import {async, firstValueFrom} from 'rxjs';
 })
 export class VerifyRemovePatientComponent {
 
-  constructor(private service: PatientService, private route: ActivatedRoute, private authService: AuthService) { }
+  constructor(private service: PatientService, private medicalRecordService: PatientMedicalRecordService, private route: ActivatedRoute, private authService: AuthService) { }
 
   message: string = '';
   isError: boolean = false;
@@ -41,15 +42,18 @@ export class VerifyRemovePatientComponent {
           const email = this.authService.extractEmailFromAccessToken(token) as string;
           this.service.deletePatient(email, token)
           .then(async response => {
-            if (response.status === 200) {
-              this.wait = false;
-              this.authService.updateMessage('You were deleted from our system! Sad to see you go...');
-              this.authService.updateIsError(false);
-            } else {
-              this.wait = false;
-              this.authService.updateMessage('Unexpected status...');
-              this.authService.updateIsError(false);
-            }
+            const patient = (await this.service.getByEmail(email, token)).body.patient;
+            const medicalRecord = (await this.medicalRecordService.getPatientMedicalRecord(patient, token)).body.patientMedicalRecord;
+            await this.medicalRecordService.deleteMedicalRecord(medicalRecord, token)
+            .then(response => {
+              if (response.status === 200 || response.status === 204) {
+                this.authService.updateMessage('You were deleted from our system! Sad to see you go...');
+                this.authService.updateIsError(false);
+              } else {
+                this.authService.updateMessage('Unexpected status...');
+                this.authService.updateIsError(false);
+              }
+            })
           });
           this.wait = false;
           setTimeout(() => {

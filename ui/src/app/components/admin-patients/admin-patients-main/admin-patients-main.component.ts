@@ -321,14 +321,28 @@ export class AdminPatientsMainComponent {
         if (response.status === 200) {
           this.success = true;
           this.message = 'Patient deleted successfully!';
+        } else {
+          this.displayError('Failed to delete patient: ' + response.status);
+        }
+      }
+    );
+
+    const medicalRecord = (await this.patientMedicalRecordService.getPatientMedicalRecord(this.selectedPatientToDelete, this.accessToken)).body.patientMedicalRecord;
+
+    await this.patientMedicalRecordService.deleteMedicalRecord(medicalRecord, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.success = true;
+          this.message = 'Patient medical record deleted successfully!';
 
           this.closeDeleteModal();
           this.fetchPatients();
           this.hideNotificationAfterDelay();
         } else {
-          this.displayError('Failed to delete patient: ' + response.status);
+          this.displayError('Failed to delete patient medical record: ' + response.status);
         }
-      });
+      }
+    );
   }
 
   navigateTo(route: string, options?: { queryParams?: any }) {
