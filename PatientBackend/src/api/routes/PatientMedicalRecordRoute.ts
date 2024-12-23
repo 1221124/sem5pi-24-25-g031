@@ -40,7 +40,7 @@ export default (app: Router) => {
   );
 
   //Get by medical record number
-  route.get('/medical-record-number',
+  route.get('/:medicalRecordNumber',
     isAuth(['Admin','Doctor','Patient']) as unknown as RequestHandler,
     celebrate({
       query: Joi.object({

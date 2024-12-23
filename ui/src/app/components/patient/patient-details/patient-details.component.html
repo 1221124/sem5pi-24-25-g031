@@ -6,4 +6,8 @@
   <div><strong>Phone Number:</strong> {{ patient.ContactInformation.PhoneNumber }}</div>
   <div><strong>Email:</strong> {{ patient.ContactInformation.Email }}</div>
   <div *ngIf="patient.EmergencyContact"><strong>EmergencyContact: </strong>{{ patient.EmergencyContact}}</div>
+  <div>
+    <strong>Medical Record: </strong>
+    <button (click)="emitViewMedicalRecord()">View</button>
+  </div>
 </div>

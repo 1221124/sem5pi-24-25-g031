@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { httpOptions, environment } from '../../../environments/environment';
 import { PatientMedicalRecord } from '../../models/patient-medical-record.model';
 import { MedicalRecordEntry } from '../../models/medical-record-entry';
+import { Patient } from '../../models/patient.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,17 +13,20 @@ export class PatientMedicalRecordService {
 
   constructor(private http: HttpClient) { }
 
-  async getPatientMedicalRecord(medicalRecordNumber: string, accessToken: string) {
+  async getPatientMedicalRecord(patient: Patient, accessToken: string) {
     try {
       const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       });
 
-      const params = new HttpParams().set('medicalRecordNumber', medicalRecordNumber);
+      let params = new HttpParams().set('medicalRecordNumber', patient.MedicalRecordNumber.trim());
+      const options = { headers, observe: 'response' as const, params };
 
-      const options = { ...httpOptions, params, headers };
+      console.log('Getting patient medical record:', patient.MedicalRecordNumber);
+      console.log('Options:', options);
       
-      return await firstValueFrom(this.http.get<any>(`${environment.patientMedicalRecord}/medical-record-number`, options))
+      return await firstValueFrom(this.http.get<any>(`${environment.patientMedicalRecord}`, options))
         .then(response => {
           console.log('Raw API response:', response);
       

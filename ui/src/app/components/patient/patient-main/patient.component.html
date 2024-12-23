@@ -1,27 +1,46 @@
 <h1 class="title">Patient Profile</h1>
 <div class="patient-container">
-  <ng-container *ngIf="patient; else noPatient">
+  <div *ngIf="patient; else noPatient">
+  
+  <!-- <ng-container *ngIf="patient; else noPatient"> -->
 
-    <app-patient-details [patient]="patient"></app-patient-details>
+    <!-- app-patient-details component -->
+    <app-patient-details 
+      *ngIf="patient"
+      [patient]="patient"
+      (viewMedicalRecord)="viewMedicalRecord()">
+    </app-patient-details>
 
+    <!-- app-patient-contact-info component -->
     <app-patient-contact-info
       [patient]="patient"
       [accessToken]="accessToken"
       (patientUpdated)="patient = $event">
     </app-patient-contact-info>
 
+    <!-- app-delete-account-button component -->
     <app-delete-account-button
       [patient]="patient"
       [accessToken]="accessToken"
       (patientDeleted)="patient = $event">
     </app-delete-account-button>
 
-  </ng-container>
+    <!-- app-patient-medical-record component -->
+    <app-patient-medical-record
+      *ngIf="patient?.MedicalRecordNumber"
+      [patient]="patient"
+      (close)="closeMedicalRecord()">
+    </app-patient-medical-record>
 
+  <!-- </ng-container> -->
+  </div>
+
+  <!-- No patient data available message -->
   <ng-template #noPatient>
     <p>No patient data available.</p>
   </ng-template>
 
+  <!-- Message display -->
   <p *ngIf="message" [class.success]="success" [class.error]="!success">
     {{ message }}
   </p>

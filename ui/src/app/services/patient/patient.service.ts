@@ -44,6 +44,7 @@ export class PatientService {
       .then(response => {
         if(response.status === 200 && response.body){
           const item = response.body.patient;
+          console.log("Patient item: ", item);
           const patient = {
             Id: item.id,
             FullName: {

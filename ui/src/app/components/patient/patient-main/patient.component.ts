@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatientService } from '../../../services/patient/patient.service';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -7,20 +7,24 @@ import {CommonModule} from '@angular/common';
 import {PatientDetailsComponent} from '../patient-details/patient-details.component';
 import {PatientContactInfoComponent} from '../patient-contact-info/patient-contact-info.component';
 import {DeleteAccountButtonComponent} from '../delete-account-button/delete-account-button.component';
+import { PatientMedicalRecordComponent } from '../../patient-medical-record-module/patient-medical-record/patient-medical-record.component';
 
 @Component({
   selector: 'app-patient-main',
   templateUrl: './patient.component.html',
   styleUrls: ['./patient.component.css'],
+  standalone: true,
   imports: [
     CommonModule,
     PatientDetailsComponent,
     PatientContactInfoComponent,
-    DeleteAccountButtonComponent
+    DeleteAccountButtonComponent,
+    PatientMedicalRecordComponent
   ],
-  standalone: true
 })
-export class PatientComponent {
+export class PatientComponent implements OnInit {
+  @Output() patientForMedicalRecord!: Patient;
+
   accessToken: string = '';
   patient: Patient = {
     Id: '',
@@ -63,6 +67,8 @@ export class PatientComponent {
     }
 
     await this.loadPatientData();
+  
+    console.log("this.patient: ", this.patient);
   }
 
   private async loadPatientData() {
@@ -74,8 +80,10 @@ export class PatientComponent {
 
     await this.patientService.getByEmail(email, this.accessToken)
       .then((response) => {
+        console.log('Raw API response:', response);
         if (response.status === 200 && response.body) {
           this.patient = response.body.patient;
+          console.log('Patient:', this.patient);
         } else {
           this.handleError('Failed to load patient-main data. Response status: ' + response.status);
         }
@@ -95,5 +103,13 @@ export class PatientComponent {
     this.message = message;
     this.success = false;
     console.error(message);
+  }
+
+  viewMedicalRecord() {
+    console.log("Viewing medical record for:", this.patient);
+  }
+  
+  closeMedicalRecord() {
+    console.log('Closing medical record');
   }
 }

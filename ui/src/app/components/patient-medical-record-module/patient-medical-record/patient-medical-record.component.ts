@@ -125,7 +125,7 @@ export class PatientMedicalRecordComponent implements OnInit {
   async getPatientMedicalRecord() {
     try {
       const patient = await this.service.getPatientMedicalRecord(
-        this.patient.MedicalRecordNumber,
+        this.patient,
         this.accessToken
       );
 
