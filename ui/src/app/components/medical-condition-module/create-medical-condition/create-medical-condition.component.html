@@ -17,11 +17,22 @@
                     (focus)="descriptionTouched = true" placeholder="Description" />
             </div>
             <div>
-                <input type="text" id="commonSymptom" name="commonSymptom" [(ngModel)]="selectedMedicalConditionCommonSymptoms"
-                    (focus)="commonSymptomsTouched = true" placeholder="Common Symptom" />
+                <h3>Common Symptoms</h3>
+                <div *ngFor="let symptom of selectedMedicalConditionCommonSymptoms; let i = index">
+                    <input type="text" [(ngModel)]="selectedMedicalConditionCommonSymptoms[i]"
+                        name="commonSymptom{{i}}" placeholder="Common Symptom" />
+                    <button type="button" (click)="removeSymptom(i)">Remove</button>
+                </div>
+                
+                <<div>
+                    <input type="text" [(ngModel)]="newSymptom" name="newSymptomInput" placeholder="Enter new symptom" />
+                    <button type="button" (click)="addSymptom()">Add Symptom</button>
+                </div>                
+                
             </div>
             <div class="button-group">
                 <button type="button" class="btn-create-request" (click)="submit()">Submit</button>
             </div>
         </form>
+    </div>
 </div>

@@ -57,19 +57,12 @@ export class MedicalConditionService {
       accessToken: string,
       medicalCondition: MedicalCondition
     ) {
-      // const dto = {
-      //   "code": `${medicalCondition.code}`,
-      //   "name": `${medicalCondition.name}`,
-      //   "description": `${medicalCondition.description}`,
-      //   "commonSymptoms": `${medicalCondition.commonSymptoms}`
-      // };
-
       const dto = {
-        "code": "AB02",
-        "name": "name",
-        "description": "description",
-        "commonSymptoms": ["symptom1", "symptom2"]
-      }
+        "code": `${medicalCondition.code}`,
+        "name": `${medicalCondition.name}`,
+        "description": `${medicalCondition.description}`,
+        "commonSymptoms": medicalCondition.commonSymptoms.map(symptom => `${symptom}`)
+      };
 
       const headers = new HttpHeaders({
         'Content-Type': 'application/json',

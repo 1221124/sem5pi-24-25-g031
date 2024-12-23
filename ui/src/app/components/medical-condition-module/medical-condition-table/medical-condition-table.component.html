@@ -22,7 +22,11 @@
                 <td>{{ medicalCondition.code }}</td>
                 <td>{{ medicalCondition.name }}</td>
                 <td>{{ medicalCondition.description }}</td>
-                <td>{{ medicalCondition.commonSymptoms }}</td>    
+                    <td>
+                        <ul>
+                            <li *ngFor="let symptom of medicalCondition.commonSymptoms"> {{ symptom }}</li>
+                        </ul>
+                    </td>
                 <td>
                     <button (click)="updateMedicalConditionEvent.emit(medicalCondition)">Update</button>
                     <button (click)="deleteMedicalConditionEvent.emit(medicalCondition)">Delete</button>

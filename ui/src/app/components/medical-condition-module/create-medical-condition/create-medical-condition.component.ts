@@ -45,6 +45,8 @@ export class CreateMedicalConditionComponent implements OnInit {
   selectedMedicalConditionDescription: string = '';
   selectedMedicalConditionCommonSymptoms: string[] = [];
 
+  newSymptom: string = '';
+
   ngOnInit() {
     // Authentication checks
     if (!this.authService.isAuthenticated()) {
@@ -63,6 +65,21 @@ export class CreateMedicalConditionComponent implements OnInit {
       this.router.navigate(['']);
       return;
     }  
+  }
+
+  addSymptom() {
+    console.log("new symptom: ", this.newSymptom);
+    if (this.newSymptom.trim() === '') {
+      console.log('Cannot add an empty symptom!');
+      return;
+    }
+
+    this.selectedMedicalConditionCommonSymptoms.push(this.newSymptom.trim());
+    this.newSymptom = ''; // Clear the temporary input field after adding
+  }
+
+  removeSymptom(index: number) {
+    this.selectedMedicalConditionCommonSymptoms.splice(index, 1); 
   }
 
   submit() {
@@ -90,8 +107,7 @@ export class CreateMedicalConditionComponent implements OnInit {
     this.medicalCondition.code = this.selectedMedicalConditionCode;
     this.medicalCondition.name = this.selectedMedicalConditionName;
     this.medicalCondition.description = this.selectedMedicalConditionDescription;
-    // this.medicalCondition.commonSymptoms = this.selectedMedicalConditionCommonSymptoms;
-    this.medicalCondition.commonSymptoms = [];
+    this.medicalCondition.commonSymptoms = [...this.selectedMedicalConditionCommonSymptoms];
 
     console.log('Medical Condition: ', this.medicalCondition);
     this.createNewMedicalConditionEvent.emit(this.medicalCondition);
