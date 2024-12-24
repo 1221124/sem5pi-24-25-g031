@@ -245,8 +245,8 @@ namespace DDDNetCore.PrologIntegrations
         }
 
         private void PopulateSurgeryRequiredStaff(List<OperationTypeDto> operationTypes) {
-            //required_staff(typ1,doctor,orthopaedics,3).
-            //required_staff(OperationTypeCode,Role,Specialization,Quantity).
+            //required_staff(typ1,doctor,orthopaedics,3,false,true,false).
+            //required_staff(OperationTypeCode,Role,Specialization,Quantity,IsRequiredInPreparation,IsRequiredInSurgery,IsRequiredInCleaning).
             foreach (var operationType in operationTypes) {
                 var code = operationType.OperationTypeCode.Value.Trim().ToLower();
 
@@ -256,8 +256,12 @@ namespace DDDNetCore.PrologIntegrations
 
                     var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");
                     specialization = char.ToLower(specialization[0]) + specialization[1..];
+
+                    var prep = staff.IsRequiredInPreparation ? "true" : "false";
+                    var surg = staff.IsRequiredInSurgery ? "true" : "false";
+                    var clean = staff.IsRequiredInCleaning ? "true" : "false";
                     
-                    string value = "required_staff(" + code + "," + role + "," + specialization + "," + staff.Quantity.Value + ").";
+                    string value = "required_staff(" + code + "," + role + "," + specialization + "," + staff.Quantity.Value + "," + prep + "," + surg + "," + clean + ").";
                     this._surgeryRequiredStaff.Add(value);
                 }
             }

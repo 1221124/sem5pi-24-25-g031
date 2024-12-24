@@ -70,7 +70,7 @@ namespace Infrastructure.StaffRepository
 
         public async Task<Staff> GetByLicenseNumber(LicenseNumber licenseNumber)
         {
-            return await _objs.FirstOrDefaultAsync(x => licenseNumber.Equals(x.LicenseNumber));
+            return await _objs.FirstOrDefaultAsync(x => x.LicenseNumber.Equals(licenseNumber));
         }
 
         public async Task<List<Staff>> GetByRoleAsync(StaffRole staffRole)

@@ -331,7 +331,7 @@ namespace Domain.Staffs
         }
 
         //GetByLicenseNumber
-        public async Task<StaffDto?> GetByLicenseNumber(LicenseNumber licenseNumber){
+        public async Task<StaffDto> GetByLicenseNumber(LicenseNumber licenseNumber){
             try{
                 var staff = await _repo.GetByLicenseNumber(licenseNumber);
 
@@ -432,79 +432,6 @@ namespace Domain.Staffs
             return StaffMapper.ToDto(staff);
         }
 
-        public async Task<Dictionary<LicenseNumber, List<AppointmentNumber>>> CreateSlotAppointments(DateTime date, PrologResponse response)
-        {
-            try {
-                //staffAgendaGenerated = licenseNumber,[(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...] ; ...
-                var staffs = response.StaffAgendaGenerated.Split(new[] { " ; " }, StringSplitOptions.RemoveEmptyEntries);
-
-                Dictionary<LicenseNumber, List<AppointmentNumber>> staffAppointments = new Dictionary<LicenseNumber, List<AppointmentNumber>>();
-
-                foreach (var staff in staffs) {
-                    //staff = licenseNumber,[(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
-                    int index = staff.IndexOf(',');
-
-                    var licenseNumber = new LicenseNumber(staff.Substring(0, index).Trim());
-
-                    //operationsStr = [(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
-                    var operationsStr = staff.Substring(index + 1).Trim();
-
-                    //operationsStr = (slotStartInMinutes,slotEndInMinutes,operationRequestCode),(slotStartInMinutes,slotEndInMinutes,operationRequestCode)
-                    operationsStr = operationsStr.Substring(1, operationsStr.Length - 2);
-
-                    //operations: each operation = slotStartInMinutes,slotEndInMinutes,operationRequestCode (except first and last operation)
-                    var operations = operationsStr.Split(new[] { "),(" }, StringSplitOptions.RemoveEmptyEntries);
-
-                    //remove first character (bracket) from first operation
-                    operations[0] = operations[0].Substring(1);
-
-                    //remove last character (bracket) from last operation
-                    operations[operations.Length - 1] = operations[operations.Length - 1].Substring(0, operations[operations.Length - 1].Length - 1);
-
-                    var staffEntity = await GetByLicenseNumber(licenseNumber);
-                    if (staffEntity == null) {
-                        return new Dictionary<LicenseNumber, List<AppointmentNumber>>();
-                        throw new Exception($"Staff with license number {licenseNumber} not found.");
-                    }
-
-                    List<AppointmentNumber> appointments = new List<AppointmentNumber>();
-
-                    if (staffEntity == null) {
-                        throw new Exception("Staff not found.");
-                    }
-
-                    foreach (var operation in operations) {
-                        var parts = operation.Split(',');
-
-                        if (parts.Length != 3)
-                        {
-                            throw new Exception($"Invalid format for: {operation}");
-                        }
-
-                        var opRequestCode = parts[2].Trim();
-                        var appointmentNumber = new AppointmentNumber("ap" + int.Parse(opRequestCode.Substring(3)));
-
-                        if (!appointments.Contains(appointmentNumber)) appointments.Add(appointmentNumber);
-                    }
-
-                    staffAppointments.Add(licenseNumber, appointments);
-                }
-                
-                return staffAppointments;
-                
-            } catch (Exception e) {
-                return new Dictionary<LicenseNumber, List<AppointmentNumber>>();
-                throw new Exception("Error assigning slot appointments to staff: " + e.Message);
-            }
-        }
-
-        private static string ConvertMinutesToTime(int minutes)
-        {
-            int hours = minutes / 60;
-            int mins = minutes % 60;
-            return $"{hours:D2}:{mins:D2}";
-        }
-
         public async Task<bool> IsActive(Email email)
         {
             try {
@@ -534,28 +461,6 @@ namespace Domain.Staffs
                 return false;
             }
         }
-
-        /*public async Task<List<StaffDto>> DeleteAppointmentAsync(AppointmentDto appointment)
-        {
-            try {
-                var staffs = await _repo.GetAllAsync();
-                List<StaffDto> removed = new List<StaffDto>();
-                foreach (var staff in staffs) {
-                    if (staff.SlotAppointement != null && staff.SlotAppointement.Count > 0) {
-                        foreach (var slot in staff.SlotAppointement) {
-                            if (slot.Start == appointment.AppointmentDate.Start && slot.End == appointment.AppointmentDate.End) {
-                                staff.RemoveAppointmentSlot(slot);
-                                await _unitOfWork.CommitAsync();
-                                removed.Add(StaffMapper.ToDto(staff));
-                            }
-                        }
-                    }
-                }
-                return removed;
-            } catch (Exception e) {
-                return null;
-            }
-        }*/
 
         public async Task<List<StaffDto>> GetByRoleAndSpecialization(StaffRole role, Specialization specialization)
         {

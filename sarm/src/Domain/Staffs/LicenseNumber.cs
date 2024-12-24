@@ -43,7 +43,7 @@ namespace Domain.Staffs
             return false;
         }
         
-        public bool Equals(LicenseNumber a, LicenseNumber b)
+        public static bool Equals(LicenseNumber a, LicenseNumber b)
         {
             return a.Value.Trim().ToLower().Equals(b.Value.Trim().ToLower());
         }

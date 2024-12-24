@@ -176,6 +176,7 @@ export class AppointmentsComponent implements OnInit {
         );
       }
       this.appointments.sort((a, b) => a.AppointmentNumber.localeCompare(b.AppointmentNumber));
+      this.appointments.forEach((ap) => { ap.AssignedStaff.sort(); });
     } catch (error) {
       if ((error as any).status === 401 || (error as any).status === 403) {
         this.authService.updateMessage('You are not authorized to view Appointments! Please log in...');

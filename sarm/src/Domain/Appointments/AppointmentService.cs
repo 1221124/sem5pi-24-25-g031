@@ -89,6 +89,8 @@ namespace DDDNetCore.Domain.Appointments
 
                 var appointments = response.AppointmentsGenerated.Split(", ");
 
+                var staffs = response.StaffAgendaGenerated.Split(new[] { " ; " }, StringSplitOptions.RemoveEmptyEntries);
+
                 foreach (var appointment in appointments)
                 {
                     // var modifiedAppointment = appointment.Substring(1, appointment.Length - 2);
@@ -127,8 +129,54 @@ namespace DDDNetCore.Domain.Appointments
                     var end = dateTime.Date.Add(endTime.TimeOfDay);
 
                     var slot = new Slot(start, end);
+
+                    List<LicenseNumber> staff = new List<LicenseNumber>();
+
+                    foreach (var staffData in staffs)
+                    {
+                        //staff = licenseNumber,[(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
+                        int index = staffData.IndexOf(',');
+
+                        var licenseNumber = new LicenseNumber(staffData.Substring(0, index).Trim().ToUpper());
+
+                        //operationsStr = [(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
+                        var operationsStr = staffData.Substring(index + 1).Trim();
+
+                        //operationsStr = (slotStartInMinutes,slotEndInMinutes,operationRequestCode),(slotStartInMinutes,slotEndInMinutes,operationRequestCode)
+                        operationsStr = operationsStr.Substring(1, operationsStr.Length - 2);
+
+                        //operations: each operation = slotStartInMinutes,slotEndInMinutes,operationRequestCode (except first and last operation)
+                        var operations = operationsStr.Split(new[] { "),(" }, StringSplitOptions.RemoveEmptyEntries);
+
+                        //remove first character (bracket) from first operation
+                        operations[0] = operations[0].Substring(1);
+
+                        //remove last character (bracket) from last operation
+                        operations[operations.Length - 1] = operations[operations.Length - 1].Substring(0, operations[operations.Length - 1].Length - 1);
+                        
+                        foreach (var operation in operations)
+                        {
+                            Console.WriteLine("Operation: " + operation);
+                            var parts = operation.Split(',');
+
+                            if (parts.Length != 3)
+                            {
+                                throw new Exception($"Invalid format for: {operation}");
+                            }
+
+                            var staffOpRequestCode = parts[2].Trim();
+                            var staffAppointmentNumber = new AppointmentNumber("ap" + int.Parse(staffOpRequestCode.Substring(3)));
+
+                            if (!staffAppointmentNumber.Equals(appointmentNumber)) continue;
+
+                            if (!staff.Contains(licenseNumber)) {
+                                Console.WriteLine("Adding staff" + licenseNumber + "to appointment: " + appointmentNumber);
+                                staff.Add(licenseNumber);
+                            }
+                        }
+                    }
                     
-                    var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot, new List<LicenseNumber>());
+                    var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot, staff);
 
                     var addedAppointment = await AddAsync(creatingAppointment);
                 }
@@ -138,31 +186,6 @@ namespace DDDNetCore.Domain.Appointments
             catch (Exception e)
             {
                 throw new Exception("Error creating appointments automatically: " + e.Message);
-            }
-        }
-
-        public async Task<bool> AssignStaff(Dictionary<LicenseNumber, List<AppointmentNumber>> staffAgenda)
-        {
-            try
-            {
-                foreach (var staff in staffAgenda)
-                {
-                    foreach (var appointmentNumber in staff.Value)
-                    {
-                        var appointment = await _appointmentRepository.GetByNumberAsync(appointmentNumber);
-                        if (appointment == null) return false;
-
-                        appointment.AssignStaff(staff.Key);
-                    }
-                }
-
-                await _unitOfWork.CommitAsync();
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
 

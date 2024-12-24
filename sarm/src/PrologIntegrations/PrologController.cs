@@ -53,21 +53,6 @@ namespace DDDNetCore.PrologIntegrations
                     var activatedOpRequest = await _operationRequestService.UpdateAsync(OperationRequestMapper.ToUpdatingFromEntity(opRequest, RequestStatus.ACCEPTED));
                 }
 
-                var staffAgenda = await _staffService.CreateSlotAppointments(dateTime, response);
-
-                if (!await _appointmentService.AssignStaff(staffAgenda)) return BadRequest(new {message = "Staff couldn't be assigned to appointments.\nPlease, try again later."});
-
-                Dictionary<AppointmentDto, OperationRequestDto> appointmentsRequests = new Dictionary<AppointmentDto, OperationRequestDto>();
-                foreach (var number in codesAndAppointments.appointmentNumbers) {
-                    var appointment = await _appointmentService.GetByAppointmentNumberAsync(number);
-                    if (appointment == null) return BadRequest(new {message = $"Appointment with number {number} not found!"});
-
-                    var operationRequest = await _operationRequestService.GetByCodeAsync(appointment.RequestCode);
-                    if (operationRequest == null) return BadRequest(new {message = $"Operation request with code {appointment.RequestCode} not found!"});
-
-                    appointmentsRequests.Add(appointment, operationRequest);
-                }
-
                 value = _service.DestroyKB(dateTime);
                 if(!value.done) return BadRequest(new {message = value.message});
                 

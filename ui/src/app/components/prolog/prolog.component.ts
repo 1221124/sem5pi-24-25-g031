@@ -63,7 +63,7 @@ export class PrologComponent implements OnInit {
     await this.prologService.runProlog(option, this.surgeryRoom, this.surgeryDate, this.accessToken).then((response) => {
       if (response.status === 201) {
         alert(`Appointments created for room ${this.surgeryRoom} on ${this.surgeryDate}!`);
-        this.router.navigate(['/admin/appointments']);
+        this.router.navigate(['/appointments']);
       } else {
         alert('Unexpected response status: ' + response.status);
       }
