@@ -14,7 +14,7 @@ namespace DDDNetCore.PrologIntegrations
             List<string> _surgery,
             List<string> _surgeryId,
             List<string> _surgeryRequiredStaff,
-            string _agendaOperationRoom,
+            List<string> _agendaOperationRoom,
             DateTime date)
         {
             try{
@@ -56,7 +56,11 @@ namespace DDDNetCore.PrologIntegrations
                 }
                 content += "\n";
 
-                content += _agendaOperationRoom;
+                foreach (var item in _agendaOperationRoom)
+                {
+                    Console.WriteLine(item);
+                    content += item + "\n";
+                }
 
                 // Navigate to the project root directory safely
                 string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -108,9 +112,13 @@ namespace DDDNetCore.PrologIntegrations
 
         }
 
-        public (string absolutePrologPath, string command1, string command2, string command3) PreparePrologCommand(SurgeryRoomNumber surgeryRoomNumber, DateTime date, int option) {
-            string surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber).ToLower();
-            Console.WriteLine($"Surgery Room: {surgeryRoom}");
+        public (string absolutePrologPath, string command1, string command2, string command3) PreparePrologCommand(SurgeryRoomNumber? surgeryRoomNumber, DateTime date, int option) {
+            string surgeryRoom = "";
+            if (surgeryRoomNumber.HasValue) {
+                surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber.Value).ToLower();
+                Console.WriteLine($"Surgery Room: {surgeryRoom}");
+            }
+
             Console.WriteLine($"Date: {date}");
             string dateStr = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
             Console.WriteLine($"DateStr: {dateStr}");
@@ -137,22 +145,24 @@ namespace DDDNetCore.PrologIntegrations
             codeFilePath = codeFilePath.Replace(@"\\", "/");
             string codeFilePathFirstHeuristic = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFileFirstHeuristic);
             codeFilePathFirstHeuristic = codeFilePathFirstHeuristic.Replace(@"\\", "/");
+            string codeFilePathAllRooms = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFileAllRooms);
+            codeFilePathAllRooms = codeFilePathAllRooms.Replace(@"\\", "/");
 
-            if (!File.Exists(kbFilePath) || !File.Exists(codeFilePath) || !File.Exists(codeFilePathFirstHeuristic))
+            if (!File.Exists(kbFilePath) || !File.Exists(codeFilePath) || !File.Exists(codeFilePathFirstHeuristic) || !File.Exists(codeFilePathAllRooms))
             {
                 throw new FileNotFoundException("Prolog file(s) not found.");
             }
 
             string command1 = $@"consult('knowledge_base/kb-{dateStr}.pl').";
-            string command2;
-            if (option == 0) {
-                command2 = $@"consult('code/{AppSettings.PrologFileScheduling}').";
-            } else if (option == 1) {
-                command2 = $@"consult('code/{AppSettings.PrologFileFirstHeuristic}').";
-            } else {
-                throw new Exception("Invalid option.");
-            }
-            string command3 = $@"schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
+            string command2 = option switch
+            {
+                0 => $@"consult('code/{AppSettings.PrologFileScheduling}').",
+                1 => $@"consult('code/{AppSettings.PrologFileFirstHeuristic}').",
+                2 => $@"consult('code/{AppSettings.PrologFileAllRooms}').",
+                _ => throw new ArgumentException("Invalid option."),
+            };
+            string command3 = $@"schedule_appointments({dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
+            if (surgeryRoom != "") command3 = $@"schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
 
             Console.WriteLine("Absolute Prolog Path: " + absolutePrologPath);
             Console.WriteLine("Prolog Command 1: " + command1);
@@ -189,6 +199,7 @@ namespace DDDNetCore.PrologIntegrations
                         writer.WriteLine(command.command1);
                         writer.WriteLine(command.command2);
                         writer.WriteLine(command.command3);
+                        writer.WriteLine("abort.");
                         writer.WriteLine("halt.");
                     }
                 }
@@ -209,42 +220,71 @@ namespace DDDNetCore.PrologIntegrations
             }
         }
 
-        public PrologResponse? ParsePrologResponse(string prologOutput)
+        public Dictionary<SurgeryRoomNumber, PrologResponse> ParsePrologResponse(string prologOutput)
         {
-            string[] lines = prologOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            //skip to the line starting with "Final Result"
-            int i = 0;
-            while (i < lines.Length && !lines[i].StartsWith("Final Result"))
+            Dictionary<SurgeryRoomNumber, PrologResponse> result = new Dictionary<SurgeryRoomNumber, PrologResponse>();
+
+            // split prologOutput by "SEPARATION" line
+            string[] prologOutputSplitted = prologOutput.Split(new[] { "SEPARATION" }, StringSplitOptions.None);
+
+            Console.WriteLine("Prolog Output Splitted...");
+
+            foreach (var item in prologOutputSplitted)
             {
-                if (lines[i].StartsWith("false"))
+                if (item == prologOutputSplitted.Last())
                 {
-                    return null;
+                    break;
                 }
+
+                string[] lines = item.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+                //skip until the first line with "FOR ROOM"
+                int i = 0;
+                while (!lines[i].StartsWith("FOR ROOM"))
+                {
+                    i++;
+                }
+
+                Console.WriteLine("For room found...");
+
+                //parse room number: FOR ROOM or1
+                SurgeryRoomNumber roomNumber = SurgeryRoomNumberUtils.FromString(lines[i].Split(" ")[2].Trim());
+
+                Console.WriteLine($"Room Number: {roomNumber}");
+
+                //skip to next line to get AppointmentsGenerated (line starts with AppointmentsGenerated)
                 i++;
+                string appointmentsGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
+
+                Console.WriteLine($"Appointments Generated: {appointmentsGenerated}");
+                //skip to next line to get StaffAgendaGenerated (line starts with StaffAgendaGenerated)
+                i++;
+                string trimmedStaffAgendaGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
+            
+                string[] elements = Regex.Split(trimmedStaffAgendaGenerated, ", ");
+                string staffAgendaGenerated = string.Join(" ; ", elements);
+
+                Console.WriteLine($"Staff Agenda Generated: {staffAgendaGenerated}");
+
+                //skip to next line to get BestFinishingTime (line starts with BestFinishingTime)
+                i++;
+                string bestFinishingTime = lines[i].Substring(lines[i].IndexOf(':') + 1);
+
+                int time = int.Parse(bestFinishingTime.Trim());
+
+                Console.WriteLine($"Best Finishing Time: {time}");
+
+                if (time < 1441) {
+                    Console.WriteLine("Adding to result finishing time: " + time);    
+                    result.Add(roomNumber, new PrologResponse(appointmentsGenerated, staffAgendaGenerated, bestFinishingTime));
+                }
             }
 
-            //Final Result: AgOpRoomBetter=[0,134,req2, 135,269,req3, 270,404,req1]
-            //LAgDoctorsBetter=[(d20246,[(45,105,req2),(45,105,req2)]),(d20245,[(180,240,req3),(180,240,req3)]),(d20244,[(45,105,req2),(180,240,req3),(315,375,req1)]),(d20248,[(315,375,req1)]),(d20247,[(315,375,req1)])]
-            //TFinOp=404
-            //Tempo de geracao da solucao:0.0009179115295410156
+            Console.WriteLine("Prolog Response Parsed...");
 
-            //parse AgOpRoomBetter
-            string appointmentsGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
-            Console.WriteLine("AppointmentsGenerated RESULT: " + appointmentsGenerated + "\n");
+            Console.WriteLine("Result: ");
 
-            //parse LAgDoctorsBetter
-            i++;
-            string trimmedStaffAgendaGenerated = lines[i].Substring(lines[i].IndexOf('[') + 1, lines[i].LastIndexOf(']') - lines[i].IndexOf('[') - 1);
-
-            string[] elements = Regex.Split(trimmedStaffAgendaGenerated, ", ");
-            string staffAgendaGenerated = string.Join(" ; ", elements);
-            Console.WriteLine("StaffAgendaGenerated RESULT: " + staffAgendaGenerated + "\n");
-
-            //parse TFinOp
-            i++;
-            string bestFinishingTime = lines[i].Substring(lines[i].IndexOf('=') + 1);
-            
-            return new PrologResponse(appointmentsGenerated, staffAgendaGenerated, bestFinishingTime);
+            return result;
         }
 
         public bool DestroyFile(DateTime dateTime)

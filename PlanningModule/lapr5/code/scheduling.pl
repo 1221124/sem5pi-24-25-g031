@@ -185,20 +185,21 @@ print_with_comma_separation([Elem|Rest]) :-
     print_with_comma_separation(Rest).
 
 obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
-		get_time(Ti),
-		(obtain_better_sol1(Room,Day);true),
-		retract(better_sol(Day,Room,AgOpRoomBetter,LAgDoctorsBetter,TFinOp)),
-            write('Final Result: AgOpRoomBetter=['),
-            print_with_comma_separation(AgOpRoomBetter),
-            write(']'), nl,
-            write('LAgDoctorsBetter=['),
-            print_with_comma_separation(LAgDoctorsBetter),
-            write(']'), nl,
-            write('TFinOp='),write(TFinOp),nl,
-		get_time(Tf),
-		T is Tf-Ti,
-		write('Tempo de geracao da solucao:'),write(T),nl.
-
+    get_time(Ti),
+    (obtain_better_sol1(Room,Day);true),
+    retract(better_sol(Day,Room,AgOpRoomBetter,LAgDoctorsBetter,TFinOp)),
+    write('FOR ROOM '), write(Room), nl,
+    write('AppointmentsGenerated=['),
+    print_with_comma_separation(AgOpRoomBetter),
+    write(']'), nl,
+    write('StaffAgendaGenerated=['),
+    print_with_comma_separation(LAgDoctorsBetter),
+    write(']'), nl,
+    write('BestFinishingTime: '), write(TFinOp), nl,
+    get_time(Tf),
+    T is Tf - Ti,
+    write('Time necessary for generating solution: '), write(T), nl,
+    write('SEPARATION'), nl.
 
 obtain_better_sol1(Room,Day):-
     asserta(better_sol(Day,Room,_,_,1441)),

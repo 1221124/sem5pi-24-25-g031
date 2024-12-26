@@ -14,5 +14,6 @@ namespace DDDNetCore.Domain.Appointments
         Task<Appointment> GetByNumberAsync(AppointmentNumber appointmentNumber);
         Task<Appointment> GetByRequestCodeAsync(RequestCode requestCode);
         Task<List<Appointment>> GetByLicenseNumberAsync(LicenseNumber licenseNumber);
+        Task<List<Appointment>> GetByDateAsync(DateTime date);
     }
 }

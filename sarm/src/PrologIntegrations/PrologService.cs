@@ -1,5 +1,6 @@
 using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.OperationRequests;
+using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.OperationTypes;
 using Domain.Shared;
@@ -15,26 +16,29 @@ namespace DDDNetCore.PrologIntegrations
         private readonly OperationTypeService _operationTypeService;
         private readonly OperationRequestService _operationRequestService;
         private readonly PrologIntegrationService _prologIntegrationService;
+        private readonly SurgeryRoomService _surgeryRoomService;
         private readonly List<string> _agendaStaff;
         private readonly List<string> _timetable;
         private readonly List<string> _staff;
         private readonly List<string> _surgery;
         private readonly List<string> _surgeryRequiredStaff;
         private readonly List<string> _surgeryId;
-        private string _agendaOperationRoom;
+        private readonly List<string> _agendaOperationRoom;
 
         public PrologService(
             AppointmentService appointmentService,
             StaffService staffService,
             OperationTypeService operationTypeService,
             OperationRequestService operationRequestService,
-            PrologIntegrationService prologIntegrationService)
+            PrologIntegrationService prologIntegrationService,
+            SurgeryRoomService surgeryRoomService)
         {
             _appointmentService = appointmentService;
             _staffService = staffService;
             _operationTypeService = operationTypeService;
             _operationRequestService = operationRequestService;
             _prologIntegrationService = prologIntegrationService;
+            _surgeryRoomService = surgeryRoomService;
 
             _agendaStaff = [];
             _timetable = [];
@@ -42,10 +46,10 @@ namespace DDDNetCore.PrologIntegrations
             _surgery = [];
             _surgeryRequiredStaff = [];
             _surgeryId = [];
-            _agendaOperationRoom = "";
+            _agendaOperationRoom = [];
         }
 
-        public async Task<(bool done, string message)> CreateKB(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
+        public async Task<(bool done, string message)> CreateKB(SurgeryRoomNumber? surgeryRoomNumber, DateTime date)
         {
             try
             {
@@ -76,7 +80,7 @@ namespace DDDNetCore.PrologIntegrations
         }
 
         //create file
-        public async Task<(bool done, string message)> CreateKnowledgeBaseText(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
+        public async Task<(bool done, string message)> CreateKnowledgeBaseText(SurgeryRoomNumber? surgeryRoomNumber, DateTime date)
         {
             try
             {
@@ -95,8 +99,16 @@ namespace DDDNetCore.PrologIntegrations
 
                 PopulateStaff(staffs, operationTypes);
 
-                var appointments = await _appointmentService.GetByRoomAndDateAsync(surgeryRoomNumber, date);
+                List<AppointmentDto> appointments = [];
+                if (surgeryRoomNumber.HasValue)
+                {
+                    appointments = await _appointmentService.GetByRoomAndDateAsync(surgeryRoomNumber.Value, date);
+                } else {
+                    appointments = await _appointmentService.GetByDateAsync(date);
+                }
 
+                if (appointments == null) appointments = [];
+                
                 PopulateAgendaStaff(appointments, staffs, date);
                 PopulateTimetable(staffs, date);
 
@@ -133,7 +145,7 @@ namespace DDDNetCore.PrologIntegrations
                 PopulateSurgeryId(operationRequests);
 
                 dateStr = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
-                PopulateAgendaOperationRoom(surgeryRoomNumber, appointments, dateStr);
+                await PopulateAgendaOperationRoom(surgeryRoomNumber, appointments, dateStr);
 
                 return (true, "Knowledge base text created successfully.");
             }
@@ -177,7 +189,7 @@ namespace DDDNetCore.PrologIntegrations
             }
         }
 
-        private void PopulateAgendaStaff(List<Appointment> appointments, List<StaffDto> staffs, DateTime date)
+        private void PopulateAgendaStaff(List<AppointmentDto> appointments, List<StaffDto> staffs, DateTime date)
         {
             //agenda_staff(d20241,20241028,[(720,840,ap01),(1080,1200,ap02)]).
             //agenda_staff(license number, date, [(start, end, appointment number)]).
@@ -278,26 +290,42 @@ namespace DDDNetCore.PrologIntegrations
             }
         }
 
-        private void PopulateAgendaOperationRoom(SurgeryRoomNumber surgeryRoomNumber, List<Appointment> appointments, string date)
+        private async Task PopulateAgendaOperationRoom(SurgeryRoomNumber? surgeryRoomNumber, List<AppointmentDto> appointments, string date)
         {
             //agenda_operation_room(or1,20241028,[(720,840,ap2),(1080,1200,ap3)]).
-            string value = "agenda_operation_room(" + SurgeryRoomNumberUtils.ToString(surgeryRoomNumber).ToLower() + "," + date + ",[";
-            foreach(var appointment in appointments)
+            List<SurgeryRoomDto> surgeryRooms = [];
+            if (surgeryRoomNumber.HasValue)
             {
-                if (appointment.SurgeryRoomNumber != surgeryRoomNumber) continue;
-
-                var startToMinutes = appointment.AppointmentDate.Start.Hour * 60 + appointment.AppointmentDate.Start.Minute;
-                var endToMinutes = appointment.AppointmentDate.End.Hour * 60 + appointment.AppointmentDate.End.Minute;
-                value += "(" + startToMinutes + "," + endToMinutes + "," + appointment.AppointmentNumber + "),";
+                Console.WriteLine("Getting surgery room by number: " + surgeryRoomNumber.Value);
+                var surgeryRoom = await _surgeryRoomService.GetBySurgeryRoomNumberAsync(surgeryRoomNumber.Value);
+                surgeryRooms.Add(SurgeryRoomMapper.ToDto(surgeryRoom));
+            } else
+            {
+                Console.WriteLine("Getting all surgery rooms");
+                surgeryRooms = await _surgeryRoomService.GetAll();
             }
 
-            if (value.EndsWith(",")) value = value[..^1];
-            value += "]).";
+            foreach (var room in surgeryRooms) {
+                Console.WriteLine("Room: " + room.SurgeryRoomNumber);
+                string value = "agenda_operation_room(" + SurgeryRoomNumberUtils.ToString(room.SurgeryRoomNumber).ToLower() + "," + date + ",[";
+                foreach(var appointment in appointments)
+                {
+                    if (appointment.SurgeryRoomNumber != room.SurgeryRoomNumber) continue;
 
-            this._agendaOperationRoom = value;
+                    var startToMinutes = appointment.AppointmentDate.Start.Hour * 60 + appointment.AppointmentDate.Start.Minute;
+                    var endToMinutes = appointment.AppointmentDate.End.Hour * 60 + appointment.AppointmentDate.End.Minute;
+                    value += "(" + startToMinutes + "," + endToMinutes + "," + appointment.AppointmentNumber + "),";
+                }
+
+                if (value.EndsWith(",")) value = value[..^1];
+                value += "]).";
+
+                Console.WriteLine("Value: " + value);
+                this._agendaOperationRoom.Add(value);
+            }
         }
 
-        public PrologResponse? RunPrologEngine(SurgeryRoomNumber surgeryRoomNumber, DateTime date, int option)
+        public Dictionary<SurgeryRoomNumber, PrologResponse> RunPrologEngine(SurgeryRoomNumber? surgeryRoomNumber, DateTime date, int option)
         {
             var command = _prologIntegrationService.PreparePrologCommand(surgeryRoomNumber, date, option);
             var response = _prologIntegrationService.RunPrologEngine(command);

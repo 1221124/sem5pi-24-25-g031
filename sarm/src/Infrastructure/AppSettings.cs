@@ -33,6 +33,8 @@ namespace Infrastructure
         public static string PrologPathLAPR5 { get; private set; }
         public static string PrologFileScheduling { get; private set; }
         public static string PrologFileFirstHeuristic { get; private set; }
+        public static string PrologFileAllRooms { get; private set; }
+
         public static void Initialize(IConfiguration configuration)
         {
             EmailDomain = configuration["EmailSettings:EmailDomain"];
@@ -66,6 +68,7 @@ namespace Infrastructure
             PrologPathLAPR5 = configuration["Prolog:PathToPrologLAPR5"];
             PrologFileScheduling = configuration["Prolog:FileScheduling"];
             PrologFileFirstHeuristic = configuration["Prolog:FileFirstHeuristic"];
+            PrologFileAllRooms = configuration["Prolog:FileAllRooms"];
         }
     }
 }

@@ -66,7 +66,7 @@ export const routes: Route[] = [
     ]
   },
   {
-    path: 'appointments',
+    path: 'doctor/appointments',
     component: AppointmentsComponent,
     children: [
       {
@@ -86,6 +86,7 @@ export const routes: Route[] = [
   {path: 'admin/patients', component: AdminPatientsMainComponent},
   {path: 'admin/users', component: AdminUsersComponent},
   {path: 'admin/roomTypes', component: RoomTypesComponent},
+  {path: 'admin/appointments', component: AppointmentsComponent},
   {
     path: 'admin/specializations',
     component: SpecializationsComponent,

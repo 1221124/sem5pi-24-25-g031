@@ -42,5 +42,15 @@ namespace Infrastructure.Appointments
         {
             return await _objs.Where(x => x.AssignedStaff.Any(y => y.Value == licenseNumber.Value)).ToListAsync();
         }
+
+        public async Task<List<Appointment>> GetByDateAsync(DateTime date)
+        {
+            var startOfDay = date.Date;
+            var endOfDay = date.Date.AddDays(1).AddTicks(-1);
+
+            return await _objs.Where(x => x.AppointmentDate.Start >= startOfDay 
+                && x.AppointmentDate.Start <= endOfDay)
+                .ToListAsync();
+        }
     }
 }

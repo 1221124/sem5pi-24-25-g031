@@ -53,4 +53,3 @@ surgery_id(req4,typ1).
 surgery_id(req5,typ2).
 
 agenda_operation_room(or1,20260810,[(100,235,ap1)]).
-agenda_operation_room(or2,20260810,[(1080,1215,ap2)]).

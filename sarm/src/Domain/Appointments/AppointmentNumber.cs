@@ -38,26 +38,14 @@ public class AppointmentNumber
         return Value;
     }
 
+    public static bool SameValue(AppointmentNumber ap1, AppointmentNumber ap2)
+    {
+        return string.Equals(ap1.Value.Trim().ToLower(), ap2.Value.Trim().ToLower());
+    }
+
     public override bool Equals(object obj)
     {
-        var other = obj as AppointmentNumber;
-
-        if (ReferenceEquals(other, null))
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        if (GetType() != obj.GetType())
-        {
-            return false;
-        }
-
-        return Value == other.Value;
+        return obj is AppointmentNumber other && Value.Trim().ToLower() == other.Value.Trim().ToLower();
     }
 
     public override int GetHashCode()

@@ -201,7 +201,6 @@ obtain_better_sol_room(Room, Day):-
     get_time(Ti),
     (obtain_better_sol1(Room, Day); true),
     retract(better_sol(Day, Room, AgOpRoomBetter, LAgDoctorsBetter, TFinOp)),
-    % better_sol(Day, Room, AgOpRoomBetter, LAgDoctorsBetter, TFinOp),
     write('FOR ROOM '), write(Room), nl,
     write('AppointmentsGenerated=['),
     print_with_comma_separation(AgOpRoomBetter),

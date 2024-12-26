@@ -4,8 +4,22 @@
   <section>
     <form>
       <div class="form-group">
+        <label for="specificRoom">On a specific room:</label>
+        <input 
+          type="checkbox" 
+          id="specificRoom" 
+          name="specificRoom"
+          [(ngModel)]="isSpecificRoomSelected" 
+          (change)="onRoomSelectionChange()">
+      </div>
+
+      <div *ngIf="isSpecificRoomSelected" class="form-group">
         <label for="surgeryRoom">Select Room:</label>
-        <select id="surgeryRoom" name="surgeryRoom" [(ngModel)]="surgeryRoom">
+        <select 
+          id="surgeryRoom" 
+          name="surgeryRoom" 
+          [(ngModel)]="surgeryRoom" 
+          [disabled]="!isSpecificRoomSelected">
           <option *ngFor="let roomNumber of surgeryRooms" [value]="roomNumber">
             {{ roomNumber }}
           </option>
@@ -14,14 +28,62 @@
 
       <div class="form-group">
         <label for="surgeryDate">Select Date:</label>
-        <input type="date" id="surgeryDate" name="surgeryDate" [(ngModel)]="surgeryDate">
+        <input 
+          type="date" 
+          id="surgeryDate" 
+          name="surgeryDate" 
+          [(ngModel)]="surgeryDate" 
+          [min]="minDate">
       </div>
 
       <div class="button-group">
-        <button type="submit" class="submit-button" (click)="runProlog(0)">Normal Scheduling</button>
-        <button type="submit" class="submit-button" (click)="runProlog(1)">Heuristic Scheduling</button>
-        <button type="button" class="clear-button" (click)="clearForm()">Clear</button>
+        <ng-container *ngIf="isSpecificRoomSelected">
+          <button 
+            type="button" 
+            class="submit-button" 
+            [disabled]="!isDateValid() || !surgeryRoom" 
+            (click)="runProlog(0)">
+            Schedule (Normal Mode)
+          </button>
+          <button 
+            type="button" 
+            class="submit-button" 
+            [disabled]="!isDateValid() || !surgeryRoom" 
+            (click)="runProlog(1)">
+            Schedule (Heuristic Mode)
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="!isSpecificRoomSelected">
+          <button 
+            type="button" 
+            class="submit-button" 
+            [disabled]="!isDateValid()" 
+            (click)="runProlog(2)">
+            Schedule
+          </button>
+        </ng-container>
+
+        <button 
+          type="button" 
+          class="clear-button" 
+          (click)="clearForm()">
+          Clear
+        </button>
       </div>
     </form>
   </section>
+
+  <button 
+    type="button" 
+    class="back-button" 
+    (click)="back()">
+    Back
+  </button>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Generating appointments, please wait...</p>
+  </div>
+
 </div>

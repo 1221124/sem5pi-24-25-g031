@@ -118,23 +118,29 @@ export class AppointmentsComponent implements OnInit {
       }
     });
 
-    if (this.router.url.includes('create')) {
-      this.showAppointmentsForm();
-    } else if (this.router.url.includes('update')) {
-      this.route.queryParams.subscribe((params) => {
-        const number = params['number'];
-        if (number) {
-          const appointment = this.appointments.find((ap) => ap.AppointmentNumber === number);
-          if (appointment?.Id) {
-            this.selectedAppointment = appointment;
-            this.showAppointmentsForm();
+    if (this.isDoctor) {
+      if (this.router.url.includes('create')) {
+        this.showAppointmentsForm();
+      } else if (this.router.url.includes('update')) {
+        this.route.queryParams.subscribe((params) => {
+          const number = params['number'];
+          if (number) {
+            const appointment = this.appointments.find((ap) => ap.AppointmentNumber === number);
+            if (appointment?.Id) {
+              this.selectedAppointment = appointment;
+              this.showAppointmentsForm();
+            }
+          } else {
+            this.router.navigate(['/doctor/appointments']);
+            this.showAppointmentsList();
           }
-        } else {
-          this.router.navigate(['/appointments']);
-          this.showAppointmentsList();
-        }
-      });
+        });
+      } else {
+        this.router.navigate(['/doctor/appointments']);
+        await this.showAppointmentsList();
+      }
     } else {
+      this.router.navigate(['/admin/appointments']);
       await this.showAppointmentsList();
     }
   }
@@ -233,11 +239,11 @@ export class AppointmentsComponent implements OnInit {
     this.showList = false;
     this.showForm = true;
     if (this.selectedAppointment.Id) {
-      this.router.navigate(['/appointments/update'], {
+      this.router.navigate(['/doctor/appointments/update'], {
         queryParams: { number: this.selectedAppointment.AppointmentNumber }
       });
     } else {
-      this.router.navigate(['/appointments/create']);
+      this.router.navigate(['/doctor/appointments/create']);
     }
   }
 
@@ -305,6 +311,7 @@ export class AppointmentsComponent implements OnInit {
   }
 
   async onCancel() {
+    this.router.navigate(['/doctor/appointments']);
     await this.showAppointmentsList();
   }
 }

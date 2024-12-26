@@ -34,10 +34,6 @@ export class AdminMenuComponent implements OnInit {
     }
   }
 
-  navigateToAppointments() {
-    this.router.navigateByUrl('/appointments');
-  }
-
   navigateTo(path: string) {
     console.log('Navigating to:', path);
     this.router.navigateByUrl('/admin/' + path), { replaceUrl: true };

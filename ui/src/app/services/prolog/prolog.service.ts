@@ -13,11 +13,19 @@ export class PrologService {
   async runProlog(option: string, surgeryRoomNumber: string, date: string, accessToken: string) {
     const url = `${environment.prolog}`;
     const dateTime = new Date(date).toISOString();
-    const prologParams = {
-      "SurgeryRoomNumber": surgeryRoomNumber,
-      "DateTime": dateTime,
-      "Option": option
-    };
+    let prologParams: { SurgeryRoomNumber?: string; DateTime: string; Option: string; };
+    if (surgeryRoomNumber) {
+      prologParams = {
+        "SurgeryRoomNumber": surgeryRoomNumber,
+        "DateTime": dateTime,
+        "Option": option,
+      }
+    } else {
+      prologParams = {
+        "DateTime": dateTime,
+        "Option": option,
+      }
+    }
     const headers = {
       Authorization: `Bearer ${accessToken}`
     };

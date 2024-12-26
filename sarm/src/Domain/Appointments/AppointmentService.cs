@@ -17,9 +17,18 @@ namespace DDDNetCore.Domain.Appointments
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<Appointment>> GetByRoomAndDateAsync(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
+        public async Task<List<AppointmentDto>> GetByRoomAndDateAsync(SurgeryRoomNumber surgeryRoomNumber, DateTime date)
         {
-            return await _appointmentRepository.GetByRoomAndDateAsync(surgeryRoomNumber, date);
+            try {
+                var appointments = await _appointmentRepository.GetByRoomAndDateAsync(surgeryRoomNumber, date);
+                if (appointments == null || appointments.Count == 0)
+                {
+                    return null;
+                }
+                return AppointmentMapper.ToDtoList(appointments);
+            } catch (Exception) {
+                return null;
+            }
         }
 
         public async Task<List<AppointmentDto>> GetAll()
@@ -78,107 +87,139 @@ namespace DDDNetCore.Domain.Appointments
             }
         }
 
-        public async Task<(List<RequestCode> requestCodes, List<AppointmentNumber> appointmentNumbers)> CreateAppointmentsAutomatically(SurgeryRoomNumber surgeryRoomNumber, DateTime dateTime, PrologResponse response)
+        public async Task<(List<RequestCode> requestCodes, List<AppointmentNumber> appointmentNumbers)> CreateAppointmentsAutomatically(DateTime dateTime, Dictionary<SurgeryRoomNumber, PrologResponse> prologResponse)
         {
             try
             {
                 var requestCodes = new List<RequestCode>();
                 var appointmentNumbers = new List<AppointmentNumber>();
 
-                var surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber);
+                Console.WriteLine("Creating appointments automatically...");
 
-                var appointments = response.AppointmentsGenerated.Split(", ");
-
-                var staffs = response.StaffAgendaGenerated.Split(new[] { " ; " }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var appointment in appointments)
+                foreach (var (surgeryRoomNumber, response) in prologResponse)
                 {
-                    // var modifiedAppointment = appointment.Substring(1, appointment.Length - 2);
-                    var appointmentData = appointment.Split(",");
+                    var surgeryRoom = SurgeryRoomNumberUtils.ToString(surgeryRoomNumber);
 
-                    var startInMinutes = appointmentData[0];
-                    var endInMinutes = appointmentData[1];
-                    var code = appointmentData[2];
+                    var appointments = response.AppointmentsGenerated.Split(", ");
 
-                    var opRequestCode = new RequestCode();
-                    var appointmentNumber = new AppointmentNumber();
-                    if (code.ToLower().StartsWith("ap")) continue;
-                    else if (code.ToLower().StartsWith("req")) {
-                        opRequestCode = new RequestCode(code);
-                        var number = code.Substring(3);
-                        appointmentNumber = new AppointmentNumber("ap" + number);
+                    var staffs = response.StaffAgendaGenerated.Split(new[] { " ; " }, StringSplitOptions.RemoveEmptyEntries);
 
-                        requestCodes.Add(opRequestCode);
-                        appointmentNumbers.Add(appointmentNumber);
-                    } else {
-                        throw new Exception("Invalid code: " + code);
-                    }
-
-                    int hours = int.Parse(startInMinutes) / 60;
-                    int minutes = int.Parse(startInMinutes) % 60;
-                    var startInHours = hours.ToString("D2") + ":" + minutes.ToString("D2");
-
-                    hours = int.Parse(endInMinutes) / 60;
-                    minutes = int.Parse(endInMinutes) % 60;
-                    var endInHours = hours.ToString("D2") + ":" + minutes.ToString("D2");
-
-                    var startTime = DateTime.ParseExact(startInHours, "HH:mm", null);
-                    var endTime = DateTime.ParseExact(endInHours, "HH:mm", null);
-
-                    var start = dateTime.Date.Add(startTime.TimeOfDay);
-                    var end = dateTime.Date.Add(endTime.TimeOfDay);
-
-                    var slot = new Slot(start, end);
-
-                    List<LicenseNumber> staff = new List<LicenseNumber>();
-
-                    foreach (var staffData in staffs)
+                    foreach (var appointment in appointments)
                     {
-                        //staff = licenseNumber,[(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
-                        int index = staffData.IndexOf(',');
+                        Console.WriteLine("Appointment: " + appointment);
+                        // var modifiedAppointment = appointment.Substring(1, appointment.Length - 2);
+                        var appointmentData = appointment.Split(",");
+                        Console.WriteLine("Appointment data: " + appointmentData);
 
-                        var licenseNumber = new LicenseNumber(staffData.Substring(0, index).Trim().ToUpper());
+                        var startInMinutes = appointmentData[0];
+                        Console.WriteLine("Start in minutes: " + startInMinutes);
+                        var endInMinutes = appointmentData[1];
+                        Console.WriteLine("End in minutes: " + endInMinutes);
+                        var code = appointmentData[2].Trim().ToLower();
+                        Console.WriteLine("Code: " + code);
 
-                        //operationsStr = [(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
-                        var operationsStr = staffData.Substring(index + 1).Trim();
+                        var opRequestCode = new RequestCode();
+                        var appointmentNumber = new AppointmentNumber();
+                        if (code.StartsWith("ap")) {
+                            Console.WriteLine("Appointment already exists: " + code);
+                            continue;
+                        }
+                        else if (code.StartsWith("req")) {
+                            opRequestCode = new RequestCode(code);
+                            var number = code.Substring(3);
+                            appointmentNumber = new AppointmentNumber("ap" + number);
+                            Console.WriteLine("Request code: " + opRequestCode);
+                            Console.WriteLine("Appointment number: " + appointmentNumber);
 
-                        //operationsStr = (slotStartInMinutes,slotEndInMinutes,operationRequestCode),(slotStartInMinutes,slotEndInMinutes,operationRequestCode)
-                        operationsStr = operationsStr.Substring(1, operationsStr.Length - 2);
+                            requestCodes.Add(opRequestCode);
+                            appointmentNumbers.Add(appointmentNumber);
+                        } else {
+                            throw new Exception("Invalid code: " + code);
+                        }
 
-                        //operations: each operation = slotStartInMinutes,slotEndInMinutes,operationRequestCode (except first and last operation)
-                        var operations = operationsStr.Split(new[] { "),(" }, StringSplitOptions.RemoveEmptyEntries);
+                        int hours = int.Parse(startInMinutes) / 60;
+                        int minutes = int.Parse(startInMinutes) % 60;
+                        var startInHours = hours.ToString("D2") + ":" + minutes.ToString("D2");
 
-                        //remove first character (bracket) from first operation
-                        operations[0] = operations[0].Substring(1);
+                        hours = int.Parse(endInMinutes) / 60;
+                        minutes = int.Parse(endInMinutes) % 60;
+                        var endInHours = hours.ToString("D2") + ":" + minutes.ToString("D2");
 
-                        //remove last character (bracket) from last operation
-                        operations[operations.Length - 1] = operations[operations.Length - 1].Substring(0, operations[operations.Length - 1].Length - 1);
-                        
-                        foreach (var operation in operations)
+                        var startTime = DateTime.ParseExact(startInHours, "HH:mm", null);
+                        var endTime = DateTime.ParseExact(endInHours, "HH:mm", null);
+
+                        var start = dateTime.Date.Add(startTime.TimeOfDay);
+                        var end = dateTime.Date.Add(endTime.TimeOfDay);
+
+                        var slot = new Slot(start, end);
+
+                        Console.WriteLine("Slot: " + slot);
+
+                        List<LicenseNumber> staff = new List<LicenseNumber>();
+
+                        foreach (var staffData in staffs)
                         {
-                            Console.WriteLine("Operation: " + operation);
-                            var parts = operation.Split(',');
+                            //staff = licenseNumber,[(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
+                            int index = staffData.IndexOf(',');
 
-                            if (parts.Length != 3)
+                            var licenseNumber = new LicenseNumber(staffData.Substring(0, index).Trim().ToUpper());
+
+                            Console.WriteLine("License number: " + licenseNumber);
+
+                            Console.WriteLine("Staff data: " + staffData);
+
+                            if (staffData[index + 1] == '[' && staffData[index + 2] == ']')
                             {
-                                throw new Exception($"Invalid format for: {operation}");
+                                Console.WriteLine("No operations for staff: " + licenseNumber);
+                                continue;
                             }
 
-                            var staffOpRequestCode = parts[2].Trim();
-                            var staffAppointmentNumber = new AppointmentNumber("ap" + int.Parse(staffOpRequestCode.Substring(3)));
+                            //operationsStr = [(slotStartInMinutes,slotEndInMinutes,operationRequestCode),...]
+                            var operationsStr = staffData.Substring(index + 1).Trim();
 
-                            if (!staffAppointmentNumber.Equals(appointmentNumber)) continue;
+                            //operationsStr = (slotStartInMinutes,slotEndInMinutes,operationRequestCode),(slotStartInMinutes,slotEndInMinutes,operationRequestCode)
+                            operationsStr = operationsStr.Substring(1, operationsStr.Length - 2);
 
-                            if (!staff.Contains(licenseNumber)) {
-                                Console.WriteLine("Adding staff" + licenseNumber + "to appointment: " + appointmentNumber);
-                                staff.Add(licenseNumber);
+                            //operations: each operation = slotStartInMinutes,slotEndInMinutes,operationRequestCode (except first and last operation)
+                            var operations = operationsStr.Split(new[] { "),(" }, StringSplitOptions.RemoveEmptyEntries);
+
+                            //remove first character (bracket) from first operation
+                            operations[0] = operations[0].Substring(1);
+
+                            //remove last character (bracket) from last operation
+                            operations[operations.Length - 1] = operations[operations.Length - 1].Substring(0, operations[operations.Length - 1].Length - 1);
+                            
+                            foreach (var operation in operations)
+                            {
+                                Console.WriteLine("Operation: " + operation);
+                                var parts = operation.Split(',');
+
+                                if (parts.Length != 3)
+                                {
+                                    throw new Exception($"Invalid format for: {operation}");
+                                }
+
+                                var staffOpRequestCode = parts[2].Trim();
+                                if (staffOpRequestCode.StartsWith("ap")) {
+                                    Console.WriteLine("Appointment already exists 2: " + staffOpRequestCode);
+                                    continue;
+                                }
+                                var staffAppointmentNumber = new AppointmentNumber("ap" + int.Parse(staffOpRequestCode.Substring(3)));
+
+                                if (!AppointmentNumber.SameValue(staffAppointmentNumber, appointmentNumber)) continue;
+
+                                if (!staff.Contains(licenseNumber)) {
+                                    Console.WriteLine("Adding staff" + licenseNumber + "to appointment: " + appointmentNumber);
+                                    staff.Add(licenseNumber);
+                                }
                             }
                         }
-                    }
-                    
-                    var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot, staff);
+                        
+                        var creatingAppointment = new CreatingAppointmentDto(opRequestCode, surgeryRoomNumber, appointmentNumber, slot, staff);
 
-                    var addedAppointment = await AddAsync(creatingAppointment);
+                        var addedAppointment = await AddAsync(creatingAppointment);
+                    }
+
                 }
 
                 return (requestCodes, appointmentNumbers);
@@ -288,6 +329,20 @@ namespace DDDNetCore.Domain.Appointments
                 if (appointments == null || appointments.Count == 0)
                     return [];
 
+                return AppointmentMapper.ToDtoList(appointments);
+            } catch (Exception) {
+                return null;
+            }
+        }
+
+        public async Task<List<AppointmentDto>> GetByDateAsync(DateTime date)
+        {
+            try {
+                var appointments = await _appointmentRepository.GetByDateAsync(date);
+                if (appointments == null || appointments.Count == 0)
+                {
+                    return null;
+                }
                 return AppointmentMapper.ToDtoList(appointments);
             } catch (Exception) {
                 return null;

@@ -42,10 +42,6 @@ export class DoctorMenuComponent implements OnInit {
     this.router.navigateByUrl('/doctor/' + path), { replaceUrl: true };
   }
 
-  navigateToAppointments(): void {
-    this.router.navigate(['/appointments']);
-  }
-
   navigateTo3D(): void {
     window.location.href = environment.three_d_module;
   }
