@@ -6,7 +6,9 @@
 
   <app-allergy-table
     *ngIf="allergies"
-    [allergies]="allergies">
+    [allergies]="allergies"
+    [displayAllergies]="displayAllergies"
+    (filterAllergiesEvent)="loadInitialData($event)">
   </app-allergy-table>
 
   <app-create-allergy

@@ -6,7 +6,6 @@ import {AllergyService} from '../../../services/allergy/allergy.service';
 import {CreateAllergyComponent} from '../create-allergy/create-allergy.component';
 import {NgIf} from '@angular/common';
 import {AllergyTableComponent} from '../allergy-table/allergy-table.component';
-import {start} from 'node:repl';
 
 @Component({
   selector: 'app-allergy',
@@ -21,6 +20,7 @@ import {start} from 'node:repl';
 })
 export class AllergyComponent {
   @Output() allergies: Allergy[];
+  @Output() displayAllergies: Allergy[];
   @Output() selectedAllergyToUpdate!: Allergy;
   @Output() selectedAllergyToDelete!: Allergy;
   @Output() selectedAllergyToCreate!: Allergy;
@@ -82,6 +82,8 @@ export class AllergyComponent {
         description: allergy.description
       }
     });
+
+    this.displayAllergies = this.allergies;
 
   }
 
