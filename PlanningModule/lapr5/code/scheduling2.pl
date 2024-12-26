@@ -5,7 +5,7 @@
 :-dynamic agenda_operation_room/3.
 :-dynamic agenda_operation_room1/3.
 :-dynamic better_sol/5.
-:-dynamic surgery_in_room/2.
+:-dynamic surgery_in_room/3.
 
 free_agenda0([],[(0,1440)]).
 free_agenda0([(0,Tfin,_)|LT],LT1):-!,free_agenda1([(0,Tfin,_)|LT],LT1).
@@ -116,8 +116,7 @@ schedule_all_surgeries(Room,Day):-
     findall(_,(agenda_staff(D,Day,Agenda),assertz(agenda_staff1(D,Day,Agenda))),_),
     agenda_operation_room(Or,Date,Agenda),assert(agenda_operation_room1(Or,Date,Agenda)),
     findall(_,(agenda_staff1(D,Date,L),free_agenda0(L,LFA),adapt_timetable(D,Date,LFA,LFA2),assertz(availability(D,Date,LFA2))),_),
-    findall(OpCode,surgery_in_room(Room,OpCode),LOpCode),
-
+    findall(OpCode,surgery_in_room(OpCode,Room,Day),LOpCode),
     availability_all_surgeries(LOpCode,Room,Day),!.
 
 availability_all_surgeries([],_,_).
@@ -193,54 +192,88 @@ print_with_comma_separation([Elem|Rest]) :-
     write(', '),
     print_with_comma_separation(Rest).
 
-obtain_better_sol(Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
-    findall(Room,agenda_operation_room(Room,Day,_),LRooms),
-    obtain_better_sol(LRooms,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).
+obtain_better_sol([], _, AgOpRoomBetter, LAgDoctorsBetter, TFinOp):-
+    % final_better_sol(Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp),
+    write('Final Result: AgOpRoomBetter=['),
+    print_with_comma_separation(AgOpRoomBetter),
+    write(']'), nl,
+    write('LAgDoctorsBetter=['),
+    print_with_comma_separation(LAgDoctorsBetter),
+    write(']'), nl,
+    write('TFinOp='), write(TFinOp), nl.
 
-obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
-		get_time(Ti),
-		(obtain_better_sol1(Room,Day);true),
-		retract(better_sol(Day,Room,AgOpRoomBetter,LAgDoctorsBetter,TFinOp)),
-            write('Final Result: AgOpRoomBetter=['),
-            print_with_comma_separation(AgOpRoomBetter),
-            write(']'), nl,
-            write('LAgDoctorsBetter=['),
-            print_with_comma_separation(LAgDoctorsBetter),
-            write(']'), nl,
-            write('TFinOp='),write(TFinOp),nl,
-		get_time(Tf),
-		T is Tf-Ti,
-		write('Tempo de geracao da solucao:'),write(T),nl.
+obtain_better_sol([Room|LRooms], Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp):-
+    obtain_better_sol_room(Room, Day),
+    obtain_better_sol(LRooms, Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp).
 
+obtain_better_sol_room(Room, Day):-
+    get_time(Ti),
+    (obtain_better_sol1(Room, Day); true),
+    % retract(better_sol(Day, Room, AgOpRoomBetter, LAgDoctorsBetter, TFinOp)),
+    get_time(Tf),
+    T is Tf - Ti,
+    write('Tempo de geracao da solucao: '), write(T), nl.
+    % add_better_sol_to_final_result(Day, Room).
 
-obtain_better_sol1(Room,Day):-
-    asserta(better_sol(Day,Room,_,_,1441)),
-    findall(OpCode,surgery_in_room(Room,OpCode),LOC),!,
-    permutation(LOC,LOpCode),
+obtain_better_sol1(Room, Day):-
+    retract(better_sol(Day,Room,_,_,_)),
+    asserta(better_sol(Day, Room, _, _, 1441)),
+    findall(OpCode, surgery_in_room(OpCode, Room, Day), LOC),!,
+    permutation(LOC, LOpCode),
     retractall(agenda_staff1(_,_,_)),
     retractall(agenda_operation_room1(_,_,_)),
     retractall(availability(_,_,_)),
-    findall(_,(agenda_staff(D,Day,Agenda),assertz(agenda_staff1(D,Day,Agenda))),_),
-    agenda_operation_room(Room,Day,Agenda),assert(agenda_operation_room1(Room,Day,Agenda)),
-    findall(_,(agenda_staff1(D,Day,L),free_agenda0(L,LFA),adapt_timetable(D,Day,LFA,LFA2),assertz(availability(D,Day,LFA2))),_),
-    availability_all_surgeries(LOpCode,Room,Day),
-    agenda_operation_room1(Room,Day,AgendaR),
-		update_better_sol(Day,Room,AgendaR,LOpCode),
-		fail.
+    findall(_,
+        (agenda_staff(D, Day, Agenda),
+        assertz(agenda_staff1(D, Day, Agenda))),
+    _),
+    agenda_operation_room(Room, Day, Agenda),
+    assert(agenda_operation_room1(Room, Day, Agenda)),
+    findall(_,
+        (agenda_staff1(D, Day, L),
+        free_agenda0(L, LFA),
+        adapt_timetable(D, Day, LFA, LFA2),
+        assertz(availability(D, Day, LFA2))
+        ),
+    _),
+    availability_all_surgeries(LOpCode, Room, Day),
+    agenda_operation_room1(Room, Day, AgendaR),
+    update_better_sol(Day, Room, AgendaR, LOpCode),
+    fail.
 
-update_better_sol(Day,Room,Agenda,LOpCode):-
-                better_sol(Day,Room,_,_,FinTime),
-                reverse(Agenda,AgendaR),
-                evaluate_final_time(AgendaR,LOpCode,FinTime1),
-             write('Analysing for LOpCode='),write(LOpCode),nl,
-             write('now: FinTime1='),write(FinTime1),write(' Agenda='),write(Agenda),nl,
-		FinTime1<FinTime,
-             write('best solution updated'),nl,
-                retract(better_sol(_,_,_,_,_)),
-                findall(Doctor,assignment_surgery(_,Doctor),LDoctors1),
-                remove_equals(LDoctors1,LDoctors),
-                list_doctors_agenda(Day,LDoctors,LDAgendas),
-		asserta(better_sol(Day,Room,Agenda,LDAgendas,FinTime1)).
+update_better_sol(Day, Room, Agenda, LOpCode):-
+    better_sol(Day, Room, _, _, FinTime),
+    reverse(Agenda, AgendaR),
+    evaluate_final_time(AgendaR, LOpCode, FinTime1),
+    write('Analysing for LOpCode='), write(LOpCode), nl,
+    write('now: FinTime1='), write(FinTime1), write(' Agenda='), write(Agenda), nl,
+    FinTime1 < FinTime,
+    write('best solution updated'), nl,
+    retract(better_sol(Day,Room,_,_,_)),
+    findall(Doctor, assignment_surgery(_, Doctor), LDoctors1),
+    remove_equals(LDoctors1, LDoctors),
+    list_doctors_agenda(Day, LDoctors, LDAgendas),
+    asserta(better_sol(Day, Room, Agenda, LDAgendas, FinTime1)).
+
+% add_better_sol_to_final_result(Day, Room):-
+    %final_better_sol(Day, List of [start,end,surgery,room], LAgDoctorsBetter, List of [TFinOp,Room]),
+    % better_sol(Day, Room, Agenda, LDAgendas, FinTime),
+    % findall((Start, End, Surgery, Room), member((Start, End, Surgery, Room), Agenda), LAgOpRoomBetter),
+    % findall((Doctor, Agenda), member((Doctor, Agenda), LDAgendas), NewLAgDoctorsBetter),
+    % retract(final_better_sol(Day, CurrentAgOpRoomBetterList, _, CurrentFinTimeOfRoomList)),
+    %do a for each to each member in LAgOpRoomBetter and call insert_agenda(member, CurrentAgOpRoomBetterList, NewAgOpRoomBetterList),
+    %for each start, end, surgery, insert_agenda
+    % insert_agenda_list(LAgOpRoomBetter, CurrentAgOpRoomBetterList, NewAgOpRoomBetterList),
+    %replace LAgDoctorsBetter with NewLAgDoctorsBetter,
+    %add [FinTime, Room] to CurrentFinTimeOfRoomList,
+    % append([(FinTime, Room)], CurrentFinTimeOfRoomList, NewCurrentFinTimeOfRoomList),
+    %assert final_better_sol(Day, NewAgOpRoomBetterList, NewLAgDoctorsBetter, NewCurrentFinTimeOfRoomList).
+    % assert(final_better_sol(Day, NewAgOpRoomBetterList, NewLAgDoctorsBetter, NewCurrentFinTimeOfRoomList)).
+
+% insert_agenda_list([], Current, Current).
+% insert_agenda_list([(Start, End, Surgery, Room) | Rest], Current, New):-
+%     insert_agenda((Start, End, Surgery, Room), Current, TempList),
+%     insert_agenda_list(Rest, TempList, New).
 
 evaluate_final_time([],_,1441).
 evaluate_final_time([(_,Tfin,OpCode)|_],LOpCode,Tfin):-member(OpCode,LOpCode),!.
@@ -253,39 +286,68 @@ remove_equals([],[]).
 remove_equals([X|L],L1):-member(X,L),!,remove_equals(L,L1).
 remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
 
-schedule_appointments(Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp) :-
+schedule_appointments(Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp):-
+    assign_surgeries_to_rooms(Day),
     assign_staff_to_surgeries,
-    assign_surgeries_to_rooms_automatically(Day),
-    schedule_all_surgeries(Day),
-    obtain_better_sol(Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp).
-
-assign_surgeries_to_rooms_automatically(Day) :-
     findall(Room, agenda_operation_room(Room, Day, _), LRooms),
-    assign_surgeries_to_rooms_automatically1(LRooms, Day).
+    schedule_all_surgeries(LRooms, Day),
+    obtain_better_sol(LRooms,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp).
 
-assign_surgeries_to_rooms_automatically1([], _).
-assign_surgeries_to_rooms_automatically1([Room | LRooms], Day) :-
-    findall(OpCode, surgery_in_room(Room, OpCode), LOpCode),
-    surgery_times_for_room(LOpCode, TotalRequiredTime),
-    room_availability(Room, Day, TotalAvailableTime),
-    check_room_capacity(TotalRequiredTime, TotalAvailableTime),
-    assign_surgeries_to_rooms_automatically1(LRooms, Day).
+assign_surgeries_to_rooms(Day) :-
+    retractall(surgery_in_room(_,_,_)),
+    findall(Room, agenda_operation_room(Room, Day, _), LRooms),
+    findall(Surgery, surgery_id(Surgery, _), LSurgeries),
+    calculate_rooms_occupancy(LRooms, Day, RoomOccupancy),
+    bfs_queue_with_least_occupied(LSurgeries, RoomOccupancy, Queue),
+    process_bfs_queue(Queue, Day),
+    write('Surgeries in rooms: '), nl,
+    write('Surgery, Room, Day'), nl,
+    findall((Surgery, Room, Day), surgery_in_room(Surgery, Room, Day), L),
+    print_surgeries_in_rooms(L).
 
-surgery_times_for_room(LOpCode, TotalRequiredTime) :-
-    findall(TotalTime, (member(OpCode, LOpCode), surgery_id(OpCode, OpType), surgery(OpType, TPreparation, TSurgery, TCleaning), 
-                        TotalTime is TPreparation + TSurgery + TCleaning), Times),
-    sum_list(Times, TotalRequiredTime).
+print_surgeries_in_rooms([]).
+print_surgeries_in_rooms([(Surgery, Room, Day) | L]) :-
+    write(Surgery), write(', '), write(Room), write(', '), write(Day), nl,
+    print_surgeries_in_rooms(L).
 
-room_availability(Room, Day, TotalAvailableTime) :-
-    agenda_operation_room(Room, Day, Agenda),
-    free_agenda0(Agenda, FreeTimeSlots),
-    sum_free_time_slots(FreeTimeSlots, TotalAvailableTime).
+calculate_rooms_occupancy(Rooms, Day, RoomOccupancy) :-
+    findall((Room, TotalTime), (
+        member(Room, Rooms),
+        calculate_total_occupancy(Room, Day, TotalTime)
+    ), RoomOccupancy).
 
-sum_free_time_slots([], 0).
-sum_free_time_slots([(Tin, Tfin) | Tail], TotalTime) :-
-    sum_free_time_slots(Tail, RemainingTime),
-    TotalTime is RemainingTime + (Tfin - Tin).
+calculate_total_occupancy(Room, Day, TotalTime) :-
+    findall(Time, (
+        agenda_operation_room(Room, Day, Agenda),
+        member((_, _, Surgery), Agenda),
+        surgery_id(Surgery, OpType),
+        surgery(OpType, TPreparation, TSurgery, TCleaning),
+        Time is TPreparation + TSurgery + TCleaning
+    ), Times),
+    sum_times(Times, TotalTime).
 
-check_room_capacity(TotalRequiredTime, TotalAvailableTime) :-
-    Ratio is TotalRequiredTime / TotalAvailableTime,
-    (Ratio < 0.8 -> true; fail).
+sum_times([], 0).
+sum_times([Time | Rest], TotalTime) :-
+    sum_times(Rest, RestTime),
+    TotalTime is RestTime + Time.
+
+bfs_queue_with_least_occupied([], _, []) :- !.
+bfs_queue_with_least_occupied([Surgery | LSurgeries], RoomOccupancy, Queue) :-
+    choose_least_occupied_room(RoomOccupancy, Room),
+    surgery_id(Surgery, OpType),
+    surgery(OpType, TPreparation, TSurgery, TCleaning),
+    TotalTime is TPreparation + TSurgery + TCleaning,
+    select((Room, OldTime), RoomOccupancy, RestOccupancy),
+    NewTime is OldTime + TotalTime,
+    NewRoomOccupancy = [(Room, NewTime) | RestOccupancy],
+    bfs_queue_with_least_occupied(LSurgeries, NewRoomOccupancy, RestQueue),
+    Queue = [(Surgery, Room) | RestQueue].
+
+choose_least_occupied_room(RoomOccupancy, Room) :-
+    sort(2, @=<, RoomOccupancy, SortedRooms),
+    SortedRooms = [(Room, _)|_].
+
+process_bfs_queue([], _) :- !.
+process_bfs_queue([(Surgery, Room) | Tail], Day) :-
+    assert(surgery_in_room(Surgery, Room, Day)),
+    process_bfs_queue(Tail, Day).

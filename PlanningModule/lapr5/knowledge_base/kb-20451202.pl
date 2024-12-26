@@ -77,24 +77,24 @@ surgery(typ1,45,60,30).
 surgery(typ2,45,60,45).
 surgery(typ3,15,40,20).
 
-required_staff(typ1,doctor,orthopaedics,3).
-required_staff(typ1,doctor,anaesthesiology,1).
-required_staff(typ1,nurse,instrumenting,1).
-required_staff(typ1,nurse,anaesthesiology,1).
-required_staff(typ1,nurse,circulating,1).
-required_staff(typ1,technician,medical_Action,1).
-required_staff(typ2,doctor,orthopaedics,3).
-required_staff(typ2,doctor,anaesthesiology,1).
-required_staff(typ2,nurse,instrumenting,1).
-required_staff(typ2,nurse,anaesthesiology,1).
-required_staff(typ2,nurse,circulating,1).
-required_staff(typ2,technician,medical_Action,1).
-required_staff(typ3,doctor,orthopaedics,2).
-required_staff(typ3,doctor,anaesthesiology,1).
-required_staff(typ3,nurse,instrumenting,1).
-required_staff(typ3,nurse,anaesthesiology,1).
-required_staff(typ3,nurse,circulating,1).
-required_staff(typ3,technician,medical_Action,1).
+required_staff(typ1,doctor,orthopaedics,3,false,true,false).
+required_staff(typ1,doctor,anaesthesiology,1,true,true,false).
+required_staff(typ1,nurse,instrumenting,1,false,true,false).
+required_staff(typ1,nurse,anaesthesiology,1,true,true,false).
+required_staff(typ1,nurse,circulating,1,false,true,false).
+required_staff(typ1,technician,medical_Action,1,false,true,true).
+required_staff(typ2,doctor,orthopaedics,3,false,true,false).
+required_staff(typ2,doctor,anaesthesiology,1,true,true,false).
+required_staff(typ2,nurse,instrumenting,1,false,true,false).
+required_staff(typ2,nurse,anaesthesiology,1,true,true,false).
+required_staff(typ2,nurse,circulating,1,false,true,false).
+required_staff(typ2,technician,medical_Action,1,false,true,true).
+required_staff(typ3,doctor,orthopaedics,2,false,true,false).
+required_staff(typ3,doctor,anaesthesiology,1,true,true,false).
+required_staff(typ3,nurse,instrumenting,1,false,true,false).
+required_staff(typ3,nurse,anaesthesiology,1,true,true,false).
+required_staff(typ3,nurse,circulating,1,false,true,false).
+required_staff(typ3,technician,medical_Action,1,false,true,true).
 
 surgery_id(req3,typ1).
 surgery_id(req4,typ1).
@@ -102,4 +102,5 @@ surgery_id(req5,typ2).
 surgery_id(req6,typ3).
 surgery_id(req7,typ3).
 
-agenda_operation_room(or1,20451202,[(100,180,ap1),(1080,1140,ap2)]).
+agenda_operation_room(or1,20451202,[(1080,1140,ap2)]).
+agenda_operation_room(or2,20451202,[(100,180,ap1)]).
