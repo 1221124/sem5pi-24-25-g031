@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {}
+    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj": {}
   },
   "projects": {
-    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {
+    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
+        "projectUniqueName": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
-        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\obj\\",
+        "projectPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj",
+        "packagesPath": "/Users/GuilhermeCastroRibeiro/.nuget/packages/",
+        "outputPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/GuilhermeCastroRibeiro/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -36,7 +36,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
+          "auditMode": "all"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -116,7 +116,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

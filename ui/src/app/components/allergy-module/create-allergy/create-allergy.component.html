@@ -1,0 +1,24 @@
+<div>
+  <h1>Create Allergy</h1>
+  <div class="modal-content">
+    <span type="button" class="close" (click)="emitCloseModalEvent()">&times;</span>
+    <h2>Allergy Form</h2>
+    <form class="form-group">
+      <div>
+        <input type="text" id="code" name="code" [(ngModel)]="selectedAllergyCode"
+          (focus)="codeTouched = true" placeholder="Code">
+      </div>
+      <div>
+        <input type="text" id="name" name="name" [(ngModel)]="selectedAllergyName"
+          (focus)="nameTouched = true" placeholder="Name">
+      </div>
+      <div>
+        <input type="text" id="description" name="description" [(ngModel)]="selectedAllergyDescription"
+          (focus)="descriptionTouched = true" placeholder="Description">
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn-create-request" (click)="submit()">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
