@@ -60,6 +60,8 @@ export class PatientMedicalRecordComponent implements OnInit {
 
   medicalRecordLoaded = false;
 
+  isPatient = false;
+
   constructor(
     private service: PatientMedicalRecordService,
     private medicalConditionService: MedicalConditionService,
@@ -94,6 +96,10 @@ export class PatientMedicalRecordComponent implements OnInit {
       this.authService.updateIsError(true);
       this.router.navigate(['']);
       return;
+    }
+
+    if (role.includes('patient')) {
+      this.isPatient = true;
     }
 
     await this.getAllMedicalConditions();

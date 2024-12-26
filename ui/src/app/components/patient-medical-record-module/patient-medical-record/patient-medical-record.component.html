@@ -1,6 +1,6 @@
 <div class="patient-medical-record full-page">
   <div>
-    <button class="back-btn" (click)="closePopup()">Back</button>
+    <button *ngIf="!isPatient" class="back-btn" (click)="closePopup()">Back</button>
   </div>
 
   <h1>Patient Medical Record</h1>
@@ -24,7 +24,7 @@
         <th>Name</th>
         <th>Last Updated</th>
         <th>Irrelevant</th>
-        <th>Actions</th>
+        <th *ngIf="!isPatient">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -33,14 +33,14 @@
         <td>{{ getMedicalConditionName(condition.ICD11Code) }}</td>
         <td>{{ condition.Date | date: 'medium' }}</td>
         <td>{{ condition.notMeaningfulAnymore ? 'Yes' : 'No' }}</td>
-        <td>
+        <td *ngIf="!isPatient">
           <button class="edit-btn" (click)="openMedicalConditionPopup(condition)">Edit</button>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <button class="add-btn" (click)="openMedicalConditionPopup()">Add Medical Condition</button>
+  <button *ngIf="!isPatient" class="add-btn" (click)="openMedicalConditionPopup()">Add Medical Condition</button>
 </div>
 
 <div class="overlay" [ngClass]="{ active: medicalConditionPopup }">
