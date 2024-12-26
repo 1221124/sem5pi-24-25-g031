@@ -1,1 +1,7 @@
-<p>delete-allergy works!</p>
+<div class="modal-backdrop"></div>
+<div class="delete-allergy">
+  <h2>Delete Allergy: {{allergy.code}}</h2>
+  <p>Are you sure you want to delete this allergy?</p>
+  <button (click)="closeDelete()" class="btn-cancel">Cancel</button>
+  <button (click)="confirmDelete()" class="btn-delete">Yes, Delete</button>
+</div>
