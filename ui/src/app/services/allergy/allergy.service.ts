@@ -131,4 +131,31 @@ export class AllergyService {
         }
       });
   }
+
+  async delete(
+    accessToken: string,
+    allergy: Allergy
+  ) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const };
+
+    return await firstValueFrom(this.http.delete<any>(`${environment.allergies}/${allergy.id}`, options))
+      .then(response => {
+        if (response.status === 200) {
+          return {
+            status: response.status,
+            body: null
+          };
+        } else {
+          return {
+            status: response.status,
+            body: null
+          };
+        }
+      });
+  }
 }
