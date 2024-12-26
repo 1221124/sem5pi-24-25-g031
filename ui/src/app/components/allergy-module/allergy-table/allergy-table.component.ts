@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, SimpleChange} from '@angular/core';
+import {Component, EventEmitter, Input, output, Output, SimpleChange} from '@angular/core';
 import {Allergy} from '../../../models/allergy.model';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
@@ -17,21 +17,23 @@ import {NgForOf} from '@angular/common';
 })
 export class AllergyTableComponent {
   @Input() allergies: Allergy[];
+  @Input() displayAllergies: Allergy[] = [];
 
+  @Output() filterAllergiesEvent = new EventEmitter<{ code?: string; name?: string; description?: string }>();
   @Output() updateAllergyEvent = new EventEmitter<Allergy>();
   @Output() deleteAllergyEvent = new EventEmitter<Allergy>();
 
   constructor(
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) {
+  }
 
   accessToken: string = '';
 
   message: string = '';
   success: boolean = false;
 
-  displayAllergies: Allergy[] = [];
   pages = {
     currentPage: 1,
     totalPages: 1
@@ -53,7 +55,7 @@ export class AllergyTableComponent {
     }
 
     this.accessToken = this.authService.getToken() as string;
-    if(!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
       this.authService.updateMessage('You are not an admin! Redirecting to login...');
       this.authService.updateIsError(true);
       await this.router.navigate(['']);
@@ -66,9 +68,12 @@ export class AllergyTableComponent {
     }
 
     this.displayAllergies = [];
+    console.log('DISPLAY ALLERGIES:', this.displayAllergies);
+
     this.pages.currentPage = 1;
     this.pages.totalPages = Math.ceil(this.allergies.length / 2);
     this.changePage(this.pages.currentPage);
+
   }
 
   changePage(page: number) {
@@ -84,16 +89,26 @@ export class AllergyTableComponent {
       description: this.filter.searchDescription
     };
 
-    //this.filterAllergiesEvent.emit(filters);
+    if (this.displayAllergies.length !== 0) {
+      this.pages.currentPage = 1;
+      this.pages.totalPages = Math.ceil(this.displayAllergies.length / 2);
+      this.changePage(this.pages.currentPage);
+    }
+    this.filterAllergiesEvent.emit(filters);
   }
 
   clearFilters() {
-    this.filter ={
+    this.filter = {
       searchCode: '',
       searchName: '',
       searchDescription: ''
     }
 
-    //this.filterAllergiesEvent.emit({});
+    this.pages.currentPage = 1;
+    this.pages.totalPages = Math.ceil(this.allergies.length / 2);
+    this.changePage(this.pages.currentPage);
+
+
+    this.filterAllergiesEvent.emit({});
   }
 }
