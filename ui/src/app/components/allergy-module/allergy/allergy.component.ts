@@ -6,6 +6,7 @@ import {AllergyService} from '../../../services/allergy/allergy.service';
 import {CreateAllergyComponent} from '../create-allergy/create-allergy.component';
 import {NgIf} from '@angular/common';
 import {AllergyTableComponent} from '../allergy-table/allergy-table.component';
+import {UpdateAllergyComponent} from '../update-allergy/update-allergy.component';
 
 @Component({
   selector: 'app-allergy',
@@ -16,6 +17,7 @@ import {AllergyTableComponent} from '../allergy-table/allergy-table.component';
     NgIf,
     CreateAllergyComponent,
     AllergyTableComponent,
+    UpdateAllergyComponent,
   ]
 })
 export class AllergyComponent {
@@ -140,6 +142,47 @@ export class AllergyComponent {
       name: '',
       description: ''
     };
+
+    this.navigateToAllergy();
+  }
+
+  openUpdateModal(allergy: Allergy) {
+    this.selectedAllergyToUpdate = allergy;
+
+    this.isUpdateModalOpen = true;
+    this.navigateTo('update', { queryParams: { id: JSON.stringify(this.selectedAllergyToUpdate) }});
+  }
+
+  async updateAllergy() {
+    try {
+      await this.service.put(this.accessToken, this.selectedAllergyToUpdate);
+
+      await this.loadInitialData();
+
+      this.message = 'Allergy updated successfully!';
+      this.success = true;
+    } catch (error) {
+      console.error('Error updating allergy:', error);
+      this.message = 'Error updating allergy!';
+      this.success = false;
+    } finally {
+      if (this.success) {
+        this.closeUpdateModal();
+      } else {
+        console.error('Error updating allergy:', this.message);
+      }
+    }
+  }
+
+  closeUpdateModal() {
+    this.isUpdateModalOpen = false;
+    this.selectedAllergyToUpdate = {
+      id: '',
+      code: '',
+      name: '',
+      description: ''
+    }
+    this.navigateToAllergy();
   }
 
 

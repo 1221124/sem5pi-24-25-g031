@@ -8,7 +8,8 @@
     *ngIf="allergies"
     [allergies]="allergies"
     [displayAllergies]="displayAllergies"
-    (filterAllergiesEvent)="loadInitialData($event)">
+    (filterAllergiesEvent)="loadInitialData($event)"
+    (updateAllergyEvent)="openUpdateModal($event)">
   </app-allergy-table>
 
   <app-create-allergy
@@ -17,4 +18,11 @@
     (closeModalEvent)="closeCreateModal()"
     (createNewAllergyEvent)="createAllergy()">
   </app-create-allergy>
+
+  <app-update-allergy
+    *ngIf="isUpdateModalOpen"
+    [allergy]="selectedAllergyToUpdate"
+    (close)="closeUpdateModal()"
+    (update)="updateAllergy()">
+  </app-update-allergy>
 </div>

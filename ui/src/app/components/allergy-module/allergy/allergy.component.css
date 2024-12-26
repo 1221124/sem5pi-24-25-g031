@@ -1,0 +1,76 @@
+.allergy {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1300px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+.allergy p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.allergy .btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-right: 10px;
+}
+
+.allergy .btn-primary {
+  background-color: #007acc;
+  color: white;
+}
+
+.allergy .btn-primary:hover {
+  background-color: #005f99;
+  transform: scale(1.05);
+}
+
+.allergy .btn-secondary {
+  background-color: #f44336;
+  color: white;
+}
+
+.allergy .btn-secondary:hover {
+  background-color: #e41f1f;
+  transform: scale(1.05);
+}
+
+.allergy .btn:focus {
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.allergy app-allergy-table {
+  margin-top: 20px;
+}
+
+.allergy app-create-allergy,
+.allergy app-update-allergy {
+  margin-top: 40px;
+}
+
+@media screen and (max-width: 768px) {
+  .allergy {
+    padding: 15px;
+  }
+
+  .allergy p {
+    font-size: 20px;
+  }
+
+  .allergy .btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
