@@ -1,8 +1,8 @@
-import { expressjwt as jwt } from 'express-jwt';
 import jwtDecode, { Jwt, JwtHeader, JwtPayload } from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
+import { expressjwt } from 'express-jwt';
 
 dotenv.config();
 
@@ -12,6 +12,7 @@ const client = jwksClient({
 
 const getKey = async (header: any) => {
   try {
+    console.log('process.env.JWKS_URI:',process.env.JWKS_URI);
     const token = getTokenFromHeader(header);
 
     if (!token) {
@@ -26,6 +27,7 @@ const getKey = async (header: any) => {
       throw new Error('Kid not found in token');
     }
 
+    console.log('Client:', client); 
     const keys = await client.getSigningKeys();
     console.log('Keys obtained from JWKS:', keys);
 
@@ -61,11 +63,18 @@ const getTokenFromHeader = (req: Request) => {
     return null;
   }
 
+  console.log('Token:', token);
   return token;
 };
 
 const getKidFromToken = (token: string) => {
   try {
+
+    if (!token) {
+      console.error('Token not provided');
+      return null;
+    }
+
     const decodedToken = jwtDecode.decode(token, { complete: true });
 
     console.log('Decoded JWT:', decodedToken);
@@ -101,7 +110,7 @@ const getRolesFromToken = (token: string): string[] | null => {
 
 const isAuth = (roles: string[]) => {
   return [
-    jwt({
+    expressjwt({
       getToken: getTokenFromHeader,
       secret: getKey,
       algorithms: ['RS256'],

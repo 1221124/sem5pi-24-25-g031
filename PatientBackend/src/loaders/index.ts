@@ -4,8 +4,10 @@ import mongooseLoader from './mongoose';
 import Logger from './logger';
 
 import config from '../../config';
+import { Console } from 'console';
 
 export default async ({ expressApp }) => {
+  try{
   const mongoConnection = await mongooseLoader();
   Logger.info('✌️ DB loaded and connected!');
 
@@ -142,4 +144,9 @@ export default async ({ expressApp }) => {
 
   expressLoader({ app: expressApp });
   Logger.info('✌️ Express loaded');
-};
+  } catch (error) {
+    console.log(error);
+    Logger.error(`❌ Error on server startup: ${error}`);
+    throw error;
+  }
+}
