@@ -1,1 +1,21 @@
-<p>update-allergy works!</p>
+<div class="modal" *ngIf="allergy">
+  <div class="modal-content">
+    <h2>Update Allergy</h2>
+    <form (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          [(ngModel)]="updatedDescription"
+          name="description"
+          placeholder="Enter Description"
+          (input)="adjustHeight($event)">
+        </textarea>
+      </div>
+      <div class="button-group">
+        <button type="button" (click)="close.emit()" class="btn-cancel">Close</button>
+        <button type="submit" class="btn-save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
