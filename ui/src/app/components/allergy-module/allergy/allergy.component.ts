@@ -1,10 +1,12 @@
-import {Component, Output} from '@angular/core';
+import { Component, Output} from '@angular/core';
 import {Allergy} from '../../../models/allergy.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
 import {AllergyService} from '../../../services/allergy/allergy.service';
 import {CreateAllergyComponent} from '../create-allergy/create-allergy.component';
 import {NgIf} from '@angular/common';
+import {AllergyTableComponent} from '../allergy-table/allergy-table.component';
+import {start} from 'node:repl';
 
 @Component({
   selector: 'app-allergy',
@@ -14,6 +16,7 @@ import {NgIf} from '@angular/common';
   imports: [
     NgIf,
     CreateAllergyComponent,
+    AllergyTableComponent,
   ]
 })
 export class AllergyComponent {
@@ -41,7 +44,7 @@ export class AllergyComponent {
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
       this.authService.updateIsError(true);
-      this.router.navigate(['']);
+      await this.router.navigate(['']);
       return;
     }
 
@@ -61,9 +64,9 @@ export class AllergyComponent {
     }
   }
 
-  async loadInitialData() {
+  async loadInitialData(filters?: { code?: string; name?: string; description?: string }) {
 
-    const response = await this.service.get(this.accessToken);
+    const response = await this.service.get(this.accessToken, filters);
 
     if(response.status !== 200){
       this.message = 'Error loading allergies!';
@@ -79,6 +82,7 @@ export class AllergyComponent {
         description: allergy.description
       }
     });
+
   }
 
   openCreateModal() {
@@ -154,4 +158,5 @@ export class AllergyComponent {
   navigateToAllergy(){
     this.router.navigate(['admin/allergy']).then(r => console.log('Navigated to allergy:', r)).catch(e => console.error('Error navigating to allergy:', e));
   }
+
 }

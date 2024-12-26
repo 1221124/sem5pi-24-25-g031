@@ -16,9 +16,16 @@ export class AllergyService {
   }
 
   async get(
-    accessToken: string
+    accessToken: string,
+    filters?: { code?: string; name?: string; description?: string }
   ) {
     let params = new HttpParams();
+
+    if (filters) {
+      if (filters.code) params = params.append('code', filters.code);
+      if (filters.name) params = params.append('name', filters.name);
+      if (filters.description) params = params.append('description', filters.description);
+    }
 
     const headers = ({
       'Content-Type': 'application',

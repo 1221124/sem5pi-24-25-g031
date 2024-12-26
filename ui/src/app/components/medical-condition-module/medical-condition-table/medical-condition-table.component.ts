@@ -24,7 +24,7 @@ export class MedicalConditionTableComponent implements OnInit {
 
   @Output() updateMedicalConditionEvent = new EventEmitter<MedicalCondition>();
   @Output() deleteMedicalConditionEvent = new EventEmitter<MedicalCondition>();
-  
+
 
   constructor(
     private router: Router,
@@ -97,5 +97,5 @@ export class MedicalConditionTableComponent implements OnInit {
       searchSymptoms: [],
     };
   }
-  
+
 }
