@@ -1,4 +1,4 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 
 import {firstValueFrom} from 'rxjs';
@@ -78,6 +78,42 @@ export class AllergyService {
     return await firstValueFrom(this.http.post<any>(`${environment.allergies}`, dto, options))
       .then(response => {
         if (response.status === 201 && response.body) {
+          return {
+            status: response.status,
+            body: {
+              id: response.body.id,
+              code: response.body.code.props.value,
+              name: response.body.name.props.value,
+              description: response.body.description.props.value
+            }
+          };
+        } else {
+          return {
+            status: response.status,
+            body: null
+          };
+        }
+      });
+  }
+
+  async put (
+    accessToken: string,
+    allergy: Allergy
+  ) {
+    const dto = {
+      "description": `${allergy.description}`
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const options = { headers, observe: 'response' as const };
+
+    return await firstValueFrom(this.http.put<any>(`${environment.allergies}/${allergy.id}`, dto, options))
+      .then(response => {
+        if (response.status === 200 && response.body) {
           return {
             status: response.status,
             body: {
