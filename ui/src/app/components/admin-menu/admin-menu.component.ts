@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth/auth.service';
   templateUrl: './admin-menu.component.html',
   styleUrls: ['./admin-menu.component.css'],
   imports: [
-    RouterOutlet
+
   ],
   standalone: true
 })
@@ -39,6 +39,7 @@ export class AdminMenuComponent implements OnInit {
   }
 
   navigateTo(path: string) {
+    console.log('Navigating to:', path);
     this.router.navigateByUrl('/admin/' + path), { replaceUrl: true };
   }
 }
