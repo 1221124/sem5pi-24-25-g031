@@ -1,1 +1,44 @@
-<p>allergy-table works!</p>
+<div class="get-allergies">
+  <div>
+    <table>
+      <thead>
+      <tr>
+        <th>
+          <input type="text" [(ngModel)]="filter.searchCode" placeholder="Enter Code"/>
+        </th>
+        <th>
+          <input type="text" [(ngModel)]="filter.searchName" placeholder="Enter Name"/>
+        </th>
+        <th>
+          <input type="text" [(ngModel)]="filter.searchDescription" placeholder="Enter Description"/>
+        </th>
+        <th>
+          <button class="apply-filter-btn" (click)="filterAllergies()">Apply Filters</button>
+          <button class="clear-filter-btn" (click)="clearFilters()">Clear Filters</button>
+        </th>
+      </tr>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </thead>
+      <tbody>
+      <tr *ngFor="let allergy of displayAllergies">
+        <td>{{ allergy.code }}</td>
+        <td>{{ allergy.name }}</td>
+        <td>{{ allergy.description }}</td>
+        <td>
+          <button (click)="updateAllergyEvent.emit(allergy)">Edit</button>
+          <button (click)="deleteAllergyEvent.emit(allergy)">Delete</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination">
+    <button (click)="changePage(pages.currentPage - 1)" [disabled]="pages.currentPage <= 1">Previous</button>
+    <span>Page {{ pages.currentPage }} of {{ pages.totalPages }}</span>
+    <button (click)="changePage(pages.currentPage + 1)" [disabled]="pages.currentPage >= pages.totalPages">Next</button>
+  </div>
+</div>

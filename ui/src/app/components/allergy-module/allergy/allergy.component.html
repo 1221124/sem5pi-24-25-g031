@@ -4,6 +4,11 @@
 
   <button (click)="navigateToAdminMenu()" class="btn btn-secondary">Back To Menu</button>
 
+  <app-allergy-table
+    *ngIf="allergies"
+    [allergies]="allergies">
+  </app-allergy-table>
+
   <app-create-allergy
     *ngIf="isCreateModalOpen"
     [allergy]="selectedAllergyToCreate"
