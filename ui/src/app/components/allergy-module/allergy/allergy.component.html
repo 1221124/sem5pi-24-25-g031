@@ -1,0 +1,13 @@
+<div class="allergy">
+  <p>Allergies</p>
+  <button (click)="openCreateModal()" class="btn btn-primary">Add Allergy</button>
+
+  <button (click)="navigateToAdminMenu()" class="btn btn-secondary">Back To Menu</button>
+
+  <app-create-allergy
+    *ngIf="isCreateModalOpen"
+    [allergy]="selectedAllergyToCreate"
+    (closeModalEvent)="closeCreateModal()"
+    (createNewAllergyEvent)="createAllergy()">
+  </app-create-allergy>
+</div>
