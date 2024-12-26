@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/DDDNetCore.Tests/DDDNetCore.Tests.csproj": {}
+    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj": {}
   },
   "projects": {
-    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/DDDNetCore.Tests/DDDNetCore.Tests.csproj": {
+    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/DDDNetCore.Tests/DDDNetCore.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
         "projectName": "DDDNetCore.Tests",
-        "projectPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/DDDNetCore.Tests/DDDNetCore.Tests.csproj",
-        "packagesPath": "/Users/GuilhermeCastroRibeiro/.nuget/packages/",
-        "outputPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/DDDNetCore.Tests/obj/",
+        "projectPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
+        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/GuilhermeCastroRibeiro/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -26,8 +26,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj": {
-                "projectPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj"
+              "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {
+                "projectPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj"
               }
             }
           }
@@ -40,7 +40,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -62,7 +62,7 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[8.0.8, )"
+              "version": "[9.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
@@ -112,21 +112,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj": {
+    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj",
+        "projectUniqueName": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/DDDNetCore.csproj",
-        "packagesPath": "/Users/GuilhermeCastroRibeiro/.nuget/packages/",
-        "outputPath": "/Users/GuilhermeCastroRibeiro/Library/Mobile Documents/com~apple~CloudDocs/ISEP/3º ano/SEM5PI/sem5pi-24-25-g031/sarm/obj/",
+        "projectPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
+        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/GuilhermeCastroRibeiro/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -148,7 +148,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -170,23 +170,27 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[8.0.8, )"
+              "version": "[9.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.8, )"
+              "version": "[9.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
               "version": "[8.0.8, )"
             },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.8, )"
+              "version": "[9.0.0, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -194,7 +198,7 @@
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[9.0.0, )"
             },
             "RestSharp": {
               "target": "Package",
@@ -228,7 +232,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

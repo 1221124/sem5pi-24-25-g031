@@ -116,7 +116,7 @@ public class OperationRequestServiceUnitTest
             .ReturnsAsync(1);
 
         // Act
-        var result = await _service.AddAsync(creatingDto, new RequestCode("req1"));
+        var result = await _service.AddAsync(creatingDto);
 
         // Assert
         Assert.NotNull(result);

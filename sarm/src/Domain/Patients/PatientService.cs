@@ -91,6 +91,7 @@ namespace DDDNetCore.Domain.Patients
             try
             {
                 var patient = await this._repo.GetByEmailAsync(email);
+                Console.WriteLine("Patient: " + patient);
             
                 if(patient == null)
                     return null;

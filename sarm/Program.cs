@@ -112,6 +112,7 @@ builder.Services.AddTransient<StaffService>();
 builder.Services.AddTransient<IDbLogRepository, DbLogRepository>();
 builder.Services.AddTransient<DbLogService>();
 
+builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<EnumsService>();
 
 builder.Services.AddTransient<IAppointmentRepository, AppointmentRepository>();
@@ -123,7 +124,7 @@ builder.Services.AddTransient<SurgeryRoomService>();
 builder.Services.AddTransient<IRoomTypeRepository, RoomTypeRepository>();
 builder.Services.AddTransient<RoomTypeService>();
 
-builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
+// builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
 
 builder.Services.AddScoped<PrologIntegrationService>();
 builder.Services.AddScoped<PrologService>();

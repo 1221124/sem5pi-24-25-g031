@@ -79,6 +79,8 @@ namespace Controllers
         {
             var accessToken = body.AccessToken;
             
+            Console.WriteLine("Access Token: " + accessToken);
+
             if (string.IsNullOrEmpty(accessToken))
             {
                 return BadRequest( new { Message = "AccessToken is missing." });
@@ -89,19 +91,24 @@ namespace Controllers
                 var emailAndRole = _iamService.GetClaimsFromToken(accessToken);
                 
                 Email email = new Email(emailAndRole.Email);
+                Console.WriteLine("Email: " + email.Value);
                 if (email == null)
                 {
                     return BadRequest(new { Message = "Email not found in access token." });
                 }
 
                 Role role = RoleUtils.FromString(emailAndRole.Roles[0]);
+                Console.WriteLine("Role: " + role);
                 if (RoleUtils.IsPatient(role)) {
+                    Console.WriteLine("Role is Patient.");
                     if (await _patientService.GetByEmailAsync(email) == null) {
+                        Console.WriteLine("Patient does not exist or does not have its user assigned correctly.");
                         return NotFound(new { Message = "Patient does not exist or does not have its user assigned correctly." });
                     }
                 }
 
                 var user = await _service.GetByEmailAsync(email);
+                Console.WriteLine("User: " + user);
 
                 if (user == null)
                 {

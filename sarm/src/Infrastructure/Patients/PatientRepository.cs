@@ -25,8 +25,18 @@ namespace DDDNetCore.Infrastructure.Patients
 
         public async Task<Patient?> GetByEmailAsync(Email email)
         {
-            return await _objs.
-                AsQueryable().Where(x=> email.Equals(x.ContactInformation.Email)).FirstOrDefaultAsync();
+            try {
+                Console.WriteLine("Email: " + email);
+                var a = await _objs
+                    .AsQueryable().Where(x=> email.Equals(x.ContactInformation.Email)).FirstOrDefaultAsync();
+
+                Console.WriteLine("Patient: " + a);
+
+                return a;
+            } catch (Exception e) {
+                Console.WriteLine("####################Error: " + e);
+                return null;
+            }
         }
         
         public async Task<List<Patient?>> GetByName(Name firstName, Name lastName)

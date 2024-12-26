@@ -2,6 +2,8 @@ using DDDNetCore.Domain.Patients;
 using DDDNetCore.Infrastructure.OperationRequests;
 using Domain.DbLogs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.Extensions.Configuration;
 
 using Domain.OperationTypes;
 
@@ -32,7 +34,6 @@ namespace Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Staff> Staffs { get; set; }
-        public DbSet<DbLog> Logs { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<SurgeryRoom> SurgeryRooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
