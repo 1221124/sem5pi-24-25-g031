@@ -46,6 +46,7 @@ export class PatientComponent implements OnInit {
 
   message: string = '';
   success: boolean = true;
+  viewMedicalRecordFlag: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -106,10 +107,12 @@ export class PatientComponent implements OnInit {
   }
 
   viewMedicalRecord() {
+    this.viewMedicalRecordFlag = true;
     console.log("Viewing medical record for:", this.patient);
   }
   
   closeMedicalRecord() {
+    this.viewMedicalRecordFlag = false;
     console.log('Closing medical record');
   }
 }

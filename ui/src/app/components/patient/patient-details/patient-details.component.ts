@@ -18,10 +18,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class PatientDetailsComponent implements OnInit {
   @Input() patient!: Patient;
   @Output() viewMedicalRecord = new EventEmitter<void>();
+  @Output() closeMedicalRecord = new EventEmitter<void>();
   
   message: string = '';
   success: boolean = true;
   accessToken: string = '';
+  emitOpen: boolean = false;
 
   constructor(
       private authService: AuthService,
@@ -53,7 +55,14 @@ export class PatientDetailsComponent implements OnInit {
 
   emitViewMedicalRecord() {
     console.log('Emitting viewMedicalRecord event:', this.patient);
+    this.emitOpen = true;
     this.viewMedicalRecord.emit();
+  }
+
+  emitCloseMedicalRecord() {
+    console.log('Emitting closeMedicalRecord event:', this.patient);
+    this.emitOpen = false;
+    this.closeMedicalRecord.emit();
   }
   
 }

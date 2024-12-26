@@ -8,6 +8,9 @@
   <div *ngIf="patient.EmergencyContact"><strong>EmergencyContact: </strong>{{ patient.EmergencyContact}}</div>
   <div>
     <strong>Medical Record: </strong>
-    <button (click)="emitViewMedicalRecord()">View</button>
+
+    <span *ngIf="!emitOpen"><button (click)="emitViewMedicalRecord()">View</button></span>
+    <span *ngIf="emitOpen"><button (click)="emitCloseMedicalRecord()">Close</button></span>
+    
   </div>
 </div>

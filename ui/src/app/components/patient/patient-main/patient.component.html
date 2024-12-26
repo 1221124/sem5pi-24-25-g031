@@ -8,8 +8,15 @@
     <app-patient-details 
       *ngIf="patient"
       [patient]="patient"
-      (viewMedicalRecord)="viewMedicalRecord()">
+      (viewMedicalRecord)="viewMedicalRecord()"
+      (closeMedicalRecord)="closeMedicalRecord()">
     </app-patient-details>
+
+    <!-- app-patient-medical-record component -->
+      <app-patient-medical-record
+        *ngIf="viewMedicalRecordFlag"
+        [patient]="patient">
+      </app-patient-medical-record>
 
     <!-- app-patient-contact-info component -->
     <app-patient-contact-info
@@ -25,12 +32,6 @@
       (patientDeleted)="patient = $event">
     </app-delete-account-button>
 
-    <!-- app-patient-medical-record component -->
-    <app-patient-medical-record
-      *ngIf="patient?.MedicalRecordNumber"
-      [patient]="patient"
-      (close)="closeMedicalRecord()">
-    </app-patient-medical-record>
 
   <!-- </ng-container> -->
   </div>

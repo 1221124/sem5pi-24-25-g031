@@ -22,3 +22,21 @@
 .end-slot {
   margin-left: 40px;
 }
+
+.patient-details button {
+  background-color: #5a9bd3; /* Light blue background */
+  border: none;
+  color: white;
+  padding: 5px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.patient-details button:hover {
+  background-color: #337085; /* Darker light blue on hover */
+}
