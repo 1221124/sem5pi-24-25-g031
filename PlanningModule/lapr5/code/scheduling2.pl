@@ -192,16 +192,7 @@ print_with_comma_separation([Elem|Rest]) :-
     write(', '),
     print_with_comma_separation(Rest).
 
-obtain_better_sol([], _, AgOpRoomBetter, LAgDoctorsBetter, TFinOp):-
-    % final_better_sol(Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp),
-    write('Final Result: AgOpRoomBetter=['),
-    print_with_comma_separation(AgOpRoomBetter),
-    write(']'), nl,
-    write('LAgDoctorsBetter=['),
-    print_with_comma_separation(LAgDoctorsBetter),
-    write(']'), nl,
-    write('TFinOp='), write(TFinOp), nl.
-
+obtain_better_sol([], _, _, _, _).
 obtain_better_sol([Room|LRooms], Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp):-
     obtain_better_sol_room(Room, Day),
     obtain_better_sol(LRooms, Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp).
@@ -209,14 +200,22 @@ obtain_better_sol([Room|LRooms], Day, AgOpRoomBetter, LAgDoctorsBetter, TFinOp):
 obtain_better_sol_room(Room, Day):-
     get_time(Ti),
     (obtain_better_sol1(Room, Day); true),
-    % retract(better_sol(Day, Room, AgOpRoomBetter, LAgDoctorsBetter, TFinOp)),
+    retract(better_sol(Day, Room, AgOpRoomBetter, LAgDoctorsBetter, TFinOp)),
+    % better_sol(Day, Room, AgOpRoomBetter, LAgDoctorsBetter, TFinOp),
+    write('FOR ROOM '), write(Room), nl,
+    write('AppointmentsGenerated=['),
+    print_with_comma_separation(AgOpRoomBetter),
+    write(']'), nl,
+    write('StaffAgendaGenerated=['),
+    print_with_comma_separation(LAgDoctorsBetter),
+    write(']'), nl,
+    write('BestFinishingTime: '), write(TFinOp), nl,
     get_time(Tf),
     T is Tf - Ti,
-    write('Tempo de geracao da solucao: '), write(T), nl.
-    % add_better_sol_to_final_result(Day, Room).
+    write('Time necessary for generating solution: '), write(T), nl,
+    write('SEPARATION'), nl.
 
-obtain_better_sol1(Room, Day):-
-    retract(better_sol(Day,Room,_,_,_)),
+obtain_better_sol1(Room, Day) :-
     asserta(better_sol(Day, Room, _, _, 1441)),
     findall(OpCode, surgery_in_room(OpCode, Room, Day), LOC),!,
     permutation(LOC, LOpCode),
@@ -254,26 +253,6 @@ update_better_sol(Day, Room, Agenda, LOpCode):-
     remove_equals(LDoctors1, LDoctors),
     list_doctors_agenda(Day, LDoctors, LDAgendas),
     asserta(better_sol(Day, Room, Agenda, LDAgendas, FinTime1)).
-
-% add_better_sol_to_final_result(Day, Room):-
-    %final_better_sol(Day, List of [start,end,surgery,room], LAgDoctorsBetter, List of [TFinOp,Room]),
-    % better_sol(Day, Room, Agenda, LDAgendas, FinTime),
-    % findall((Start, End, Surgery, Room), member((Start, End, Surgery, Room), Agenda), LAgOpRoomBetter),
-    % findall((Doctor, Agenda), member((Doctor, Agenda), LDAgendas), NewLAgDoctorsBetter),
-    % retract(final_better_sol(Day, CurrentAgOpRoomBetterList, _, CurrentFinTimeOfRoomList)),
-    %do a for each to each member in LAgOpRoomBetter and call insert_agenda(member, CurrentAgOpRoomBetterList, NewAgOpRoomBetterList),
-    %for each start, end, surgery, insert_agenda
-    % insert_agenda_list(LAgOpRoomBetter, CurrentAgOpRoomBetterList, NewAgOpRoomBetterList),
-    %replace LAgDoctorsBetter with NewLAgDoctorsBetter,
-    %add [FinTime, Room] to CurrentFinTimeOfRoomList,
-    % append([(FinTime, Room)], CurrentFinTimeOfRoomList, NewCurrentFinTimeOfRoomList),
-    %assert final_better_sol(Day, NewAgOpRoomBetterList, NewLAgDoctorsBetter, NewCurrentFinTimeOfRoomList).
-    % assert(final_better_sol(Day, NewAgOpRoomBetterList, NewLAgDoctorsBetter, NewCurrentFinTimeOfRoomList)).
-
-% insert_agenda_list([], Current, Current).
-% insert_agenda_list([(Start, End, Surgery, Room) | Rest], Current, New):-
-%     insert_agenda((Start, End, Surgery, Room), Current, TempList),
-%     insert_agenda_list(Rest, TempList, New).
 
 evaluate_final_time([],_,1441).
 evaluate_final_time([(_,Tfin,OpCode)|_],LOpCode,Tfin):-member(OpCode,LOpCode),!.
