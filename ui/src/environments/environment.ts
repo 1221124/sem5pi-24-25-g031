@@ -14,6 +14,7 @@ export const environment = {
   specializations: 'http://localhost:5500/api/Specializations',
   /*patient backend*/
   medicalConditions: 'http://localhost:4000/api/medical-condition',
+  allergies: 'http://localhost:4000/api/allergy',
   patientMedicalRecord: 'http://localhost:4000/api/patient-medical-record',
   /*algav*/
   prolog: 'http://localhost:5500/api/Prolog',

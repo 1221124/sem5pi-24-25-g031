@@ -31,6 +31,11 @@ import { PatientMedicalRecordModule } from './components/patient-medical-record-
 import { SpecializationsComponent } from './components/specializations/main-specialization/specializations.component';
 import { AddSpecializationComponent } from './components/specializations/add-specialization/add-specialization.component';
 import { ListSpecializationComponent } from './components/specializations/list-specialization/list-specialization.component';
+import { CreateAllergyComponent } from './components/allergy-module/create-allergy/create-allergy.component';
+import { DeleteAllergyComponent } from './components/allergy-module/delete-allergy/delete-allergy.component';
+import { AllergyComponent } from './components/allergy-module/allergy/allergy.component';
+import { AllergyTableComponent } from './components/allergy-module/allergy-table/allergy-table.component';
+import { UpdateAllergyComponent } from './components/allergy-module/update-allergy/update-allergy.component';
 
 @NgModule({
   imports: [
@@ -68,6 +73,13 @@ import { ListSpecializationComponent } from './components/specializations/list-s
     ListSpecializationComponent
   ],
   providers: [],
-  bootstrap: []
+  bootstrap: [],
+  declarations: [
+    CreateAllergyComponent,
+    DeleteAllergyComponent,
+    AllergyComponent,
+    AllergyTableComponent,
+    UpdateAllergyComponent
+  ]
 })
 export class AppModule { }
