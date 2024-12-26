@@ -7,6 +7,8 @@ import {CreateAllergyComponent} from '../create-allergy/create-allergy.component
 import {NgIf} from '@angular/common';
 import {AllergyTableComponent} from '../allergy-table/allergy-table.component';
 import {UpdateAllergyComponent} from '../update-allergy/update-allergy.component';
+import {DeleteAllergyComponent} from '../delete-allergy/delete-allergy.component';
+import {response} from 'express';
 
 @Component({
   selector: 'app-allergy',
@@ -18,6 +20,7 @@ import {UpdateAllergyComponent} from '../update-allergy/update-allergy.component
     CreateAllergyComponent,
     AllergyTableComponent,
     UpdateAllergyComponent,
+    DeleteAllergyComponent,
   ]
 })
 export class AllergyComponent {
@@ -185,6 +188,50 @@ export class AllergyComponent {
     this.navigateToAllergy();
   }
 
+  openDeleteModal(allergy: Allergy) {
+    this.selectedAllergyToDelete = allergy;
+    this.isDeleteModalOpen = true;
+
+    this.navigateTo('delete', { queryParams: { id: JSON.stringify(this.selectedAllergyToDelete) }});
+  }
+
+  async deleteAllergy() {
+    try {
+      const response = await this.service.delete(this.accessToken, this.selectedAllergyToDelete);
+
+      if (response.status !== 204) {
+        this.message = 'Error deleting allergy!';
+        this.success = false;
+        return;
+      }
+      await this.loadInitialData();
+
+      this.message = 'Allergy deleted successfully!';
+      this.success = true;
+    } catch (error) {
+      console.error('Error deleting allergy:', error);
+      this.message = 'Error deleting allergy!';
+      this.success = false;
+    } finally {
+      if (this.success) {
+        this.closeDeleteModal();
+      } else {
+        console.error('Error deleting allergy:', this.message);
+      }
+    }
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.selectedAllergyToDelete = {
+      id: '',
+      code: '',
+      name: '',
+      description: ''
+    };
+
+    this.navigateToAllergy();
+  }
 
   navigateTo(route: string, options?: { queryParams: any }) {
     this.router

@@ -9,7 +9,8 @@
     [allergies]="allergies"
     [displayAllergies]="displayAllergies"
     (filterAllergiesEvent)="loadInitialData($event)"
-    (updateAllergyEvent)="openUpdateModal($event)">
+    (updateAllergyEvent)="openUpdateModal($event)"
+    (deleteAllergyEvent)="openDeleteModal($event)">
   </app-allergy-table>
 
   <app-create-allergy
@@ -25,4 +26,11 @@
     (close)="closeUpdateModal()"
     (update)="updateAllergy()">
   </app-update-allergy>
+
+  <app-delete-allergy
+    *ngIf="isDeleteModalOpen"
+    [allergy]="selectedAllergyToDelete"
+    (closeDeleteEvent)="closeDeleteModal()"
+    (confirmDeleteEvent)="deleteAllergy()">
+  </app-delete-allergy>
 </div>
