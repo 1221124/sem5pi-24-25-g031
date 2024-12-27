@@ -2,7 +2,7 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 
 import {firstValueFrom} from 'rxjs';
-import {environment} from '../../../environments/environment';
+import {environment, httpOptions} from '../../../environments/environment';
 import {Allergy} from '../../models/allergy.model';
 
 @Injectable({
@@ -157,5 +157,17 @@ export class AllergyService {
           };
         }
       });
+  }
+
+  async validateICD11Code(code: string, accessToken: string) {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${accessToken}`);
+    const params = new HttpParams().set('code', code);
+    const options = { ...httpOptions, headers, params };
+
+    const response = await firstValueFrom(this.http.get<boolean>(`${environment.allergies}/validateCode`, { ...options, observe: 'response' }));
+
+    const ICD11_REGEX = /^[A-HJ-NP-Z0-9][A-HJ-NP-Z][0-9][A-HJ-NP-Z0-9](\.[A-HJ-NP-Z0-9]{1,2})?$/;
+
+    return response.body ? ICD11_REGEX.test(code) : false;
   }
 }
