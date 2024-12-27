@@ -1,0 +1,34 @@
+<div class="allergy-entry-form">
+  <h2>{{ isEdit ? 'Edit' : 'Add' }} Allergy Entry</h2>
+
+  <div class="form-group">
+    <label for="icd11Code">ICD-11 Code:</label>
+    <input
+      id="icd11Code"
+      type="text"
+      [(ngModel)]="newAllergy.ICD11Code"
+      (ngModelChange)="validateICD11Code($event)"
+      placeholder="Enter ICD-11 Code"
+      class="form-control"
+      [class.invalid]="isError || (!isEdit && !newAllergy.ICD11Code)"
+    />
+    <div *ngIf="isError" class="error-message">
+      {{ message }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>
+      <input
+        type="checkbox"
+        [(ngModel)]="newAllergy.notMeaningfulAnymore"
+      />
+      Mark as not meaningful anymore
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" [disabled]="isError || (!isEdit && !newAllergy.ICD11Code)" (click)="saveAllergy()">Save</button>
+    <button class="btn btn-secondary" (click)="closeAllergy.emit()">Cancel</button>
+  </div>
+</div>
