@@ -10,6 +10,9 @@ import {Staff} from "../../../models/staff.model";
 import {Specialization} from "../../../models/specialization.model";
 import {SpecializationsService} from "../../../services/specializations/specializations.service";
 import {RoomType} from "../../../models/room-type.model";
+import {HttpHeaders, HttpParams} from '@angular/common/http';
+import {firstValueFrom} from 'rxjs';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-specializations',
@@ -21,6 +24,7 @@ import {RoomType} from "../../../models/room-type.model";
 export class SpecializationsComponent {
 
   @Output() selectedSpecializationToCreate!: Specialization
+  @Output() selectedSpecializationToUpdate!: Specialization
 
   isCreateModalOpen = false;
 
@@ -37,6 +41,9 @@ export class SpecializationsComponent {
 
   message : string = '';
   isError : boolean = false;
+  isEditMode: boolean = false;
+
+  success: boolean = true;
 
   constructor(private service: SpecializationsService, private router: Router, private route: ActivatedRoute) { }
 
@@ -68,28 +75,74 @@ export class SpecializationsComponent {
 
     this.selectedSpecializationToCreate = specialization;
 
-    await this.service.post(this.selectedSpecializationToCreate, this.accessToken)
-        .then((response) => {
+    if (this.isEditMode) {
+      console.log("Updating staff:", this.specialization.Id);
+      await this.update(this.selectedSpecializationToUpdate);
+    } else {
+
+      console.log("Entrou");
+      this.service.post(this.selectedSpecializationToCreate, this.accessToken)
+        .then(response => {
           if (response.status === 201) {
-            this.message = 'Specialization added successfully!';
-            this.isError = false;
-          }
-          setTimeout(() => {
-            this.message = '';
-            this.isError = false;
-            this.router.navigate(['/admin/specializations']);
-          }, 3000);
-        })
-        .catch((error) => {
-          if (error.status === 400) {
-            this.message = 'Something went wrong! Please try again...';
-            this.isError = true;
+            this.message = 'Staff successfully created!';
+            this.success = true;
+            this.closeModal();
+            this.fetchSpecialization();
             setTimeout(() => {
-              this.message = '';
-              this.isError = false;
-              this.router.navigate(['/admin/specializations']);
+              this.success = false;
             }, 3000);
+          } else {
+            this.message = 'Unexpected response status: ' + response.status;
+            this.success = false;
           }
+        })
+        .catch(error => {
+          if (error.status === 401) {
+            this.message = 'You are not authorized to create Staff! Please log in...';
+            this.success = false;
+            setTimeout(() => {
+              this.router.navigate(['']);
+            }, 3000);
+            return;
+          } else if (error.status == 400) {
+            this.message = 'Bad Request... ' + error;
+          }
+          this.message = 'There was an error creating the Staff: ' + error;
+          this.success = false;
         });
+      await this.fetchSpecialization();
+    }
+  }
+
+  async update(specialization: Specialization) {
+
+    await this.service.update(specialization.Id, specialization, this.accessToken)
+      .then(response => {
+        if (response.status === 200) {
+          this.message = 'Staff successfully updated!';
+          this.success = true;
+        } else {
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+        }
+      })
+      .catch(error => {
+        if (error.status === 401) {
+          this.message = 'You are not authorized to update Staffs! Please log in...';
+          this.success = false;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        }
+        this.message = 'There was an error updating the Staff: ' + error;
+        this.success = false;
+      });
+    if(this.success) this.closeModal();
+    await this.fetchSpecialization();
+  }
+
+  private async fetchSpecialization() {
+
   }
 }
