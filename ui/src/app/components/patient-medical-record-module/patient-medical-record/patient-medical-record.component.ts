@@ -10,6 +10,10 @@ import { PatientMedicalRecordService } from '../../../services/patient-medical-r
 import { MedicalCondition } from '../../../models/medical-condition.model';
 import { MedicalConditionService } from '../../../services/medical-condition/medical-condition.service';
 import { FormsModule } from '@angular/forms';
+import {Allergy} from '../../../models/allergy.model';
+import {AllergyService} from '../../../services/allergy/allergy.service';
+import {ALL} from 'node:dns';
+import {AllergyEntryFormComponent} from '../allergy-entry-form/allergy-entry-form.component';
 
 @Component({
   selector: 'app-patient-medical-record',
@@ -18,6 +22,7 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     FormsModule,
     MedicalConditionEntryFormComponent,
+    AllergyEntryFormComponent,
   ],
   templateUrl: './patient-medical-record.component.html',
   styleUrls: ['./patient-medical-record.component.css'],
@@ -51,12 +56,16 @@ export class PatientMedicalRecordComponent implements OnInit {
   };
 
   medicalConditionPopup = false;
+  allergyPopup = false;
   medicalCondition: MedicalRecordEntry | null = null;
+  allergy: MedicalRecordEntry | null = null;
 
   searchQuery: string = '';
   filteredMedicalConditions: MedicalRecordEntry[] = [];
+  filteredAllergies: MedicalRecordEntry[] = [];
 
   allMedicalConditions: MedicalCondition[] = [];
+  allAlergies: Allergy[] = [];
 
   medicalRecordLoaded = false;
 
@@ -65,6 +74,7 @@ export class PatientMedicalRecordComponent implements OnInit {
   constructor(
     private service: PatientMedicalRecordService,
     private medicalConditionService: MedicalConditionService,
+    private allergyService: AllergyService,
     private authService: AuthService,
     private router: Router,
   ) {}
@@ -103,6 +113,7 @@ export class PatientMedicalRecordComponent implements OnInit {
     }
 
     await this.getAllMedicalConditions();
+    await this.getAllAllergies();
     await this.getPatientMedicalRecord();
   }
 
@@ -123,6 +134,28 @@ export class PatientMedicalRecordComponent implements OnInit {
     } catch (error) {
       this.authService.updateMessage(
         'Error getting all medical conditions: ' + error
+      );
+      this.authService.updateIsError(true);
+    }
+  }
+
+  async getAllAllergies(){
+    try {
+      if (this.allAlergies.length === 0) {
+        const allergies = await this.allergyService.get(this.accessToken);
+
+        if (allergies.status === 200 && allergies.body) {
+          this.allAlergies = allergies.body;
+        } else {
+          this.authService.updateMessage(
+            'Error getting all allergies: ' + allergies.status
+          );
+          this.authService.updateIsError(true);
+        }
+      }
+    } catch (error) {
+      this.authService.updateMessage(
+        'Error getting all allergies: ' + error
       );
       this.authService.updateIsError(true);
     }
@@ -162,13 +195,30 @@ export class PatientMedicalRecordComponent implements OnInit {
     return medicalCondition ? medicalCondition.name : 'Unknown';
   }
 
+  getAllergyName(ICD11Code: string): string {
+    const allergy = this.allAlergies.find(
+      (condition) => condition.code === ICD11Code
+    );
+    return allergy ? allergy.name : 'Unknown';
+  }
+
   searchMedicalConditions() {
     const query = this.searchQuery.toLowerCase();
 
     this.filteredMedicalConditions = this.patientMedicalRecord.MedicalConditions.filter(
       (condition) =>
         condition.ICD11Code.toLowerCase().includes(query.toLowerCase()) ||
-        this.allMedicalConditions.find((medicalCondition) => medicalCondition.code === condition.ICD11Code)?.name.toLowerCase().includes(query.toLowerCase())
+        this.allMedicalConditions.find((allergy) => allergy.code === condition.ICD11Code)?.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  searchAllergies() {
+    const query = this.searchQuery.toLowerCase();
+
+    this.filteredMedicalConditions = this.patientMedicalRecord.Allergies.filter(
+      (condition) =>
+        condition.ICD11Code.toLowerCase().includes(query.toLowerCase()) ||
+        this.allAlergies.find((medicalCondition) => medicalCondition.code === condition.ICD11Code)?.name.toLowerCase().includes(query.toLowerCase())
     );
   }
 
@@ -183,8 +233,19 @@ export class PatientMedicalRecordComponent implements OnInit {
     this.medicalConditionPopup = false;
   }
 
+  closeAllergyPopup() {
+    this.getPatientMedicalRecord();
+    this.allergy = null;
+    this.allergyPopup = false;
+  }
+
   closePopup() {
     this.router.navigate(['doctor/patients']);
     this.close.emit();
+  }
+
+  openAllergyPopup(allergyCondition?: MedicalRecordEntry) {
+    this.allergy = allergyCondition || null;
+    this.allergyPopup = true;
   }
 }
