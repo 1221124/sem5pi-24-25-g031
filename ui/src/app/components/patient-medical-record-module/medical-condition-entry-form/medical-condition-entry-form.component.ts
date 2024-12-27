@@ -21,6 +21,7 @@ export class MedicalConditionEntryFormComponent implements OnInit {
     Date: new Date(),
     notMeaningfulAnymore: false
   };
+
   @Input() patientMedicalRecord: PatientMedicalRecord = {
     Id: '',
     MedicalRecordNumber: '',
@@ -28,7 +29,8 @@ export class MedicalConditionEntryFormComponent implements OnInit {
     MedicalConditions: []
   }
   @Output() closeMedicalCondition = new EventEmitter<void>();
-  
+  @Output() closeAllergy = new EventEmitter<void>();
+
   accessToken: string = '';
 
   message: string = '';
@@ -109,7 +111,7 @@ export class MedicalConditionEntryFormComponent implements OnInit {
           return;
         }
       }
-      
+
       if (isValid) {
         this.message = 'ICD11 code is valid';
         this.isError = false;
