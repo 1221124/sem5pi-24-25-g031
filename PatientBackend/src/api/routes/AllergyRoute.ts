@@ -1,10 +1,11 @@
-import {Router} from "express";
+import {RequestHandler, Router} from "express";
 import {celebrate, Joi} from "celebrate";
 
 import {Container} from "typedi";
 import {IAllergyController} from "../../controllers/IControllers/IAllergyController";
 
 import config from "../../../config";
+import isAuth from "../middlewares/isAuth";
 
 const route = Router();
 
@@ -30,6 +31,17 @@ export default (app: Router) => {
 
     route.get('', (req, res, next) => ctrl.getAllAllergies(req, res, next));
 
+    route.get('/validateCode',
+        isAuth(['Doctor']) as unknown as RequestHandler,
+        celebrate({
+            query: Joi.object({
+                code: Joi.string().required()
+            })
+        }),
+
+        (req, res, next) => ctrl.validateICD11Code(req, res, next)
+    );
+    
     route.put('/:id',
         celebrate({
             params: Joi.object({
