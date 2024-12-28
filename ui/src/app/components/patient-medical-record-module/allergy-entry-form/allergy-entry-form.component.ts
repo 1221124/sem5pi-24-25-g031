@@ -48,7 +48,7 @@ export class AllergyEntryFormComponent {
     private allergyService: AllergyService) {
   }
 
-  async validateICD11Code(code: string) {
+  async  validateICD11Code(code: string) {
     try {
       if (!code || code === '') {
         this.message = 'ICD11 code cannot be empty';
@@ -56,6 +56,8 @@ export class AllergyEntryFormComponent {
         return;
       }
       let isValid = await this.allergyService.validateICD11Code(code, this.accessToken);
+
+      console.log(isValid);
 
       if (!this.isEdit) {
         isValid = isValid && this.patientMedicalRecord.Allergies.findIndex((mc) => mc.ICD11Code === code) === -1;
@@ -81,7 +83,7 @@ export class AllergyEntryFormComponent {
 
   async saveAllergy() {
     try {
-      const response = await this.service.saveMedicalCondition(this.patientMedicalRecord.Id, this.newAllergy, this.accessToken);
+      const response = await this.service.saveAllergy(this.patientMedicalRecord.Id, this.newAllergy, this.accessToken);
       if (response.status === 200 || response.status === 201) {
         this.message = 'Allergy saved successfully';
         this.isError = false;

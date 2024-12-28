@@ -166,7 +166,7 @@ export class AllergyService {
 
     const response = await firstValueFrom(this.http.get<boolean>(`${environment.allergies}/validateCode`, { ...options, observe: 'response' }));
 
-    const ICD11_REGEX = /^[A-HJ-NP-Z0-9][A-HJ-NP-Z][0-9][A-HJ-NP-Z0-9](\.[A-HJ-NP-Z0-9]{1,2})?$/;
+    const ICD11_REGEX = /^\w+DA\d{2}$/;
 
     return response.body ? ICD11_REGEX.test(code) : false;
   }

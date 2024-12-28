@@ -142,6 +142,7 @@ export class PatientMedicalRecordComponent implements OnInit {
   async getAllAllergies(){
     try {
       if (this.allAlergies.length === 0) {
+
         const allergies = await this.allergyService.get(this.accessToken);
 
         if (allergies.status === 200 && allergies.body) {
@@ -188,6 +189,7 @@ export class PatientMedicalRecordComponent implements OnInit {
     }
   }
 
+
   getMedicalConditionName(ICD11Code: string): string {
     const medicalCondition = this.allMedicalConditions.find(
       (condition) => condition.code === ICD11Code
@@ -215,7 +217,7 @@ export class PatientMedicalRecordComponent implements OnInit {
   searchAllergies() {
     const query = this.searchQuery.toLowerCase();
 
-    this.filteredMedicalConditions = this.patientMedicalRecord.Allergies.filter(
+    this.filteredAllergies = this.patientMedicalRecord.Allergies.filter(
       (condition) =>
         condition.ICD11Code.toLowerCase().includes(query.toLowerCase()) ||
         this.allAlergies.find((medicalCondition) => medicalCondition.code === condition.ICD11Code)?.name.toLowerCase().includes(query.toLowerCase())

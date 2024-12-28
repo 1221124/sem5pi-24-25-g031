@@ -25,15 +25,15 @@ export class PatientMedicalRecordService {
 
       console.log('Getting patient medical record:', patient.MedicalRecordNumber);
       console.log('Options:', options);
-      
+
       return await firstValueFrom(this.http.get<any>(`${environment.patientMedicalRecord}/medical-record-number`, options))
         .then(response => {
           console.log('Raw API response:', response);
-      
+
           if (!response || !response.body) {
             throw new Error('API response body is empty or undefined.');
           }
-    
+
           const patientMedicalRecord: PatientMedicalRecord = {
             Id: response.body.id || '',
             MedicalRecordNumber: response.body.medicalRecordNumber?.props?.value || '',
@@ -48,9 +48,9 @@ export class PatientMedicalRecordService {
               notMeaningfulAnymore: condition?.props?.notMeaningfulAnyMore || false
             })) || []
           };
-      
+
           console.log('Mapped PatientMedicalRecord:', patientMedicalRecord);
-      
+
           return {
             status: response.status,
             body: {
@@ -61,7 +61,7 @@ export class PatientMedicalRecordService {
         .catch((error: HttpErrorResponse | Error) => {
           console.error('Error during API request:', error);
           throw error;
-        });      
+        });
     } catch (error) {
       throw new Error('Error getting patient medical record: ' + error);
     }
@@ -119,4 +119,22 @@ export class PatientMedicalRecordService {
     }
   }
 
+  async saveAllergy(id: string, newAllergy: MedicalRecordEntry, accessToken: string) {
+    try {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      const dto = {
+        "code": newAllergy.ICD11Code,
+        "notMeaningfulAnymore": newAllergy.notMeaningfulAnymore
+      };
+
+      const options = { ...httpOptions, headers };
+
+      return await firstValueFrom(this.http.patch(`${environment.patientMedicalRecord}/allergy/${id}`, dto, options))
+    } catch (error) {
+      throw new Error('Error saving medical condition: ' + error);
+    }
+  }
 }
