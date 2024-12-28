@@ -1,5 +1,5 @@
-﻿import {ICD11Code} from "../shared/ICD11Code";
-import {ValueObject} from "../../core/domain/ValueObject";
+﻿import { ICD11Code } from "../shared/ICD11Code";
+import { ValueObject } from "../../core/domain/ValueObject";
 
 export class MedicalRecordEntryProps {
     code: ICD11Code;
@@ -8,24 +8,16 @@ export class MedicalRecordEntryProps {
 }
 
 export class MedicalRecordEntry extends ValueObject<MedicalRecordEntryProps> {
-    get code (): ICD11Code {
+    get code(): ICD11Code {
         return this.props.code;
     }
 
-    get date (): Date {
+    get date(): Date {
         return this.props.date;
     }
 
-    set date (date: Date) {
-        this.props.date = date;
-    }
-
-    get notMeaningfulAnyMore (): boolean {
+    get notMeaningfulAnyMore(): boolean {
         return this.props.notMeaningfulAnyMore;
-    }
-
-    set notMeaningfulAnyMore (notMeaningfulAnyMore: boolean) {
-        this.props.notMeaningfulAnyMore = notMeaningfulAnyMore;
     }
     
     constructor(props: MedicalRecordEntryProps) {
@@ -33,25 +25,39 @@ export class MedicalRecordEntry extends ValueObject<MedicalRecordEntryProps> {
     }
 
     public static create(arg0: ICD11Code, arg1: Date) {
-        return new MedicalRecordEntry({code: arg0, date: arg1, notMeaningfulAnyMore: false});
+        return new MedicalRecordEntry({ code: arg0, date: arg1, notMeaningfulAnyMore: false });
     }
 
     public static createWithNotMeaningfulAnyMore(arg0: ICD11Code, arg1: Date, arg2: boolean | string) {
         if (typeof arg2 === 'string') {
             console.log("arg2 = " + arg2);
-            arg2 = (arg2 === 'true') ? true : false as boolean;
+            arg2 = (arg2 === 'true') ? true : false;
         }
         console.log("arg2 as bool = " + arg2);
-        return new MedicalRecordEntry({code: arg0, date: arg1, notMeaningfulAnyMore: arg2});
+        return new MedicalRecordEntry({ code: arg0, date: arg1, notMeaningfulAnyMore: arg2 });
     }
 
-    public toggleNotMeaningfulAnyMore(notMeaningfulAnyMore: boolean) {
+    public toggleNotMeaningfulAnyMore(notMeaningfulAnyMore: boolean): MedicalRecordEntry {
         if (this.props.notMeaningfulAnyMore !== notMeaningfulAnyMore) {
-            this.notMeaningfulAnyMore = notMeaningfulAnyMore;
+            return new MedicalRecordEntry({
+                ...this.props,
+                notMeaningfulAnyMore
+            });
         }
+        return this;
     }
 
-    public toString() {
+    public updateDate(newDate: Date): MedicalRecordEntry {
+        if (this.props.date.getTime() !== newDate.getTime()) {
+            return new MedicalRecordEntry({
+                ...this.props,
+                date: newDate
+            });
+        }
+        return this;
+    }
+
+    public toString(): string {
         return `${this.props.code.toString()}_${this.props.date.toISOString()}`;
     }
 }
