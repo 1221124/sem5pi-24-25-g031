@@ -8,6 +8,7 @@ import {Result} from "../core/logic/Result";
 import {AllergyDto} from "../dto/allergy/AllergyDto";
 import {AllergyMap} from "../mappers/AllergyMap";
 import {UpdatingAllergyDto} from "../dto/allergy/UpdatingAllergyDto";
+import {ICD11Code} from "../domain/shared/ICD11Code";
 
 @Service()
 
@@ -77,6 +78,20 @@ export default class AllergyService implements IAllergyService {
             await this.allergyRepo.delete(allergy);
 
             return Result.ok<void>();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    public async validateICD11Code(code: string): Promise<Result<boolean>> {
+        try {
+            const icd11Code = ICD11Code.create(code);
+            if (icd11Code.isFailure) {
+                return Result.fail<boolean>(icd11Code.error);
+            }
+            const exists = await this.allergyRepo.findByCode(icd11Code.getValue());
+            //returns true if the code exists, false otherwise
+            return Result.ok<boolean>(exists != null);
         } catch (error) {
             throw error;
         }
