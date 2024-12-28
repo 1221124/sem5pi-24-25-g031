@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj": {}
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj": {
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
         "projectName": "DDDNetCore.Tests",
-        "projectPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
-        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\DDDNetCore.Tests\\obj\\",
+        "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\DDDNetCore.Tests\\DDDNetCore.Tests.csproj",
+        "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\DDDNetCore.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -26,8 +26,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {
-                "projectPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj"
+              "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj": {
+                "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj"
               }
             }
           }
@@ -40,7 +40,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
+          "auditMode": "all"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -112,21 +112,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj": {
+    "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
+        "projectUniqueName": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj",
         "projectName": "DDDNetCore",
-        "projectPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\DDDNetCore.csproj",
-        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\sarm\\obj\\",
+        "projectPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\DDDNetCore.csproj",
+        "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Utilizador\\Desktop\\Faculdade\\3º Ano\\3º Ano - 1º Semestre\\PI - Projeto Integrador\\sem5pi24-25-g031\\sarm\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -148,7 +148,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
+          "auditMode": "all"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -232,7 +232,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

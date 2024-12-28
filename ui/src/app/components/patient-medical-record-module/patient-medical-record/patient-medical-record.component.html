@@ -6,9 +6,7 @@
   <h1>Patient Medical Record</h1>
   <p><strong>Medical Record Number:</strong> {{ patientMedicalRecord.MedicalRecordNumber }}</p>
 
-
   <h1>Medical Conditions</h1>
-
   <div class="search-bar">
     <label for="search">Search Medical Conditions (by Code or Name):</label>
     <input
@@ -19,7 +17,6 @@
       placeholder="Enter code or name"
     />
   </div>
-
   <table class="medical-record-table">
     <thead>
       <tr>
@@ -42,11 +39,9 @@
       </tr>
     </tbody>
   </table>
-
   <button *ngIf="!isPatient" class="add-btn" (click)="openMedicalConditionPopup()">Add Medical Condition</button>
 
   <h1>Allergies</h1>
-
   <div class="search-bar">
     <label for="search">Search Allergies (by Code or Name):</label>
     <input
@@ -57,35 +52,30 @@
       placeholder="Enter code or name"
     />
   </div>
-
-
   <table class="medical-record-table">
     <thead>
-    <tr>
-      <th>ICD-11 Code</th>
-      <th>Name</th>
-      <th>Last Updated</th>
-      <th>Irrelevant</th>
-      <th *ngIf="!isPatient">Actions</th>
-    </tr>
+      <tr>
+        <th>ICD-11 Code</th>
+        <th>Name</th>
+        <th>Last Updated</th>
+        <th>Irrelevant</th>
+        <th *ngIf="!isPatient">Actions</th>
+      </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let condition of filteredAllergies">
-      <td>{{ condition.ICD11Code }}</td>
-      <td>{{ getAllergyName(condition.ICD11Code) }}</td>
-      <td>{{ condition.Date | date: 'medium' }}</td>
-      <td>{{ condition.notMeaningfulAnymore ? 'Yes' : 'No' }}</td>
-      <td *ngIf="!isPatient">
-        <button class="edit-btn" (click)="openAllergyPopup(condition)">Edit</button>
-      </td>
-    </tr>
+      <tr *ngFor="let condition of filteredAllergies">
+        <td>{{ condition.ICD11Code }}</td>
+        <td>{{ getAllergyName(condition.ICD11Code) }}</td>
+        <td>{{ condition.Date | date: 'medium' }}</td>
+        <td>{{ condition.notMeaningfulAnymore ? 'Yes' : 'No' }}</td>
+        <td *ngIf="!isPatient">
+          <button class="edit-btn" (click)="openAllergyPopup(condition)">Edit</button>
+        </td>
+      </tr>
     </tbody>
   </table>
-
   <button *ngIf="!isPatient" class="add-btn" (click)="openAllergyPopup()">Add Allergies</button>
-
 </div>
-
 <div class="overlay" [ngClass]="{ active: medicalConditionPopup }">
   <app-medical-condition-entry-form
     *ngIf="medicalConditionPopup"
@@ -93,9 +83,7 @@
     [patientMedicalRecord]="patientMedicalRecord"
     (closeMedicalCondition)="closeMedicalConditionPopup()">
   </app-medical-condition-entry-form>
-
 </div>
-
 <div class="overlay" [ngClass]="{ active: allergyPopup }">
   <app-allergy-entry-form
     *ngIf="allergyPopup"
@@ -103,5 +91,4 @@
     [patientMedicalRecord]="patientMedicalRecord"
     (closeAllergy)="closeAllergyPopup()">
   </app-allergy-entry-form>
-
 </div>

@@ -1,12 +1,13 @@
 .patient-medical-record.full-page {
   display: flex;
   flex-direction: column;
-  justify-content: start;
   align-items: center;
-  height: 100vh;
   padding: 20px;
   background-color: #f9f9f9;
   box-sizing: border-box;
+  height: auto;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
 .medical-record-table {
@@ -70,7 +71,7 @@
 }
 
 .overlay.active {
-  display: flex; 
+  display: flex;
 }
 
 .back-btn {
