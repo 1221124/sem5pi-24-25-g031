@@ -10,7 +10,7 @@ if (!envFound) {
   throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
-module.exports = {
+export default {
   /**
    * Your favorite port : optional change to 4000 by JRT
    */
