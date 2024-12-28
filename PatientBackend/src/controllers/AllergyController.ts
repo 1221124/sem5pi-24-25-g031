@@ -125,4 +125,20 @@ export default class AllergyController {
         }
     }
 
+    /**
+     * Validates an ICD-11 code.
+     * @param req - Express request object.
+     * @param res - Express response object.
+     * @param next - Express next middleware function.
+     */
+    public async validateICD11Code(req: Request, res: Response, next: NextFunction) {
+        try {
+            const code = req.query.code as string;
+            const isValid = await this.allergyService.validateICD11Code(code);
+            return res.json({ isValid });
+        } catch (error) {
+            return next(error);
+        }
+    }
+
 }
