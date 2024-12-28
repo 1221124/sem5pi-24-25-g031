@@ -204,12 +204,12 @@ export const routes: Route[] = [
               import('./components/patient-medical-record-module/patient-medical-record.module')
                 .then((m) => m.PatientMedicalRecordModule)
           },
-          // {
-          //   path: 'allergy',
-          //   loadChildren: () =>
-          //     import('./components/patient-medical-record-module/patient-medical-record.module')
-          //     .then((m) => m.PatientMedicalRecordModule)
-          // },
+          {
+           path: 'allergy',
+            loadChildren: () =>
+              import('./components/patient-medical-record-module/patient-medical-record.module')
+                .then((m) => m.PatientMedicalRecordModule)
+          },
         ]
       }
     ]
