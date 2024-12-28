@@ -20,10 +20,10 @@
     "esModuleInterop": true
   },
   "include": [
-    "./src/**/*", "index.js"
+    "./src/**/*",
+    "index.js"
   ],
   "exclude": [
     "node_modules",
-    "tests"
   ]
 }
