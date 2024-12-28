@@ -5,6 +5,7 @@ import { PatientMedicalRecord } from "../domain/patient-medical-record/PatientMe
 import { PatientMedicalRecordId } from "../domain/patient-medical-record/PatientMedicalRecordId";
 import { MedicalRecordNumber } from "../domain/patient-medical-record/MedicalRecordNumber";
 import { MedicalRecordEntry } from "../domain/medical-record-entry/MedicalRecordEntry";
+import { CreatingPatientMedicalRecordDto } from "../dto/patient-medical-record/CreatingPatientMedicalRecordDto";
 
 export class PatientMedicalRecordMap {
     public static toDto(patientMedicalRecord: PatientMedicalRecord): PatientMedicalRecordDto {
@@ -49,8 +50,8 @@ export class PatientMedicalRecordMap {
         return patientMedicalRecordOrError.getValue();
     }
   
-    public static async toDomainfromCreating(raw: any): Promise<PatientMedicalRecord> {
-        const medicalRecordNumberOrError = MedicalRecordNumber.create(raw.medicalRecordNumber);
+    public static toDomainfromCreating(raw: CreatingPatientMedicalRecordDto): PatientMedicalRecord {
+        const medicalRecordNumberOrError = MedicalRecordNumber.create(raw.medicalRecordNumber.getValue());
         if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
         const medicalRecordNumber = medicalRecordNumberOrError.getValue();
 

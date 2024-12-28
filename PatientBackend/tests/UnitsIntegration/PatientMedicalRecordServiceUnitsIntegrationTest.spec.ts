@@ -39,9 +39,7 @@ describe('PatientMedicalRecordService Integration Tests with Repository Isolatio
 
     it('should create a new patient medical record', async () => {
         // Arrange
-        const newRecordDto: CreatingPatientMedicalRecordDto = {
-            medicalRecordNumber
-        };
+        const newRecordDto = CreatingPatientMedicalRecordDto.create(medicalRecordNumber.getValue()).getValue();
 
         const mockPatientRecord: PatientMedicalRecord = PatientMedicalRecord.create({
             medicalRecordNumber,
@@ -49,9 +47,9 @@ describe('PatientMedicalRecordService Integration Tests with Repository Isolatio
             medicalConditions: [],
         }, domainId).getValue();
 
-        vi.spyOn(PatientMedicalRecordMap, 'toDomainfromCreating').mockResolvedValue(mockPatientRecord);
+        // vi.spyOn(PatientMedicalRecordMap, 'toDomainfromCreating').mockResolvedValue(mockPatientRecord);
 
-        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(null);
+        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(Promise.resolve(null));
         patientMedicalRecordRepoMock.save.mockReturnValue(Promise.resolve(mockPatientRecord));
 
         // Act
@@ -59,14 +57,12 @@ describe('PatientMedicalRecordService Integration Tests with Repository Isolatio
 
         // Assert
         expect(result.isSuccess).toBe(true);
-        expect(result.getValue().medicalRecordNumber).toBe(medicalRecordNumber);
+        expect(result.getValue().medicalRecordNumber.getValue()).toBe(medicalRecordNumber.getValue());
     });
 
     it('should return an error if the patient medical record already exists', async () => {
         // Arrange
-        const newRecordDto: CreatingPatientMedicalRecordDto = {
-            medicalRecordNumber
-        };
+        const newRecordDto = CreatingPatientMedicalRecordDto.create(medicalRecordNumber.getValue()).getValue();
 
         const existingPatientRecord: PatientMedicalRecord = PatientMedicalRecord.create({
             medicalRecordNumber,
@@ -105,7 +101,7 @@ describe('PatientMedicalRecordService Integration Tests with Repository Isolatio
 
         // Assert
         expect(result.isSuccess).toBe(true);
-        expect(result.getValue().medicalRecordNumber).toBe(medicalRecordNumber);
+        expect(result.getValue().medicalRecordNumber.getValue()).toBe(medicalRecordNumber.getValue());
     });
 
     it('should return an error if patient medical record not found for update', async () => {
@@ -170,12 +166,12 @@ describe('PatientMedicalRecordService Integration Tests with Repository Isolatio
 
         // Assert
         expect(result.isSuccess).toBe(true);
-        expect(result.getValue().medicalRecordNumber).toBe(medicalRecordNumber);
+        expect(result.getValue().medicalRecordNumber.getValue()).toBe(medicalRecordNumber.getValue());
     });
 
     it('should return false if the patient medical record does not exist', async () => {
         // Arrange
-        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(null);
+        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(Promise.resolve(null));
 
         // Act
         const result = await service.getByMedicalRecordNumber(medicalRecordNumber.getValue());

@@ -19,7 +19,7 @@ export default interface IPatientMedicalRecordRepo extends Repo<PatientMedicalRe
 
 
   /** */
-  findByMedicalRecordNumber(number: MedicalRecordNumber): Promise<PatientMedicalRecord> | null;
+  findByMedicalRecordNumber(number: MedicalRecordNumber):  Promise<PatientMedicalRecord | null>;
 
   /**
    * Retrieves all medical conditions from the repository.

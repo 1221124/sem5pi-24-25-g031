@@ -88,7 +88,7 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
 
       if(existsOrNot != null) return Result.fail<PatientMedicalRecordDto>("Patient medical record already exists.");
       
-      const patientMedicalRecord = await PatientMedicalRecordMap.toDomainfromCreating(dto);
+      const patientMedicalRecord = PatientMedicalRecordMap.toDomainfromCreating(dto);
   
       console.log("1 patientMedicalRecord: ", patientMedicalRecord);
       

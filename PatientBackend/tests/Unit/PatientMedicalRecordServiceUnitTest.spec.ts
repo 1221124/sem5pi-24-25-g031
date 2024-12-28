@@ -39,9 +39,7 @@ describe('PatientMedicalRecordService Unit Tests with Total Isolation', () => {
 
     it('should create a new patient medical record', async () => {
         // Arrange
-        const newRecordDto: CreatingPatientMedicalRecordDto = {
-            medicalRecordNumber
-        };
+        const newRecordDto = CreatingPatientMedicalRecordDto.create(medicalRecordNumber.getValue()).getValue();
 
         const mockPatientRecord: PatientMedicalRecord = PatientMedicalRecord.create({
             medicalRecordNumber,
@@ -49,9 +47,7 @@ describe('PatientMedicalRecordService Unit Tests with Total Isolation', () => {
             medicalConditions: [],
         }, domainId).getValue();
 
-        vi.spyOn(PatientMedicalRecordMap, 'toDomainfromCreating').mockResolvedValue(mockPatientRecord);
-
-        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(null);
+        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(Promise.resolve(null));
         patientMedicalRecordRepoMock.save.mockReturnValue(Promise.resolve(mockPatientRecord));
 
         // Act
@@ -59,14 +55,12 @@ describe('PatientMedicalRecordService Unit Tests with Total Isolation', () => {
 
         // Assert
         expect(result.isSuccess).toBe(true);
-        expect(result.getValue().medicalRecordNumber).toBe(medicalRecordNumber);
+        expect(result.getValue().medicalRecordNumber.getValue()).toBe(medicalRecordNumber.getValue());
     });
 
     it('should return an error if the patient medical record already exists', async () => {
         // Arrange
-        const newRecordDto: CreatingPatientMedicalRecordDto = {
-            medicalRecordNumber
-        };
+        const newRecordDto = CreatingPatientMedicalRecordDto.create(medicalRecordNumber.getValue()).getValue();
 
         const existingPatientRecord: PatientMedicalRecord = PatientMedicalRecord.create({
             medicalRecordNumber,
@@ -105,7 +99,7 @@ describe('PatientMedicalRecordService Unit Tests with Total Isolation', () => {
 
         // Assert
         expect(result.isSuccess).toBe(true);
-        expect(result.getValue().medicalRecordNumber).toBe(medicalRecordNumber);
+        expect(result.getValue().medicalRecordNumber.getValue()).toBe(medicalRecordNumber.getValue());
     });
 
     it('should return an error if patient medical record not found for update', async () => {
