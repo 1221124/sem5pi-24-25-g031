@@ -5,6 +5,7 @@ import {Document, FilterQuery, Model } from "mongoose";
 import {IAllergyPersistence} from "../dataschema/IAllergyPersistence";
 import {AllergyId} from "../domain/allergy/AllergyId";
 import {AllergyMap} from "../mappers/AllergyMap";
+import {ICD11Code} from "../domain/shared/ICD11Code";
 
 @Service()
 export default class AllergyRepo implements IAllergyRepo {
@@ -95,6 +96,17 @@ export default class AllergyRepo implements IAllergyRepo {
         }
     }
 
+    public async findByCode(code: ICD11Code): Promise<Allergy | null> {
+        const query = { code: code.toString() };
+        const allergyRecord = await this.allergySchema.findOne(query as FilterQuery<IAllergyPersistence & Document>);
+
+        if (allergyRecord != null) {
+            return AllergyMap.toDomain(allergyRecord);
+        } else {
+            return null;
+        }
+    }
+    
     public async delete(allergy: Allergy): Promise<void> {
         const query = { allergyId: allergy.id.toString() };
 
