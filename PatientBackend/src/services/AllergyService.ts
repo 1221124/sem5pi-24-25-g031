@@ -17,6 +17,24 @@ export default class AllergyService implements IAllergyService {
         @Inject(config.repos.allergy.name) private allergyRepo: IAllergyRepo
     ) {}
 
+    /**
+     * Retrieves a medical condition by its ID.
+     */
+    public async getAllergyById(id: string): Promise<Result<AllergyDto>> {
+        try {
+            const allergy = await this.allergyRepo.findByDomainId(id);
+            
+            if (!allergy) {
+                return Result.fail<AllergyDto>("Allergy not found");
+            }
+
+            const allergyDTO = AllergyMap.toDto(allergy);
+            return Result.ok<AllergyDto>(allergyDTO);
+        } catch (error) {
+            throw error; // Rethrow to be handled by the controller.
+        }
+    }
+    
     public async createAllergy(dto: CreatingAllergyDto): Promise<Result<AllergyDto>> {
         try {
             const creatingAllergy = AllergyMap.toDomain(dto);

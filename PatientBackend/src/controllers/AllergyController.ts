@@ -8,6 +8,7 @@ import {Result} from "../core/logic/Result";
 import {CreatingAllergyDto} from "../dto/allergy/CreatingAllergyDto";
 import {UpdatingAllergyDto} from "../dto/allergy/UpdatingAllergyDto";
 import {Description} from "../domain/shared/Description";
+import {MedicalConditionDto} from "../dto/medical-condition/MedicalConditionDto";
 
 
 @Service()
@@ -37,6 +38,22 @@ export default class AllergyController {
             return res.status(201).json(allergyDTO);
         } catch (error) {
             console.error("CONTROLLER: Error creating allergy: ", error);
+            return next(error);
+        }
+    }
+
+    public async getAllergyById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id;
+            const resultOrError = await this.allergyService.getAllergyById(id) as Result<AllergyDto>;
+
+            if (resultOrError.isFailure) {
+                return res.status(404).send(resultOrError.errorValue());
+            }
+
+            const allergyDTO = resultOrError.getValue();
+            return res.json(allergyDTO);
+        } catch (error) {
             return next(error);
         }
     }

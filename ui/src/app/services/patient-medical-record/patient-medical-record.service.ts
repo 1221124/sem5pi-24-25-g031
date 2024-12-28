@@ -120,6 +120,9 @@ export class PatientMedicalRecordService {
   }
 
   async saveAllergy(id: string, newAllergy: MedicalRecordEntry, accessToken: string) {
+    console.log(id);
+    console.log(newAllergy);
+    console.log(accessToken);
     try {
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${accessToken}`
