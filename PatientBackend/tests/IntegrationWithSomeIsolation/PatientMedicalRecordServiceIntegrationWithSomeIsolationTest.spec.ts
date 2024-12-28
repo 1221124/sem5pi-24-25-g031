@@ -18,7 +18,7 @@ const patientMedicalRecordRepoMock = {
     findAll: vi.fn(),
 };
 
-describe('PatientMedicalRecordService Unit Tests with Total Isolation', () => {
+describe('PatientMedicalRecordService Integration Tests with Repository Isolation', () => {
     let service: PatientMedicalRecordService;
     let domainId: UniqueEntityID;
     let medicalRecordNumber: MedicalRecordNumber;
@@ -74,7 +74,7 @@ describe('PatientMedicalRecordService Unit Tests with Total Isolation', () => {
             medicalConditions: [],
         }, domainId).getValue();
 
-        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(Promise.resolve(existingPatientRecord));
+        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(existingPatientRecord);
 
         // Act
         const result = await service.create(newRecordDto);
@@ -149,6 +149,36 @@ describe('PatientMedicalRecordService Unit Tests with Total Isolation', () => {
 
         // Act
         const result = await service.delete(domainId.toString());
+
+        // Assert
+        expect(result.isFailure).toBe(true);
+        expect(result.error).toBe('Patient medical record not found');
+    });
+
+    it('should return true if the patient medical record exists', async () => {
+        // Arrange
+        const existingPatientRecord: PatientMedicalRecord = PatientMedicalRecord.create({
+            medicalRecordNumber: medicalRecordNumber,
+            allergies: [],
+            medicalConditions: [],
+        }, domainId).getValue();
+
+        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(existingPatientRecord);
+
+        // Act
+        const result = await service.getByMedicalRecordNumber(medicalRecordNumber.getValue());
+
+        // Assert
+        expect(result.isSuccess).toBe(true);
+        expect(result.getValue().medicalRecordNumber).toBe(medicalRecordNumber);
+    });
+
+    it('should return false if the patient medical record does not exist', async () => {
+        // Arrange
+        patientMedicalRecordRepoMock.findByMedicalRecordNumber.mockReturnValue(null);
+
+        // Act
+        const result = await service.getByMedicalRecordNumber(medicalRecordNumber.getValue());
 
         // Assert
         expect(result.isFailure).toBe(true);

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { MedicalRecordEntry } from '../../src/domain/medical-record-entry/MedicalRecordEntry';
 import { ICD11Code } from '../../src/domain/shared/ICD11Code';
 
-describe("MedicalRecordEntry", () => {
+describe("MedicalRecordEntry Unit Tests", () => {
     let icd11Code;
     let date;
     let medicalRecordEntry;
