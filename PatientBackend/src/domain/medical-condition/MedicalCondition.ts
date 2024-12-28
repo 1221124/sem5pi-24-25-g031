@@ -23,7 +23,11 @@ export class MedicalCondition extends AggregateRoot<MedicalConditionProps> {
     // }
 
     get medicalConditionId(): MedicalConditionId {
-        return MedicalConditionId.caller(this.id);
+        if (this.id instanceof MedicalConditionId ) {
+            return this.id as MedicalConditionId; 
+        };
+
+        throw new Error('ID is not a MedicalConditionId');
     }
 
     get code(): ICD11Code {
