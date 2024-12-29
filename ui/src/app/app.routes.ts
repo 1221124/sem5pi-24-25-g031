@@ -96,6 +96,12 @@ export const routes: Route[] = [
         loadChildren: () =>
           import('./components/specializations/specializations.module')
             .then((m) => m.SpecializationsModule),
+      },
+      {
+        path: 'update',
+        loadChildren: () =>
+          import('./components/specializations/specializations.module')
+            .then((m) => m.SpecializationsModule),
       }
     ]
   },
