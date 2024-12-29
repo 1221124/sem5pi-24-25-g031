@@ -23,6 +23,7 @@ using Infrastructure.DbLogs;
 using Microsoft.OpenApi.Models;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.Specializations;
 using Infrastructure.Appointments;
 using DDDNetCore.Infrastructure.SurgeryRooms;
 using DDDNetCore.Domain.Surgeries;
@@ -30,6 +31,7 @@ using DDDNetCore.Domain.SurgeryRooms;
 using DDDNetCore.PrologIntegrations;
 using DDDNetCore.src.Domain.RoomTypes;
 using DDDNetCore.src.Infrastructure.RoomTypes;
+using DDDNetCore.src.Infrastructure.Specializations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -123,6 +125,9 @@ builder.Services.AddTransient<SurgeryRoomService>();
 
 builder.Services.AddTransient<IRoomTypeRepository, RoomTypeRepository>();
 builder.Services.AddTransient<RoomTypeService>();
+
+builder.Services.AddTransient<ISpecializationRepository, SpecializationRepository>();
+builder.Services.AddTransient<SpecializationService>();
 
 // builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
 
