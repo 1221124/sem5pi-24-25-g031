@@ -62,39 +62,14 @@ namespace DDDNetCore.Domain.Specializations
             }
         }
 
-        public async Task<SNOMEDCTCode> AssignCodeAsync()
-        {
-            try
-            {
-                var lastCode = await _repository.GetLastCodeAsync();
-
-                int lastNumber = 0;
-                if (!string.IsNullOrEmpty(lastCode) && lastCode.Trim().ToLower().StartsWith("CT"))
-                {
-                    if (int.TryParse(lastCode[4..], out var parsedNumber))
-                    {
-                        lastNumber = parsedNumber;
-                    }
-                }
-
-                int nextNumber = lastNumber + 1;
-                return new SNOMEDCTCode($"CT{nextNumber}");
-            }
-            catch (Exception)
-            {
-                return new SNOMEDCTCode("CT1"); // Retorna um código de especialização padrão
-            }
-        }
-
-
-        public async Task<SpecializationDto> AddAsync(CreatingSpecializationDto dto, SNOMEDCTCode SNOMEDCTCode)
+        public async Task<SpecializationDto> AddAsync(CreatingSpecializationDto dto)
         {
             try
             {
                 if (dto == null)
                     return null;
 
-                var specialization = new Specialization(SNOMEDCTCode, dto.Name, dto.Description);
+                var specialization = new Specialization(dto.SNOMEDCTCode, dto.Name, dto.Description);
 
                 await _repository.AddAsync(specialization);
                 await _unitOfWork.CommitAsync();
@@ -105,6 +80,22 @@ namespace DDDNetCore.Domain.Specializations
             {
                 return null;
             }
+        }
+
+
+        public async Task<SpecializationDto> UpdateAsync(SpecializationDto dto)
+        {
+            var specialization = await this._repository.GetByIdAsync(new SpecializationId(dto.Id));
+
+            if (specialization == null)
+                return null;   
+
+            specialization.Name = dto.Name;
+            specialization.Description = dto.Description;
+
+            await this._unitOfWork.CommitAsync();
+
+            return SpecializationMapper.ToDto(specialization);
         }
     }
 }
