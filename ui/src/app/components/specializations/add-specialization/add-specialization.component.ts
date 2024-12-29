@@ -14,7 +14,7 @@ import {Router} from '@angular/router';
   templateUrl: './add-specialization.component.html',
   styleUrl: './add-specialization.component.css'
 })
-export class AddSpecializationComponent implements OnInit{
+export class AddSpecializationComponent implements OnInit {
 
   @Input() specialization!: Specialization;
 
@@ -30,7 +30,7 @@ export class AddSpecializationComponent implements OnInit{
   constructor(private authService: AuthService, private router: Router) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     if (!this.specialization) {
       this.specialization = {

@@ -24,13 +24,15 @@ export class SpecializationsService {
     };
 
     const dto = {
-      "name": {
+      "Name": {
         "value": specialization.Name
       },
-      "description": {
-        "value": specialization.Description
+      "Description": {
+        "value": specialization.Description || '-'
       }
     }
+
+    console.log(specialization.SNOMEDCTCode);
 
     return await firstValueFrom(this.http.post(`${environment.specializations}`, dto, options));
   }
@@ -53,6 +55,40 @@ export class SpecializationsService {
       'Authorization': `Bearer ${accessToken}`
     });
     const options = { ...httpOptions, headers };
-    return await firstValueFrom(this.http.put(`${environment.staffs}/update/${specialization.Id}`, specializationDto, options));
+    return await firstValueFrom(this.http.put(`${environment.specializations}/update/${id}`, specializationDto, options));
+  }
+
+
+  async getSpecializations(accessToken: string) {
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    };
+
+    const options = {
+      ...httpOptions, headers
+    };
+
+    return await firstValueFrom(this.http.get<{ specializations: any[], totalItems: number }>(`${environment.specializations}`, options))
+      .then(response => {
+        if (response.status === 200 && response.body) {
+          const specializations = response.body.specializations.map(item => ({
+            Id: item.id,
+            SNOMEDCTCode: item.SNOMEDCTCode.value,
+            Name: item.name.value,
+            Description: item.description.value,
+          }));
+
+          return {
+            status: response.status,
+            body: {
+              specializations,
+              totalItems: response.body.totalItems
+            }
+          };
+        } else {
+          throw new Error('Unexpected response structure or status');
+        }
+      });
   }
 }
