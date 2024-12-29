@@ -14,6 +14,7 @@ import {Allergy} from '../../../models/allergy.model';
 import {AllergyService} from '../../../services/allergy/allergy.service';
 import {ALL} from 'node:dns';
 import {AllergyEntryFormComponent} from '../allergy-entry-form/allergy-entry-form.component';
+import {DownloadHistoryFormComponent} from '../download-history-form/download-history-form.component';
 
 @Component({
   selector: 'app-patient-medical-record',
@@ -23,6 +24,7 @@ import {AllergyEntryFormComponent} from '../allergy-entry-form/allergy-entry-for
     FormsModule,
     MedicalConditionEntryFormComponent,
     AllergyEntryFormComponent,
+    DownloadHistoryFormComponent,
   ],
   templateUrl: './patient-medical-record.component.html',
   styleUrls: ['./patient-medical-record.component.css'],
@@ -57,6 +59,8 @@ export class PatientMedicalRecordComponent implements OnInit {
 
   medicalConditionPopup = false;
   allergyPopup = false;
+  downnloadHistoryPopup: boolean;
+
   medicalCondition: MedicalRecordEntry | null = null;
   allergy: MedicalRecordEntry | null = null;
 
@@ -249,5 +253,13 @@ export class PatientMedicalRecordComponent implements OnInit {
   openAllergyPopup(allergyCondition?: MedicalRecordEntry) {
     this.allergy = allergyCondition || null;
     this.allergyPopup = true;
+  }
+
+  openDownloadPopup() {
+    this.downnloadHistoryPopup = true;
+  }
+
+  closeDownloadHistoryPopup() {
+    this.downnloadHistoryPopup = false;
   }
 }
