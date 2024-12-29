@@ -21,8 +21,9 @@ import Orientation from "./orientation.js";
  * }
  */
 
-export default class Camera {
+export default class Camera extends THREE.PerspectiveCamera {
     constructor(parameters, windowWidth, windowHeight) {
+        super(parameters.initialFov, windowWidth, windowHeight);
         for (const [key, value] of Object.entries(parameters)) {
             this[key] = value;
         }
