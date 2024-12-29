@@ -375,7 +375,7 @@ var mainGroup = new Group();
  * Thank you all, you're awesome!
  */
 var Tween = /** @class */ (function () {
-    function Tween(_object, _group) {
+    function Tween(_object) {
         if (_group === void 0) { _group = mainGroup; }
         this._object = _object;
         this._group = _group;
