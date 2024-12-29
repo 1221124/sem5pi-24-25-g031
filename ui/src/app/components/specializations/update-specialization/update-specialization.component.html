@@ -1,0 +1,21 @@
+<div class="modal">
+  <div class="modal-content">
+    <span type="button" class="close" (click)="closeModal()">&times;</span>
+    <h2>Edit Specialization</h2>
+
+    <form (ngSubmit)="saveSpecialization()">
+      <div>
+        <label>Name</label>
+        <input type="text" id="nameEdit" [(ngModel)]="specialization.Name" name="name" />
+      </div>
+      <div>
+        <label>Description</label>
+        <input type="text" id="descriptionEdit" [(ngModel)]="specialization.Description" name="description" />
+      </div>
+
+      <div class="button-group">
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
