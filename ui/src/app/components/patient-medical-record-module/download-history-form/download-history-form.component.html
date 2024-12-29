@@ -1,0 +1,13 @@
+ <div class="password-popup">
+    <h2>Enter Password</h2>
+    <input
+      type="password"
+      [(ngModel)]="password"
+      placeholder="Enter your password"
+    />
+    <div class="buttons">
+      <button class="confirm-btn" (click)="confirmPassword()">Confirm</button>
+      <button class="cancel-btn" (click)="closeDownload.emit()">Cancel</button>
+    </div>
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  </div>
