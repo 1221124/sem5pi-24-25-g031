@@ -17,7 +17,7 @@ namespace DDDNetCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -89,7 +89,7 @@ namespace DDDNetCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OperationRequests");
+                    b.ToTable("OperationRequests", (string)null);
                 });
 
             modelBuilder.Entity("DDDNetCore.Domain.Patients.Patient", b =>
@@ -116,7 +116,32 @@ namespace DDDNetCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
+                });
+
+            modelBuilder.Entity("DDDNetCore.Domain.Specializations.Specialization", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Name");
+
+                    b.Property<string>("SNOMEDCTCode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("SNOMEDCTCode");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Specializations", (string)null);
                 });
 
             modelBuilder.Entity("DDDNetCore.Domain.SurgeryRooms.SurgeryRoom", b =>
@@ -151,7 +176,7 @@ namespace DDDNetCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SurgeryRooms");
+                    b.ToTable("SurgeryRooms", (string)null);
                 });
 
             modelBuilder.Entity("DDDNetCore.src.Domain.RoomTypes.RoomType", b =>
@@ -181,7 +206,7 @@ namespace DDDNetCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoomTypes");
+                    b.ToTable("RoomTypes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.DbLogs.DbLog", b =>
@@ -245,7 +270,7 @@ namespace DDDNetCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OperationTypes");
+                    b.ToTable("OperationTypes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Staffs.Staff", b =>
@@ -282,7 +307,7 @@ namespace DDDNetCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Staffs");
+                    b.ToTable("Staffs", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Users.User", b =>
@@ -301,7 +326,7 @@ namespace DDDNetCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DDDNetCore.Domain.Appointments.Appointment", b =>
@@ -323,7 +348,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("AppointmentId");
 
-                            b1.ToTable("Appointments");
+                            b1.ToTable("Appointments", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("AppointmentId");
@@ -347,7 +372,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("AppointmentId", "Id");
 
-                            b1.ToTable("LicenseNumber");
+                            b1.ToTable("LicenseNumber", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("AppointmentId");
@@ -380,7 +405,25 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("PatientId");
 
-                            b1.ToTable("Patients");
+                            b1.ToTable("Patients", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("PatientId");
+                        });
+
+                    b.OwnsOne("Domain.Patients.EmergencyContact", "EmergencyContact", b1 =>
+                        {
+                            b1.Property<string>("PatientId")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Number")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("EmergencyContactPhoneNumber");
+
+                            b1.HasKey("PatientId");
+
+                            b1.ToTable("Patients", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("PatientId");
@@ -405,25 +448,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("PatientId");
 
-                            b1.ToTable("Patients");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PatientId");
-                        });
-
-                    b.OwnsOne("Domain.Patients.EmergencyContact", "EmergencyContact", b1 =>
-                        {
-                            b1.Property<string>("PatientId")
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Number")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("EmergencyContactPhoneNumber");
-
-                            b1.HasKey("PatientId");
-
-                            b1.ToTable("Patients");
+                            b1.ToTable("Patients", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("PatientId");
@@ -463,7 +488,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("SurgeryRoomId", "Id");
 
-                            b1.ToTable("SurgeryRooms_MaintenanceSlots");
+                            b1.ToTable("SurgeryRooms_MaintenanceSlots", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("SurgeryRoomId");
@@ -493,7 +518,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("OperationTypeId");
 
-                            b1.ToTable("OperationTypes");
+                            b1.ToTable("OperationTypes", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OperationTypeId");
@@ -541,7 +566,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("OperationTypeId", "Id");
 
-                            b1.ToTable("RequiredStaff");
+                            b1.ToTable("RequiredStaff", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OperationTypeId");
@@ -574,7 +599,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("StaffId");
 
-                            b1.ToTable("Staffs");
+                            b1.ToTable("Staffs", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("StaffId");
@@ -599,36 +624,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("StaffId");
 
-                            b1.ToTable("Staffs");
-
-                            b1.WithOwner()
-                                .HasForeignKey("StaffId");
-                        });
-
-                    b.OwnsMany("Domain.Shared.Slot", "SlotAppointement", b1 =>
-                        {
-                            b1.Property<string>("StaffId")
-                                .HasColumnType("text");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("End")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("End");
-
-                            b1.Property<string>("Start")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("Start");
-
-                            b1.HasKey("StaffId", "Id");
-
-                            b1.ToTable("Staffs_SlotAppointement");
+                            b1.ToTable("Staffs", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("StaffId");
@@ -657,7 +653,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("StaffId", "Id");
 
-                            b1.ToTable("Staffs_SlotAvailability");
+                            b1.ToTable("Staffs_SlotAvailability", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("StaffId");
@@ -668,8 +664,6 @@ namespace DDDNetCore.Migrations
 
                     b.Navigation("FullName")
                         .IsRequired();
-
-                    b.Navigation("SlotAppointement");
 
                     b.Navigation("SlotAvailability");
                 });
@@ -689,7 +683,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -708,7 +702,7 @@ namespace DDDNetCore.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

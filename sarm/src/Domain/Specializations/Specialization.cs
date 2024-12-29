@@ -9,6 +9,10 @@ namespace DDDNetCore.Domain.Specializations
         public Name Name { get; set; }
         public Description Description { get; set; }
 
+        public Specialization()
+        {
+        }
+
         public Specialization(SNOMEDCTCode snomedctCode, Name name, Description description)
         {
             Id = new SpecializationId(Guid.NewGuid());
