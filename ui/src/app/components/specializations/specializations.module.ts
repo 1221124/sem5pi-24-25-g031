@@ -7,6 +7,7 @@ import {routes} from "../../app.routes";
 import {AddSpecializationComponent} from "./add-specialization/add-specialization.component";
 import {ListSpecializationComponent} from "./list-specialization/list-specialization.component";
 import {SpecializationsService} from "../../services/specializations/specializations.service";
+import { UpdateSpecializationComponent } from './update-specialization/update-specialization.component';
 
 @NgModule({
     imports: [
@@ -17,10 +18,12 @@ import {SpecializationsService} from "../../services/specializations/specializat
         NgIf,
         SpecializationsComponent,
         AddSpecializationComponent,
-        ListSpecializationComponent
+        ListSpecializationComponent,
+        UpdateSpecializationComponent
     ],
     exports: [
-        SpecializationsComponent
-    ]
+        SpecializationsComponent,
+        UpdateSpecializationComponent
+    ],
 })
 export class SpecializationsModule { }
