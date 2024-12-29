@@ -7,6 +7,11 @@
       <form #form="ngForm" novalidate>
 
         <div class="form-group">
+          <input type="text" id="SNOMEDCTCode" name="name" [(ngModel)]="specialization.SNOMEDCTCode"
+                 (focus)="SNOMEDCTCodeTouched = true" placeholder="Enter SNOMEDCTCode" required/>
+        </div>
+
+        <div class="form-group">
           <input type="text" id="name" name="name" [(ngModel)]="specialization.Name"
                  (focus)="nameTouched = true" placeholder="Enter Name" required/>
         </div>

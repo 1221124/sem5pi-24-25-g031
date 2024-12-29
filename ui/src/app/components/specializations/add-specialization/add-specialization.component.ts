@@ -21,12 +21,15 @@ export class AddSpecializationComponent implements OnInit {
 
   @Output() closeModalEvent = new EventEmitter<unknown>();
 
+  @Output() createSpecializationEvent = new EventEmitter<Specialization>();
+
   nameTouched = false;
   descriptionTouched = false;
   codeTouched = false;
-  @Output() createSpecializationEvent = new EventEmitter<Specialization>();
+  SNOMEDCTCodeTouched = false;
 
   accessToken: string = '';
+
   constructor(private authService: AuthService, private router: Router) {
   }
 
