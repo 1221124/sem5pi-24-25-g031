@@ -6,10 +6,11 @@ namespace DDDNetCore.Domain.Specializations
     public class SpecializationMapper
     {
         public static CreatingSpecializationDto ToCreating(
-            string name, string description
+            string name, string description, string snomedctCode
         )
         {
             return new CreatingSpecializationDto(
+                new SNOMEDCTCode(snomedctCode),
                 new Name(name),
                 new Description(description)
             );
