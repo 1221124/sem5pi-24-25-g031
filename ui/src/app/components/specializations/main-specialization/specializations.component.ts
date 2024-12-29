@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,14 +21,12 @@ import {environment} from '../../../../environments/environment';
   templateUrl: './specializations.component.html',
   styleUrl: './specializations.component.css'
 })
-export class SpecializationsComponent {
+export class SpecializationsComponent implements OnInit {
 
   @Output() selectedSpecializationToCreate!: Specialization
   @Output() selectedSpecializationToUpdate!: Specialization
 
   isCreateModalOpen = false;
-
-  accessToken: '';
 
   specialization: Specialization = {
     Id: '',
@@ -36,6 +34,18 @@ export class SpecializationsComponent {
     Name: '',
     Description: '',
   };
+
+  filter = {
+    pageNumber: 1,
+    SNOMEDCTCode: '',
+    Name: '',
+    Description: ''
+  }
+
+  totalItems: number = 0;
+  totalPages: number = 1;
+  currentPage: number = 1;
+  itemsPerPage: number = 1;
 
   specializations: Specialization[] = [];
 
@@ -45,7 +55,37 @@ export class SpecializationsComponent {
 
   success: boolean = true;
 
-  constructor(private service: SpecializationsService, private router: Router, private route: ActivatedRoute) { }
+  accessToken: string = '';
+  showList : boolean = false;
+
+  constructor(
+    private service: SpecializationsService,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute) { }
+
+  async ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
+      this.authService.updateIsError(true);
+      this.router.navigate(['']);
+      return;
+    }
+
+    this.accessToken = this.authService.getToken() as string;
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
+      this.authService.updateMessage(
+        'You are not authenticated or are not an admin! Redirecting to login...'
+      );
+      this.authService.updateIsError(true);
+      this.router.navigate(['']);
+      return;
+    }
+
+    this.accessToken = this.authService.getToken() as string;
+    await this.fetchSpecialization();
+
+  }
 
   closeModal() {
     this.isCreateModalOpen = false;
@@ -75,9 +115,12 @@ export class SpecializationsComponent {
 
     this.selectedSpecializationToCreate = specialization;
 
+    //this.selectedSpecializationToCreate.SNOMEDCTCode = "CT2";  // Remove o código antes de enviar
+
+
     if (this.isEditMode) {
       console.log("Updating staff:", this.specialization.Id);
-      await this.update(this.selectedSpecializationToUpdate);
+      await this.update(this.specialization);
     } else {
 
       console.log("Entrou");
@@ -110,6 +153,8 @@ export class SpecializationsComponent {
           this.message = 'There was an error creating the Staff: ' + error;
           this.success = false;
         });
+
+      console.log(this.selectedSpecializationToCreate);
       await this.fetchSpecialization();
     }
   }
@@ -143,6 +188,12 @@ export class SpecializationsComponent {
   }
 
   private async fetchSpecialization() {
-
+    await this.service.getSpecializations(this.accessToken)
+      .then((response) => {
+          if (response.status === 200) {
+            this.specializations = response.body.specializations;
+          }
+        }
+      );
   }
 }
