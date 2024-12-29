@@ -7,7 +7,6 @@ import { UniqueEntityID } from '../../src/core/domain/UniqueEntityID';
 import { MedicalRecordNumber } from '../../src/domain/patient-medical-record/MedicalRecordNumber';
 import { MedicalRecordEntry } from '../../src/domain/medical-record-entry/MedicalRecordEntry';
 import { ICD11Code } from '../../src/domain/shared/ICD11Code';
-import { PatientMedicalRecordMap } from '../../src/mappers/PatientMedicalRecordMap';
 
 const patientMedicalRecordRepoMock = {
     findByDomainId: vi.fn(),
