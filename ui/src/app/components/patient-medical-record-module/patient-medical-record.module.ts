@@ -6,6 +6,7 @@ import { PatientMedicalRecordComponent } from "./patient-medical-record/patient-
 import { MedicalConditionEntryFormComponent } from "./medical-condition-entry-form/medical-condition-entry-form.component";
 import { AllergyEntryFormComponent } from './allergy-entry-form/allergy-entry-form.component';
 import {FormsModule} from '@angular/forms';
+import { DownloadHistoryFormComponent } from './download-history-form/download-history-form.component';
 @NgModule({
   imports: [
     RouterModule.forChild(routes),
@@ -15,12 +16,13 @@ import {FormsModule} from '@angular/forms';
     PatientMedicalRecordComponent,
     MedicalConditionEntryFormComponent,
     AllergyEntryFormComponent,
+    DownloadHistoryFormComponent,
     FormsModule,
   ],
   exports: [
     PatientMedicalRecordComponent,
     MedicalConditionEntryFormComponent,
     AllergyEntryFormComponent
-  ],
+  ]
 })
 export class PatientMedicalRecordModule {}
