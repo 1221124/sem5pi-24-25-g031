@@ -1,28 +1,28 @@
 ﻿using Domain.Shared;
 
-namespace DDDNetCore.Domain.Specializations;
-
-public class Specialization : Entity<SpecializationId>, IAggregateRoot
+namespace DDDNetCore.Domain.Specializations
 {
-    public SNOMEDCTCode SNOMEDCTCode { get; set; }
-    public Name Name { get; set; }
-    public Description Description { get; set; }
-    
-    public Specialization() { }
 
-    public Specialization(SNOMEDCTCode snomedctCode, Name name, Description description)
+    public class Specialization : Entity<SpecializationId>, IAggregateRoot
     {
-        Id = new SpecializationId(Guid.NewGuid());
-        SNOMEDCTCode = snomedctCode;
-        Name = name;
-        Description = description;
-    }
-    
-    public Specialization(SpecializationId id, SNOMEDCTCode snomedctCode, Name name, Description description)
-    {
-        Id = id;
-        SNOMEDCTCode = snomedctCode;
-        Name = name;
-        Description = description;
+        public SNOMEDCTCode SNOMEDCTCode { get; set; }
+        public Name Name { get; set; }
+        public Description Description { get; set; }
+
+        public Specialization(SNOMEDCTCode snomedctCode, Name name, Description description)
+        {
+            Id = new SpecializationId(Guid.NewGuid());
+            SNOMEDCTCode = snomedctCode;
+            Name = name;
+            Description = description;
+        }
+
+        public Specialization(SpecializationId id, SNOMEDCTCode snomedctCode, Name name, Description description)
+        {
+            Id = id;
+            SNOMEDCTCode = snomedctCode;
+            Name = name;
+            Description = description;
+        }
     }
 }

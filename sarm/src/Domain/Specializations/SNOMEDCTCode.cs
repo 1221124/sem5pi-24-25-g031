@@ -1,49 +1,49 @@
 ﻿using Domain.Shared;
 
-namespace DDDNetCore.Domain.Specializations;
-
-public class SNOMEDCTCode : IValueObject
+namespace DDDNetCore.Domain.Specializations
 {
-    public string Value { get; }
-
-    public SNOMEDCTCode(string value)
+    public class SNOMEDCTCode : IValueObject
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Specialization code cannot be empty");
+        public string Value { get; }
 
-        if (!value.ToLower().StartsWith("CT"))
-            throw new ArgumentException("Specialization code must start with 'CT'");
-
-        Value = value;
-    }
-
-    public static implicit operator string(SNOMEDCTCode requestCode)
-    {
-        return requestCode.Value;
-    }
-
-    public static implicit operator SNOMEDCTCode(string value)
-    {
-        return new SNOMEDCTCode(value);
-    }
-
-    public override string ToString()
-    {
-        return Value;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is SNOMEDCTCode other)
+        public SNOMEDCTCode(string value)
         {
-            return this.Value == other.Value;
+            if (string.IsNullOrEmpty(value) || !value.StartsWith("CT"))
+            {
+                throw new ArgumentException("Specialization code must start with 'CT'");
+            }
+            Value = value;
         }
-        return false;
+
+        public static implicit operator string(SNOMEDCTCode requestCode)
+        {
+            return requestCode.Value;
+        }
+
+        public static implicit operator SNOMEDCTCode(string value)
+        {
+            return new SNOMEDCTCode(value);
+        }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is SNOMEDCTCode other)
+            {
+                return this.Value == other.Value;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value != null ? Value.GetHashCode() : 0;
+        }
+
     }
-    
-    public override int GetHashCode()
-    {
-        return Value != null ? Value.GetHashCode() : 0;
-    }
-    
 }
