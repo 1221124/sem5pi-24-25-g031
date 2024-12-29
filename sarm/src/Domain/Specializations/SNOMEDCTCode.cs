@@ -6,13 +6,8 @@ namespace DDDNetCore.Domain.Specializations
     {
         public string Value { get; }
 
-        public SNOMEDCTCode(string value)
+        public SNOMEDCTCode()
         {
-            if (string.IsNullOrEmpty(value) || !value.StartsWith("CT"))
-            {
-                throw new ArgumentException("Specialization code must start with 'CT'");
-            }
-            Value = value;
         }
 
         public static implicit operator string(SNOMEDCTCode requestCode)
@@ -22,7 +17,7 @@ namespace DDDNetCore.Domain.Specializations
 
         public static implicit operator SNOMEDCTCode(string value)
         {
-            return new SNOMEDCTCode(value);
+            return new SNOMEDCTCode();
         }
 
         public override string ToString()
