@@ -24,11 +24,14 @@ export class SpecializationsService {
     };
 
     const dto = {
-      "Name": {
+      "snomedctCode": {
+        "value": specialization.SNOMEDCTCode
+      },
+      "name": {
         "value": specialization.Name
       },
-      "Description": {
-        "value": specialization.Description || '-'
+      "description": {
+        "value": specialization.Description
       }
     }
 
@@ -43,12 +46,12 @@ export class SpecializationsService {
 
     const specializationDto = {
       "name": {
-        "value": specialization.Name,
+        "value": specialization.Name
       },
       "description": {
-        "value": specialization.Description,
+        "value": specialization.Description
       }
-      }
+    }
 
     console.log(specializationDto);
     const headers = new HttpHeaders({
@@ -74,7 +77,7 @@ export class SpecializationsService {
         if (response.status === 200 && response.body) {
           const specializations = response.body.specializations.map(item => ({
             Id: item.id,
-            SNOMEDCTCode: item.SNOMEDCTCode.value,
+            SNOMEDCTCode: item.SNOMEDCTCode,
             Name: item.name.value,
             Description: item.description.value,
           }));

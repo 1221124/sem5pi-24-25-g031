@@ -5,7 +5,8 @@
 </div>
 
 <app-list-specialization
-        [specializations]="specializations">
+        [specializations]="specializations"
+        (updateSpecializationEvent)="openUpdateModal($event)">
 </app-list-specialization>
 
 
@@ -15,3 +16,10 @@
   (closeModalEvent)="closeModal()"
   (createSpecializationEvent)="submitRequest($event)">
 ></app-add-specialization>
+
+<app-update-specialization
+  *ngIf="isEditModalOpen"
+  [specialization]="selectedSpecializationToUpdate"
+  (closeModalEvent)="closeModal()"
+  (update)="update($event)">
+</app-update-specialization>

@@ -13,16 +13,20 @@ import {RoomType} from "../../../models/room-type.model";
 import {HttpHeaders, HttpParams} from '@angular/common/http';
 import {firstValueFrom} from 'rxjs';
 import {environment} from '../../../../environments/environment';
+import {UpdateStaffsComponent} from '../../staffs-main/update-staffs/update-staffs.component';
+import {SpecializationsModule} from '../specializations.module';
+import {UpdateSpecializationComponent} from '../update-specialization/update-specialization.component';
+import {ListStaffsComponent} from '../../staffs-main/list-staffs/list-staffs.component';
 
 @Component({
   selector: 'app-specializations',
   standalone: true,
-  imports: [ListSpecializationComponent, AddSpecializationComponent, CommonModule, FormsModule],
+  imports: [ListSpecializationComponent, AddSpecializationComponent, CommonModule, FormsModule, UpdateStaffsComponent, UpdateSpecializationComponent, ListStaffsComponent],
   templateUrl: './specializations.component.html',
   styleUrl: './specializations.component.css'
 })
 export class SpecializationsComponent implements OnInit {
-
+d
   @Output() selectedSpecializationToCreate!: Specialization
   @Output() selectedSpecializationToUpdate!: Specialization
 
@@ -57,6 +61,8 @@ export class SpecializationsComponent implements OnInit {
 
   accessToken: string = '';
   showList : boolean = false;
+  isEditModalOpen = false;
+
 
   constructor(
     private service: SpecializationsService,
@@ -89,6 +95,7 @@ export class SpecializationsComponent implements OnInit {
 
   closeModal() {
     this.isCreateModalOpen = false;
+    this.isEditModalOpen = false;
   }
 
   openModal() {
@@ -114,9 +121,6 @@ export class SpecializationsComponent implements OnInit {
     console.log("Specialization:", specialization);
 
     this.selectedSpecializationToCreate = specialization;
-
-    //this.selectedSpecializationToCreate.SNOMEDCTCode = "CT2";  // Remove o código antes de enviar
-
 
     if (this.isEditMode) {
       console.log("Updating staff:", this.specialization.Id);
@@ -164,7 +168,7 @@ export class SpecializationsComponent implements OnInit {
     await this.service.update(specialization.Id, specialization, this.accessToken)
       .then(response => {
         if (response.status === 200) {
-          this.message = 'Staff successfully updated!';
+          this.message = 'Specialization successfully updated!';
           this.success = true;
         } else {
           this.message = 'Unexpected response status: ' + response.status;
@@ -173,14 +177,14 @@ export class SpecializationsComponent implements OnInit {
       })
       .catch(error => {
         if (error.status === 401) {
-          this.message = 'You are not authorized to update Staffs! Please log in...';
+          this.message = 'You are not authorized to update Specializations! Please log in...';
           this.success = false;
           setTimeout(() => {
             this.router.navigate(['']);
           }, 3000);
           return;
         }
-        this.message = 'There was an error updating the Staff: ' + error;
+        this.message = 'There was an error updating the Specialization: ' + error;
         this.success = false;
       });
     if(this.success) this.closeModal();
@@ -189,11 +193,60 @@ export class SpecializationsComponent implements OnInit {
 
   private async fetchSpecialization() {
     await this.service.getSpecializations(this.accessToken)
-      .then((response) => {
-          if (response.status === 200) {
+      .then(response => {
+        if (response.status === 200) {
+          if (response.body) {
             this.specializations = response.body.specializations;
+            this.totalItems = response.body.totalItems || 0;
+            console.log(this.totalItems);
+            this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+            this.showList = true;
+          } else {
+            this.specializations = [];
+            this.message = 'Response body is null: ' + response.body;
+            this.success = false;
+            this.totalItems = 0;
+            this.totalPages = 1;
           }
+        } else {
+          this.specializations = [];
+          this.message = 'Unexpected response status: ' + response.status;
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
         }
-      );
+      }).catch(error => {
+        if (error.status === 404) {
+          this.specializations = [];
+          this.message = 'No staffs found!';
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        } else if (error.status === 401) {
+          this.message = 'You are not authorized to view Staffs! Please log in...';
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+          setTimeout(() => {
+            this.router.navigate(['']);
+          }, 3000);
+          return;
+        } else {
+          this.specializations = [];
+          this.message = 'There was an error fetching the Staffs: ' + error;
+          this.success = false;
+          this.totalItems = 0;
+          this.totalPages = 1;
+        }
+      });
+  }
+
+  openUpdateModal(specialization: Specialization) {
+    console.log('Opening update modal...');
+
+    this.selectedSpecializationToUpdate = specialization;
+
+    this.isEditModalOpen = true;
+    this.navigateTo('update', { queryParams: { id: JSON.stringify(this.selectedSpecializationToUpdate.Id) } });
   }
 }
