@@ -6,6 +6,8 @@ import {PatientMedicalRecord} from '../../../models/patient-medical-record.model
 import {PatientMedicalRecordService} from '../../../services/patient-medical-record/patient-medical-record.service';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {AuthService} from '../../../services/auth/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-allergy-entry-form',
@@ -37,6 +39,7 @@ export class AllergyEntryFormComponent {
   };
 
   @Output() closeAllergy = new EventEmitter<void>();
+  @Output() closeDownload = new EventEmitter<void>();
 
   accessToken: string = '';
 
@@ -45,7 +48,37 @@ export class AllergyEntryFormComponent {
 
   constructor(
     private service: PatientMedicalRecordService,
-    private allergyService: AllergyService) {
+    private authService: AuthService,
+    private allergyService: AllergyService,
+    private router: Router
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['']);
+      return;
+    }
+
+    this.accessToken = this.authService.getToken() as string;
+    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
+      this.router.navigate(['']);
+      return;
+    }
+
+    if (this.allergy) {
+      if (this.allergy.ICD11Code) {
+        this.isEdit = true;
+        this.allergy = { ...this.allergy };
+      }
+    } else {
+      this.isEdit = false;
+    }
+
+    if (!this.patientMedicalRecord.Id) {
+      this.message = 'Patient medical record not found';
+      this.isError = true;
+      this.closeAllergy.emit();
+    }
   }
 
   async  validateICD11Code(code: string) {
@@ -83,7 +116,9 @@ export class AllergyEntryFormComponent {
 
   async saveAllergy() {
     try {
+      console.log("Entrou");
       const response = await this.service.saveAllergy(this.patientMedicalRecord.Id, this.newAllergy, this.accessToken);
+      console.log(response);
       if (response.status === 200 || response.status === 201) {
         this.message = 'Allergy saved successfully';
         this.isError = false;
