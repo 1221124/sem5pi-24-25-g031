@@ -2,7 +2,9 @@ import * as THREE from "three";
 import Ground from "./ground.js";
 import Wall from "./wall.js";
 import Door from "./door.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+import TWEEN from "three/addons/libs/tween.module.js";
+
 
 /*
  * parameters = {
@@ -13,7 +15,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
  */
 
 export default class Maze {
-    constructor(parameters) {
+    constructor(parameters, camera) {
+        this.camera = camera;
         this.onLoad = function (description) {
             // Store the maze's map and size
             this.map = description.map;
@@ -30,23 +33,38 @@ export default class Maze {
             this.object = new THREE.Group();
 
             // Create the ground
-            this.ground = new Ground({ textureUrl: description.groundTextureUrl, size: description.size });
+            this.ground = new Ground({textureUrl: description.groundTextureUrl, size: description.size});
             this.object.add(this.ground.object);
 
             // Create a wall
-            this.wall = new Wall({ textureUrl: description.wallTextureUrl });
+            this.wall = new Wall({textureUrl: description.wallTextureUrl});
 
             this.doorMaterial = this.wall.object.children[0].material.clone();
             this.doorMaterial.transparent = true;
             this.doorMaterial.opacity = 0.5;
 
-            this.door = new Wall({ textureUrl: description.doorTextureUrl });
+            this.door = new Wall({textureUrl: description.doorTextureUrl});
 
-             // Load hospital bed model
-             const bedLoader = new GLTFLoader();
+            // Load hospital bed model
+            const bedLoader = new GLTFLoader();
 
-             this.doors = []; // Lista de todas as portas no labirinto
+            this.doors = [];
 
+            this.surgicalBeds = [];
+
+            this.objectToIntersect = new THREE.Group();
+            this.mouse = new THREE.Vector2();
+            this.raycaster = new THREE.Raycaster();
+
+            this.rayLineMaterial = new THREE.LineBasicMaterial({color: 0xff0000});
+            this.rayLineGeometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 0, 0)
+            ]);
+            this.rayLine = new THREE.Line(this.rayLineGeometry, this.rayLineMaterial);
+            this.object.add(this.rayLine);
+
+            window.addEventListener("mousedown", (event) => this.onMouseDown(event));
 
             // Build the maze
             let wallObject, bedObject, doorObject;
@@ -79,8 +97,8 @@ export default class Maze {
                         this.doors.push(doorObject);
 
                         this.object.add(doorObject);
-                    }            
-                    if (description.map[j][i] == 5) {
+                    }
+                    if (description.map[j][i] === 5) {
 
                         bedLoader.load('./models/gltf/bed.glb', (gltf) => {
                             bedObject = gltf.scene;
@@ -89,123 +107,134 @@ export default class Maze {
                                 0.5,
                                 j - description.size.height / 2.0
                             );
+
                             bedObject.scale.set(1, 1, 1);
+                            this.objectToIntersect.add(bedObject);
                             this.object.add(bedObject);
+
+                            this.surgicalBeds.push({
+                                object: bedObject,
+                                position: {
+                                    x: bedObject.position.x,
+                                    y: bedObject.position.y,
+                                    z: bedObject.position.z
+                                }
+                            });
                         });
 
                         this.getSurgeries().then((response) => {
-                            if(response.status === 200){
+                            if (response.status === 200) {
 
                                 const surgeryRoomsWrapper = response.body.surgeryRooms;
                                 if (Array.isArray(surgeryRoomsWrapper) && surgeryRoomsWrapper.length > 0) {
 
-                                        surgeryRoomsWrapper.forEach((surgeryRoom) => {
-                                            if (surgeryRoom.CurrentStatus === 'OCCUPIED') {
-                                                const roomNumber = surgeryRoom.SurgeryRoomNumber;
-                                                switch (roomNumber) {
-                                                    case 'OR1': {
-                                                        if (i === 2 && j === 2) {
-                                                            bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
-                                                                const bedObject = gltf.scene;
-                                                                bedObject.position.set(
-                                                                    i - description.size.width / 2.0 + 0.5,
-                                                                    0.5,
-                                                                    j - description.size.height / 2.0
-                                                                );
-                                                                bedObject.scale.set(0.8, 0.8, 0.8);
-                                                                this.object.add(bedObject);
-                                                            });
-                                                            console.log('Cama carregada para OR1');
-                                                        }
-                                                        break;
+                                    surgeryRoomsWrapper.forEach((surgeryRoom) => {
+                                        if (surgeryRoom.CurrentStatus === 'OCCUPIED') {
+                                            const roomNumber = surgeryRoom.SurgeryRoomNumber;
+                                            switch (roomNumber) {
+                                                case 'OR1': {
+                                                    if (i === 2 && j === 2) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR1');
                                                     }
-                                                    case 'OR2': {
-                                                        if (i === 6 && j === 2) {
-                                                            bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
-                                                                const bedObject = gltf.scene;
-                                                                bedObject.position.set(
-                                                                    i - description.size.width / 2.0 + 0.5,
-                                                                    0.5,
-                                                                    j - description.size.height / 2.0
-                                                                );
-                                                                bedObject.scale.set(0.8, 0.8, 0.8);
-                                                                this.object.add(bedObject);
-                                                            });
-                                                            console.log('Cama carregada para OR2');
-                                                        }
-                                                        break;
+                                                    break;
+                                                }
+                                                case 'OR2': {
+                                                    if (i === 6 && j === 2) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR2');
                                                     }
-                                                    case 'OR3': {
-                                                        if (i === 10 && j === 2) {
-                                                            bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
-                                                                const bedObject = gltf.scene;
-                                                                bedObject.position.set(
-                                                                    i - description.size.width / 2.0 + 0.5,
-                                                                    0.5,
-                                                                    j - description.size.height / 2.0
-                                                                );
-                                                                bedObject.scale.set(0.8, 0.8, 0.8);
-                                                                this.object.add(bedObject);
-                                                            });
-                                                            console.log('Cama carregada para OR3');
-                                                        }
-                                                        break;
+                                                    break;
+                                                }
+                                                case 'OR3': {
+                                                    if (i === 10 && j === 2) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR3');
                                                     }
-                                                    case 'OR4': {
-                                                        if (i === 2 && j === 10) {
-                                                            bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
-                                                                const bedObject = gltf.scene;
-                                                                bedObject.position.set(
-                                                                    i - description.size.width / 2.0 + 0.5,
-                                                                    0.5,
-                                                                    j - description.size.height / 2.0
-                                                                );
-                                                                bedObject.scale.set(0.8, 0.8, 0.8);
-                                                                this.object.add(bedObject);
-                                                            });
-                                                            console.log('Cama carregada para OR4');
-                                                        }
-                                                        break;
+                                                    break;
+                                                }
+                                                case 'OR4': {
+                                                    if (i === 2 && j === 10) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR4');
                                                     }
-                                                    case 'OR5': {
-                                                        if (i === 6 && j === 10) {
-                                                            bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
-                                                                const bedObject = gltf.scene;
-                                                                bedObject.position.set(
-                                                                    i - description.size.width / 2.0 + 0.5,
-                                                                    0.5,
-                                                                    j - description.size.height / 2.0
-                                                                );
-                                                                bedObject.scale.set(0.8, 0.8, 0.8);
-                                                                this.object.add(bedObject);
-                                                            });
-                                                            console.log('Cama carregada para OR5');
-                                                        }
-                                                        break;
+                                                    break;
+                                                }
+                                                case 'OR5': {
+                                                    if (i === 6 && j === 10) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR5');
                                                     }
-                                                    case 'OR6': {
-                                                        if (i === 10 && j === 10) {
-                                                            bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
-                                                                const bedObject = gltf.scene;
-                                                                bedObject.position.set(
-                                                                    i - description.size.width / 2.0 + 0.5,
-                                                                    0.5,
-                                                                    j - description.size.height / 2.0
-                                                                );
-                                                                bedObject.scale.set(0.8, 0.8, 0.8);
-                                                                this.object.add(bedObject);
-                                                            });
-                                                            console.log('Cama carregada para OR6');
-                                                        }
-                                                        break;
+                                                    break;
+                                                }
+                                                case 'OR6': {
+                                                    if (i === 10 && j === 10) {
+                                                        bedLoader.load('./models/gltf/bedWithBody.glb', (gltf) => {
+                                                            const bedObject = gltf.scene;
+                                                            bedObject.position.set(
+                                                                i - description.size.width / 2.0 + 0.5,
+                                                                0.5,
+                                                                j - description.size.height / 2.0
+                                                            );
+                                                            bedObject.scale.set(0.8, 0.8, 0.8);
+                                                            this.object.add(bedObject);
+                                                        });
+                                                        console.log('Cama carregada para OR6');
                                                     }
-                                                    default: {
-                                                        console.log(`Nenhuma operação para ${roomNumber}`);
-                                                        break;
-                                                    }
+                                                    break;
+                                                }
+                                                default: {
+                                                    console.log(`Nenhuma operação para ${roomNumber}`);
+                                                    break;
                                                 }
                                             }
-                                        });
+                                        }
+                                    });
 
                                 }
                             }
@@ -218,7 +247,58 @@ export default class Maze {
             this.loaded = true;
         }
 
+        this.onMouseDown = function (event) {
+            // Update mouse coordinates
+            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+            this.raycaster.setFromCamera(this.mouse, this.camera.object);
+
+            // Check for intersections
+            const intersects = this.raycaster.intersectObjects(this.surgicalBeds.map(bed => bed.object));
+
+
+            if (intersects.length > 0) {
+
+                const intersectedObject = intersects[0].object;
+
+                const selectedBed = this.surgicalBeds.find(bed => {
+                    let found = false;
+                    bed.object.traverse(child => {
+                        if (child.uuid === intersectedObject.uuid) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                });
+
+                if (selectedBed) {
+                    console.log("Selected Bed UUID:", selectedBed.object.uuid);
+                    console.log("Selected Bed Position:", selectedBed.position);
+                    this.moveCameraToRoom(selectedBed.position);
+                } else {
+                    console.log("No matching bed found");
+                }
+            }
+        }
+
+        this.moveCameraToRoom = function (roomCenter) {
+            console.log("Room Center", roomCenter);
+
+            this.camera.setTarget(roomCenter);
+            console.log("Camera", this.camera);
+
+        };
+
+
+
+        this.getRoomCenter = function (i, j, size) {
+            return {
+                x: i - size.width / 2.0 + 0.5,
+                y: 0,
+                z: j - size.height / 2.0 + 0.5
+            };
+        };
 
         this.onProgress = function (url, xhr) {
             console.log("Resource '" + url + "' " + (100.0 * xhr.loaded / xhr.total).toFixed(0) + "% loaded.");
@@ -257,7 +337,30 @@ export default class Maze {
             error => this.onError(this.url, error)
         );
     }
-    
+
+    addIntersectableObject(object, userData = {}) {
+        object.userData = {...object.userData, ...userData}; // Add metadata for the object
+        this.objectsToIntersect.push(object);
+    }
+
+    loadGLBModel(path, position, scale, userData = {}) {
+        const loader = new GLTFLoader();
+        loader.load(
+            path,
+            (gltf) => {
+                const model = gltf.scene;
+                model.position.copy(position);
+                model.scale.copy(scale);
+
+                this.addIntersectableObject(model, userData); // Add to the list of intersectable objects
+                this.object.add(model); // Add to the scene
+            },
+            undefined,
+            (error) => {
+                console.error("Error loading GLB model:", error);
+            }
+        );
+    }
 
     // Convert cell [row, column] coordinates to cartesian (x, y, z) coordinates
     cellToCartesian(position) {
@@ -287,12 +390,12 @@ export default class Maze {
         // Check if the robot is near the door and animate it opening
         if (this.isRobotNearDoor(robotPosition, door.object.position)) {
             new TWEEN.Tween(door.object.rotation)
-                .to({ y: Math.PI / 2 }, 1000) // A rotação de 0 para 90 graus (abertura)
+                .to({y: Math.PI / 2}, 1000) // A rotação de 0 para 90 graus (abertura)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .start();
         }
     }
-    
+
 
     // Convert cartesian (x, y, z) coordinates to cell [row, column] coordinates
     cartesianToCell(position) {
@@ -341,7 +444,7 @@ export default class Maze {
         this.doors.push(door); // Adicionar porta ao labirinto
     }
 
-    async getSurgeries(){
+    async getSurgeries() {
 
         const headers = {
             'Content-Type': 'application/json',
@@ -356,24 +459,24 @@ export default class Maze {
 
         try {
             const response = await fetch(url, options);
-
             if (response.status === 200) {
 
                 const responseBody = await response.json();
-
-                if(responseBody && Array.isArray(responseBody.rooms)){
-                    const surgeryRooms = responseBody.rooms.map((room) => ({
+                //console.log('Response body:', responseBody);
+                if (responseBody && Array.isArray(responseBody.surgeryRooms)) {
+                    const surgeryRooms = responseBody.surgeryRooms.map((room) => ({
                         SurgeryRoomNumber: room.surgeryRoomNumber,
-                        RoomType: room.roomType,
+                        RoomTypeCode: room.roomTypeCode.value,
                         RoomCapacity: room.roomCapacity.capacity,
-                        AssignedEquipment: room.assignedEquipment.equipment, // Extrair o valor do equipamento
+                        AssignedEquipment: room.assignedEquipment.equipment,
                         CurrentStatus: room.currentStatus,
                         MaintenanceSlots: room.maintenanceSlots.map(slot => ({
-                            Start: slot.start || null, // Prevenção caso os valores estejam ausentes
+                            Start: slot.start || null,
                             End: slot.end || null
                         })),
-                        Id: room.id.objValue // Acessar diretamente `objValue`
+                        Id: room.id
                     }));
+                    //console.log("Surgery rooms:", surgeryRooms);
 
                     return {
                         status: response.status,
@@ -387,7 +490,7 @@ export default class Maze {
             } else {
                 throw new Error('Unexpected response status: ' + response.status);
             }
-        } catch (error){
+        } catch (error) {
             console.error('Error fetching surgery room by number:', error);
             throw error;
         }
@@ -402,7 +505,7 @@ export default class Maze {
 
             let startTime = null; // Track the start time for each animation
 
-            const directionMultiplier =  1; // Set direction based on the array
+            const directionMultiplier = 1; // Set direction based on the array
 
             function animate(timestamp) {
                 if (!startTime) startTime = timestamp; // Initialize start time on first frame

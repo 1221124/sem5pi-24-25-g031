@@ -48,7 +48,7 @@ export const cameraData = {
     distanceMin: 4.0,
     distanceMax: 16.0,
     initialZoom: 1.0, // Zoom factor and associated limits
-    zoomMin: 0.5,
+    zoomMin: 0.2,
     zoomMax: 2.0,
     initialFov: 45.0, // Field-of-view (expressed in degrees)
     near: 0.01, // Front clipping plane
