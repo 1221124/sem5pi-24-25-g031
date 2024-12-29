@@ -5,7 +5,7 @@ using Domain.DbLogs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DDDNetCore.Controllers{
+namespace Controllers{
     
     [Route("api/[controller]")]
     [ApiController]
@@ -20,10 +20,10 @@ namespace DDDNetCore.Controllers{
             _dbLogService = dbLogService;
         }
         
-        // GET: api/specializations?name={name}
+        // GET: api/specialization?name={name}
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<RoomTypeDto>>> Get([FromQuery] string? name)
+        public async Task<ActionResult<IEnumerable<SpecializationDto>>> Get([FromQuery] string? name)
         {
             var specializations = await _service.GetAsync(name);
 
@@ -35,10 +35,10 @@ namespace DDDNetCore.Controllers{
             return Ok(new { specializations = specializations, totalItems = specializations.Count });
         }
         
-        // GET: api/specializations/{id}
+        // GET: api/specialization/{id}
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<RoomTypeDto>> GetById(Guid id)
+        public async Task<ActionResult<SpecializationDto>> GetById(Guid id)
         {
             var specializations = await _service.GetByIdAsync(new SpecializationId(id));
 
@@ -50,21 +50,24 @@ namespace DDDNetCore.Controllers{
             return Ok (new { specializations });
         }
         
-        // POST: api/specializations
+        // POST: api/specialization
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<SpecializationDto>> Create([FromBody] CreatingSpecializationDto dto)
         {
             if (dto == null)
             {
-                _ = await _dbLogService.LogAction(EntityType.RoomType, DbLogType.Error, new Message("Error creating Specialization: DTO is null"));
+                _ = await _dbLogService.LogAction(EntityType.Specialization, DbLogType.Error, new Message("Error creating Specialization: DTO is null"));
                 return BadRequest("Creating Specialization DTO cannot be null");
             }
-
+        
+            Console.WriteLine("vai entrar");
+           
             var code = await _service.AssignCodeAsync();
-
-            var specializationWithName = await _service.GetAsync(dto.Name.Value);
-            if (specializationWithName != null && specializationWithName.Count > 0)
+            Console.WriteLine("Code" + code);
+            
+            var specializationWithName = (await _service.GetAsync(dto.Name.Value)).FirstOrDefault();
+            if (specializationWithName != null)
             {
                 _ = await _dbLogService.LogAction(EntityType.Specialization, DbLogType.Error, new Message("Error creating Specialization: name already exists"));
                 return BadRequest("Specialization with this name already exists");
