@@ -1,42 +1,23 @@
 /* Table Container */
 .table-container {
-  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
   margin: 0 auto;
   font-family: Arial, sans-serif;
   color: #333;
 }
 
-/* Table Styles */
-.styled-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  padding: 10px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-th {
-  background-color: #f0f0f0;
-  font-weight: normal;
-}
-
-td {
-  background-color: #fff;
-}
-
-tr:hover {
-  background-color: #f7f7f7;
-}
-
-/* Header and Filter Input */
-.header-name {
-  justify-content: space-between;
+/* Filters Container */
+.filters-container {
+  display: flex;
+  gap: 10px;
   align-items: center;
-  width: 100%;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: 80%;
 }
 
 .filter-input {
@@ -44,7 +25,7 @@ tr:hover {
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 70%; /* Ajuste a largura do campo de filtro */
+  flex: 1; /* Ajusta os campos para ocupar o mesmo espaço */
 }
 
 .filter-input:focus {
@@ -52,7 +33,6 @@ tr:hover {
   outline: none;
 }
 
-/* Filter Buttons */
 .filter-buttons-container {
   display: flex;
   gap: 10px;
@@ -86,6 +66,30 @@ tr:hover {
   background-color: #999;
 }
 
+/* Table Styles */
+.styled-table {
+  width: 80%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f0f0f0;
+}
+
+td {
+  background-color: #fff;
+}
+
+tr:hover {
+  background-color: #f7f7f7;
+}
+
 /* Action Buttons */
 .action-buttons {
   gap: 10px;
@@ -107,19 +111,24 @@ tr:hover {
 
 /* Specific Button Colors */
 .edit-btn {
-  background-color: #007bff; /* Blue */
-  color: white;
-}
-
-.details-btn {
-  background-color: #28a745; /* Green */
+  background-color: #007bff;
   color: white;
 }
 
 .edit-btn:hover {
-  background-color: #0056b3; /* Darker blue */
+  background-color: #0056b3;
 }
 
-.details-btn:hover {
-  background-color: #218838; /* Darker green */
+/* Adjust Column Widths */
+.code-column {
+  width: 5%; /* Coluna Code mais pequena */
+  text-align: center; /* Centraliza o conteúdo na coluna */
 }
+
+.actions-column {
+  width: 10%; /* Reduz o tamanho da coluna Actions */
+  text-align: center; /* Centraliza o conteúdo */
+}
+
+/* Outros estilos permanecem os mesmos */
+

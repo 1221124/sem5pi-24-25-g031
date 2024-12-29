@@ -1,37 +1,38 @@
 <div class="table-container">
+  <div class="filters-container">
+    <input type="text" name="code" placeholder="Filter by Code" class="filter-input" />
+    <input type="text" name="name" placeholder="Filter by Name" class="filter-input" />
+    <input type="text" name="description" placeholder="Filter by Description" class="filter-input" />
+    <div class="filter-buttons-container">
+      <button class="apply-filter-btn" (click)="applyFiltrer()">Apply Filters</button>
+      <button class="clear-filter-btn" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+
   <table class="styled-table">
     <thead>
     <tr>
-      <th class="header-name">
-        <input type="text" name="name" placeholder="Filter by Name" class="filter-input" />
-      </th>
-      <th class="filter-buttons-container">
-        <button class="apply-filter-btn">Apply Filters</button>
-        <button class="clear-filter-btn">Clear Filters</button>
-      </th>
-    </tr>
-    <tr>
-      <th>Code</th>
+      <th class="code-column">Code</th>
       <th>Name</th>
-      <th>Actions</th>
+      <th>Description</th>
+      <th class="actions-column">Actions</th>
     </tr>
     </thead>
     <tbody>
-    <!-- Verifica se há especializações -->
     <ng-container *ngIf="getPaginatedSpecializations()?.length > 0; else noSpecializations">
       <tr *ngFor="let specialization of getPaginatedSpecializations()">
         <td>{{ specialization.SNOMEDCTCode }}</td>
         <td>{{ specialization.Name }}</td>
-        <td class="action-buttons">
-          <button class="action-btn edit-btn">Edit</button>
-          <button class="action-btn details-btn">View Details</button>
+        <td>{{ specialization.Description }}</td>
+        <td class="actions-column action-buttons">
+          <button class="action-btn edit-btn" (click)="updateSpecializationEvent.emit(specialization)">Edit</button>
         </td>
       </tr>
     </ng-container>
 
     <ng-template #noSpecializations>
       <tr>
-        <td colspan="3" style="text-align: center; padding: 20px;">
+        <td colspan="4" style="text-align: center; padding: 20px;">
           No specializations available.
         </td>
       </tr>

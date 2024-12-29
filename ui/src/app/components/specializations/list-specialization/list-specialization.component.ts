@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {OperationType} from '../../../models/operation-type.model';
 import {Specialization} from '../../../models/specialization.model';
 import {AuthService} from '../../../services/auth/auth.service';
 import {Router} from '@angular/router';
+import {Staff} from '../../../models/staff.model';
 
 @Component({
   selector: 'app-list-specialization',
@@ -16,8 +17,18 @@ import {Router} from '@angular/router';
 export class ListSpecializationComponent implements OnInit {
   @Input() specializations: Specialization[] = [];
   @Input() currentPage: number = 1;
-  @Input() itemsPerPage: number = 1;
+  @Input() itemsPerPage: number = 5;
+  @Output() updateSpecializationEvent = new EventEmitter<Specialization>();
+
   accessToken = '';
+
+  filters = {
+    code: '',
+    name: '',
+    description: ''
+  };
+
+  filteredSpecializations = [...this.specializations];
 
   constructor(
     private authService: AuthService,
@@ -45,5 +56,26 @@ export class ListSpecializationComponent implements OnInit {
   getPaginatedSpecializations() : Specialization[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.specializations.slice(start, start + this.itemsPerPage);
+  }
+
+  applyFiltrer() {
+    this.filteredSpecializations = this.specializations.filter(specialization => {
+      const matchesCode = this.filters.code
+        ? specialization.SNOMEDCTCode === this.filters.code
+        : true;
+      const matchesName = this.filters.name
+        ? specialization.Name.toLowerCase().includes(this.filters.name.toLowerCase())
+        : true;
+      const matchesDescription = this.filters.description
+        ? specialization.Description.toLowerCase().includes(this.filters.description.toLowerCase())
+        : true;
+
+      return matchesCode && matchesName && matchesDescription;
+    });
+  }
+
+  clearFilters() {
+    this.filters = { code: '', name: '', description: '' };
+    this.filteredSpecializations = [...this.specializations];
   }
 }
