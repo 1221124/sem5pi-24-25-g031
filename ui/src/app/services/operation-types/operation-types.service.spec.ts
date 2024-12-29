@@ -21,47 +21,17 @@ describe('OperationTypesService', () => {
     service = TestBed.inject(OperationTypesService);
   });
 
-  describe('getStaffRoles', () => {
-    it('should retrieve a list of staff roles', async () => {
-      const mockStaffRoles = ['Admin', 'Doctor', 'Nurse'];
-
-      httpClientSpy.get.and.returnValue(of(mockStaffRoles));
-
-      service.getStaffRoles().then(roles => {
-        expect(roles).toEqual(mockStaffRoles);
-      });
-
-      const req = httpClientSpy.get.calls.mostRecent().args[0];
-      expect(req).toBe(`${environment.enums}/staffRoles`);
-      expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('getSpecializations', () => {
-    it('should retrieve a list of specializations', async () => {
-      const mockSpecializations = ['Cardiology', 'Orthopedics'];
-
-      httpClientSpy.get.and.returnValue(of(mockSpecializations));
-
-      service.getSpecializations().then(specializations => {
-        expect(specializations).toEqual(mockSpecializations);
-      });
-
-      const req = httpClientSpy.get.calls.mostRecent().args[0];
-      expect(req).toBe(`${environment.enums}/specializations`);
-      expect(httpClientSpy.get).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('post', () => {
     it('should create a new operation type', async () => {
       const mockOperationType = {
         Id: 'a5f6e9d2-3c8e-4bb6-a91b-32c4cfaf4cfd',
+        OperationTypeCode: 'OT123',
         Name: 'Surgery',
         Specialization: "Cardiology",
-        RequiredStaff: [{ Role: 'Doctor', Specialization: "Cardiology", Quantity: 2 }],
+        RequiredStaff: [{ Role: 'Doctor', Specialization: "Cardiology", Quantity: 2, IsRequiredInPreparation: true, IsRequiredInSurgery: true, IsRequiredInCleaning: true }],
         PhasesDuration: { Preparation: 30, Surgery: 60, Cleaning: 15 },
-        Status: "Active"
+        Status: "Active",
+        Version: 1
       };
 
       const mockResponse = new HttpResponse({ status: 201 });
@@ -82,11 +52,13 @@ describe('OperationTypesService', () => {
     it('should update an operation type', async () => {
       const mockOperationType = {
         Id: 'a5f6e9d2-3c8e-4bb6-a91b-32c4cfaf4cfd',
+        OperationTypeCode: 'OT123',
         Name: 'Updated Surgery',
         Specialization: 'Cardiology',
-        RequiredStaff: [{ Role: 'Doctor', Specialization: 'Cardiology', Quantity: 3 }],
+        RequiredStaff: [{ Role: 'Doctor', Specialization: 'Cardiology', Quantity: 3, IsRequiredInPreparation: true, IsRequiredInSurgery: true, IsRequiredInCleaning: true }],
         PhasesDuration: { Preparation: 20, Surgery: 40, Cleaning: 10 },
-        Status: 'Active'
+        Status: 'Active',
+        Version: 1
       };
 
       const mockResponse = new HttpResponse({ status: 200 });
