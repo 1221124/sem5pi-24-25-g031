@@ -2,6 +2,7 @@
 using DDDNetCore.Domain.Specializations;
 using DDDNetCore.src.Domain.RoomTypes;
 using Domain.DbLogs;
+using Domain.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,11 +61,6 @@ namespace Controllers{
                 _ = await _dbLogService.LogAction(EntityType.Specialization, DbLogType.Error, new Message("Error creating Specialization: DTO is null"));
                 return BadRequest("Creating Specialization DTO cannot be null");
             }
-        
-            Console.WriteLine("vai entrar");
-           
-            var code = await _service.AssignCodeAsync();
-            Console.WriteLine("Code" + code);
             
             var specializationWithName = (await _service.GetAsync(dto.Name.Value)).FirstOrDefault();
             if (specializationWithName != null)
@@ -73,11 +69,41 @@ namespace Controllers{
                 return BadRequest("Specialization with this name already exists");
             }
 
-            var specialization = await _service.AddAsync(dto, code);
+            var specialization = await _service.AddAsync(dto);
 
             _ = await _dbLogService.LogAction(EntityType.Specialization, DbLogType.Create, new Message($"Create {specialization.SNOMEDCTCode}"));
             return CreatedAtAction(nameof(GetById), new { id = specialization.Id }, specialization);
         }
+        
+        // PUT: api/Staff/5
+        [HttpPut("update/{id}")]
+        [Authorize (Roles = "Admin")]
+        public async Task<ActionResult<SpecializationDto>> Update(Guid id, [FromBody] SpecializationDto dto)
+        {
+            try
+            {
+                if (id != dto.Id)
+                {
+                    return BadRequest( new { Message = "Id in URL does not match id in body" });
+                }
+
+                var specialization = await _service.UpdateAsync(dto);
+                
+                if (specialization == null)
+                {
+                    _ = await _dbLogService.LogAction(EntityType.Specialization, DbLogType.Error, new Message("Error updating operation type: operation type not found"));
+                    return NotFound();
+                }
+                _ = await _dbLogService.LogAction(EntityType.Specialization, DbLogType.Update, new Message($"Update {specialization.Id}"));
+                return Ok(new { operationType = specialization });
+            }
+            catch(BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { ex.Message});
+            }
+
+        }
+
 
     }
     
