@@ -62,6 +62,7 @@ d
   accessToken: string = '';
   showList : boolean = false;
   isEditModalOpen = false;
+  showForm = false;
 
 
   constructor(
@@ -71,6 +72,7 @@ d
     private route: ActivatedRoute) { }
 
   async ngOnInit() {
+
     if (!this.authService.isAuthenticated()) {
       this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
       this.authService.updateIsError(true);
@@ -248,5 +250,9 @@ d
 
     this.isEditModalOpen = true;
     this.navigateTo('update', { queryParams: { id: JSON.stringify(this.selectedSpecializationToUpdate.Id) } });
+  }
+
+  goToAdmin() {
+    this.router.navigate(['/admin']);
   }
 }
