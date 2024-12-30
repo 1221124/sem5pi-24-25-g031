@@ -304,7 +304,7 @@ namespace DDDNetCore.Domain.OperationRequests
                 return new RequestCode($"req{nextNumber}");
             }catch (Exception)
             {
-                return new RequestCode("REQ0");
+                return new RequestCode("REQ1");
             }
         }
 
