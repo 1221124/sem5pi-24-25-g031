@@ -3,6 +3,8 @@ import mongoose, { Model, Schema } from 'mongoose';
 import { Document } from 'mongoose';
 import { IPatientMedicalRecordPersistence } from '../src/dataschema/IPatientMedicalRecordPersistence';
 import PatientMedicalRecordRepo from '../src/repos/PatientMedicalRecordRepo';
+import AllergyRepo from "../src/repos/AllergyRepo";
+import {IAllergyPersistence} from "../src/dataschema/IAllergyPersistence";
 
 export class TestRepoFactory {
     private static mongoServer: MongoMemoryServer;
@@ -22,5 +24,11 @@ export class TestRepoFactory {
         const schema = new Schema<IPatientMedicalRecordPersistence & Document>({});
         const model = mongoose.model<IPatientMedicalRecordPersistence & Document>('PatientMedicalRecord', schema);
         return new PatientMedicalRecordRepo(model);
+    }
+
+    static createAllergyRepo(): AllergyRepo {
+        const schema = new Schema<IPatientMedicalRecordPersistence & Document>({});
+        const model = mongoose.model<IAllergyPersistence & Document>('Allergy', schema);
+        return new AllergyRepo(model);
     }
 }

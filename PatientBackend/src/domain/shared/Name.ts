@@ -23,4 +23,8 @@ export class Name extends ValueObject<NameProps> {
             return Result.ok<Name>(new Name({ value: name}))
         }
     }
+
+    public getValue(): string {
+        return this.value;
+    }
 }

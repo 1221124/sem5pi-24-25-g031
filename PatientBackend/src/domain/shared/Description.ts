@@ -21,8 +21,17 @@ export class Description extends ValueObject<DescriptionProps> {
         const guardResult = Guard.againstNullOrUndefined(description, 'description');
         if (!guardResult.succeeded) {
             return Result.fail<Description>(guardResult.message);
+        }
+        return Result.ok<Description>(new Description({ value: description}))
+            /*
         } else if (description.trim().length < MAX_CHARS) {
             return Result.ok<Description>(new Description({ value: description}))
         }
+
+             */
+    }
+
+    public getValue(): string {
+        return this.value;
     }
 }

@@ -12,4 +12,11 @@ export class CreatingAllergyDto {
         this.name = name;
         this.description = description;
     }
+
+    public static create (code: string, name: string, description: string): CreatingAllergyDto {
+        const icd11Code = ICD11Code.create(code).getValue();
+        const allergyName = Name.create(name).getValue();
+        const allergyDescription = Description.create(description).getValue();
+        return new CreatingAllergyDto(icd11Code, allergyName, allergyDescription);
+    }
 }

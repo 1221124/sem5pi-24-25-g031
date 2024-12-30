@@ -35,4 +35,8 @@ export class ICD11Code extends ValueObject<ICD11CodeProps> {
     public toString(): string {
         return this.value;
     }
+
+    public getValue(): string {
+        return this.value;
+    }
 }
