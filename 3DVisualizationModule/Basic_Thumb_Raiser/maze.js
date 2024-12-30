@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import Ground from "./ground.js";
 import Wall from "./wall.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import TWEEN from "three/addons/libs/tween.module.js";
 
 
@@ -32,17 +32,17 @@ export default class Maze {
             this.object = new THREE.Group();
 
             // Create the ground
-            this.ground = new Ground({textureUrl: description.groundTextureUrl, size: description.size});
+            this.ground = new Ground({ textureUrl: description.groundTextureUrl, size: description.size });
             this.object.add(this.ground.object);
 
             // Create a wall
-            this.wall = new Wall({textureUrl: description.wallTextureUrl});
+            this.wall = new Wall({ textureUrl: description.wallTextureUrl });
 
             this.doorMaterial = this.wall.object.children[0].material.clone();
             this.doorMaterial.transparent = true;
             this.doorMaterial.opacity = 0.5;
 
-            this.door = new Wall({textureUrl: description.doorTextureUrl});
+            this.door = new Wall({ textureUrl: description.doorTextureUrl });
 
             // Load hospital bed model
             const bedLoader = new GLTFLoader();
@@ -55,7 +55,7 @@ export default class Maze {
             this.mouse = new THREE.Vector2();
             this.raycaster = new THREE.Raycaster();
 
-            this.rayLineMaterial = new THREE.LineBasicMaterial({color: 0xff0000});
+            this.rayLineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
             this.rayLineGeometry = new THREE.BufferGeometry().setFromPoints([
                 new THREE.Vector3(0, 0, 0),
                 new THREE.Vector3(0, 0, 0)
@@ -275,6 +275,15 @@ export default class Maze {
                     console.log("Selected Bed UUID:", selectedBed.object.uuid);
                     console.log("Selected Bed Position:", selectedBed.position);
                     this.moveCameraToRoom(selectedBed.position);
+
+                    if (selectedBed) window.addEventListener("keydown", (event) => {
+                        if (event.key === 'i') {
+                            this.obtainRoomDataWhenPressingI(selectedBed).then((response) => {
+                                console.log("Response", response);
+                            });
+                        }
+                    });
+
                 } else {
                     console.log("No matching bed found");
                 }
@@ -286,6 +295,8 @@ export default class Maze {
 
             this.camera.setTarget(roomCenter);
             console.log("Camera", this.camera);
+
+
 
         };
 
@@ -336,17 +347,11 @@ export default class Maze {
             error => this.onError(this.url, error)
         );
 
-        if(this.selectedBed) window.addEventListener("keydown", (event) => {
-            if (event.key === 'i') {
-                this.obtainRoomDataWhenPressingI().then((response) => {
-                    console.log(response);
-                });
-            }
-        });
+
     }
 
     addIntersectableObject(object, userData = {}) {
-        object.userData = {...object.userData, ...userData}; // Add metadata for the object
+        object.userData = { ...object.userData, ...userData }; // Add metadata for the object
         this.objectsToIntersect.push(object);
     }
 
@@ -397,7 +402,7 @@ export default class Maze {
         // Check if the robot is near the door and animate it opening
         if (this.isRobotNearDoor(robotPosition, door.object.position)) {
             new TWEEN.Tween(door.object.rotation)
-                .to({y: Math.PI / 2}, 1000) // A rotação de 0 para 90 graus (abertura)
+                .to({ y: Math.PI / 2 }, 1000) // A rotação de 0 para 90 graus (abertura)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .start();
         }
@@ -569,8 +574,7 @@ export default class Maze {
 
 
 
-
-    async obtainRoomDataWhenPressingI(){
+    async obtainRoomDataWhenPressingI(selectedBed) {
         let appointment;
         const surgeries = await this.getSurgeries();
 
@@ -579,13 +583,14 @@ export default class Maze {
             if (Array.isArray(surgeryRoomsWrapper) && surgeryRoomsWrapper.length > 0) {
 
                 for (let surgeryRoom of surgeryRoomsWrapper) {
-                    if (surgeryRoom.SurgeryRoomNumber === this.selectedBed.roomNumber) {
-                        console.log(this.selectedBed);
+                    if (surgeryRoom.SurgeryRoomNumber === selectedBed.roomNumber) {
+                        console.log(selectedBed);
 
-                        if(surgeryRoom.CurrentStatus === 'OCCUPIED'){
+                        if (surgeryRoom.CurrentStatus === 'OCCUPIED') {
                             console.log('Sala ocupada');
 
                             appointment = await this.getAppointment(surgeryRoom.surgeryRoomNumber);
+
                         }
 
                         break;
@@ -595,7 +600,7 @@ export default class Maze {
         }
 
         return {
-            surgeryRoom: this.selectedBed,
+            surgeryRoom: selectedBed,
             appointment: appointment
         }
     }
