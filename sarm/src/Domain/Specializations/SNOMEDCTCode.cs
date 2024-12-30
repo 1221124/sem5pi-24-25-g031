@@ -6,9 +6,11 @@ namespace DDDNetCore.Domain.Specializations
     {
         public string Value { get; }
 
-        public SNOMEDCTCode()
+        public SNOMEDCTCode(string value)
         {
+            Value = value;
         }
+        
 
         public static implicit operator string(SNOMEDCTCode requestCode)
         {
@@ -17,7 +19,7 @@ namespace DDDNetCore.Domain.Specializations
 
         public static implicit operator SNOMEDCTCode(string value)
         {
-            return new SNOMEDCTCode();
+            return new SNOMEDCTCode(value);
         }
 
         public override string ToString()

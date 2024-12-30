@@ -78,16 +78,12 @@ namespace Controllers{
         // PUT: api/Staff/5
         [HttpPut("update/{id}")]
         [Authorize (Roles = "Admin")]
-        public async Task<ActionResult<SpecializationDto>> Update(Guid id, [FromBody] SpecializationDto dto)
+        public async Task<ActionResult<SpecializationDto>> Update(Guid id, [FromBody] UpdatingSpecializationDto dto)
         {
             try
             {
-                if (id != dto.Id)
-                {
-                    return BadRequest( new { Message = "Id in URL does not match id in body" });
-                }
 
-                var specialization = await _service.UpdateAsync(dto);
+                var specialization = await _service.UpdateAsync(id, dto);
                 
                 if (specialization == null)
                 {

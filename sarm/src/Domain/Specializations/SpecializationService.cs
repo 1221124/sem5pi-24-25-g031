@@ -83,9 +83,9 @@ namespace DDDNetCore.Domain.Specializations
         }
 
 
-        public async Task<SpecializationDto> UpdateAsync(SpecializationDto dto)
+        public async Task<SpecializationDto> UpdateAsync(Guid id, UpdatingSpecializationDto dto)
         {
-            var specialization = await this._repository.GetByIdAsync(new SpecializationId(dto.Id));
+            var specialization = await this._repository.GetByIdAsync(new SpecializationId(id));
 
             if (specialization == null)
                 return null;   
