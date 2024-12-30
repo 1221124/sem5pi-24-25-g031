@@ -121,7 +121,7 @@ schedule_all_surgeries(Room,Day):-
 
 availability_all_surgeries([],_,_).
 availability_all_surgeries([OpCode|LOpCode],Room,Day):-
-    sum_surgery_time(OpCode, TotalTime),
+    calculate_surgery_time(OpCode,TotalTime),
     availability_operation(OpCode,Room,Day,LPossibilities,LDoctors),
     schedule_first_interval(TotalTime,LPossibilities,(TinS,TfinS)),
     retract(agenda_operation_room1(Room,Day,Agenda)),
@@ -130,8 +130,8 @@ availability_all_surgeries([OpCode|LOpCode],Room,Day):-
     insert_agenda_doctors((TinS,TfinS,OpCode),Day,LDoctors),
     availability_all_surgeries(LOpCode,Room,Day).
 
-availability_operation(OpCode,Room,Day,LPossibilities,LDoctors):-surgery_id(OpCode,OpType),surgery(OpType,TPreparation,TSurgery,TCleaning),
-    TotalTime is TPreparation+TSurgery+TCleaning,
+availability_operation(OpCode,Room,Day,LPossibilities,LDoctors):-
+    calculate_surgery_time(OpCode,TotalTime),
     findall(Doctor,assignment_surgery(OpCode,Doctor),LDoctors),
     intersect_all_agendas(LDoctors,Day,LA),
     agenda_operation_room1(Room,Day,LAgenda),
@@ -274,7 +274,7 @@ assign_surgeries_to_rooms(Day) :-
     retractall(surgery_in_room(_,_,_)),
     findall(Room, agenda_operation_room(Room, Day, _), LRooms),
     findall(Surgery, surgery_id(Surgery, _), LSurgeries),
-    process_surgeries(LSurgeries, LRooms, Day),
+    solve_surgery_allocation(LSurgeries, LRooms, Day),
     write('Surgeries in rooms: '), nl,
     write('Surgery, Room, Day'), nl,
     findall((Surgery, Room, Day), surgery_in_room(Surgery, Room, Day), L),
@@ -285,36 +285,51 @@ print_surgeries_in_rooms([(Surgery, Room, Day) | L]) :-
     write(Surgery), write(', '), write(Room), write(', '), write(Day), nl,
     print_surgeries_in_rooms(L).
 
-process_surgeries([], _, _).
-process_surgeries([Surgery | RestSurgeries], Rooms, Day) :-
-    find_least_occupied_room(Rooms, Room),
+calculate_rooms_occupancy(Rooms, Day, RoomOccupancy) :-
+    findall((Room, TotalTime), (
+        member(Room, Rooms),
+        calculate_total_occupancy(Room, Day, TotalTime)
+    ), RoomOccupancy).
+
+calculate_total_occupancy(Room, Day, TotalTime) :-
+    findall(Time, (
+        agenda_operation_room(Room, Day, Agenda),
+        member((Start, End, _), Agenda),
+        Time is End - Start
+    ), Times),
+    sum_list(Times, TotalTime).
+
+solve_surgery_allocation(Surgeries, Rooms, Day) :-
+    calculate_rooms_occupancy(Rooms, Day, RoomOccupancy),
+    dfs_allocate_surgeries(Surgeries, RoomOccupancy, [], Solution),
+    process_allocation(Solution, Day).
+
+dfs_allocate_surgeries([], _, Solution, Solution).
+dfs_allocate_surgeries([Surgery | RemainingSurgeries], RoomOccupancy, CurrentSolution, FinalSolution) :-
+    choose_least_occupied_room(RoomOccupancy, Room),
+    current_time(Room, RoomOccupancy, CurrentTime),
+    calculate_surgery_time(Surgery, SurgeryTime),
+    NewTime is SurgeryTime + CurrentTime,
+    update_room_occupancy(RoomOccupancy, Room, NewTime, UpdatedOccupancy),
+    dfs_allocate_surgeries(RemainingSurgeries, UpdatedOccupancy, [(Surgery, Room) | CurrentSolution], FinalSolution).
+
+current_time(Room, RoomOccupancy, Time) :-
+    member((Room, Time), RoomOccupancy), !.
+    
+choose_least_occupied_room(RoomOccupancy, Room) :-
+    sort(2, @=<, RoomOccupancy, SortedOccupancy),
+    SortedOccupancy = [(Room, _) | _].
+
+update_room_occupancy(RoomOccupancy, Room, NewTime, UpdatedOccupancy) :-
+    select((Room, _), RoomOccupancy, RestOccupancy),
+    UpdatedOccupancy = [(Room, NewTime) | RestOccupancy].
+
+process_allocation([], _).
+process_allocation([(Surgery, Room) | Tail], Day) :-
     assert(surgery_in_room(Surgery, Room, Day)),
-    process_surgeries(RestSurgeries, Rooms, Day).
+    process_allocation(Tail, Day).
 
-find_least_occupied_room(Rooms, RoomWithMinTime) :-
-    bfs(Rooms, [], 1441, RoomWithMinTime).
-
-bfs([], _, RoomWithMinTime, RoomWithMinTime).
-bfs([Room | RestRooms], Visited, CurrentMinTime, RoomWithMinTime) :-
-    calculate_total_occupancy(Room, TotalTime),
-    (   TotalTime < CurrentMinTime
-    ->  bfs(RestRooms, [Room | Visited], TotalTime, RoomWithMinTime)
-    ;   bfs(RestRooms, [Room | Visited], CurrentMinTime, RoomWithMinTime)
-    ).
-
-calculate_total_occupancy(Room, TotalTime) :-
-    findall(Surgery, surgery_in_room(Surgery, Room, _), Surgeries),
-    findall(Surgery, (agenda_operation_room(_, _, List), member((_, _, Surgery), List)), Agenda),
-    append(Surgeries, Agenda, AllSurgeries),
-    sum_surgeries_times(AllSurgeries, TotalTime).
-
-sum_surgeries_times([], 0).
-sum_surgeries_times([Surgery | Rest], TotalTime) :-
-    sum_surgeries_times(Rest, TotalTimeRest),
-    sum_surgery_time(Surgery, Time),
-    TotalTime is TotalTimeRest + Time.
-
-sum_surgery_time(Surgery, Time) :-
+calculate_surgery_time(Surgery, Time) :-
     surgery_id(Surgery, OpType),
     surgery(OpType, TPreparation, TSurgery, TCleaning),
     Time is TPreparation + TSurgery + TCleaning.
