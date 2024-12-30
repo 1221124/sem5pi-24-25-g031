@@ -282,15 +282,14 @@ export default class PatientMedicalRecordController {
           next(err);
         } else {
           console.log('File sent successfully. Deleting file...');
-  
-          fs.unlink(filePath, (unlinkErr) => {
-            if (unlinkErr) {
-              console.error('Error deleting file: ', unlinkErr);
-            } else {
-              console.log('File deleted successfully:', filePath);
-            }
-          });
         }
+        fs.unlink(filePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error('Error deleting file: ', unlinkErr);
+          } else {
+            console.log('File deleted successfully:', filePath);
+          }
+        });
       });
     } catch (error) {
       console.error("Controller: Unexpected error: ", error);
