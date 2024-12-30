@@ -1,7 +1,7 @@
 <div class="patient-medical-record full-page">
   <div>
     <button *ngIf="!isPatient" class="back-btn" (click)="closePopup()">Back</button>
-    <button class="add-btn" (click)="openDownloadPopup()">Download</button>
+    <button *ngIf="isPatient" class="add-btn" (click)="openDownloadPopup()">Download</button>
   </div>
 
   <h1>Patient Medical Record</h1>
@@ -97,6 +97,7 @@
 <div class="overlay" [ngClass]="{active: downnloadHistoryPopup}">
   <app-download-history-form
     *ngIf="downnloadHistoryPopup"
+    (download)="downloadMedicalRecord()"
     (closeDownload)="closeDownloadHistoryPopup()">
     ></app-download-history-form>
 </div>

@@ -109,6 +109,13 @@ export default async ({ expressApp }) => {
     path: config.repos.patientMedicalRecord.path
   }
 
+  /*** FILE ***/
+  
+  const fileService = {
+    name: config.services.file.name,
+    path: config.services.file.path
+  }
+
   /*** DEPENDENCY INJECTOR ***/
 
   dependencyInjectorLoader({
@@ -137,7 +144,8 @@ export default async ({ expressApp }) => {
       roleService,
       medicalConditionService,
       allergyService,
-      patientMedicalRecordService  
+      patientMedicalRecordService,
+      fileService  
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');

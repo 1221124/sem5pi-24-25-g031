@@ -107,11 +107,13 @@ export class PatientComponent implements OnInit {
   }
 
   viewMedicalRecord() {
+    this.router.navigate(['/patient/patient-medical-record']);
     this.viewMedicalRecordFlag = true;
     console.log("Viewing medical record for:", this.patient);
   }
   
   closeMedicalRecord() {
+    this.router.navigate(['/patient']);
     this.viewMedicalRecordFlag = false;
     console.log('Closing medical record');
   }

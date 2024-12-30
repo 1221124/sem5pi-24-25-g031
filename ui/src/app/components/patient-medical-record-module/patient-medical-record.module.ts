@@ -22,7 +22,8 @@ import { DownloadHistoryFormComponent } from './download-history-form/download-h
   exports: [
     PatientMedicalRecordComponent,
     MedicalConditionEntryFormComponent,
-    AllergyEntryFormComponent
+    AllergyEntryFormComponent,
+    DownloadHistoryFormComponent,
   ]
 })
 export class PatientMedicalRecordModule {}

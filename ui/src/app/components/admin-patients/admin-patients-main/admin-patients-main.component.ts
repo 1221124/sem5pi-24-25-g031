@@ -90,11 +90,11 @@ export class AdminPatientsMainComponent {
   handleRoute() {
     this.role = this.role.trim().toLowerCase();
     if (this.router.url.includes('patient-medical-record')) {
-      if (!this.patients || !this.route.snapshot.queryParams['patientId']) {
+      if (!this.patients || !this.route.snapshot.queryParams['medicalRecordNumber']) {
         this.router.navigate([`${this.role}/patients`]);	
         return;
       }
-      this.selectedPatient = this.patients.find(patient => patient.Id === this.route.snapshot.queryParams['patientId']);
+      this.selectedPatient = this.patients.find(patient => patient.MedicalRecordNumber === this.route.snapshot.queryParams['medicalRecordNumber']);
       if (this.selectedPatient === undefined) {
         this.router.navigate([`${this.role}/patients`]);
         return;
@@ -162,7 +162,7 @@ export class AdminPatientsMainComponent {
 
   openPatientMedicalRecordModal(patient: Patient) {
     this.selectedPatient = patient;
-    this.router.navigate(['doctor/patients/patient-medical-record'], { queryParams: { patientId: patient.Id } });
+    this.router.navigate(['doctor/patients/patient-medical-record'], { queryParams: { medicalRecordNumber: patient.MedicalRecordNumber } });
     this.hideTable = true;
     this.isMedicalRecordModalOpen = true;
   }

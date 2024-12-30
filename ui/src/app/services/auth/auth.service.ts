@@ -89,6 +89,29 @@ export class AuthService {
       }
     }
 
+    async authenticateWithCredentials(email: string, password: string): Promise<any> {
+      const payload = {
+        grant_type: 'password',
+        client_id: environment.authConfig.clientId,
+        client_secret: environment.authConfig.clientSecret,
+        username: email,
+        password: password,
+        scope: 'openid profile email',
+        connection: 'Username-Password-Authentication'
+      };
+    
+      return (await firstValueFrom(this.http.post<any>(`${environment.tokenUrl}`, payload, httpOptions)).then(response => {
+        if (response.status.toString().startsWith('2')) {
+          console.log('Successfully authenticated with credentials!');
+          return true;
+        }
+        return false;
+      }).catch(error => {
+        console.error('Error during API request:', error);
+        return false;
+      }));
+    }
+
     extractRoleFromAccessToken(accessToken: string): string | null {
       try {
         const decodedToken: any = jwtDecode(accessToken);

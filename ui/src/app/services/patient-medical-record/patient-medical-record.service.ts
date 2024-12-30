@@ -85,6 +85,28 @@ export class PatientMedicalRecordService {
       throw new Error('Error creating patient medical record: ' + error);
     }
   }
+  
+  async saveAllergy(id: string, newAllergy: MedicalRecordEntry, accessToken: string) {
+    console.log(id);
+    console.log(newAllergy);
+    console.log(accessToken);
+    try {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      const dto = {
+        "code": newAllergy.ICD11Code,
+        "notMeaningfulAnymore": newAllergy.notMeaningfulAnymore
+      };
+
+      const options = { ...httpOptions, headers };
+
+      return await firstValueFrom(this.http.patch(`${environment.patientMedicalRecord}/allergy/${id}`, dto, options))
+    } catch (error) {
+      throw new Error('Error saving medical condition: ' + error);
+    }
+  }
 
   async saveMedicalCondition(id: string, medicalCondition: MedicalRecordEntry, accessToken: string) {
     try {
@@ -119,25 +141,25 @@ export class PatientMedicalRecordService {
     }
   }
 
-  async saveAllergy(id: string, newAllergy: MedicalRecordEntry, accessToken: string) {
-    console.log(id);
-    console.log(newAllergy);
-    console.log(accessToken);
-    try {
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${accessToken}`
-      });
+  async downloadPatientMedicalRecord(medicalRecordNumber: string, accessToken: string) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    });
 
-      const dto = {
-        "code": newAllergy.ICD11Code,
-        "notMeaningfulAnymore": newAllergy.notMeaningfulAnymore
+    const params = new HttpParams().set('medicalRecordNumber', medicalRecordNumber);
+
+    const options = { ...httpOptions, headers, params };
+
+    return await firstValueFrom(this.http.get<any>(`${environment.patientMedicalRecord}/download`, options))
+    .then(response => {
+      return {
+        status: response.status,
+        body: {
+          file: response.body.file
+        }
       };
-
-      const options = { ...httpOptions, headers };
-
-      return await firstValueFrom(this.http.patch(`${environment.patientMedicalRecord}/allergy/${id}`, dto, options))
-    } catch (error) {
-      throw new Error('Error saving medical condition: ' + error);
-    }
+    });
   }
+
 }

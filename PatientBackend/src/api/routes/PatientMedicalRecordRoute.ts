@@ -49,6 +49,17 @@ export default (app: Router) => {
     }),
     (req, res, next) => ctrl.getPatientMedicalRecordByMedicalRecordNumber(req, res, next)
   );
+  
+  //Get file by medical record number
+  route.get('/download',
+    isAuth(['Patient']) as unknown as RequestHandler,
+    celebrate({
+      query: Joi.object({
+        medicalRecordNumber: Joi.string().required()
+      })
+    }),
+    (req, res, next) => ctrl.downloadPatientMedicalRecord(req, res, next)
+  );
 
   //Get by id
   route.get('/:id',
@@ -116,4 +127,5 @@ export default (app: Router) => {
     }),
     (req, res, next) => ctrl.deletePatientMedicalRecord(req, res, next)
   );
+
 };

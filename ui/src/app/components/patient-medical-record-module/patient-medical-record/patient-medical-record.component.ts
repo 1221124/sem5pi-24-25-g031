@@ -12,7 +12,6 @@ import { MedicalConditionService } from '../../../services/medical-condition/med
 import { FormsModule } from '@angular/forms';
 import {Allergy} from '../../../models/allergy.model';
 import {AllergyService} from '../../../services/allergy/allergy.service';
-import {ALL} from 'node:dns';
 import {AllergyEntryFormComponent} from '../allergy-entry-form/allergy-entry-form.component';
 import {DownloadHistoryFormComponent} from '../download-history-form/download-history-form.component';
 
@@ -230,36 +229,74 @@ export class PatientMedicalRecordComponent implements OnInit {
 
   openMedicalConditionPopup(medicalCondition?: MedicalRecordEntry) {
     this.medicalCondition = medicalCondition || null;
+    this.router.navigate(['/doctor/patients/patient-medical-record/medical-condition']);
     this.medicalConditionPopup = true;
   }
 
   closeMedicalConditionPopup() {
     this.getPatientMedicalRecord();
     this.medicalCondition = null;
+    this.router.navigate(['/doctor/patients/patient-medical-record']);
     this.medicalConditionPopup = false;
   }
 
   closeAllergyPopup() {
     this.getPatientMedicalRecord();
     this.allergy = null;
+    this.router.navigate(['/doctor/patients/patient-medical-record']);
     this.allergyPopup = false;
   }
 
   closePopup() {
-    this.router.navigate(['doctor/patients']);
+    this.router.navigate(['/doctor/patients']);
     this.close.emit();
   }
 
   openAllergyPopup(allergyCondition?: MedicalRecordEntry) {
     this.allergy = allergyCondition || null;
+    this.router.navigate(['/doctor/patients/patient-medical-record/allergy']);
     this.allergyPopup = true;
   }
 
   openDownloadPopup() {
+    this.router.navigate(['/patient/patient-medical-record/download']);
     this.downnloadHistoryPopup = true;
   }
 
+  downloadMedicalRecord() {
+    if (!this.isPatient) return;
+
+    this.service.downloadPatientMedicalRecord(this.patientMedicalRecord.MedicalRecordNumber, this.accessToken).then((response) => {
+      if (response.status === 200) {
+        const filePath = response.body.file;
+        const link = document.createElement('a');
+        link.href = filePath;
+        link.download = `PatientMedicalRecord_${this.patientMedicalRecord.MedicalRecordNumber}.pdf`;
+        link.click();
+        this.authService.updateMessage('Patient medical record downloaded successfully!');
+        this.authService.updateIsError(false);
+      } else {
+        this.authService.updateMessage('Unexpected response: ' + response.status);
+        this.authService.updateIsError(true);
+      }
+    }).catch((error) => {
+      if (error.status === 400) {
+        this.authService.updateMessage('Bad request: ' + error.error);
+      } else if (error.status === 404) {
+        this.authService.updateMessage('Patient medical record not found!');
+      } else {
+        this.authService.updateMessage('Download failed: ' + error);
+      }
+      this.authService.updateIsError(true);
+    }).finally(() => {
+      setTimeout(() => {
+        this.closePopup();
+      }, 2000);
+    });
+  }
+
   closeDownloadHistoryPopup() {
+    this.router.navigate(['/patient/patient-medical-record']);
     this.downnloadHistoryPopup = false;
   }
 }

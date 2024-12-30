@@ -98,6 +98,10 @@ export default {
     patientMedicalRecord: {
       name: "PatientMedicalRecordService",
       path: "../services/patientMedicalRecordService"
+    },
+    file: {
+      name: "FileService",
+      path: "../services/fileService"
     }
   },
 };

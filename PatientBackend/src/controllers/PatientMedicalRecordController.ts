@@ -9,11 +9,13 @@ import { UpdatingPatientMedicalRecordDto } from '../dto/patient-medical-record/U
 import mongoose from 'mongoose';
 import { MedicalRecordEntry } from '../domain/medical-record-entry/MedicalRecordEntry';
 import { ICD11Code } from '../domain/shared/ICD11Code';
+import IFileService from '../services/IServices/IFileService';
 
 @Service()
 export default class PatientMedicalRecordController {
   constructor(
-    @Inject(config.services.patientMedicalRecord.name) private patientMedicalRecordService: IPatientMedicalRecordService
+    @Inject(config.services.patientMedicalRecord.name) private patientMedicalRecordService: IPatientMedicalRecordService,
+    @Inject(config.services.file.name) private fileService: IFileService
   ) {}
 
   /**
@@ -232,6 +234,37 @@ export default class PatientMedicalRecordController {
       }
 
       return res.status(204).send();
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
+   * Downloads a patient medical record
+   * @param req - Express request object.
+   * @param res - Express response object.
+   * @param next - Express next middleware function.
+   */
+  public async downloadPatientMedicalRecord(req: Request, res: Response, next: NextFunction) {
+    try {
+      const medicalRecordNumber = req.query.medicalRecordNumber as string; 
+
+      console.log("Controller: Download patient medical record: ", medicalRecordNumber);
+
+      const patientMedicalRecordResultOrError = await this.patientMedicalRecordService.getByMedicalRecordNumber(medicalRecordNumber) as Result<PatientMedicalRecordDto>;
+      if (patientMedicalRecordResultOrError.isFailure) {
+        return res.status(404).send(patientMedicalRecordResultOrError.errorValue()); 
+      }
+      const patientMedicalRecord = patientMedicalRecordResultOrError.getValue();
+
+      const fileResultOrError = await this.fileService.createFile(patientMedicalRecord) as Result<string>;
+      if (fileResultOrError.isFailure) {
+        return res.status(400).send(fileResultOrError.errorValue()); 
+      }
+      const file = fileResultOrError.getValue();
+
+      return res.status(200).send(file);
+
     } catch (error) {
       return next(error);
     }

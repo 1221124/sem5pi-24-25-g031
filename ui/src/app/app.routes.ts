@@ -220,7 +220,24 @@ export const routes: Route[] = [
       }
     ]
   },
-  {path: 'patient', component: PatientComponent},
+  {
+    path: 'patient',
+    component: PatientComponent,
+    children: [
+      {
+        path: 'patient-medical-record',
+        component: PatientMedicalRecordComponent,
+        children: [
+          {
+            path: 'download',
+            loadChildren: () =>
+              import('./components/patient-medical-record-module/patient-medical-record.module')
+                .then((m) => m.PatientMedicalRecordModule)
+          },
+        ]
+      }
+    ]
+  },
   {path: 'nurse', component: NurseMenuComponent},
   {path: 'technician', component: TechnicianMenuComponent},
   {path: 'verify-email', component: VerifyEmailComponent},

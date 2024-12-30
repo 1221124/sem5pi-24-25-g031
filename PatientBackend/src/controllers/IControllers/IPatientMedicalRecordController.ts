@@ -9,4 +9,5 @@ export interface IPatientMedicalRecordController {
     addOrUpdateMedicalConditionEntry(req: Request, res: Response, next: NextFunction): Promise<any>;
     addOrUpdateAllergyEntry(req: Request, res: Response, next: NextFunction): Promise<any>;
     deletePatientMedicalRecord(req: Request, res: Response, next: NextFunction): Promise<any>;
+    downloadPatientMedicalRecord(req: Request, res: Response, next: NextFunction): Promise<any>;
 }

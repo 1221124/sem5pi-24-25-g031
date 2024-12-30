@@ -214,4 +214,5 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
       throw error;
     }
   }
+
 }
