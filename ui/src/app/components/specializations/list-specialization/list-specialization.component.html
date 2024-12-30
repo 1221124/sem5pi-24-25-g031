@@ -1,10 +1,10 @@
 <div class="table-container">
   <div class="filters-container">
-    <input type="text" name="code" placeholder="Filter by Code" class="filter-input" />
-    <input type="text" name="name" placeholder="Filter by Name" class="filter-input" />
-    <input type="text" name="description" placeholder="Filter by Description" class="filter-input" />
+    <input type="text" name="code" placeholder="Filter by Code" class="filter-input" [(ngModel)]="filter.code"/>
+    <input type="text" name="name" placeholder="Filter by Name" class="filter-input" [(ngModel)]="filter.name"/>
+    <input type="text" name="description" placeholder="Filter by Description" class="filter-input" [(ngModel)]="filter.description"/>
     <div class="filter-buttons-container">
-      <button class="apply-filter-btn" (click)="applyFiltrer()">Apply Filters</button>
+     <!-- <button class="apply-filter-btn" (click)="applyFiltrer()">Apply Filters</button>-->
       <button class="clear-filter-btn" (click)="clearFilters()">Clear Filters</button>
     </div>
   </div>

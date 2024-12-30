@@ -6,6 +6,7 @@ import {Specialization} from '../../../models/specialization.model';
 import {AuthService} from '../../../services/auth/auth.service';
 import {Router} from '@angular/router';
 import {Staff} from '../../../models/staff.model';
+import {filter} from 'rxjs';
 
 @Component({
   selector: 'app-list-specialization',
@@ -16,13 +17,13 @@ import {Staff} from '../../../models/staff.model';
 })
 export class ListSpecializationComponent implements OnInit {
   @Input() specializations: Specialization[] = [];
-  @Input() currentPage: number = 1;
-  @Input() itemsPerPage: number = 5;
+  /*@Input() currentPage: number = 1;
+  @Input() itemsPerPage: number = 5;*/
   @Output() updateSpecializationEvent = new EventEmitter<Specialization>();
 
   accessToken = '';
 
-  filters = {
+  filter = {
     code: '',
     name: '',
     description: ''
@@ -53,29 +54,23 @@ export class ListSpecializationComponent implements OnInit {
     }
   }
 
-  getPaginatedSpecializations() : Specialization[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.specializations.slice(start, start + this.itemsPerPage);
-  }
-
-  applyFiltrer() {
-    this.filteredSpecializations = this.specializations.filter(specialization => {
-      const matchesCode = this.filters.code
-        ? specialization.SNOMEDCTCode === this.filters.code
-        : true;
-      const matchesName = this.filters.name
-        ? specialization.Name.toLowerCase().includes(this.filters.name.toLowerCase())
-        : true;
-      const matchesDescription = this.filters.description
-        ? specialization.Description.toLowerCase().includes(this.filters.description.toLowerCase())
-        : true;
-
-      return matchesCode && matchesName && matchesDescription;
+  getPaginatedSpecializations() {
+    return this.specializations.filter(specialization => {
+      return (
+        (this.filter.code ? specialization.SNOMEDCTCode.includes(this.filter.code) : true) &&
+        (this.filter.name ? specialization.Name.toLowerCase().includes(this.filter.name.toLowerCase()) : true) &&
+        (this.filter.description ? specialization.Description.toLowerCase().includes(this.filter.description.toLowerCase()) : true)
+      );
     });
   }
 
+  applyFiltrer() {
+    this.getPaginatedSpecializations();
+  }
+
   clearFilters() {
-    this.filters = { code: '', name: '', description: '' };
+    this.filter = { code: '', name: '', description: '' };
     this.filteredSpecializations = [...this.specializations];
   }
+
 }
