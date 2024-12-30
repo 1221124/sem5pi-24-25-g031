@@ -16,9 +16,14 @@ import TWEEN from "three/addons/libs/tween.module.js";
 export default class Maze {
     constructor(parameters, camera) {
         this.selectedBedRoomNumber = '';
+        this.selectedBed = '';
+        this.descriptionWidth = '';
+        this.descriptionHeight = '';
         this.camera = camera;
         this.onLoad = function (description) {
             // Store the maze's map and size
+            this.descriptionWidth = description.size.width;
+            this.descriptionHeight = description.size.height;
             this.map = description.map;
             this.size = description.size;
 
@@ -145,7 +150,6 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR1');
-                                                        this.selectedBedRoomNumber = 'OR1';
                                                     }
                                                     break;
                                                 }
@@ -162,7 +166,6 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR2');
-                                                        this.selectedBedRoomNumber = 'OR2';
                                                     }
                                                     break;
                                                 }
@@ -179,7 +182,6 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR3');
-                                                        this.selectedBedRoomNumber = 'OR3';
                                                     }
                                                     break;
                                                 }
@@ -196,7 +198,6 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR4');
-                                                        this.selectedBedRoomNumber = 'OR4';
                                                     }
                                                     break;
                                                 }
@@ -213,7 +214,6 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR5');
-                                                        this.selectedBedRoomNumber = 'OR5';
                                                     }
                                                     break;
                                                 }
@@ -230,7 +230,6 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR6');
-                                                        this.selectedBedRoomNumber = 'OR6';
                                                     }
                                                     break;
                                                 }
@@ -283,7 +282,35 @@ export default class Maze {
                     console.log("Selected Bed Position:", selectedBed.position);
                     this.moveCameraToRoom(selectedBed.position);
 
-                    if (selectedBed) window.addEventListener("keydown", (event) => {
+                    console.log("selectBed.position: ", selectedBed.position);
+                    console.log("Description: ", this.description);
+                    console.log("Description Width: ", this.descriptionWidth);
+                    console.log("Description Height: ", this.descriptionHeight);
+
+                    var i = selectedBed.position.x - 0.5 + (this.descriptionWidth/2) ;
+                    console.log("i: ", i);
+                    var j = selectedBed.position.z + (this.descriptionHeight/2);
+                    console.log("j: ", j);
+
+                    if (i === 2 && j === 2) {
+                        this.selectedBedRoomNumber = 'OR1';
+                    } else if (i === 6 && j === 2) {
+                        this.selectedBedRoomNumber = 'OR2';
+                    } else if (i === 10 && j === 2) {
+                        this.selectedBedRoomNumber = 'OR3';
+                    } else if (i === 2 && j === 10) {
+                        this.selectedBedRoomNumber = 'OR4';
+                    } else if (i === 6 && j === 10) {
+                        this.selectedBedRoomNumber = 'OR5';
+                    } else if (i === 10 && j === 10) {
+                        this.selectedBedRoomNumber = 'OR6';
+                    } else {
+                        this.selectedBedRoomNumber = '';
+                    }
+
+                    console.log("selected bed rrom: ", this.selectedBedRoomNumber);
+
+                    if (selectedBed !== '') window.addEventListener("keydown", (event) => {
                         if (event.key === 'i') {
                             this.obtainRoomDataWhenPressingI(selectedBed).then((response) => {
                                 console.log("Response", response);
@@ -302,12 +329,7 @@ export default class Maze {
 
             this.camera.setTarget(roomCenter);
             console.log("Camera", this.camera);
-
-
-
         };
-
-
 
         this.getRoomCenter = function (i, j, size) {
             return {
@@ -579,43 +601,82 @@ export default class Maze {
         });
     }
 
-
-
     async obtainRoomDataWhenPressingI(selectedBed) {
-        let appointment;
+        let appointment, surgeryRoom;
         console.log("Selected Bed:", selectedBed);
+
+        if(!selectedBed) return;
 
         appointment = await this.getAppointment(this.selectedBedRoomNumber);
         console.log("App: ", appointment);
 
-        // Atualiza o conteúdo do modal
+        surgeryRoom = await this.getSurgeryRoom(this.selectedBedRoomNumber);
+        console.log("Surgery Room: ", surgeryRoom);
+
         const modalTitle = document.getElementById('modal-title');
         const modalDetails = document.getElementById('modal-details');
-
+    
         modalTitle.textContent = `Room: ${this.selectedBedRoomNumber}`;
         modalDetails.textContent = `Appointment Details: ${JSON.stringify(appointment)}`;
-
-        // Mostra o modal e o overlay
+    
         const modal = document.getElementById('room-info-modal');
         const overlay = document.getElementById('modal-overlay');
         modal.style.display = 'block';
         overlay.style.display = 'block';
 
-        // Fecha o modal quando clicar no botão "Close" ou no overlay
-        document.getElementById('close-modal').onclick = () => {
+        const closeModal = () => {
             modal.style.display = 'none';
             overlay.style.display = 'none';
-            this.selectedBedRoomNumber = '';
-            this.selectedBed = '';
+    
+            window.location.reload();
         };
-        overlay.onclick = () => {
-            modal.style.display = 'none';
-            overlay.style.display = 'none';
-        };
-
+    
+        document.getElementById('close-modal').onclick = closeModal;
+        overlay.onclick = closeModal;
+        
         return {
             surgeryRoomNumber: this.selectedBedRoomNumber,
+            surgeryRoomData: surgeryRoom,
             appointment: appointment
+        }
+    }
+
+    async getSurgeryRoom(surgeryRoomNumber) {
+        const headers = {
+            'Content-Type': 'application/json',
+            //'Authorization'
+        };
+        const options = {
+            method: 'GET',
+            headers: headers
+        };
+
+        const url = `http://localhost:5500/api/SurgeryRooms/${surgeryRoomNumber}`;
+        console.log("Url: ", url);
+
+        try {
+            const response = await fetch(url, options);
+            if (response.status === 200) {
+                const responseBody = await response.json();
+                console.log('Response body:', responseBody);
+                return {
+                    // id: responseBody.id,
+                    surgeryRoomNumber: responseBody.surgeryRoomNumber,
+                    roomTypeCode: responseBody.roomTypeCode.value,
+                    roomCapacity: responseBody.roomCapacity.capacity,
+                    assignedEquipment: responseBody.assignedEquipment.equipment,
+                    currentStatus: responseBody.currentStatus,
+                    maintenanceSlots: responseBody.maintenanceSlots.map(slot => ({
+                        start: slot.start || null,
+                        end: slot.end || null
+                    }))
+                };
+            } else {
+                throw new Error('Unexpected response status: ' + response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching surgery room by number:', error);
+            throw error;
         }
     }
 
@@ -629,7 +690,7 @@ export default class Maze {
             headers: headers
         };
 
-        const url = `http://localhost:5500/api/Appointments/current/${surgeryRoomNumber}`; //adicionar date
+        const url = `http://localhost:5500/api/Appointments/current/${surgeryRoomNumber}`;
         console.log("Url: ", url);
 
         try {
@@ -638,7 +699,7 @@ export default class Maze {
                 const responseBody = await response.json(); 
                 console.log('Response body:', responseBody);
                 return {
-                    id: responseBody.id,
+                    // id: responseBody.id,
                     requestCode: responseBody.requestCode.value,
                     surgeryRoomNumber: responseBody.surgeryRoomNumber,
                     appointmentNumber: responseBody.appointmentNumber.value,
