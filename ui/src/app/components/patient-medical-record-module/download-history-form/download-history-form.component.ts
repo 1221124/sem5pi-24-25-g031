@@ -13,11 +13,11 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './download-history-form.component.css'
 })
 export class DownloadHistoryFormComponent implements OnInit {
-  password = '';
   errorMessage = '';
   accessToken = '';
+  beforeLogin = true;
 
-  @Output() download = new EventEmitter<string>();
+  @Output() download = new EventEmitter<void>();
   @Output() closeDownload = new EventEmitter<void>();
 
   constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
@@ -48,31 +48,32 @@ export class DownloadHistoryFormComponent implements OnInit {
       return;
     }
 
-    if (!this.route.fragment) {
-      this.redirectToLogin();
-    } else {
-      this.router.navigate([], { fragment: null });
+    const fragmentContent = this.route.snapshot.fragment;
+    if (fragmentContent) {
+      this.emitDownload();
     }
 
   }
 
   redirectToLogin() {
-    this.router.navigate([environment.downloadLoginUrl]);
+    window.location.href = `${environment.downloadLoginUrl}`;
   }
 
-  async confirmPassword() {
-    if (this.password) {
-      const email = this.authService.extractEmailFromAccessToken(this.accessToken);
-      const valid = await this.authService.authenticateWithCredentials(email, this.password);
-      if (valid) {
-        this.download.emit(this.accessToken);
-      } else {
-        this.errorMessage = 'Invalid password! Please try again...';
-        this.password = '';
-      }
-    } else {
-      this.errorMessage = 'Please provide a valid password!';
-      this.password = '';
+  emitDownload() {
+    this.beforeLogin = false;
+    console.log('Fragment found!');
+    console.log(this.route.fragment);
+    const token = this.route.snapshot.fragment.split('=')[1].split('&')[0];
+    const emailFromToken = this.authService.extractEmailFromAccessToken(token);
+    const emailFromAccessToken = this.authService.extractEmailFromAccessToken(this.accessToken);
+    console.log('Token: ', token);
+    console.log('Email from token: ', emailFromToken);
+    if (emailFromToken.trim().toLowerCase() !== emailFromAccessToken.trim().toLowerCase()) {
+      console.log('Emails do not match!');
+      window.location.href = `${environment.homeUrl}`;
+      return;
     }
+    this.router.navigate([], { fragment: null });
+    this.download.emit();
   }
 }

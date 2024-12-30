@@ -118,6 +118,18 @@ export class PatientMedicalRecordComponent implements OnInit {
     await this.getAllMedicalConditions();
     await this.getAllAllergies();
     await this.getPatientMedicalRecord();
+
+    this.handleRoute();
+  }
+
+  private handleRoute() {
+    if (this.router.url.includes('medical-condition')) {
+      this.openMedicalConditionPopup();
+    } else if (this.router.url.includes('allergy')) {
+      this.openAllergyPopup();
+    } else if (this.router.url.includes('download')) {
+      this.openDownloadPopup();
+    }
   }
 
   async getAllMedicalConditions() {
@@ -259,38 +271,30 @@ export class PatientMedicalRecordComponent implements OnInit {
   }
 
   openDownloadPopup() {
-    this.router.navigate(['/patient/patient-medical-record/download']);
+    if (!this.router.url.includes('download')) {
+      this.router.navigate(['/patient/patient-medical-record/download']);
+    }
     this.downnloadHistoryPopup = true;
   }
 
-  downloadMedicalRecord() {
+  async downloadMedicalRecord() {
     if (!this.isPatient) return;
 
-    this.service.downloadPatientMedicalRecord(this.patientMedicalRecord.MedicalRecordNumber, this.accessToken).then((response) => {
-      if (response.status === 200) {
-        const filePath = response.body.file;
-        const link = document.createElement('a');
-        link.href = filePath;
-        link.download = `PatientMedicalRecord_${this.patientMedicalRecord.MedicalRecordNumber}.pdf`;
-        link.click();
-        this.authService.updateMessage('Patient medical record downloaded successfully!');
-        this.authService.updateIsError(false);
-      } else {
-        this.authService.updateMessage('Unexpected response: ' + response.status);
-        this.authService.updateIsError(true);
-      }
-    }).catch((error) => {
-      if (error.status === 400) {
-        this.authService.updateMessage('Bad request: ' + error.error);
-      } else if (error.status === 404) {
-        this.authService.updateMessage('Patient medical record not found!');
-      } else {
-        this.authService.updateMessage('Download failed: ' + error);
-      }
-      this.authService.updateIsError(true);
-    }).finally(() => {
+    await this.service.downloadPatientMedicalRecord(this.patientMedicalRecord.MedicalRecordNumber, this.accessToken)
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `PatientMedicalRecord_${this.patientMedicalRecord.MedicalRecordNumber}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error('Error downloading PDF: ', error);
+    })
+    .finally(() => {
       setTimeout(() => {
-        this.closePopup();
+        this.closeDownloadHistoryPopup();
       }, 2000);
     });
   }

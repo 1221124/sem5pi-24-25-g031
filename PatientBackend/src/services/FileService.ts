@@ -1,6 +1,7 @@
 import { Service } from 'typedi';
 import PDFDocument from 'pdfkit';
 import * as fs from 'fs';
+import path from 'path';
 import { Result } from "../core/logic/Result";
 import IFileService from './IServices/IFileService';
 import { PatientMedicalRecordDto } from '../dto/patient-medical-record/PatientMedicalRecordDto';
@@ -17,12 +18,22 @@ export default class FileService implements IFileService {
      */
     public async createFile(patientMedicalRecord: PatientMedicalRecordDto): Promise<Result<string>> {
         try {
+            console.log('Creating PDF File for Patient Medical Record...');
             const doc = new PDFDocument();
             const fileName = `PatientMedicalRecord_${patientMedicalRecord.medicalRecordNumber.getValue()}.pdf`;
 
+            console.log('File Name: ', fileName);
+
             // Write the PDF to the file system (you can change the location as needed)
-            const filePath = `../../../${fileName}`;
-            doc.pipe(fs.createWriteStream(filePath));
+            const filePath = path.join(__dirname, '../../../files', fileName);
+            console.log('File Path: ', filePath);
+
+            if (!fs.existsSync(path.dirname(filePath))) {
+                fs.mkdirSync(path.dirname(filePath), { recursive: true });
+            }
+
+            const writeStream = fs.createWriteStream(filePath);
+            doc.pipe(writeStream);
 
             // Add Title
             doc.fontSize(20).text('PATIENT MEDICAL RECORD', { align: 'center' });
@@ -52,10 +63,18 @@ export default class FileService implements IFileService {
             // Finalize the PDF and save it
             doc.end();
 
+            await new Promise<void>((resolve, reject) => {
+                writeStream.on('finish', resolve);
+                writeStream.on('error', reject);
+            });
+
+            console.log('PDF File created successfully!');
+
             // Return the file path where the PDF was saved
             return Result.ok<string>(filePath);
 
         } catch (error) {
+            console.error('Error creating PDF File: ', error);
             return Result.fail<string>(error.message);
         }
     }

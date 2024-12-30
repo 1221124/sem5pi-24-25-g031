@@ -1,13 +1,12 @@
  <div class="password-popup">
-    <h2>Enter Password</h2>
-    <input
-      type="password"
-      [(ngModel)]="password"
-      placeholder="Enter your password"
-    />
-    <div class="buttons">
-      <button class="confirm-btn" (click)="confirmPassword()">Confirm</button>
-      <button class="cancel-btn" (click)="closeDownload.emit()">Cancel</button>
+    <h1>Download Patient Medical Record</h1>
+    <div *ngIf="beforeLogin">
+      <p>Please verify your identity...</p>
+      <button class="confirm-btn" (click)="redirectToLogin()">Verify</button>
     </div>
-    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-  </div>
+    <div *ngIf="!beforeLogin">
+      <p>Generating your patient medical record file for download, please wait...</p>
+    </div>
+    <button *ngIf="beforeLogin" class="cancel-btn" (click)="closeDownload.emit()">Cancel</button>
+    <p *ngIf="errorMessage && !beforeLogin" class="error-message">{{ errorMessage }}</p>
+</div>

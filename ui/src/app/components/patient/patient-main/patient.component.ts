@@ -43,7 +43,6 @@ export class PatientComponent implements OnInit {
     UserId: ''
   }
 
-
   message: string = '';
   success: boolean = true;
   viewMedicalRecordFlag: boolean = false;
@@ -68,8 +67,16 @@ export class PatientComponent implements OnInit {
     }
 
     await this.loadPatientData();
+    
+    this.handleRoute();
   
     console.log("this.patient: ", this.patient);
+  }
+
+  private handleRoute() {
+    if (this.router.url.includes('patient-medical-record')) {
+      this.viewMedicalRecord();
+    }
   }
 
   private async loadPatientData() {
@@ -107,7 +114,9 @@ export class PatientComponent implements OnInit {
   }
 
   viewMedicalRecord() {
-    this.router.navigate(['/patient/patient-medical-record']);
+    if (!this.router.url.includes('patient-medical-record')) {
+      this.router.navigate(['/patient/patient-medical-record']);
+    }
     this.viewMedicalRecordFlag = true;
     console.log("Viewing medical record for:", this.patient);
   }

@@ -144,22 +144,13 @@ export class PatientMedicalRecordService {
   async downloadPatientMedicalRecord(medicalRecordNumber: string, accessToken: string) {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
     });
-
+  
     const params = new HttpParams().set('medicalRecordNumber', medicalRecordNumber);
-
-    const options = { ...httpOptions, headers, params };
-
-    return await firstValueFrom(this.http.get<any>(`${environment.patientMedicalRecord}/download`, options))
-    .then(response => {
-      return {
-        status: response.status,
-        body: {
-          file: response.body.file
-        }
-      };
-    });
+  
+    const options = { headers, params, responseType: 'blob' as 'json' };
+  
+    return await firstValueFrom(this.http.get<Blob>(`${environment.patientMedicalRecord}/download`, options));
   }
 
 }

@@ -247,26 +247,55 @@ export default class PatientMedicalRecordController {
    */
   public async downloadPatientMedicalRecord(req: Request, res: Response, next: NextFunction) {
     try {
-      const medicalRecordNumber = req.query.medicalRecordNumber as string; 
+      const medicalRecordNumber = req.query.medicalRecordNumber as string;
 
       console.log("Controller: Download patient medical record: ", medicalRecordNumber);
 
       const patientMedicalRecordResultOrError = await this.patientMedicalRecordService.getByMedicalRecordNumber(medicalRecordNumber) as Result<PatientMedicalRecordDto>;
       if (patientMedicalRecordResultOrError.isFailure) {
-        return res.status(404).send(patientMedicalRecordResultOrError.errorValue()); 
+        return res.status(404).send(patientMedicalRecordResultOrError.errorValue());
       }
       const patientMedicalRecord = patientMedicalRecordResultOrError.getValue();
 
+      console.log("Controller: I already have the patient medical record: ", patientMedicalRecord);
+
       const fileResultOrError = await this.fileService.createFile(patientMedicalRecord) as Result<string>;
       if (fileResultOrError.isFailure) {
-        return res.status(400).send(fileResultOrError.errorValue()); 
+        console.log("Controller: Error creating file: ", fileResultOrError.errorValue());
+        return res.status(400).send(fileResultOrError.errorValue());
       }
-      const file = fileResultOrError.getValue();
+      const filePath = fileResultOrError.getValue();
 
-      return res.status(200).send(file);
+      console.log("Controller: I already have the file: ", filePath);
 
+      const fs = require('fs');
+      if (!fs.existsSync(filePath)) {
+        console.log("Controller: File not found on disk: ", filePath);
+        return res.status(404).send({ message: 'File not found' });
+      }
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=PatientMedicalRecord_${medicalRecordNumber}.pdf`);
+      return res.sendFile(filePath, (err) => {
+        if (err) {
+          console.error('Error sending file: ', err);
+          next(err);
+        } else {
+          console.log('File sent successfully. Deleting file...');
+  
+          fs.unlink(filePath, (unlinkErr) => {
+            if (unlinkErr) {
+              console.error('Error deleting file: ', unlinkErr);
+            } else {
+              console.log('File deleted successfully:', filePath);
+            }
+          });
+        }
+      });
     } catch (error) {
+      console.error("Controller: Unexpected error: ", error);
       return next(error);
     }
   }
+
 }
