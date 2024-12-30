@@ -588,6 +588,31 @@ export default class Maze {
         appointment = await this.getAppointment(this.selectedBedRoomNumber);
         console.log("App: ", appointment);
 
+        // Atualiza o conteúdo do modal
+        const modalTitle = document.getElementById('modal-title');
+        const modalDetails = document.getElementById('modal-details');
+
+        modalTitle.textContent = `Room: ${this.selectedBedRoomNumber}`;
+        modalDetails.textContent = `Appointment Details: ${JSON.stringify(appointment)}`;
+
+        // Mostra o modal e o overlay
+        const modal = document.getElementById('room-info-modal');
+        const overlay = document.getElementById('modal-overlay');
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+
+        // Fecha o modal quando clicar no botão "Close" ou no overlay
+        document.getElementById('close-modal').onclick = () => {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+            this.selectedBedRoomNumber = '';
+            this.selectedBed = '';
+        };
+        overlay.onclick = () => {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        };
+
         return {
             surgeryRoomNumber: this.selectedBedRoomNumber,
             appointment: appointment

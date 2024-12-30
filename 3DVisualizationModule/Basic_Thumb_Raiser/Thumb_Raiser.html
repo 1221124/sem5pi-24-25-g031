@@ -299,6 +299,16 @@
                 </tr>
             </table>
         </div>
+
+        <div id="room-info-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: black; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); z-index: 1000;">
+            <h2 id="modal-title">Room Information</h2>
+            <p id="modal-details">Details will be displayed here.</p>
+            <button id="close-modal" style="margin-top: 10px; padding: 10px 20px; background: #007BFF; color: white; border: none; border-radius: 5px;">Close</button>
+        </div>
+        
+        <!-- Overlay to darken the background -->
+        <div id="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 900;"></div>
+
     </div>
     <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
     <script type="importmap">
