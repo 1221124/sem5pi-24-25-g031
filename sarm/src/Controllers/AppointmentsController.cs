@@ -2,6 +2,7 @@ using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.DbLogs;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
+using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
 using Domain.Patients;
 using Domain.Shared;
@@ -49,6 +50,30 @@ namespace DDDNetCore.Controllers {
             return Ok(new { appointments = appointments, totalItems = appointments.Count });
         }
 
+        [HttpGet("current/{roomNumber}")]
+        // [Authorize(Roles = "Admin,Doctor")]
+
+        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetCurrentInRoom(string roomNumber)
+        {
+            try{            
+                if (string.IsNullOrEmpty(roomNumber))
+                {
+                    return BadRequest("Room parameter cannot be null or empty.");
+                }
+                    
+                Console.WriteLine("roomNumber: " + roomNumber);
+                var surgeryRoomNumber = SurgeryRoomNumberUtils.FromString(roomNumber);
+                Console.WriteLine("surgeryRoomNumber: " + surgeryRoomNumber);
+                var appointment = await _service.GetCurrentInRoomAsync(surgeryRoomNumber);
+                Console.WriteLine("appointment: " + appointment);
+                if (appointment == null) return NotFound("No appointment found!");
+
+                return Ok(appointment);
+            } catch (Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+
         // GET: api/Appointments/staff?licenseNumber={licenseNumber}
         [HttpGet("staff")]
         [Authorize(Roles = "Admin,Doctor")]
@@ -85,6 +110,8 @@ namespace DDDNetCore.Controllers {
 
             return Ok(new { appointments = appointments, totalItems = appointments.Count });
         }
+
+        [HttpGet("patient/{medicalRecordNumber}")]
 
         // POST: api/Appointments
         [HttpPost]

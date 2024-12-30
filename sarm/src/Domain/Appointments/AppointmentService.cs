@@ -31,6 +31,37 @@ namespace DDDNetCore.Domain.Appointments
             }
         }
 
+        public async Task<AppointmentDto?> GetCurrentInRoomAsync(SurgeryRoomNumber surgeryRoomNumber)
+        {
+            try {
+                Console.WriteLine("Getting current appointment in room: " + surgeryRoomNumber);
+                var date = DateTime.Now;
+                Console.WriteLine("Date: " + date);
+                var appointments = await this.GetByRoomAndDateAsync(surgeryRoomNumber, date);
+                Console.WriteLine("Appointments: " + appointments);
+
+                if (appointments == null || appointments.Count == 0) return null;
+                Console.WriteLine("Appointments count: " + appointments.Count);
+
+                foreach (var appointment in appointments)
+                {
+                    Console.WriteLine("Checking appointment: " + appointment);
+                    if(appointment.AppointmentDate.Start <= date && appointment.AppointmentDate.End >= date)
+                    {
+                        Console.WriteLine("Current appointment: " + appointment);
+                        return appointment;
+                    }
+                }
+
+                Console.WriteLine("No current appointment found");
+                return null;
+
+
+            } catch (Exception) {
+                return null;
+            }
+        }
+
         public async Task<List<AppointmentDto>> GetAll()
         {
             var appointments = await _appointmentRepository.GetAllAsync();

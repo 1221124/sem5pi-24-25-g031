@@ -569,6 +569,7 @@ export default class Maze {
 
 
 
+
     async obtainRoomDataWhenPressingI(){
         let appointment;
         const surgeries = await this.getSurgeries();
@@ -584,7 +585,7 @@ export default class Maze {
                         if(surgeryRoom.CurrentStatus === 'OCCUPIED'){
                             console.log('Sala ocupada');
 
-                            appointment = await this.getAppointment(surgeryRoom.Id);
+                            appointment = await this.getAppointment(surgeryRoom.surgeryRoomNumber);
                         }
 
                         break;
@@ -599,7 +600,7 @@ export default class Maze {
         }
     }
 
-    async getAppointment(surgeryRoomId) {
+    async getAppointment(surgeryRoomNumber) {
         const date = Date.now();
 
         const headers = {
@@ -611,7 +612,7 @@ export default class Maze {
             headers: headers
         };
 
-        const url = `http://localhost:5500/api/Appointments/${surgeryRoomId}`; //adicionar date
+        const url = `http://localhost:5500/api/Appointments/current/${surgeryRoomNumber}`; //adicionar date
 
         try {
             const response = await fetch(url, options);
