@@ -15,6 +15,7 @@ import TWEEN from "three/addons/libs/tween.module.js";
 
 export default class Maze {
     constructor(parameters, camera) {
+        this.selectedBedRoomNumber = '';
         this.camera = camera;
         this.onLoad = function (description) {
             // Store the maze's map and size
@@ -144,6 +145,7 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR1');
+                                                        this.selectedBedRoomNumber = 'OR1';
                                                     }
                                                     break;
                                                 }
@@ -160,6 +162,7 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR2');
+                                                        this.selectedBedRoomNumber = 'OR2';
                                                     }
                                                     break;
                                                 }
@@ -176,6 +179,7 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR3');
+                                                        this.selectedBedRoomNumber = 'OR3';
                                                     }
                                                     break;
                                                 }
@@ -192,6 +196,7 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR4');
+                                                        this.selectedBedRoomNumber = 'OR4';
                                                     }
                                                     break;
                                                 }
@@ -208,6 +213,7 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR5');
+                                                        this.selectedBedRoomNumber = 'OR5';
                                                     }
                                                     break;
                                                 }
@@ -224,6 +230,7 @@ export default class Maze {
                                                             this.object.add(bedObject);
                                                         });
                                                         console.log('Cama carregada para OR6');
+                                                        this.selectedBedRoomNumber = 'OR6';
                                                     }
                                                     break;
                                                 }
@@ -474,7 +481,7 @@ export default class Maze {
             if (response.status === 200) {
 
                 const responseBody = await response.json();
-                //console.log('Response body:', responseBody);
+                console.log('Response body:', responseBody);
                 if (responseBody && Array.isArray(responseBody.surgeryRooms)) {
                     const surgeryRooms = responseBody.surgeryRooms.map((room) => ({
                         SurgeryRoomNumber: room.surgeryRoomNumber,
@@ -488,7 +495,7 @@ export default class Maze {
                         })),
                         Id: room.id
                     }));
-                    //console.log("Surgery rooms:", surgeryRooms);
+                    console.log("Surgery rooms:", surgeryRooms);
 
                     return {
                         status: response.status,
@@ -576,38 +583,18 @@ export default class Maze {
 
     async obtainRoomDataWhenPressingI(selectedBed) {
         let appointment;
-        const surgeries = await this.getSurgeries();
+        console.log("Selected Bed:", selectedBed);
 
-        if (surgeries.status === 200) {
-            const surgeryRoomsWrapper = surgeries.body.surgeryRooms;
-            if (Array.isArray(surgeryRoomsWrapper) && surgeryRoomsWrapper.length > 0) {
-
-                for (let surgeryRoom of surgeryRoomsWrapper) {
-                    if (surgeryRoom.SurgeryRoomNumber === selectedBed.roomNumber) {
-                        console.log(selectedBed);
-
-                        if (surgeryRoom.CurrentStatus === 'OCCUPIED') {
-                            console.log('Sala ocupada');
-
-                            appointment = await this.getAppointment(surgeryRoom.surgeryRoomNumber);
-
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
+        appointment = await this.getAppointment(this.selectedBedRoomNumber);
+        console.log("App: ", appointment);
 
         return {
-            surgeryRoom: selectedBed,
+            surgeryRoomNumber: this.selectedBedRoomNumber,
             appointment: appointment
         }
     }
 
     async getAppointment(surgeryRoomNumber) {
-        const date = Date.now();
-
         const headers = {
             'Content-Type': 'application/json',
             //'Authorization'
@@ -618,18 +605,32 @@ export default class Maze {
         };
 
         const url = `http://localhost:5500/api/Appointments/current/${surgeryRoomNumber}`; //adicionar date
+        console.log("Url: ", url);
 
         try {
             const response = await fetch(url, options);
             if (response.status === 200) {
-                const responseBody = await response.json();
+                const responseBody = await response.json(); 
                 console.log('Response body:', responseBody);
-                return responseBody;
+                return {
+                    id: responseBody.id,
+                    requestCode: responseBody.requestCode.value,
+                    surgeryRoomNumber: responseBody.surgeryRoomNumber,
+                    appointmentNumber: responseBody.appointmentNumber.value,
+                    appointmentDate: {
+                        start: responseBody.appointmentDate.start,
+                        end: responseBody.appointmentDate.end
+                    },
+                    assignedStaff: [{
+                        value: responseBody.assignedStaff.value
+                    }]
+                }
+                
             } else {
                 throw new Error('Unexpected response status: ' + response.status);
             }
         } catch (error) {
-            console.error('Error fetching appointment by surgery room id:', error);
+            console.error('Error fetching appointment by surgery room number:', error);
             throw error;
         }
     }
