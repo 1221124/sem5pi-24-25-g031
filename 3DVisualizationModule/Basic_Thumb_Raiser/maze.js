@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import Ground from "./ground.js";
 import Wall from "./wall.js";
-import Door from "./door.js";
 import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 import TWEEN from "three/addons/libs/tween.module.js";
 
@@ -336,6 +335,14 @@ export default class Maze {
             // onError callback
             error => this.onError(this.url, error)
         );
+
+        if(this.selectedBed) window.addEventListener("keydown", (event) => {
+            if (event.key === 'i') {
+                this.obtainRoomDataWhenPressingI().then((response) => {
+                    console.log(response);
+                });
+            }
+        });
     }
 
     addIntersectableObject(object, userData = {}) {
@@ -558,5 +565,66 @@ export default class Maze {
 
             requestAnimationFrame(animate); // Start the animation loop
         });
+    }
+
+
+
+    async obtainRoomDataWhenPressingI(){
+        let appointment;
+        const surgeries = await this.getSurgeries();
+
+        if (surgeries.status === 200) {
+            const surgeryRoomsWrapper = surgeries.body.surgeryRooms;
+            if (Array.isArray(surgeryRoomsWrapper) && surgeryRoomsWrapper.length > 0) {
+
+                for (let surgeryRoom of surgeryRoomsWrapper) {
+                    if (surgeryRoom.SurgeryRoomNumber === this.selectedBed.roomNumber) {
+                        console.log(this.selectedBed);
+
+                        if(surgeryRoom.CurrentStatus === 'OCCUPIED'){
+                            console.log('Sala ocupada');
+
+                            appointment = await this.getAppointment(surgeryRoom.Id);
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        return {
+            surgeryRoom: this.selectedBed,
+            appointment: appointment
+        }
+    }
+
+    async getAppointment(surgeryRoomId) {
+        const date = Date.now();
+
+        const headers = {
+            'Content-Type': 'application/json',
+            //'Authorization'
+        }
+        const options = {
+            method: 'GET',
+            headers: headers
+        };
+
+        const url = `http://localhost:5500/api/Appointments/${surgeryRoomId}`; //adicionar date
+
+        try {
+            const response = await fetch(url, options);
+            if (response.status === 200) {
+                const responseBody = await response.json();
+                console.log('Response body:', responseBody);
+                return responseBody;
+            } else {
+                throw new Error('Unexpected response status: ' + response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching appointment by surgery room id:', error);
+            throw error;
+        }
     }
 }
