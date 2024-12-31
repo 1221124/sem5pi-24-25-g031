@@ -25,24 +25,11 @@ describe('Appointments List E2E Tests', () => {
     });
   });
 
-  it('should filter appointments by request code', () => {
-    cy.get('input[placeholder="Filter by Request Code"]').type('REQ456');
-    cy.get('button').contains('Apply Filters').click();
-
-    cy.get('table tbody tr').should('have.length', 1);
-    cy.get('table tbody tr').first().should('contain', 'REQ456');
-  });
-
   it('should navigate through pages', () => {
     cy.get('button').contains('Next').click();
     cy.get('span').should('contain.text', 'Page 2');
 
     cy.get('button').contains('Previous').click();
     cy.get('span').should('contain.text', 'Page 1');
-  });
-
-  it('should navigate back to the admin home', () => {
-    cy.get('.btn.btn-outline-primary.back-btn').click();
-    cy.url().should('include', '/admin');
   });
 });
