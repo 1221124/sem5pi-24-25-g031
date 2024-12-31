@@ -326,10 +326,28 @@ export default class Maze {
 
         this.moveCameraToRoom = function (roomCenter) {
             console.log("Room Center", roomCenter);
-
-            this.camera.setTarget(roomCenter);
-            console.log("Camera", this.camera);
-        };
+        
+            const initialTarget = this.camera.target.clone();
+            const target = new THREE.Vector3(roomCenter.x, roomCenter.y, roomCenter.z);
+        
+            let startTime = null;
+        
+            const animate = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+        
+                const elapsed = (timestamp - startTime) / 1000;
+        
+                if (elapsed > 2) return;
+        
+                const progress = elapsed / 2;
+        
+                this.camera.setTarget(initialTarget.clone().lerp(target, progress));
+        
+                requestAnimationFrame(animate);
+            }
+        
+            requestAnimationFrame(animate);
+        };        
 
         this.getRoomCenter = function (i, j, size) {
             return {
