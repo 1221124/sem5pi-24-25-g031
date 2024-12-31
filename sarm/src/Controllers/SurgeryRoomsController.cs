@@ -82,5 +82,23 @@ namespace DDDNetCore.Controllers {
                 return BadRequest("Error: " + ex.Message);
             }
         }
+
+        [HttpGet("{surgeryRoomNumber}")]
+        public async Task<ActionResult<SurgeryRoomDto>> GetBySurgeryRoomNumber(string surgeryRoomNumber)
+        {
+            try
+            {
+                var roomNumber = SurgeryRoomNumberUtils.FromString(surgeryRoomNumber);
+
+                var surgeryRoom = await _surgeryRoomService.GetBySurgeryRoomNumberAsync(roomNumber);
+                if (surgeryRoom == null)
+                {
+                    return NotFound("Surgery room not found.");
+                }
+                return Ok(surgeryRoom);
+            }catch (Exception ex) {
+                return BadRequest("Error: " + ex.Message);
+            }
+        }
     }
 }

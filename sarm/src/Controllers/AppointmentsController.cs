@@ -2,11 +2,13 @@ using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.DbLogs;
 using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Patients;
+using DDDNetCore.Domain.Surgeries;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
 using Domain.Patients;
 using Domain.Shared;
 using Domain.Staffs;
+using Domain.SurgeryRooms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,13 +28,17 @@ namespace DDDNetCore.Controllers {
         private readonly PatientService _patientService;
         private readonly OperationRequestService _operationRequestService;
 
-        public AppointmentsController(AppointmentService service, DbLogService logService, StaffService staffService, PatientService patientService, OperationRequestService operationRequestService)
+        private readonly SurgeryRoomService _surgeryRoomService;
+
+        public AppointmentsController(AppointmentService service, DbLogService logService, StaffService staffService, PatientService patientService, OperationRequestService operationRequestService
+        , SurgeryRoomService surgeryRoomService)
         {
             _service = service;
             _logService = logService;
             _staffService = staffService;
             _patientService = patientService;
             _operationRequestService = operationRequestService;
+            _surgeryRoomService = surgeryRoomService;
         }
 
         // GET: api/Appointments
@@ -60,11 +66,10 @@ namespace DDDNetCore.Controllers {
                 {
                     return BadRequest("Room parameter cannot be null or empty.");
                 }
-                    
-                Console.WriteLine("roomNumber: " + roomNumber);
-                var surgeryRoomNumber = SurgeryRoomNumberUtils.FromString(roomNumber);
-                Console.WriteLine("surgeryRoomNumber: " + surgeryRoomNumber);
-                var appointment = await _service.GetCurrentInRoomAsync(surgeryRoomNumber);
+                
+                var surgeryRoom = SurgeryRoomNumberUtils.FromString(roomNumber);
+                Console.WriteLine("surgery room: ", surgeryRoom);
+                var appointment = await _service.GetCurrentInRoomAsync(surgeryRoom);
                 Console.WriteLine("appointment: " + appointment);
                 if (appointment == null) return NotFound("No appointment found!");
 

@@ -2,6 +2,7 @@ using DDDNetCore.Domain.Appointments;
 using DDDNetCore.Domain.SurgeryRooms;
 using Domain.DbLogs;
 using Domain.Shared;
+using Domain.SurgeryRooms;
 
 namespace DDDNetCore.Domain.Surgeries{
     public class SurgeryRoomService {
@@ -145,5 +146,18 @@ namespace DDDNetCore.Domain.Surgeries{
                 return [];
             }
         }
+
+        // //GetById
+        // public async Task<SurgeryRoomDto> GetSurgeryRoomByIdAsync(SurgeryRoomId id)
+        // {
+        //     try{
+        //     var surgeryRoom = await _repo.GetByIdAsync(id);
+        //     if (surgeryRoom == null) return null;
+
+        //     return SurgeryRoomMapper.ToDto(surgeryRoom);
+        //     } catch (Exception) {
+        //         return null;
+        //     }
+        // }
     }
 }
