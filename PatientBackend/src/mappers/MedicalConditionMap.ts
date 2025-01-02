@@ -1,11 +1,9 @@
-import { cp } from "fs";
 import { UniqueEntityID } from "../core/domain/UniqueEntityID";
 import { CommonSymptom } from "../domain/medical-condition/CommonSyptom";
 import { MedicalCondition } from "../domain/medical-condition/MedicalCondition";
 import { Description } from "../domain/shared/Description";
 import { ICD11Code } from "../domain/shared/ICD11Code";
 import { Name } from "../domain/shared/Name";
-import { CreatingMedicalConditionDto } from "../dto/medical-condition/CreatingMedicalConditionDto";
 import { MedicalConditionDto } from "../dto/medical-condition/MedicalConditionDto";
 import { MedicalConditionId } from "../domain/medical-condition/MedicalConditionId";
 

@@ -7,10 +7,11 @@ import { MedicalConditionDto } from '../dto/medical-condition/MedicalConditionDt
 
 import { Result } from "../core/logic/Result";
 import { UpdatingMedicalConditionDto } from '../dto/medical-condition/UpdatingMedicalConditionDto';
-import MedicalConditionService from '../services/MedicalConditionService';
+import medicalConditionService from '../services/MedicalConditionService';
 import { MedicalConditionId } from '../domain/medical-condition/MedicalConditionId';
 import { Description } from '../domain/shared/Description';
 import { CommonSymptom } from '../domain/medical-condition/CommonSyptom';
+import MedicalConditionService from '../services/MedicalConditionService';
 
 @Service()
 export default class MedicalConditionController {

@@ -33,4 +33,10 @@ export default interface IMedicalConditionRepo extends Repo<MedicalCondition> {
    * @returns A promise indicating that the medical condition has been deleted.
    */
   delete(medicalCondition: MedicalCondition): Promise<void>;
+
+  /**
+   * Checks if a medical condition exists in the repository.
+   */
+
+  exists(medicalCondition: MedicalCondition): Promise<boolean>;
 }

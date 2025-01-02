@@ -10,6 +10,8 @@ import isAuth from '../middlewares/isAuth';
 const route = Router();
 
 export default (app: Router) => {
+  console.log("MedicalConditionRoute...");
+
   app.use('/medical-condition', route);
 
   const ctrl = Container.get(config.controllers.medicalCondition.name) as IMedicalConditionController;
@@ -22,6 +24,7 @@ export default (app: Router) => {
   console.log("Controller loaded: ", ctrl)
 
   route.post('',
+    isAuth(['Doctor']) as unknown as RequestHandler,
     celebrate({
       body: Joi.object({
         code: Joi.string().required(),
@@ -33,7 +36,9 @@ export default (app: Router) => {
     (req, res, next) => ctrl.createMedicalCondition(req, res, next) );
 
   
-    route.get('', (req, res, next) => ctrl.getAllMedicalConditions(req, res, next));
+    route.get('',
+      isAuth(['Doctor']) as unknown as RequestHandler,
+       (req, res, next) => ctrl.getAllMedicalConditions(req, res, next));
 
     route.get('/validateCode', 
       isAuth(['Doctor']) as unknown as RequestHandler,

@@ -27,9 +27,9 @@ export default class MedicalConditionRepo implements IMedicalConditionRepo {
    * Check if a medical condition exists.
    */
   public async exists(medicalCondition: MedicalCondition): Promise<boolean> {
-    const idX = medicalCondition.id instanceof MedicalConditionId ? (<MedicalConditionId>medicalCondition.id) : medicalCondition.id;
+    const codeX = medicalCondition.code instanceof ICD11Code ? (<ICD11Code>medicalCondition.code) : medicalCondition.code;
 
-    const query = { medicalConditionId: idX };
+    const query = { code: codeX };
     const medicalConditionDocument = await this.medicalConditionSchema.findOne(query as FilterQuery<IMedicalConditionPersistence & Document>);
 
     return !!medicalConditionDocument === true;

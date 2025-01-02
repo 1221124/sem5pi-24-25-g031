@@ -24,9 +24,9 @@ export class MedicalRecordNumber extends ValueObject<MedicalRecordNumberProps> {
             return Result.fail<MedicalRecordNumber>(guardResult.message);
         }
 
-        if(!MRN_REGEX.test(value)) {
-            return Result.fail<MedicalRecordNumber>("Invalid medical record number format.")
-        }
+        // if(!MRN_REGEX.test(value)) {
+        //     return Result.fail<MedicalRecordNumber>("Invalid medical record number format.")
+        // }
 
         const medicalRecordNumber = new MedicalRecordNumber({ value: value });
         return Result.ok<MedicalRecordNumber>(medicalRecordNumber);
