@@ -99,15 +99,8 @@ namespace DDDNetCore.PrologIntegrations
 
                 PopulateStaff(staffs, operationTypes);
 
-                List<AppointmentDto> appointments = [];
-                if (surgeryRoomNumber.HasValue)
-                {
-                    appointments = await _appointmentService.GetByRoomAndDateAsync(surgeryRoomNumber.Value, date);
-                } else {
-                    appointments = await _appointmentService.GetByDateAsync(date);
-                }
-
-                if (appointments == null) appointments = [];
+                List<AppointmentDto> appointments = await _appointmentService.GetByDateAsync(date);
+                appointments ??= [];
                 
                 PopulateAgendaStaff(appointments, staffs, date);
                 PopulateTimetable(staffs, date);
@@ -177,7 +170,7 @@ namespace DDDNetCore.PrologIntegrations
                 //Cardiology or Orthopaedics staff can only perform operations of their specialization
                 if (staff.Specialization.Value == "394649004" || staff.Specialization.Value == "394579002")
                 {
-                    copyOperationTypes = operationTypes.FindAll(o => o.Specialization == staff.Specialization);
+                    copyOperationTypes = operationTypes.FindAll(o => o.Specialization.Value.Equals(staff.Specialization.Value));
                 }
                 foreach (var operationType in copyOperationTypes) {
                     var code = operationType.OperationTypeCode.Value.Trim().ToLower();
