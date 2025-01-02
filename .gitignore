@@ -6,11 +6,11 @@ sarm/bin
 sarm/obj
 ui/node_modules
 *.cache
-dist/
+# dist/
 wwwroot/
 publish/
 sarm/publish/
-ui/dist/
+# ui/dist/
 **/bin/
 **/obj/
 **/*.user
@@ -28,3 +28,6 @@ sarm/obj/project.assets.json
 sarm/obj/project.nuget.cache
 PatientBackend/node_modules
 PatientBackend/node_modules/express/node_modules/.bin/
+
+# Local Netlify folder
+.netlify

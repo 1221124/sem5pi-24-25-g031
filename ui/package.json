@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "postbuild": "cp src/assets/_redirects dist/ui/browser/_redirects && cp src/assets/web.config dist/ui/browser/web.config",
     "watch": "ng build --watch --configuration development",
     "test": "concurrently \"ng test\" \"npm run test:e2e\"",
     "test:e2e": "cypress open",
