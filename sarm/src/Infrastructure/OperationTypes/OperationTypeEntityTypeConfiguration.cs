@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Specializations;
 using Domain.OperationTypes;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -31,8 +32,8 @@ namespace Infrastructure.OperationTypes
                 .IsRequired()
                 .HasMaxLength(100)
                 .HasConversion(
-                    v => SpecializationUtils.ToString(v),
-                    v => SpecializationUtils.FromString(v)
+                    v => v.Value,
+                    v => new SNOMEDCTCode(v)
                 );
 
             builder.OwnsMany(o => o.RequiredStaff, staff =>
@@ -47,8 +48,8 @@ namespace Infrastructure.OperationTypes
                 staff.Property(s => s.Specialization)
                     .HasColumnName("Specialization")
                     .HasConversion(
-                        v => SpecializationUtils.ToString(v),
-                        v => SpecializationUtils.FromString(v)
+                        v => v.Value,
+                        v => new SNOMEDCTCode(v)
                     );
 
                 staff.Property(s => s.Quantity)

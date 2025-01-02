@@ -19,9 +19,14 @@
       [(ngModel)]="operationType.Specialization"
       required
     >
-      <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+      <option
+        *ngFor="let spec of specializations"
+        [value]="spec.SNOMEDCTCode"
+      >
+        ({{ spec.SNOMEDCTCode }}) {{ spec.Name }}
+      </option>
     </select>
-  </div>
+  </div>  
 
   <div *ngIf="operationType?.RequiredStaff">
     <h3>Add Required Staff</h3>
@@ -45,9 +50,14 @@
         [(ngModel)]="newRequiredStaff.Specialization"
         required
       >
-        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+        <option
+          *ngFor="let spec of specializations"
+          [value]="spec.SNOMEDCTCode"
+        >
+          ({{ spec.SNOMEDCTCode }}) {{ spec.Name }}
+        </option>
       </select>
-    </div>
+    </div>    
 
     <div>
       <label for="newStaffQuantity">Quantity:</label>
@@ -96,13 +106,16 @@
   <div *ngFor="let staff of operationType?.RequiredStaff; let i = index" class="required-staff">
     <h3>Required Staff {{ i + 1 }}</h3>
     <p>Role: {{ staff.Role }}</p>
-    <p>Specialization: {{ staff.Specialization }}</p>
+    <p>Specialization: ({{ staff.Specialization }}) {{ getNameFromSpecializationCode(staff.Specialization) }}</p>
     <p>Quantity: {{ staff.Quantity }}</p>
     <p>Required in:</p>
     <ul>
       <li *ngIf="staff.IsRequiredInPreparation">Preparation</li>
       <li *ngIf="staff.IsRequiredInSurgery">Surgery</li>
       <li *ngIf="staff.IsRequiredInCleaning">Cleaning</li>
+      <li *ngIf="!staff.IsRequiredInPreparation && !staff.IsRequiredInSurgery && !staff.IsRequiredInCleaning">
+        <i>None</i>
+      </li>
     </ul>
     <button type="button" class="cancel" (click)="removeRequiredStaff(i)">Remove Staff</button>
   </div>

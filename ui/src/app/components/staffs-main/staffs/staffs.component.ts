@@ -25,6 +25,9 @@ import {DeleteStaffsComponent} from '../delete-staffs/delete-staffs.component';
 import {
   ToggleOperationTypeStatusComponent
 } from '../../operation-types-module/toggle-operation-type-status/toggle-operation-type-status.component';
+import { Specialization } from '../../../models/specialization.model';
+import { SpecializationsService } from '../../../services/specializations/specializations.service';
+import { EnumsService } from '../../../services/enums/enums.service';
 
 
 @Component({
@@ -50,7 +53,7 @@ export class StaffsComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 1;
   showMessage: boolean = false;
-  constructor(private staffService: StaffsService, private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private staffService: StaffsService, private authService: AuthService, private enumsService: EnumsService, private specializationService: SpecializationsService, private router: Router, private route: ActivatedRoute) { }
 
   staff: Staff = {
     Id: '',
@@ -104,7 +107,7 @@ export class StaffsComponent implements OnInit {
   message: string = '';
   success: boolean = true;
 
-  specializations: string[] = [];
+  specializations: Specialization[] = [];
   roles: string[] = [];
   names: string[] = [];
   emails: string[] = [];
@@ -119,12 +122,12 @@ export class StaffsComponent implements OnInit {
 
     this.accessToken = this.authService.getToken() as string;
 
-    await this.staffService.getStaffRoles().then((data) => {
+    await this.enumsService.getStaffRoles(this.accessToken).then((data) => {
       this.roles = data;
     });
 
-    await this.staffService.getSpecializations().then((data) => {
-      this.specializations = data;
+    await this.specializationService.getSpecializations(this.accessToken).then((data) => {
+      this.specializations = data.body.specializations;
     });
 
     this.accessToken = this.authService.getToken() as string;
@@ -323,7 +326,7 @@ export class StaffsComponent implements OnInit {
       pageNumber: 1,
       name: this.filter.name,
       email: this.filter.email,
-      specialization: this.filter.specialization
+      specialization: this.filter.specialization.split(' - ')[0]
     };
     await this.fetchStaffs();
   }

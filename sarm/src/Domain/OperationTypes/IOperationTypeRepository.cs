@@ -1,4 +1,5 @@
 
+using DDDNetCore.Domain.Specializations;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
@@ -8,7 +9,7 @@ namespace Domain.OperationTypes
         Task<OperationType> GetByCodeAsync(OperationTypeCode operationTypeCode);
         Task<List<OperationType>> GetAsync(string? name, string? specialization, string? status);
         Task<OperationType> GetByNameAsync(Name name);
-        Task<List<OperationType>> GetBySpecializationAsync(Specialization specialization);
+        Task<List<OperationType>> GetBySpecializationAsync(SNOMEDCTCode specialization);
         Task<List<OperationType>> GetByStatusAsync(Status status);
         Task<string?> GetLastCodeAsync();
     }

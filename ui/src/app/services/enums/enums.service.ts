@@ -9,7 +9,6 @@ import { environment } from '../../../environments/environment';
 export class EnumsService {
 
   staffRoles: string[] = [];
-  specializations: string[] = [];
   statuses: string[] = [];
   
   constructor(private http: HttpClient) { }
@@ -21,15 +20,6 @@ export class EnumsService {
       this.staffRoles = await firstValueFrom(this.http.get<string[]>(url, { headers }));
     }
     return this.staffRoles;
-  }
-
-  async getSpecializations(accessToken: string) {
-    if (this.specializations.length === 0) {
-      const url = `${environment.enums}/specializations`;
-      const headers = { Authorization: `Bearer ${accessToken}` };
-      this.specializations = await firstValueFrom(this.http.get<string[]>(url, { headers }));
-    }
-    return this.specializations;
   }
 
   async getStatuses(accessToken: string) {

@@ -8,6 +8,7 @@ using DDDNetCore.Tests.src.Infrastructure;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using DDDNetCore.Domain.Specializations;
 
 namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
 {
@@ -40,8 +41,8 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
             _OperationTypeRepositoryMock.Setup(repo => repo.GetByNameAsync(It.IsAny<Name>()))
                 .ReturnsAsync((Name name) => _context.OperationTypes.FirstOrDefault(u => u.Name.Value == name.Value));
 
-            _OperationTypeRepositoryMock.Setup(repo => repo.GetBySpecializationAsync(It.IsAny<Specialization>()))
-                .ReturnsAsync((Specialization specialization) => _context.OperationTypes.Where(u => u.Specialization == specialization).ToList());
+            _OperationTypeRepositoryMock.Setup(repo => repo.GetBySpecializationAsync(It.IsAny<SNOMEDCTCode>()))
+                .ReturnsAsync((SNOMEDCTCode specialization) => _context.OperationTypes.Where(u => u.Specialization == specialization).ToList());
 
             _OperationTypeRepositoryMock.Setup(repo => repo.GetByStatusAsync(It.IsAny<Status>()))
                 .ReturnsAsync((Status status) => _context.OperationTypes.Where(u => u.Status == status).ToList());
@@ -68,11 +69,11 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         {
             var creatingOperationTypeDto = new CreatingOperationTypeDto(
                 "ACL",
-                Specialization.ANAESTHESIOLOGY,
+                new SNOMEDCTCode("394649004"),
                 new List<RequiredStaff>
                 {
-                    new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                    new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                    new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                    new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
                 },
                 new PhasesDuration(30, 120, 60));
 
@@ -84,7 +85,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
 
             Assert.NotNull(OperationType);
             Assert.Equal(new Name("ACL"), OperationType.Name);
-            Assert.Equal(Specialization.ANAESTHESIOLOGY, OperationType.Specialization);
+            Assert.Equal(new SNOMEDCTCode("394649004"), OperationType.Specialization);
             Assert.Equal(2, OperationType.RequiredStaff.Count);
             Assert.Equal(30, OperationType.PhasesDuration.Preparation.Value);
             Assert.Equal(120, OperationType.PhasesDuration.Surgery.Value);
@@ -103,10 +104,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task Create_NotRegistered_WhenOperationTypeAlreadyExistsAsync()
         {
-            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
 
@@ -141,10 +142,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
 
             for (int i = 0; i < OperationTypesList.Count; i++)
             {
-                await _OperationTypeService.AddAsync(new CreatingOperationTypeDto(OperationTypesList[i], Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+                await _OperationTypeService.AddAsync(new CreatingOperationTypeDto(OperationTypesList[i], new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60)), new OperationTypeCode("typ1"));
                 await _unitOfWorkMock.Object.CommitAsync();
@@ -174,10 +175,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task GetByIdAsync_ReturnsOperationType_WhenIdExists()
         {
-            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -200,10 +201,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task DeleteAsync_DeletesOperationType_WhenOperationTypeExists()
         {
-            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -243,10 +244,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task InactivateAsync_InactivatesOperationType_WhenOperationTypeExists()
         {
-            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -302,10 +303,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task GetByNameAsync_ReturnsOperationType_WhenNameExists()
         {
-            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -338,10 +339,10 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task GetByStatusAsync_ReturnsOperationType_WhenStatusExists()
         {
-            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
@@ -359,7 +360,7 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task GetBySpecializationAsync_ReturnsEmpty_WhenOperationTypesDoNotExist()
         {
-            var nonExistentSpecialization = Specialization.ANAESTHESIOLOGY;
+            var nonExistentSpecialization = new SNOMEDCTCode("394649004");
 
             var OperationType = await _OperationTypeService.GetBySpecializationAsync(nonExistentSpecialization);
 
@@ -369,21 +370,21 @@ namespace DDDNetCore.Tests.src.IntegrationWithoutIsolation.Domain.OperationTypes
         [Fact]
         public async Task GetBySpecializationAsync_ReturnsOperationType_WhenSpecializationExists()
         {
-            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>
+            var creatingOperationTypeDto = new CreatingOperationTypeDto("ACL", new SNOMEDCTCode("394649004"), new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, 1, false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.CARDIOLOGY, 2, false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), 1, false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), 2, false, true, false)
             },
             new PhasesDuration(30, 120, 60));
             var OperationType = await _OperationTypeService.AddAsync(creatingOperationTypeDto, new OperationTypeCode("typ1"));
             await _unitOfWorkMock.Object.CommitAsync();
 
-            var result = await _OperationTypeService.GetBySpecializationAsync(Specialization.ANAESTHESIOLOGY);
+            var result = await _OperationTypeService.GetBySpecializationAsync(new SNOMEDCTCode("394649004"));
 
             Assert.NotNull(result);
             for (int i = 0; i < result.Count; i++)
             {
-                Assert.Equal(Specialization.ANAESTHESIOLOGY, result[i].Specialization);
+                Assert.Equal(new SNOMEDCTCode("394649004"), result[i].Specialization);
             }
         }
     }

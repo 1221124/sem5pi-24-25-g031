@@ -166,7 +166,7 @@ namespace DDDNetCore.PrologIntegrations
                 var licenseNumber = staff.LicenseNumber.Value;
                 licenseNumber = char.ToLower(licenseNumber[0]) + licenseNumber[1..];
 
-                var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");
+                var specialization = staff.Specialization.Value;
                 specialization = char.ToLower(specialization[0]) + specialization[1..];
 
                 var staffRole = StaffRoleUtils.ToString(staff.StaffRole);
@@ -174,7 +174,8 @@ namespace DDDNetCore.PrologIntegrations
 
                 var value = "staff(" + licenseNumber + "," + staffRole + "," + specialization + ",[";
 
-                if (SpecializationUtils.IsCardiologyOrOrthopaedics(staff.Specialization))
+                //Cardiology or Orthopaedics staff can only perform operations of their specialization
+                if (staff.Specialization.Value == "394649004" || staff.Specialization.Value == "394579002")
                 {
                     copyOperationTypes = operationTypes.FindAll(o => o.Specialization == staff.Specialization);
                 }
@@ -266,7 +267,7 @@ namespace DDDNetCore.PrologIntegrations
                     var role = RoleUtils.ToString(staff.Role);
                     role = char.ToLower(role[0]) + role[1..];
 
-                    var specialization = SpecializationUtils.ToString(staff.Specialization).Replace(" ", "_").Replace("-", "_");
+                    var specialization = staff.Specialization.Value;
                     specialization = char.ToLower(specialization[0]) + specialization[1..];
 
                     var prep = staff.IsRequiredInPreparation ? "true" : "false";

@@ -5,6 +5,7 @@ using Domain.Staffs;
 using Domain.Shared;
 using Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
+using DDDNetCore.Domain.Specializations;
 
 namespace Infrastructure.StaffRepository
 {
@@ -31,7 +32,7 @@ namespace Infrastructure.StaffRepository
             if (specialization != null)
             {
                 staffs = staffs
-                    .Where(x => specialization.Equals(SpecializationUtils.ToString(x.Specialization)))
+                    .Where(x => specialization.Equals(x.Specialization.Value))
                     .ToList();
             }
 
@@ -62,7 +63,7 @@ namespace Infrastructure.StaffRepository
                 .AsQueryable().Where(x=> firstName.Equals(x.FullName.FirstName)).Where(x=> lastName.Equals(x.FullName.LastName)).ToListAsync())!;
         }
         
-        public async Task<List<Staff>> GetBySpecializationAsync(Specialization specialization)
+        public async Task<List<Staff>> GetBySpecializationAsync(SNOMEDCTCode specialization)
         {
             return (await _objs
                 .AsQueryable().Where(x => specialization.Equals(x.Specialization)).ToListAsync())!;

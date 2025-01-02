@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {Staff} from '../../../models/staff.model';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import { Specialization } from '../../../models/specialization.model';
 
 @Component({
   selector: 'app-update-staffs',
@@ -16,7 +17,7 @@ import {CommonModule} from '@angular/common';
 
 export class UpdateStaffsComponent {
   @Input() staff!: Staff;
-  @Input() specializations!: string[];
+  @Input() specializations!: Specialization[];
 
   @Output() update = new EventEmitter<Staff>();
   @Output() closeModalEvent = new EventEmitter<unknown>();

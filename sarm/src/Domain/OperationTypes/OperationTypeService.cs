@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.Shared;
+using DDDNetCore.Domain.Specializations;
 
 namespace Domain.OperationTypes
 {
@@ -34,7 +35,7 @@ namespace Domain.OperationTypes
             return OperationTypeMapper.ToDto(operationType);
         }
 
-        public async Task<List<OperationTypeDto>> GetBySpecializationAsync(Specialization specialization)
+        public async Task<List<OperationTypeDto>> GetBySpecializationAsync(SNOMEDCTCode specialization)
         {
             var list = await this._repo.GetBySpecializationAsync(specialization);
             

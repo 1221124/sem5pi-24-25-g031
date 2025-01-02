@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DDDNetCore.Domain.Specializations;
 using Domain.OperationTypes;
 using Domain.Shared;
 using Infrastructure.Shared;
@@ -32,7 +33,7 @@ namespace Infrastructure.OperationTypes
             if (specialization != null)
             {
                 operationTypes = operationTypes
-                    .Where(x => specialization.Trim().ToUpper().Equals(SpecializationUtils.ToString(x.Specialization).Trim().ToUpper()))
+                    .Where(x => specialization.Trim().ToUpper().Equals(x.Specialization.Value.Trim().ToUpper()))
                     .ToList();
             }
 
@@ -52,7 +53,7 @@ namespace Infrastructure.OperationTypes
                 .AsQueryable().Where(x => name.Equals(x.Name)).FirstOrDefaultAsync();
         }
 
-        public async Task<List<OperationType>> GetBySpecializationAsync(Specialization specialization)
+        public async Task<List<OperationType>> GetBySpecializationAsync(SNOMEDCTCode specialization)
         {
             return await this._objs
                 .AsQueryable().Where(x => specialization.Equals(x.Specialization)).ToListAsync();

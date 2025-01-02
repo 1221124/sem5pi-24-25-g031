@@ -14,16 +14,6 @@ export class StaffsService {
 
   constructor(private http: HttpClient) { }
 
-  async getStaffRoles() {
-    const url = `${environment.enums}/staffRoles`;
-    return await firstValueFrom(this.http.get<string[]>(url));
-  }
-
-  async getSpecializations() {
-    const url = `${environment.enums}/specializations`;
-    return await firstValueFrom(this.http.get<string[]>(url));
-  }
-
   async getSlotsAvailability(staffId: string) {
     const url = `${environment.staffs}/slots-availability/${staffId}`;
     return await firstValueFrom(this.http.get<string[]>(url));
@@ -58,7 +48,7 @@ export class StaffsService {
               LastName: item.fullName.lastName.value
             },
             licenseNumber: item.licenseNumber.value,
-            specialization: item.specialization,
+            specialization: item.specialization.value,
             staffRole: item.staffRole,
             ContactInformation: {
               Email: item.contactInformation.email.value,
@@ -121,7 +111,9 @@ export class StaffsService {
       "email": {
         "value": staff.ContactInformation.Email
       },
-      "specialization": staff.specialization,
+      "specialization": {
+        "value": staff.specialization
+      },
       "staffRole": staff.staffRole
     };
 
@@ -153,7 +145,9 @@ export class StaffsService {
         "start": staff.Start,
         "end": staff.End
       })),
-      "specialization": staff.specialization,
+      "specialization": {
+        "value": staff.specialization
+      },
       "pendingPhoneNumber": {
         "value": staff.ContactInformation.PhoneNumber,
       },
@@ -207,7 +201,7 @@ export class StaffsService {
             LastName: item.fullName.lastName.value
           },
           licenseNumber: item.licenseNumber.value,
-          specialization: item.specialization,
+          specialization: item.specialization.value,
           staffRole: item.staffRole,
           ContactInformation: {
             Email: item.contactInformation.email.value,

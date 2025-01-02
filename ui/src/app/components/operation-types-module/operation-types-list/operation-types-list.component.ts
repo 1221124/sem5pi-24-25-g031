@@ -4,6 +4,8 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
+import { Specialization } from '../../../models/specialization.model';
+import { SpecializationsService } from '../../../services/specializations/specializations.service';
 
 @Component({
   selector: 'app-operation-types-list',
@@ -18,7 +20,7 @@ export class OperationTypesListComponent implements OnInit {
   @Input() totalPages: number = 1;
   @Input() currentPage: number = 1;
   @Input() itemsPerPage: number = 1;
-  @Input() specializations: string[] = [];
+  @Input() specializations: Specialization[] = [];
   @Input() statuses: string[] = [];
   @Input() filter: { name: string, specialization: string, status: string } = { name: '', specialization: '', status: '' };
   @Output() edit = new EventEmitter<OperationType>();
@@ -52,6 +54,10 @@ export class OperationTypesListComponent implements OnInit {
     });
   }
 
+  getNameFromSpecializationCode(code: string) {
+    return this.specializations.find(s => s.SNOMEDCTCode === code)?.Name;
+  }
+
   onStatusToggle(operationType: OperationType) {
     this.statusToggle.emit(operationType);
   }
@@ -59,7 +65,6 @@ export class OperationTypesListComponent implements OnInit {
   onFilterChange() {
     this.currentPage = 1;
 
-    if (this.filter.specialization == 'All Specializations') this.filter.specialization = '';
     if (this.filter.status == 'All Statuses') this.filter.status = '';
 
     this.updateQueryParams();

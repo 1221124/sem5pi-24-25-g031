@@ -8,6 +8,7 @@ using DDDNetCore.Domain.OperationRequests;
 using DDDNetCore.Domain.Appointments;
 using System.Globalization;
 using Domain.OperationTypes;
+using DDDNetCore.Domain.Specializations;
 
 namespace Controllers
 {
@@ -123,9 +124,9 @@ namespace Controllers
         //GET: api/Staff/search/specialization?specialization=CARDIOLOGY/?pageNumber=1
         [HttpGet("search/specialization")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySpecializationAsync([FromQuery] String specialization, int pageNumber)
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetBySpecializationAsync([FromQuery] string specialization, int pageNumber)
         {
-            var staffList = await _service.SearchBySpecializationAsync(SpecializationUtils.FromString(specialization));
+            var staffList = await _service.SearchBySpecializationAsync(new SNOMEDCTCode(specialization));
 
             if (staffList == null)
             {

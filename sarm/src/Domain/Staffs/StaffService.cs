@@ -1,4 +1,5 @@
 using DDDNetCore.Domain.Appointments;
+using DDDNetCore.Domain.Specializations;
 using DDDNetCore.PrologIntegrations;
 using Domain.DbLogs;
 using Domain.OperationTypes;
@@ -290,7 +291,7 @@ namespace Domain.Staffs
             }
         }
         
-        public async Task<List<StaffDto>> SearchBySpecializationAsync(Specialization specialization)
+        public async Task<List<StaffDto>> SearchBySpecializationAsync(SNOMEDCTCode specialization)
         {
             try
             {
@@ -462,7 +463,7 @@ namespace Domain.Staffs
             }
         }
 
-        public async Task<List<StaffDto>> GetByRoleAndSpecialization(StaffRole role, Specialization specialization)
+        public async Task<List<StaffDto>> GetByRoleAndSpecialization(StaffRole role, SNOMEDCTCode specialization)
         {
             try {
                 var staffs = await _repo.GetByRoleAsync(role);

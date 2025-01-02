@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Domain.OperationTypes;
 using Domain.Shared;
+using DDDNetCore.Domain.Specializations;
 
 namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
 {
@@ -18,11 +19,11 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
                 Guid.NewGuid(),
                 new OperationTypeCode("typ1"),
                 new Name("Example Operation"),
-                Specialization.CARDIOLOGY,
+                new SNOMEDCTCode("394649004"),
                 new List<RequiredStaff>
                 {
-                    new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, new Quantity(1), false, true, false),
-                    new RequiredStaff(Role.Nurse, Specialization.ANAESTHESIOLOGY, new Quantity(2), false, true, false)
+                    new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), new Quantity(1), false, true, false),
+                    new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), new Quantity(2), false, true, false)
                 },
                 new PhasesDuration(30, 60, 20),
                 Status.Active

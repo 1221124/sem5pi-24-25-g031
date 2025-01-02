@@ -20,10 +20,14 @@ export class OperationTypesService {
       "Name": {
         "Value": operationType.Name
       },
-      "Specialization": operationType.Specialization,
+      "Specialization": {
+        "Value": operationType.Specialization
+      },
       "RequiredStaff": operationType.RequiredStaff.map(staff => ({
         "Role": staff.Role,
-        "Specialization": staff.Specialization,
+        "Specialization": {
+          "Value": staff.Specialization
+        },
         "Quantity": {
           "Value": staff.Quantity
         },
@@ -57,10 +61,14 @@ export class OperationTypesService {
       "Name": {
         "Value": operationType.Name
       },
-      "Specialization": operationType.Specialization,
+      "Specialization": {
+        "Value": operationType.Specialization
+      },
       "RequiredStaff": operationType.RequiredStaff.map(staff => ({
         "Role": staff.Role,
-        "Specialization": staff.Specialization,
+        "Specialization": {
+          "Value": staff.Specialization
+        },
         "Quantity": {
           "Value": staff.Quantity
         },
@@ -85,7 +93,6 @@ export class OperationTypesService {
   async getOperationTypes(filter: any, accessToken: string) {
     let params = new HttpParams();
 
-    if (filter.specialization !== '') params = params.set('specialization', filter.specialization);
     if (filter.status !== '') params = params.set('status', filter.status);
 
     const headers = new HttpHeaders({
@@ -102,10 +109,10 @@ export class OperationTypesService {
             Id: item.id,
             OperationTypeCode: item.operationTypeCode.value,
             Name: item.name.value,
-            Specialization: item.specialization.toString(),
+            Specialization: item.specialization.value,
             RequiredStaff: item.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: boolean; isRequiredInSurgery: boolean; isRequiredInCleaning: boolean; }) => ({
               Role: staff.role,
-              Specialization: staff.specialization,
+              Specialization: staff.specialization.value,
               Quantity: staff.quantity.value,
               IsRequiredInPreparation: staff.isRequiredInPreparation,
               IsRequiredInSurgery: staff.isRequiredInSurgery,
@@ -148,10 +155,10 @@ export class OperationTypesService {
               Id: operationType.id,
               OperationTypeCode: operationType.operationTypeCode.value,
               Name: operationType.name.value,
-              Specialization: operationType.specialization.toString(),
+              Specialization: operationType.specialization.value,
               RequiredStaff: operationType.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: boolean; isRequiredInSurgery: boolean; isRequiredInCleaning: boolean; }) => ({
                 Role: staff.role,
-                Specialization: staff.specialization,
+                Specialization: staff.specialization.value,
                 Quantity: staff.quantity.value,
                 IsRequiredInPreparation: staff.isRequiredInPreparation,
                 IsRequiredInSurgery: staff.isRequiredInSurgery,
@@ -189,10 +196,10 @@ export class OperationTypesService {
             Id: operationType.id,
             OperationTypeCode: operationType.operationTypeCode.value,
             Name: operationType.name.value,
-            Specialization: operationType.specialization.toString(),
+            Specialization: operationType.specialization.value,
             RequiredStaff: operationType.requiredStaff.map((staff: { role: any; specialization: any; quantity: { value: any; }; isRequiredInPreparation: boolean; isRequiredInSurgery: boolean; isRequiredInCleaning: boolean; }) => ({
               Role: staff.role,
-              Specialization: staff.specialization,
+              Specialization: staff.specialization.value,
               Quantity: staff.quantity.value,
               IsRequiredInPreparation: staff.isRequiredInPreparation,
               IsRequiredInSurgery: staff.isRequiredInSurgery,

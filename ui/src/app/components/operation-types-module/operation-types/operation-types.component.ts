@@ -9,6 +9,8 @@ import { OperationTypesFormComponent } from '../operation-types-form/operation-t
 import { OperationTypesListComponent } from '../operation-types-list/operation-types-list.component';
 import { ToggleOperationTypeStatusComponent } from '../toggle-operation-type-status/toggle-operation-type-status.component';
 import { EnumsService } from '../../../services/enums/enums.service';
+import { SpecializationsService } from '../../../services/specializations/specializations.service';
+import { Specialization } from '../../../models/specialization.model';
 
 @Component({
   selector: 'app-operation-types',
@@ -43,7 +45,7 @@ export class OperationTypesComponent implements OnInit {
   };
 
   roles: string[] = [];
-  specializations: string[] = [];
+  specializations: Specialization[] = [];
   statuses: string[] = [];
 
   // private pollingSubscription!: Subscription;
@@ -52,6 +54,7 @@ export class OperationTypesComponent implements OnInit {
     private service: OperationTypesService,
     private authService: AuthService,
     private enumsService: EnumsService,
+    private specializationService: SpecializationsService,
     private router: Router,
     private route: ActivatedRoute,
   ) {}
@@ -70,6 +73,7 @@ export class OperationTypesComponent implements OnInit {
     // });
 
     await this.loadEnums();
+    await this.loadSpecializations();
 
     await this.initializeRoute();
   }
@@ -121,8 +125,11 @@ export class OperationTypesComponent implements OnInit {
 
   async loadEnums() {
     this.roles = await this.enumsService.getStaffRoles(this.accessToken);
-    this.specializations = await this.enumsService.getSpecializations(this.accessToken);
     this.statuses = await this.enumsService.getStatuses(this.accessToken);
+  }
+
+  async loadSpecializations() {
+    this.specializations = (await this.specializationService.getSpecializations(this.accessToken)).body.specializations;
   }
 
   async loadOperationTypes() {
@@ -133,6 +140,12 @@ export class OperationTypesComponent implements OnInit {
       if (this.filter.name) {
         this.operationTypes = this.operationTypes.filter((ot) =>
           ot.Name.toLowerCase().includes(this.filter.name.toLowerCase())
+        );
+      }
+      if (this.filter.specialization) {
+        const code = this.specializations.find((s) => s.Name.toLowerCase().includes(this.filter.specialization.toLowerCase()))?.SNOMEDCTCode;
+        this.operationTypes = this.operationTypes.filter((ot) =>
+          ot.Specialization.toLowerCase().includes(code?.toLowerCase())
         );
       }
       this.totalItems = this.operationTypes.length;
@@ -146,11 +159,11 @@ export class OperationTypesComponent implements OnInit {
     this.showForm = false;
     this.operationTypes = [];
     this.selectedOperationType = null;
-    this.filter.name = '';
-    this.filter.status = '';
-    this.filter.specialization = '';
+    // this.filter.name = '';
+    // this.filter.status = '';
+    // this.filter.specialization = '';
     await this.loadOperationTypes().then(() => {
-      this.router.navigate(["/admin/operationTypes"], { queryParams: { page: 1 } });
+      this.router.navigate(["/admin/operationTypes"], { queryParams: { page: this.currentPage } });
       this.showList = true;
     });
   }

@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Specializations;
 using Domain.Shared;
 using Domain.Staffs;
 using Microsoft.EntityFrameworkCore;
@@ -69,8 +70,8 @@ public class StaffEntityTypeConfiguration : IEntityTypeConfiguration<Staff>
             .IsRequired()
             .HasMaxLength(100)
             .HasConversion(
-                v => SpecializationUtils.ToString(v),
-                v => SpecializationUtils.FromString(v)
+                v => v.Value,
+                v => new SNOMEDCTCode(v)
             );
 
         builder.Property(o => o.StaffRole)

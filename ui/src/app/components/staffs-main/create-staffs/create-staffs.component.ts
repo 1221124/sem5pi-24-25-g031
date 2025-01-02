@@ -6,6 +6,9 @@ import {NgFor, NgIf} from '@angular/common';
 import {StaffsService} from '../../../services/staffs/staffs.service';
 import {AuthService} from '../../../services/auth/auth.service';
 import {Router} from '@angular/router';
+import { Specialization } from '../../../models/specialization.model';
+import { SpecializationsService } from '../../../services/specializations/specializations.service';
+import { EnumsService } from '../../../services/enums/enums.service';
 
 @Component({
   selector: 'app-create-staffs',
@@ -25,7 +28,7 @@ export class CreateStaffsComponent implements OnInit {
   @Output() updateStaffEvent = new EventEmitter<Staff>();
   @Output() closeModalEvent = new EventEmitter<unknown>();
 
-  specializations: string[] = [];
+  specializations: Specialization[] = [];
   roles: string[] = [];
   names: string[] = [];
   emails: string[] = [];
@@ -39,7 +42,7 @@ export class CreateStaffsComponent implements OnInit {
 
   accessToken: string = '';
 
-  constructor(private staffService: StaffsService, private authService: AuthService, private router: Router) {
+  constructor(private staffService: StaffsService, private enumService: EnumsService, private specializationService: SpecializationsService, private authService: AuthService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -63,12 +66,12 @@ export class CreateStaffsComponent implements OnInit {
 
     this.accessToken = this.authService.getToken() as string;
 
-    this.staffService.getStaffRoles().then((data) => {
+    this.enumService.getStaffRoles(this.accessToken).then((data) => {
       this.roles = data;
     });
 
-    this.staffService.getSpecializations().then((data) => {
-      this.specializations = data;
+    this.specializationService.getSpecializations(this.accessToken).then((data) => {
+      this.specializations = data.body.specializations;
     });
 
   }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Domain.OperationTypes;
 using Domain.Shared;
+using DDDNetCore.Domain.Specializations;
 
 namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
 {
@@ -10,7 +11,7 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
     {
         private readonly OperationTypeCode _code;
         private readonly Name _name;
-        private readonly Specialization _specialization;
+        private readonly SNOMEDCTCode _specialization;
         private readonly List<RequiredStaff> _requiredStaff;
         private readonly PhasesDuration _phasesDuration;
         private readonly Status _status;
@@ -19,11 +20,11 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         {
             _code = new OperationTypeCode("typ1");
             _name = new Name("Example Operation");
-            _specialization = Specialization.CARDIOLOGY;
+            _specialization = new SNOMEDCTCode("394649004");
             _requiredStaff = new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Doctor, Specialization.CARDIOLOGY, new Quantity(1), false, true, false),
-                new RequiredStaff(Role.Nurse, Specialization.ANAESTHESIOLOGY, new Quantity(2), false, true, false)
+                new RequiredStaff(Role.Doctor, new SNOMEDCTCode("394649004"), new Quantity(1), false, true, false),
+                new RequiredStaff(Role.Nurse, new SNOMEDCTCode("394649004"), new Quantity(2), false, true, false)
             };
             _phasesDuration = new PhasesDuration(30, 60, 20);
             _status = Status.Active;
@@ -91,10 +92,10 @@ namespace DDDNetCore.Tests.src.Unit.Domain.OperationTypes
         {
             var operationType = new OperationType(_code, _name, _specialization, _requiredStaff, _phasesDuration);
             var newName = new Name("Updated Operation");
-            var newSpecialization = Specialization.ORTHOPAEDICS;
+            var newSpecialization = new SNOMEDCTCode("394649004");
             var newRequiredStaff = new List<RequiredStaff>
             {
-                new RequiredStaff(Role.Technician, Specialization.ORTHOPAEDICS, new Quantity(1), false, true, false),
+                new RequiredStaff(Role.Technician, new SNOMEDCTCode("394649004"), new Quantity(1), false, true, false),
             };
             var newPhasesDuration = new PhasesDuration(40, 70, 30);
             var newStatus = Status.Inactive;

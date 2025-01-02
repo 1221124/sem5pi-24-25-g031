@@ -14,15 +14,13 @@
             />
           </th>
           <th>
-            Specialization
-            <select 
+            Specialization (includes)
+            <input
+              type="text" 
               [(ngModel)]="filter.specialization" 
-              (change)="onFilterChange()">
-              <option value="">All Specializations</option>
-              <option *ngFor="let specialization of specializations" [value]="specialization">
-                {{ specialization }}
-              </option>
-            </select>
+              (input)="onFilterChange()"
+              placeholder="Filter by specialization"
+            />
           </th>
           <th>Required Staff</th>
           <th>Phases Duration</th>
@@ -45,12 +43,14 @@
         <tr *ngFor="let operationType of getPaginatedOperationTypes()">
           <td>{{ operationType.OperationTypeCode.toUpperCase() }}</td>
           <td>{{ operationType.Name }}</td>
-          <td class="specialization-column">{{ operationType.Specialization }}</td>
+          <td class="specialization-column">{{ getNameFromSpecializationCode(operationType.Specialization) }}</td>
           <td class="required-staff-column">
             <ul class="staff-list">
               <li *ngFor="let staff of sortedStaff(operationType.RequiredStaff)" class="staff-item">
                 <span class="staff-role">{{ staff.Role }}</span>
-                <span class="staff-specialization">({{ staff.Specialization }} - {{ staff.Quantity }})</span>
+                <span class="staff-specialization">
+                  ({{ getNameFromSpecializationCode(staff.Specialization) }} - {{ staff.Quantity }})
+                </span>
                 <div class="staff-requirements">
                   <span *ngIf="staff.IsRequiredInPreparation" class="badge preparation">Preparation</span>
                   <span *ngIf="staff.IsRequiredInSurgery" class="badge surgery">Surgery</span>

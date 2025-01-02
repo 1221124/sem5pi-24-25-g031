@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DDDNetCore.Domain.Specializations;
 using Domain.OperationTypes;
 using Domain.Shared;
 using Moq;
@@ -27,8 +28,8 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
             // Arrange
             var operationTypes = new List<OperationType>
             {
-                new OperationType(Guid.NewGuid(), new OperationTypeCode("typ1"), new Name("Operation 1"), Specialization.CARDIOLOGY, new List<RequiredStaff>(), new PhasesDuration(), Status.Active),
-                new OperationType(Guid.NewGuid(), new OperationTypeCode("typ1"), new Name("Operation 2"), Specialization.ANAESTHESIOLOGY, new List<RequiredStaff>(), new PhasesDuration(), Status.Inactive)
+                new OperationType(Guid.NewGuid(), new OperationTypeCode("typ1"), new Name("Operation 1"), new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration(), Status.Active),
+                new OperationType(Guid.NewGuid(), new OperationTypeCode("typ1"), new Name("Operation 2"), new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration(), Status.Inactive)
             };
             _mockRepo.Setup(repo => repo.GetAllAsync()).ReturnsAsync(operationTypes);
 
@@ -45,7 +46,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
         {
             // Arrange
             var name = new Name("Operation 1");
-            var operationType = new OperationType(Guid.NewGuid(), new OperationTypeCode("typ1"), name, Specialization.CARDIOLOGY, new List<RequiredStaff>(), new PhasesDuration(), Status.Active);
+            var operationType = new OperationType(Guid.NewGuid(), new OperationTypeCode("typ1"), name, new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration(), Status.Active);
             _mockRepo.Setup(repo => repo.GetByNameAsync(name)).ReturnsAsync(operationType);
 
             // Act
@@ -75,7 +76,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
         public async Task AddAsync_ShouldAddNewOperationTypeAndCommit()
         {
             // Arrange
-            var dto = new CreatingOperationTypeDto(new Name("Operation 3"), Specialization.ORTHOPAEDICS, new List<RequiredStaff>(), new PhasesDuration());
+            var dto = new CreatingOperationTypeDto(new Name("Operation 3"), new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration());
             _mockRepo.Setup(repo => repo.GetByNameAsync(dto.Name)).ReturnsAsync((OperationType)null);
 
             // Act
@@ -91,7 +92,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
         public async Task AddAsync_ShouldReturnNull_WhenOperationTypeExists()
         {
             // Arrange
-            var dto = new CreatingOperationTypeDto(new Name("Duplicate Operation"), Specialization.CARDIOLOGY, new List<RequiredStaff>(), new PhasesDuration());
+            var dto = new CreatingOperationTypeDto(new Name("Duplicate Operation"), new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration());
             var existingOperationType = new OperationType(Guid.NewGuid(), new OperationTypeCode("typ1"), dto.Name, dto.Specialization, dto.RequiredStaff, dto.PhasesDuration, Status.Active);
             _mockRepo.Setup(repo => repo.GetByNameAsync(dto.Name)).ReturnsAsync(existingOperationType);
 
@@ -109,7 +110,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
         {
             // Arrange
             var dto = new OperationTypeDto { Id = Guid.NewGuid(), OperationTypeCode = new OperationTypeCode("typ1"), Name = new Name("Updated Operation"), Status = Status.Inactive };
-            var operationType = new OperationType(dto.Id, dto.OperationTypeCode, dto.Name, Specialization.CARDIOLOGY, new List<RequiredStaff>(), new PhasesDuration(), Status.Active);
+            var operationType = new OperationType(dto.Id, dto.OperationTypeCode, dto.Name, new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration(), Status.Active);
             _mockRepo.Setup(repo => repo.GetByIdAsync(It.IsAny<OperationTypeId>())).ReturnsAsync(operationType);
 
             // Act
@@ -140,7 +141,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
         {
             // Arrange
             var id = new OperationTypeId(Guid.NewGuid());
-            var operationType = new OperationType(id.AsGuid(), new OperationTypeCode("typ1"), new Name("Operation 1"), Specialization.CARDIOLOGY, new List<RequiredStaff>(), new PhasesDuration(), Status.Active);
+            var operationType = new OperationType(id.AsGuid(), new OperationTypeCode("typ1"), new Name("Operation 1"), new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration(), Status.Active);
             _mockRepo.Setup(repo => repo.GetByIdAsync(id)).ReturnsAsync(operationType);
 
             // Act
@@ -170,7 +171,7 @@ namespace DDDNetCore.Tests.Unit.Domain.OperationTypes
         {
             // Arrange
             var id = new OperationTypeId(Guid.NewGuid());
-            var operationType = new OperationType(id.AsGuid(), new OperationTypeCode("typ1"), new Name("Operation to Delete"), Specialization.CARDIOLOGY, new List<RequiredStaff>(), new PhasesDuration(), Status.Inactive);
+            var operationType = new OperationType(id.AsGuid(), new OperationTypeCode("typ1"), new Name("Operation to Delete"), new SNOMEDCTCode("394649004"), new List<RequiredStaff>(), new PhasesDuration(), Status.Inactive);
             _mockRepo.Setup(repo => repo.GetByIdAsync(id)).ReturnsAsync(operationType);
 
             // Act

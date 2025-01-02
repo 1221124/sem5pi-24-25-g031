@@ -8,6 +8,8 @@ import {CommonModule, NgForOf, NgIf} from '@angular/common';
 import {PatientContactInfoComponent} from '../../patient/patient-contact-info/patient-contact-info.component';
 import {SlotComponent} from '../../slot/slot.component';
 import {OperationType} from '../../../models/operation-type.model';
+import { SpecializationsService } from '../../../services/specializations/specializations.service';
+import { Specialization } from '../../../models/specialization.model';
 
 @Component({
   selector: 'app-list-staffs',
@@ -37,7 +39,7 @@ export class ListStaffsComponent implements OnInit {
   showSlotAvailabilityModal = false;
 
   selectedStaff: Staff | null = null;
-  constructor(private staffService: StaffsService, private authService: AuthService, private router: Router) { }
+  constructor(private staffService: StaffsService, private specializationService: SpecializationsService, private authService: AuthService, private router: Router) { }
 
   filter = {
     pageNumber: 1,
@@ -45,7 +47,7 @@ export class ListStaffsComponent implements OnInit {
     email: '',
     specialization: ''
   };
-  specializations: string[] = [];
+  specializations: Specialization[] = [];
 
   async ngOnInit() {
     if (!this.authService.isAuthWithRole(['Admin'])) {
@@ -54,8 +56,8 @@ export class ListStaffsComponent implements OnInit {
 
     const accessToken = this.authService.getToken() as string;
 
-    await this.staffService.getSpecializations().then((data) => {
-      this.specializations = data;
+    await this.specializationService.getSpecializations(accessToken).then((data) => {
+      this.specializations = data.body.specializations;
     });
   }
 
@@ -72,7 +74,7 @@ export class ListStaffsComponent implements OnInit {
       queryParams['name'] = this.filter.name;
     }
     if (this.filter.specialization) {
-      queryParams['specialization'] = this.filter.specialization;
+      queryParams['specialization'] = this.filter.specialization.split(' - ')[1];
     }
 
     if (this.currentPage) {
@@ -82,6 +84,9 @@ export class ListStaffsComponent implements OnInit {
     this.router.navigate(['/admin/staffs'], { queryParams });
   }
 
+  getNameFromSpecializationCode(code: string) {
+    return this.specializations.find(s => s.SNOMEDCTCode === code)?.Name;
+  }
 
   getPaginatedStaff(): Staff[] {
     console.log("Entrou");

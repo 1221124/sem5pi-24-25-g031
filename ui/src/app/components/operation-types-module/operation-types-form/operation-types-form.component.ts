@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OperationTypesService } from '../../../services/operation-types/operation-types.service';
+import { Specialization } from '../../../models/specialization.model';
 
 @Component({
   selector: 'app-operation-types-form',
@@ -24,7 +25,7 @@ import { OperationTypesService } from '../../../services/operation-types/operati
 export class OperationTypesFormComponent implements OnInit {
   @Input() operationType: OperationType | null = null;
   @Input() roles: string[] = [];
-  @Input() specializations: string[] = [];
+  @Input() specializations: Specialization[] = [];
   @Input() statuses: string[] = [];
   @Output() submit = new EventEmitter<OperationType>();
   @Output() cancel = new EventEmitter<void>();
@@ -104,6 +105,10 @@ export class OperationTypesFormComponent implements OnInit {
 
   removeRequiredStaff(index: number) {
     this.operationType!.RequiredStaff.splice(index, 1);
+  }
+
+  getNameFromSpecializationCode(code: string) {
+    return this.specializations.find(s => s.SNOMEDCTCode === code)?.Name;
   }
 
   async submitForm() {

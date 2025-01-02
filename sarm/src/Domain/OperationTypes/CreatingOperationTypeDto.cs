@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Specializations;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
@@ -6,13 +7,13 @@ namespace Domain.OperationTypes
     {
         public Name Name { get; set; }
 
-        public Specialization Specialization { get; set; }
+        public SNOMEDCTCode Specialization { get; set; }
 
         public List<RequiredStaff> RequiredStaff { get; set; }
 
         public PhasesDuration PhasesDuration { get; set; }
 
-        public CreatingOperationTypeDto(Name name, Specialization specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
+        public CreatingOperationTypeDto(Name name, SNOMEDCTCode specialization, List<RequiredStaff> requiredStaff, PhasesDuration phasesDuration)
         {
             Name = name;
             Specialization = specialization;

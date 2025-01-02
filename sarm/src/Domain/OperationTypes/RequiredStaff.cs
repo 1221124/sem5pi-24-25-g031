@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Specializations;
 using Domain.Shared;
 
 namespace Domain.OperationTypes
@@ -5,13 +6,13 @@ namespace Domain.OperationTypes
     public class RequiredStaff : IValueObject
     {
         public Role Role { get; set; }
-        public Specialization Specialization { get; set; }
+        public SNOMEDCTCode Specialization { get; set; }
         public Quantity Quantity { get; set; }
         public bool IsRequiredInPreparation { get; set; }
         public bool IsRequiredInSurgery { get; set; }
         public bool IsRequiredInCleaning { get; set; }
 
-        public RequiredStaff(Role role, Specialization specialization, Quantity quantity, bool isRequiredInPreparation, bool isRequiredInSurgery, bool isRequiredInCleaning)
+        public RequiredStaff(Role role, SNOMEDCTCode specialization, Quantity quantity, bool isRequiredInPreparation, bool isRequiredInSurgery, bool isRequiredInCleaning)
         {
             Role = role;
             Specialization = specialization;
@@ -36,7 +37,7 @@ namespace Domain.OperationTypes
             }
 
             var role = RoleUtils.FromString(parts[0]);
-            var specialization = SpecializationUtils.FromString(parts[1]);
+            var specialization = new SNOMEDCTCode(parts[1]);
             if (!int.TryParse(parts[2], out int quantityValue) || quantityValue < 0)
             {
                 throw new ArgumentException($"Invalid Quantity value: {parts[2]}.");
@@ -65,7 +66,7 @@ namespace Domain.OperationTypes
 
             foreach (var staffMember in staff)
             {
-                var specializationString = SpecializationUtils.ToString(staffMember.Specialization);
+                var specializationString = staffMember.Specialization.Value;
                 var roleString = RoleUtils.ToString(staffMember.Role);
                 var quantityString = staffMember.Quantity.Value.ToString();
                 var isRequiredInPreparationString = staffMember.IsRequiredInPreparation.ToString().ToLower();

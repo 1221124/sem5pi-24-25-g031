@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using DDDNetCore.Domain.Specializations;
 using Domain.Shared;
 
 namespace Domain.Staffs
@@ -9,7 +10,7 @@ namespace Domain.Staffs
         Task<Staff> GetByEmailAsync(Email email);
         Task<Staff> GetByPhoneNumberAsync(PhoneNumber phoneNumber);
         Task<List<Staff>> GetByFullNameAsync(Name firstName, Name lastName);
-        Task<List<Staff>> GetBySpecializationAsync(Specialization specialization);
+        Task<List<Staff>> GetBySpecializationAsync(SNOMEDCTCode specialization);
         Task<Staff> GetByLicenseNumber(LicenseNumber licenseNumber);
         Task<List<Staff>> GetByRoleAsync(StaffRole staffRole);
         Task<List<Staff>> GetActiveWithUserIdNull();

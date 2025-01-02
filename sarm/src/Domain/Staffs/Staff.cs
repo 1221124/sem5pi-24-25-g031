@@ -1,3 +1,4 @@
+using DDDNetCore.Domain.Specializations;
 using Domain.Shared;
 using Domain.Users;
 
@@ -8,7 +9,7 @@ namespace Domain.Staffs
         public UserId? UserId { get; set; }
         public FullName FullName { get; set; }
         public LicenseNumber LicenseNumber { get; set; }
-        public Specialization Specialization { get; set; }
+        public SNOMEDCTCode Specialization { get; set; }
         public StaffRole StaffRole { get; set; }
         public ContactInformation ContactInformation { get; set; }
         public Status Status { get; set; }
@@ -20,7 +21,7 @@ namespace Domain.Staffs
             // SlotAvailability = new List<Slot>();
         }
 
-        public Staff(LicenseNumber licenseNumber, FullName fullName, ContactInformation contactInformation, Specialization specialization, StaffRole staffRole)
+        public Staff(LicenseNumber licenseNumber, FullName fullName, ContactInformation contactInformation, SNOMEDCTCode specialization, StaffRole staffRole)
         {
             Id = new StaffId(Guid.NewGuid());
             LicenseNumber = licenseNumber;
@@ -32,7 +33,7 @@ namespace Domain.Staffs
             SlotAvailability = new List<Slot>();
         }
 
-        public Staff(StaffId staffId, UserId userId, FullName fullName, ContactInformation contactInformation, Specialization specialization, StaffRole staffRole, Status status)
+        public Staff(StaffId staffId, UserId userId, FullName fullName, ContactInformation contactInformation, SNOMEDCTCode specialization, StaffRole staffRole, Status status)
         {
             Id = staffId;
             UserId = userId;
@@ -44,7 +45,7 @@ namespace Domain.Staffs
             SlotAvailability = new List<Slot>();
         }
 
-        public Staff(FullName fullName, ContactInformation contactInformation, Specialization specialization, StaffRole staffRole)
+        public Staff(FullName fullName, ContactInformation contactInformation, SNOMEDCTCode specialization, StaffRole staffRole)
         {
             FullName = fullName;
             ContactInformation = contactInformation;
@@ -54,7 +55,7 @@ namespace Domain.Staffs
         }
 
 
-        public Staff(Guid id, Email email, PhoneNumber phoneNumber, List<Slot> avalibilitySlots, Specialization specialization, StaffRole staffRole)
+        public Staff(Guid id, Email email, PhoneNumber phoneNumber, List<Slot> avalibilitySlots, SNOMEDCTCode specialization, StaffRole staffRole)
         {
             Id = new StaffId(id);
             ContactInformation = new ContactInformation(email, phoneNumber);
@@ -83,7 +84,7 @@ namespace Domain.Staffs
             LicenseNumber = licenseNumber;
         }
 
-        public void ChangeSpecialization(Specialization specialization)
+        public void ChangeSpecialization(SNOMEDCTCode specialization)
         {
             Specialization = specialization;
         }

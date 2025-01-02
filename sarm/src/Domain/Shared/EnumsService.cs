@@ -35,11 +35,6 @@ namespace Domain.Shared
             return list.Select(g => g!).ToList();
         }
 
-        public List<string> GetSpecializations()
-        {
-            return Enum.GetValues(typeof(Specialization)).Cast<Specialization>().Select(s => SpecializationUtils.ToString(s)).ToList();
-        }
-
         public List<string> GetBackofficeRoles()
         {
             var roles = Enum.GetValues(typeof(Role)).Cast<Role>().Select(r => r.ToString()).ToList();

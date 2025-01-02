@@ -13,7 +13,7 @@
                 Specialization
                 <select [(ngModel)]="filter.specialization" name="specialization" id="specialization">
                     <option *ngFor="let spec of specializations" [value]="spec">
-                        {{ spec }}
+                        {{ spec.SNOMEDCTCode }} - {{ spec.Name }}
                     </option>
                 </select>
             </th>
@@ -43,7 +43,7 @@
             <td>{{ staff.ContactInformation.Email }}</td>
             <td>{{ staff.ContactInformation.PhoneNumber }}</td>
             <td>{{ staff.licenseNumber || 'N/A' }}</td>
-            <td>{{ staff.specialization || 'N/A' }}</td>
+            <td>{{ staff.specialization || 'N/A' }} - {{ getNameFromSpecializationCode(staff.specialization) || 'N/A'}}</td>
             <td>{{ staff.staffRole || 'N/A' }}</td>
           <td>
             <span class="status-circle" [ngClass]="{'active-status': staff.status === 'Active', 'inactive-status': staff.status === 'Inactive'}">

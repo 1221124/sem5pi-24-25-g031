@@ -55,13 +55,6 @@ namespace DDDNetCore.Controllers
             return Task.FromResult<ActionResult<List<string>>>(Ok(genders));
         }
 
-        [HttpGet("specializations")]
-        public Task<ActionResult<List<string>>> GetSpecializations()
-        {
-            var specializations = _enumsService.GetSpecializations();
-            return Task.FromResult<ActionResult<List<string>>>(Ok(specializations));
-        }
-
         [HttpGet("backofficeRoles")]
         public Task<ActionResult<List<string>>> GetBackofficeRoles()
         {

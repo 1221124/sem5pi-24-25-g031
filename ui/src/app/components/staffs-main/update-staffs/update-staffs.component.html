@@ -16,9 +16,11 @@
       <div>
         <label for="specialization">Specialization</label>
         <select id="specialization" name="specialization" [(ngModel)]="staff.specialization">
-          <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+          <option *ngFor="let spec of specializations" [value]="spec.SNOMEDCTCode">
+            {{ spec.SNOMEDCTCode }} - {{ spec.Name }}
+          </option>
         </select>
-      </div>
+      </div>      
 
       <h3>Slots Availability</h3>
 
