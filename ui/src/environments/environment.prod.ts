@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  homeUrl: 'https://nice-cliff-0e5434d03.4.azurestaticapps.net',
+  homeUrl: 'https://sarmg031.netlify.app',
   patientBackend: 'http://localhost:4000/api',
   /*sarm*/
   usersApiUrl: 'http://backend-sarmg031.azurewebsites.net/api/Users',
@@ -24,14 +24,14 @@ export const environment = {
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
     clientSecret: 'NnTGmyVIeaoTO9SfHdPRs5wVMpQJrdq_fbkUlkwxy5xfCJiARpsxrGZMY9LnBeSR',
-    redirectUri: 'https://nice-cliff-0e5434d03.4.azurestaticapps.net/callback',
+    redirectUri: 'https://sarmg031.netlify.app/callback',
     authDomain: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/',
     audience: 'https://api.sarmg031.com',
-    logoutUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/v2/logout?client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&returnTo=https://nice-cliff-0e5434d03.4.azurestaticapps.net'
+    logoutUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/v2/logout?client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&returnTo=https://sarmg031.netlify.app'
   },
   tokenUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/oauth/token',
-  loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=https://nice-cliff-0e5434d03.4.azurestaticapps.net/callback&scope=openid%20profile%20email&prompt=login',
-  downloadLoginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=https://nice-cliff-0e5434d03.4.azurestaticapps.net/patient/patient-medical-record/download&scope=openid%20profile%20email&prompt=login'
+  loginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=https://sarmg031.netlify.app/callback&scope=openid%20profile%20email&prompt=login',
+  downloadLoginUrl: 'https://dev-sagir8s22k2ehmk0.us.auth0.com/authorize?audience=https://api.sarmg031.com&response_type=token&client_id=ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn&redirect_uri=https://sarmg031.netlify.app/patient/patient-medical-record/download&scope=openid%20profile%20email&prompt=login'
 };
 
 export const httpOptions = {
