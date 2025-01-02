@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment, httpOptions } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
@@ -16,12 +16,16 @@ export class AuthService {
     private isErrorSource = new BehaviorSubject<boolean>(false);
     isError$ = this.isErrorSource.asObservable();
 
-    private tokenKey = 'accessToken';
+    private accessToken = '';
 
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(
+      private http: HttpClient,
+      private router: Router
+    ) {}
 
-    isAuthWithRole(roles: string[]): boolean {
+    isAuthWithRole(roles: string[]) {
       const accessToken = this.getToken();
+      console.log('Access token:', accessToken);
       if (!this.verifyToken()) {
         return false;
       }
@@ -43,16 +47,11 @@ export class AuthService {
       return false;
     }
 
-    getToken(): string {
-      const token = localStorage.getItem(this.tokenKey);
-      if (!token) {
-        this.updateMessage('Error getting token: ' + 'Token is empty');
-        this.updateIsError(true);
-      }
-      return token as string;
+    getToken() {
+      return this.accessToken;
     }
 
-    isA(desiredRole: string): boolean {
+    isA(desiredRole: string) {
       const accessToken = this.getToken();
       if (!this.verifyToken()) {
         return false;
@@ -66,35 +65,19 @@ export class AuthService {
       return role.trim().toLowerCase() === desiredRole.trim().toLowerCase();
     }
 
-    setToken(accessToken: string): void {
-      localStorage.setItem(this.tokenKey, accessToken);
+    async setToken(accessToken: string) {
+      this.accessToken = accessToken;
     }
 
     verifyToken() : boolean {
-      // try {
-      //   const decodedAccessToken: any = jwtDecode(this.getToken() as string);
-      //   if (decodedAccessToken) {
-      //     //TODO: Verify expiration
-      //     return true;
-      //   }
-      //   this.updateMessage('Error decoding token: ' + 'Token is empty');
-      //   this.updateIsError(true);
-      //   return false;
-      // } catch (error) {
-      //   this.updateMessage('Error verifying token: ' + error);
-      //   this.updateIsError(true);
-      //   return false;
-      // }
       return true;
     }
 
-    private clearToken(): void {
-      if(localStorage.getItem(this.tokenKey)) {
-        localStorage.removeItem(this.tokenKey);
-      }
+    private clearToken() {
+      this.accessToken = '';
     }
 
-    logout(): void {
+    logout() {
       this.clearToken();
       this.http.get(`${environment.authConfig.logoutUrl}`);
     }
