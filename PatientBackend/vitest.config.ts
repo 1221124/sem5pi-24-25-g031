@@ -1,7 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-    test: {
-        include: ['tests/**/*.spec.ts'], // Ensure E2E tests are included
-    },
-});
+  test: {
+    environment: 'node', // Use the Node.js environment for testing
+    globals: true, // To support global variables like describe, it, expect
+  },
+})

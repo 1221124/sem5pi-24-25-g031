@@ -76,6 +76,7 @@
         "chai": "^5.1.2",
         "expect": "^29.7.0",
         "mocha": "^10.8.2",
+        "mongodb-memory-server": "^10.1.2",
         "rimraf": "^2.7.1",
         "sinon": "^19.0.2",
         "supertest": "^7.0.0",
