@@ -77,7 +77,7 @@ export class SpecializationsService {
         if (response.status === 200 && response.body) {
           const specializations = response.body.specializations.map(item => ({
             Id: item.id,
-            SNOMEDCTCode: item.SNOMEDCTCode,
+            SNOMEDCTCode: item.snomedctCode.value,
             Name: item.name.value,
             Description: item.description.value,
           }));
