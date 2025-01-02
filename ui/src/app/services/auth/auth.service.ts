@@ -25,7 +25,6 @@ export class AuthService {
 
     isAuthWithRole(roles: string[]) {
       const accessToken = this.getToken();
-      console.log('Access token:', accessToken);
       if (!this.verifyToken()) {
         return false;
       }
@@ -65,7 +64,7 @@ export class AuthService {
       return role.trim().toLowerCase() === desiredRole.trim().toLowerCase();
     }
 
-    async setToken(accessToken: string) {
+    setToken(accessToken: string) {
       this.accessToken = accessToken;
     }
 
