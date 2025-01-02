@@ -15,22 +15,11 @@ export class NurseMenuComponent implements OnInit {
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not a nurse! Please login...');
-      this.authService.updateIsError(true);
+    if (!this.authService.isAuthWithRole(['Nurse'])) {
       this.router.navigate(['']);
-      return;
     }
 
-    this.accessToken = this.authService.getToken();
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('nurse')) {
-      this.authService.updateMessage(
-        'You are not authenticated or are not a nurse! Redirecting to login...'
-      );
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
-    }
+    this.accessToken = this.authService.getToken() as string;
   }
 
   navigateTo(path: string) {

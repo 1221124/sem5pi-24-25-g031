@@ -33,7 +33,6 @@
             <th>Specialization</th>
             <th>Role</th>
             <th>Status</th>
-            <th>Slots Availability</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -51,12 +50,12 @@
               {{ staff.status || 'N/A' }}
             </span>
           </td>
-            <td>
+            <!-- <td>
               <app-slot
                 [Staff]="staff"
                 (openSlotAppointmentModal)="openSlotAppointmentModal($event)">
               </app-slot>
-            </td>
+            </td> -->
             <td>
                 <button *ngIf="staff.status === 'Active'" (click)="updateStaffEvent.emit(staff)"
                         class="action-btn edit-btn">

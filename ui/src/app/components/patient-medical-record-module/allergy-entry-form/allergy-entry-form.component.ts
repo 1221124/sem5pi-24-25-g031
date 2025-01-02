@@ -54,16 +54,11 @@ export class AllergyEntryFormComponent {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.authService.isAuthWithRole(['Doctor'])) {
       this.router.navigate(['']);
-      return;
     }
 
     this.accessToken = this.authService.getToken() as string;
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
-      this.router.navigate(['']);
-      return;
-    }
 
     if (this.allergy) {
       if (this.allergy.ICD11Code) {

@@ -23,20 +23,12 @@ export class DeleteAllergyComponent {
   accessToken: string = '';
 
   async ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
-      this.authService.updateIsError(true);
-      await this.router.navigate(['']);
-      return;
+    if (!this.authService.isAuthWithRole(['Admin'])) {
+      this.router.navigate(['']);
     }
 
     this.accessToken = this.authService.getToken() as string;
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
-      this.authService.updateMessage('You are not an admin! Redirecting to login...');
-      this.authService.updateIsError(true);
-      await this.router.navigate(['']);
-      return;
-    }
+    
   }
 
   confirmDelete() {

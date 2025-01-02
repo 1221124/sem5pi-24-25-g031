@@ -56,23 +56,10 @@ export class AdminUsersComponent implements OnInit {
     this.authService.isError$.subscribe((errorStatus) => {
       this.isError = errorStatus;  
     });
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage(
-        'You are not authenticated or authorized! Redirecting to login...'
-      );
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
-    }
 
-    this.accessToken = this.authService.getToken();
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
-      this.authService.updateMessage(
-        'You are not authenticated or authorized! Redirecting to login...'
-      );
-      this.authService.updateIsError(true);
+    this.accessToken = this.authService.getToken() as string;
+    if (!this.authService.isAuthWithRole(['Admin'])) {
       this.router.navigate(['']);
-      return;
     }
     
     this.fetchStaffs();

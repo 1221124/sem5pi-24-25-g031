@@ -14,22 +14,11 @@ export class TechnicianMenuComponent implements OnInit {
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not a technician! Please login...');
-      this.authService.updateIsError(true);
+    if (!this.authService.isAuthWithRole(['Technician'])) {
       this.router.navigate(['']);
-      return;
     }
 
     this.accessToken = this.authService.getToken() as string;
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('technician')) {
-      this.authService.updateMessage(
-        'You are not authenticated or are not a technician! Redirecting to login...'
-      );
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
-    }
   }
 
   navigateTo(path: string) {

@@ -32,22 +32,11 @@ export class AppointmentsListComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not an admin or a doctor! Please login...');
-      this.authService.updateIsError(true);
+    if (!this.authService.isAuthWithRole(['Admin', 'Doctor'])) {
       this.router.navigate(['']);
-      return;
     }
 
     this.accessToken = this.authService.getToken() as string;
-
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')
-    && !this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
-      this.authService.updateMessage('You are not authenticated or are not an admin or a doctor! Redirecting to login...');
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
-    }
   }
 
   onFilterChange() {

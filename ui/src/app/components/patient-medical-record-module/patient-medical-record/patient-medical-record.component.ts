@@ -84,36 +84,12 @@ export class PatientMedicalRecordComponent implements OnInit {
 
   async ngOnInit() {
     console.log('PatientMedicalRecordComponent initialized');
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage(
-        'You are not authenticated or are not an admin, a doctor, or a patient! Please login...'
-      );
-      this.authService.updateIsError(true);
+    if (!this.authService.isAuthWithRole(['Admin', 'Doctor', 'Patient'])) {
       this.router.navigate(['']);
-      return;
     }
 
     this.accessToken = this.authService.getToken() as string;
-    const role = this.authService
-      .extractRoleFromAccessToken(this.accessToken)
-      ?.toLowerCase();
-
-    if (
-      !role?.includes('admin') &&
-      !role?.includes('doctor') &&
-      !role?.includes('patient')
-    ) {
-      this.authService.updateMessage(
-        'You are not authenticated or are not an admin, a doctor, or a patient! Redirecting to login...'
-      );
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
-    }
-
-    if (role.includes('patient')) {
-      this.isPatient = true;
-    }
+    this.isPatient = this.authService.isA('Patient');
 
     await this.getAllMedicalConditions();
     await this.getAllAllergies();

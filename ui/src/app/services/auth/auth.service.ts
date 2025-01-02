@@ -9,6 +9,7 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
+
     private messageSource = new BehaviorSubject<string>('');
     message$ = this.messageSource.asObservable();
 
@@ -19,8 +20,27 @@ export class AuthService {
 
     constructor(private http: HttpClient, private router: Router) {}
 
-    isAuthenticated(): boolean {
-      return localStorage.getItem(this.tokenKey) !== null;
+    isAuthWithRole(roles: string[]): boolean {
+      const accessToken = this.getToken();
+      if (!this.verifyToken()) {
+        return false;
+      }
+      const role = this.extractRoleFromAccessToken(accessToken);
+      if (!role) {
+        this.updateMessage('Error getting role: ' + 'Role is empty');
+        this.updateIsError(true);
+        return false;
+      }
+      if (roles.length > 0) {
+        for (const element of roles) {
+          if (element.trim().toLowerCase() === role.trim().toLowerCase()) {
+            return true;
+          }
+        }
+      } else {
+        return accessToken ? true : false;
+      }
+      return false;
     }
 
     getToken(): string {
@@ -30,6 +50,20 @@ export class AuthService {
         this.updateIsError(true);
       }
       return token as string;
+    }
+
+    isA(desiredRole: string): boolean {
+      const accessToken = this.getToken();
+      if (!this.verifyToken()) {
+        return false;
+      }
+      const role = this.extractRoleFromAccessToken(accessToken);
+      if (!role) {
+        this.updateMessage('Error getting role: ' + 'Role is empty');
+        this.updateIsError(true);
+        return false;
+      }
+      return role.trim().toLowerCase() === desiredRole.trim().toLowerCase();
     }
 
     setToken(accessToken: string): void {
@@ -54,14 +88,14 @@ export class AuthService {
       return true;
     }
 
-    clearToken(): void {
-      localStorage.removeItem(this.tokenKey);
+    private clearToken(): void {
+      if(localStorage.getItem(this.tokenKey)) {
+        localStorage.removeItem(this.tokenKey);
+      }
     }
 
     logout(): void {
-      if (this.isAuthenticated()) {
-        this.clearToken();
-      }
+      this.clearToken();
       this.http.get(`${environment.authConfig.logoutUrl}`);
     }
 
@@ -87,29 +121,6 @@ export class AuthService {
       } catch (error) {
           return null;
       }
-    }
-
-    async authenticateWithCredentials(email: string, password: string): Promise<any> {
-      const payload = {
-        grant_type: 'password',
-        client_id: environment.authConfig.clientId,
-        client_secret: environment.authConfig.clientSecret,
-        username: email,
-        password: password,
-        scope: 'openid profile email',
-        connection: 'Username-Password-Authentication'
-      };
-    
-      return (await firstValueFrom(this.http.post<any>(`${environment.tokenUrl}`, payload, httpOptions)).then(response => {
-        if (response.status.toString().startsWith('2')) {
-          console.log('Successfully authenticated with credentials!');
-          return true;
-        }
-        return false;
-      }).catch(error => {
-        console.error('Error during API request:', error);
-        return false;
-      }));
     }
 
     extractRoleFromAccessToken(accessToken: string): string | null {

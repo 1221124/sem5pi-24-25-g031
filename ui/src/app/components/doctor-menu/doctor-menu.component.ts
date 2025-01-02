@@ -14,26 +14,11 @@ import { environment } from '../../../environments/environment';
 })
 export class DoctorMenuComponent implements OnInit {
 
-  accessToken: string = '';
-
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not a doctor! Please login...');
-      this.authService.updateIsError(true);
+    if (!this.authService.isAuthWithRole(['Doctor'])) {
       this.router.navigate(['']);
-      return;
-    }
-
-    this.accessToken = this.authService.getToken();
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('doctor')) {
-      this.authService.updateMessage(
-        'You are not authenticated or authorized! Redirecting to login...'
-      );
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
     }
   }
 

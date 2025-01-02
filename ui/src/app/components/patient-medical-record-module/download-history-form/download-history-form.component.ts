@@ -23,30 +23,11 @@ export class DownloadHistoryFormComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage(
-        'You are not authenticated or are not a patient! Please login...'
-      );
-      this.authService.updateIsError(true);
+    if (!this.authService.isAuthWithRole(['Patient'])) {
       this.router.navigate(['']);
-      return;
     }
 
     this.accessToken = this.authService.getToken() as string;
-    const role = this.authService
-      .extractRoleFromAccessToken(this.accessToken)
-      ?.toLowerCase();
-
-    if (
-      !role?.includes('patient')
-    ) {
-      this.authService.updateMessage(
-        'You are not authenticated or are not a patient! Redirecting to login...'
-      );
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
-    }
 
     const fragmentContent = this.route.snapshot.fragment;
     if (fragmentContent) {

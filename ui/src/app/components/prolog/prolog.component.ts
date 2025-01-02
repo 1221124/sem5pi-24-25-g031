@@ -31,20 +31,11 @@ export class PrologComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Please login...');
-      this.authService.updateIsError(true);
+    if (!this.authService.isAuthWithRole(['Admin'])) {
       this.router.navigate(['']);
-      return;
     }
 
-    this.accessToken = this.authService.getToken();
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('admin')) {
-      this.authService.updateMessage('You are not authenticated or are not an admin! Redirecting to login...');
-      this.authService.updateIsError(true);
-      this.router.navigate(['']);
-      return;
-    }
+    this.accessToken = this.authService.getToken() as string;
 
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];

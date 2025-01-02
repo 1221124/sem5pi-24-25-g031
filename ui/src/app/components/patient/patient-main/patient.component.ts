@@ -54,17 +54,11 @@ export class PatientComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.handleAuthenticationError('You are not authenticated or are not a patient-main! Please login...');
-      return;
+    if (!this.authService.isAuthWithRole(['Patient'])) {
+      this.router.navigate(['']);
     }
 
     this.accessToken = this.authService.getToken() as string;
-
-    if (!this.authService.extractRoleFromAccessToken(this.accessToken)?.toLowerCase().includes('patient')) {
-      this.handleAuthenticationError('You are not authorized to access this resource! Redirecting to login...');
-      return;
-    }
 
     await this.loadPatientData();
     

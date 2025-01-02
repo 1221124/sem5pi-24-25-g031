@@ -67,21 +67,14 @@ export class AdminPatientsMainComponent {
   ) {}
 
   async ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.handleAuthenticationError('You are not authenticated or are not a patient-main! Please login...');
-      return;
-    }
-
+    
     this.accessToken = this.authService.getToken() as string;
-
-    this.role = this.authService.extractRoleFromAccessToken(this.accessToken);
-
-    if (!this.role?.toLowerCase().includes('admin') && !this.role?.toLowerCase().includes('doctor')) {
-      this.handleAuthenticationError('You are not authorized to access this resource! Redirecting to login...');
-      return;
+    if (!this.authService.isAuthWithRole(['Admin', 'Doctor'])) {
+      this.router.navigate(['']);
     }
 
-    this.isDoctor = this.role?.toLowerCase().includes('doctor');
+    this.isDoctor = this.authService.isA('Doctor');
+    this.role = this.authService.extractRoleFromAccessToken(this.accessToken).trim().toLowerCase();
 
     await this.fetchPatients();
     this.handleRoute();

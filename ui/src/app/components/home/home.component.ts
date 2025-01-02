@@ -11,8 +11,8 @@ export class HomeComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    if (this.authService.isAuthenticated()) {
-      this.authService.clearToken();
+    if (this.authService.isAuthWithRole([])) {
+      this.authService.logout();
     }
   }
 
