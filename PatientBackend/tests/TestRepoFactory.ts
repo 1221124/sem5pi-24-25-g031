@@ -5,6 +5,8 @@ import { IPatientMedicalRecordPersistence } from '../src/dataschema/IPatientMedi
 import PatientMedicalRecordRepo from '../src/repos/PatientMedicalRecordRepo';
 import AllergyRepo from "../src/repos/AllergyRepo";
 import {IAllergyPersistence} from "../src/dataschema/IAllergyPersistence";
+import MedicalConditionRepo from '../src/repos/MedicalConditionRepo';
+import { IMedicalConditionPersistence } from '../src/dataschema/IMedicalConditionPersistence';
 
 export class TestRepoFactory {
     private static mongoServer: MongoMemoryServer;
@@ -30,5 +32,11 @@ export class TestRepoFactory {
         const schema = new Schema<IPatientMedicalRecordPersistence & Document>({});
         const model = mongoose.model<IAllergyPersistence & Document>('Allergy', schema);
         return new AllergyRepo(model);
+    }
+    
+    static createMedicalConditionRepo(): MedicalConditionRepo {
+        const schema = new Schema<IMedicalConditionPersistence & Document>({});
+        const model = mongoose.model<IMedicalConditionPersistence & Document>('MedicalCondition', schema);
+        return new MedicalConditionRepo(model);
     }
 }

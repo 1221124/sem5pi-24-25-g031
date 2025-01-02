@@ -8,7 +8,7 @@ import middlewares from '../middlewares';
 import { celebrate, Joi } from 'celebrate';
 import winston = require('winston');
 
-var user_controller = require('../../controllers/userController');
+// var user_controller = require('../../controllers/userController');
 
 const route = Router();
 
@@ -101,5 +101,5 @@ export default (app: Router) => {
 
   app.use('/users', route);
 
-  route.get('/me', middlewares.attachCurrentUser, user_controller.getMe);
+//   route.get('/me', middlewares.attachCurrentUser, user_controller.getMe);
 };
