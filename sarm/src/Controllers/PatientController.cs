@@ -246,7 +246,7 @@ namespace DDDNetCore.Controllers
                 var user = await _userService.GetByEmailAsync(patient.ContactInformation.Email);
                 if (user != null) {
                     await _service.AssignUserId(patient, user.Id);
-                    await _userService.ActivateAsync(user.Id);
+                    await _userService.ActivateAsync(patient.ContactInformation.Email);
                 }
                 return CreatedAtAction(nameof(GetGetById), new { id = patient.Id }, patient);
             }

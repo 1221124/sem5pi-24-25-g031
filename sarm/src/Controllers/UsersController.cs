@@ -122,6 +122,8 @@ namespace Controllers
                         }
                         Console.WriteLine("Patient does not exist or does not have its user assigned correctly.");
                         return Ok(new { exists = false, Message = role });
+                    } else {
+                        await _service.ActivateAsync(email);
                     }
                 }
 
