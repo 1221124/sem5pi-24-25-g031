@@ -20,6 +20,7 @@ export default (app: Router) => {
     console.log("Controller loaded: ", ctrl);
 
     route.post('',
+        isAuth(['Admin']) as unknown as RequestHandler,
         celebrate({
             body: Joi.object({
                 code: Joi.string().required(),

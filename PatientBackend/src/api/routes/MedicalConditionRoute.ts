@@ -24,7 +24,7 @@ export default (app: Router) => {
   console.log("Controller loaded: ", ctrl)
 
   route.post('',
-    isAuth(['Doctor']) as unknown as RequestHandler,
+    isAuth(['Admin']) as unknown as RequestHandler,
     celebrate({
       body: Joi.object({
         code: Joi.string().required(),
