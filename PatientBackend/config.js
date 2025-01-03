@@ -47,15 +47,15 @@ export default {
     },
     medicalCondition: {
       name: "MedicalConditionController",
-      path: "../controllers/medicalConditionController"
+      path: "../controllers/MedicalConditionController"
     },
     allergy: {
       name: "AllergyController",
-      path: "../controllers/allergyController"
+      path: "../controllers/AllergyController"
     },
     patientMedicalRecord: {
       name: "PatientMedicalRecordController",
-      path: "../controllers/patientMedicalRecordController"
+      path: "../controllers/PatientMedicalRecordController"
     }
   },
 
@@ -70,15 +70,15 @@ export default {
     },
     medicalCondition: {
       name: "MedicalConditionRepo",
-      path: "../repos/medicalConditionRepo"
+      path: "../repos/MedicalConditionRepo"
     },
     allergy: {
       name: "AllergyRepo",
-      path: "../repos/allergyRepo"
+      path: "../repos/AllergyRepo"
     },
     patientMedicalRecord: {
       name: "PatientMedicalRecordRepo",
-      path: "../repos/patientMedicalRecordRepo"
+      path: "../repos/PatientMedicalRecordRepo"
     }
   },
 
@@ -89,19 +89,19 @@ export default {
     },
     medicalCondition: {
       name: "MedicalConditionService",
-      path: "../services/medicalConditionService"
+      path: "../services/MedicalConditionService"
     },
     allergy: {
       name: "AllergyService",
-      path: "../services/allergyService"
+      path: "../services/AllergyService"
     },
     patientMedicalRecord: {
       name: "PatientMedicalRecordService",
-      path: "../services/patientMedicalRecordService"
+      path: "../services/PatientMedicalRecordService"
     },
     file: {
       name: "FileService",
-      path: "../services/fileService"
+      path: "../services/FileService"
     }
   },
 };
