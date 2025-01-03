@@ -72,9 +72,15 @@ export class PatientMedicalRecordMap {
 
     public static toPersistence(patientMedicalRecord: PatientMedicalRecord): any {
       console.log("MedicalRecordNumber: ", patientMedicalRecord.medicalRecordNumber);
+      let number: string | MedicalRecordNumber;
+      if (patientMedicalRecord.medicalRecordNumber.value) {
+        number = patientMedicalRecord.medicalRecordNumber.value;
+      } else {
+        number = patientMedicalRecord.medicalRecordNumber;
+      }
       const a = {
         patientMedicalRecordId: patientMedicalRecord.id.toString(),
-        medicalRecordNumber: patientMedicalRecord.medicalRecordNumber,
+        medicalRecordNumber: number,
         allergies: patientMedicalRecord.allergies.map((allergy) => allergy.code.toString() + "_" + allergy.date.toISOString() + "_" + allergy.notMeaningfulAnyMore),
         medicalConditions: patientMedicalRecord.medicalConditions.map((medicalCondition) => medicalCondition.code.toString() + "_" + medicalCondition.date.toISOString() + "_" + medicalCondition.notMeaningfulAnyMore)
       }

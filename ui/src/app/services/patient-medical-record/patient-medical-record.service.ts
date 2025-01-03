@@ -109,6 +109,7 @@ export class PatientMedicalRecordService {
   }
 
   async saveMedicalCondition(id: string, medicalCondition: MedicalRecordEntry, accessToken: string) {
+    console.log(accessToken);
     try {
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${accessToken}`
