@@ -43,16 +43,16 @@ export default class AllergyService implements IAllergyService {
                 return Result.fail<AllergyDto>(creatingAllergy);
             }
 
-            await this.allergyRepo.save(await creatingAllergy);
+            await this.allergyRepo.save(creatingAllergy);
 
-            const allergyDTO = AllergyMap.toDto(await creatingAllergy);
+            const allergyDTO = AllergyMap.toDto(creatingAllergy);
             return Result.ok<AllergyDto>(allergyDTO);
         } catch (error) {
             return Result.fail<AllergyDto>(error);
         }
     }
 
-    public async getAll(filters: { code?: string; name?: string; description?: string }): Promise<AllergyDto[]> {
+    public async getAll(filters?: { code?: string; name?: string; description?: string }): Promise<AllergyDto[]> {
         try {
             console.log("\nSERVICE: Getting all allergies with filters.", filters);
             const allergies = await this.allergyRepo.findAll(filters);
