@@ -119,5 +119,22 @@ namespace Domain.Users
                 return true;
             }
         }
+
+        public async Task<UserDto> ActivateAsync(Guid id)
+        {
+            var User = await this._repo.GetByIdAsync(new UserId(id)); 
+
+            if (User == null)
+                return null;
+
+            if (User.UserStatus == UserStatus.Active)
+                throw new BusinessRuleValidationException("Cannot activate an already active user.");
+
+            User.UserStatus = UserStatus.Active;
+            
+            await this._unitOfWork.CommitAsync();
+
+            return UserMapper.ToDto(User);
+        }
     }
 }

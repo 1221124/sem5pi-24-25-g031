@@ -56,6 +56,13 @@ export class AuthCallbackComponent implements OnInit {
               this.createUser(accessToken, response.body?.message);
               return;
             }
+          } else if (response.status === 204) {
+            this.authService.updateMessage('Patient not found! In order to access your details, you need to have a profile in our system.\nPlease contact the system administrator.!');
+            this.authService.updateIsError(true);
+            setTimeout(() => {
+              this.authService.redirectToLogin();
+            }, 4000);
+            return;
           }
         }).catch(error => {
           if (error.status == 400) {
@@ -93,9 +100,8 @@ export class AuthCallbackComponent implements OnInit {
       this.authService.updateMessage('Invalid role.');  
       this.authService.updateIsError(true);
       return;
-    } else {
-      role = role.toLowerCase();
     }
+    role = role.toLowerCase();
 
     if (role == 'doctor'
       || role == 'nurse'
@@ -109,9 +115,12 @@ export class AuthCallbackComponent implements OnInit {
     try {
       const response = await this.authService.createUser(email, role, accessToken);
       if (response?.status === 201) {
-        this.authService.updateMessage('User with email ' + email + ' created successfully!');  
+        this.authService.updateMessage('User with email ' + email + ' created successfully!\nIf you are a patient, you need to have a profile in our system in order to access your details. Please contact the system administrator.');  
         this.authService.updateIsError(false);
-        this.authService.redirectBasedOnRole(accessToken);
+        if (role != "patient") this.authService.redirectBasedOnRole(accessToken);
+        else setTimeout(() => {
+          this.authService.redirectToLogin();
+        }, 4000);
         return;
       }
     } catch (error) {

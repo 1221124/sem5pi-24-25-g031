@@ -1,8 +1,14 @@
-<div class="auth-callback">
-  <h2>Authentication</h2>
-  <div *ngIf="message" [ngClass]="{ 'success-message': !isError, 'error-message': isError }">
-    <p>{{ message }}</p>
+<div class="container">
+  <div class="auth-callback">
+    <h2>Authentication</h2>
+    <div *ngIf="message" [ngClass]="{ 'message-container': true, 'error': isError }">
+      <p>{{ message }}</p>
+    </div>
+    <div *ngIf="!message && !isError" class="loading">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+      <p>We're processing your authentication...</p>
+    </div>
   </div>
-  <div *ngIf="!message && !isError" class="loading">
-    <p>We're processing your authentication...</p>
-  </div>
+</div>

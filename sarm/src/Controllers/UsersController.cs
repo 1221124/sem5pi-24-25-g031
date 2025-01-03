@@ -97,13 +97,31 @@ namespace Controllers
                     return BadRequest(new { Message = "Email not found in access token." });
                 }
 
-                Role role = RoleUtils.FromString(emailAndRole.Roles[0]);
+                Role role;
+                if (emailAndRole.Roles == null || emailAndRole.Roles.Count == 0)
+                {
+                    Console.WriteLine("Roles not found in access token.");
+                    var doneAndRole = await _iamService.AssignRoleToUserAsync(email.Value, accessToken);
+                    if (doneAndRole.done)
+                    {
+                        Console.WriteLine("Role assigned to user.");
+                        role = RoleUtils.FromString(doneAndRole.role);
+                    } else {
+                        return BadRequest(new { Message = "Failed to assign role to user." });
+                    }
+                } else {
+                    role = RoleUtils.FromString(emailAndRole.Roles[0]);
+                }
+
                 Console.WriteLine("Role: " + role);
                 if (RoleUtils.IsPatient(role)) {
                     Console.WriteLine("Role is Patient.");
                     if (await _patientService.GetByEmailAsync(email) == null) {
+                        if (await _service.GetByEmailAsync(email) != null) {
+                            return NoContent();
+                        }
                         Console.WriteLine("Patient does not exist or does not have its user assigned correctly.");
-                        return NotFound(new { Message = "Patient does not exist or does not have its user assigned correctly." });
+                        return Ok(new { exists = false, Message = role });
                     }
                 }
 
@@ -172,16 +190,14 @@ namespace Controllers
             }
             else
             {   
-                user.UserStatus = UserStatus.Active;
                 await _service.UpdateAsync(user);
                 if (RoleUtils.IsPatient(dto.Role))
                 {
                     var patientDto = await _patientService.GetByEmailAsync(dto.Email);
                     if (patientDto != null)
                     {
+                        user.UserStatus = UserStatus.Active;
                         await _patientService.AssignUserId(patientDto, user.Id);
-                    } else {
-                        return BadRequest(new { Message = $"There is no patient record in our system with email {user.Email.Value}. Please contact our system administrator!" });
                     }
                 }
             }
