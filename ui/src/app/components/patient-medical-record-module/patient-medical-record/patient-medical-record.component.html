@@ -18,7 +18,7 @@
       placeholder="Enter code or name"
     />
   </div>
-  <table class="medical-record-table">
+  <table *ngIf="medicalConditionsLoaded && allergiesLoaded" class="medical-record-table">
     <thead>
       <tr>
         <th>ICD-11 Code</th>

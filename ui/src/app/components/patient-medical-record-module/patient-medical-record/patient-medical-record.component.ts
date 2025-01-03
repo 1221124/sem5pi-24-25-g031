@@ -14,6 +14,7 @@ import {Allergy} from '../../../models/allergy.model';
 import {AllergyService} from '../../../services/allergy/allergy.service';
 import {AllergyEntryFormComponent} from '../allergy-entry-form/allergy-entry-form.component';
 import {DownloadHistoryFormComponent} from '../download-history-form/download-history-form.component';
+import { response } from 'express';
 
 @Component({
   selector: 'app-patient-medical-record',
@@ -55,6 +56,7 @@ export class PatientMedicalRecordComponent implements OnInit {
     Allergies: [],
     MedicalConditions: [],
   };
+  medicalRecordLoaded = false;
 
   medicalConditionPopup = false;
   allergyPopup = false;
@@ -68,9 +70,10 @@ export class PatientMedicalRecordComponent implements OnInit {
   filteredAllergies: MedicalRecordEntry[] = [];
 
   allMedicalConditions: MedicalCondition[] = [];
-  allAlergies: Allergy[] = [];
+  medicalConditionsLoaded = false;
 
-  medicalRecordLoaded = false;
+  allAlergies: Allergy[] = [];
+  allergiesLoaded = false;
 
   isPatient = false;
 
@@ -111,16 +114,17 @@ export class PatientMedicalRecordComponent implements OnInit {
   async getAllMedicalConditions() {
     try {
       if (this.allMedicalConditions.length === 0) {
-        const medicalConditions = await this.medicalConditionService.get(this.accessToken);
-
-        if (medicalConditions.status === 200 && medicalConditions.body) {
-          this.allMedicalConditions = medicalConditions.body;
-        } else {
-          this.authService.updateMessage(
-            'Error getting all medical conditions: ' + medicalConditions.status
-          );
-          this.authService.updateIsError(true);
-        }
+        await this.medicalConditionService.get(this.accessToken).then(response => {
+          if (response.status === 200 && response.body) {
+            this.allMedicalConditions = response.body;
+            this.medicalConditionsLoaded = true;
+          } else {
+            this.authService.updateMessage(
+              'Error getting all medical conditions: ' + response.status
+            );
+            this.authService.updateIsError(true);
+          }
+        });
       }
     } catch (error) {
       this.authService.updateMessage(
@@ -134,16 +138,17 @@ export class PatientMedicalRecordComponent implements OnInit {
     try {
       if (this.allAlergies.length === 0) {
 
-        const allergies = await this.allergyService.get(this.accessToken);
-
-        if (allergies.status === 200 && allergies.body) {
-          this.allAlergies = allergies.body;
-        } else {
-          this.authService.updateMessage(
-            'Error getting all allergies: ' + allergies.status
-          );
-          this.authService.updateIsError(true);
-        }
+        await this.allergyService.get(this.accessToken).then(response => {
+          if (response.status === 200 && response.body) {
+            this.allAlergies = response.body;
+            this.allergiesLoaded = true;
+          } else {
+            this.authService.updateMessage(
+              'Error getting all allergies: ' + response.status
+            );
+            this.authService.updateIsError(true);
+          }
+        });
       }
     } catch (error) {
       this.authService.updateMessage(
@@ -180,28 +185,32 @@ export class PatientMedicalRecordComponent implements OnInit {
   }
 
 
-  async getMedicalConditionName(ICD11Code: string) {
-    if (!this.allMedicalConditions) {
-      await this.getAllMedicalConditions();
+  getMedicalConditionName(ICD11Code: string) {
+    while (!this.medicalConditionsLoaded) {
+      setTimeout(() => {}, 100);
     }
-    
+
     const medicalCondition = this.allMedicalConditions.find(
       (mc) => mc.code === ICD11Code
     );
 
-    return medicalCondition ? medicalCondition.name : 'Unknown';
+    console.log('Medical Condition name:', medicalCondition.name);
+
+    return medicalCondition.name;
   }
 
-  async getAllergyName(ICD11Code: string) {
-    if (!this.allAlergies) {
-      await this.getAllAllergies();
+  getAllergyName(ICD11Code: string) {
+    while (!this.allergiesLoaded) {
+      setTimeout(() => {}, 100);
     }
 
     const allergy = this.allAlergies.find(
       (a) => a.code === ICD11Code
     );
 
-    return allergy ? allergy.name : 'Unknown';
+    console.log('Allergy name:', allergy.name);
+
+    return allergy.name;
   }
 
   searchMedicalConditions() {
