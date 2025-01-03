@@ -3,22 +3,22 @@ export const environment = {
   homeUrl: 'https://sarmg031.netlify.app',
   patientBackend: 'http://localhost:4000/api',
   /*sarm*/
-  usersApiUrl: 'http://backend-sarmg031.azurewebsites.net/api/Users',
-  operationRequests: 'http://backend-sarmg031.azurewebsites.net/api/OperationRequest',
-  operationTypes: 'http://backend-sarmg031.azurewebsites.net/api/OperationTypes',
-  enums: 'http://backend-sarmg031.azurewebsites.net/api/Enums',
-  staffs: 'http://backend-sarmg031.azurewebsites.net/api/Staff',
-  patients: 'http://backend-sarmg031.azurewebsites.net/api/Patient',
-  surgeryRooms: 'http://backend-sarmg031.azurewebsites.net/api/SurgeryRooms',
-  roomTypes: 'http://backend-sarmg031.azurewebsites.net/api/RoomType',
-  specializations: 'http://backend-sarmg031.azurewebsites.net/api/Specialization',
+  usersApiUrl: 'https://backend-sarmg031.azurewebsites.net/api/Users',
+  operationRequests: 'https://backend-sarmg031.azurewebsites.net/api/OperationRequest',
+  operationTypes: 'https://backend-sarmg031.azurewebsites.net/api/OperationTypes',
+  enums: 'https://backend-sarmg031.azurewebsites.net/api/Enums',
+  staffs: 'https://backend-sarmg031.azurewebsites.net/api/Staff',
+  patients: 'https://backend-sarmg031.azurewebsites.net/api/Patient',
+  surgeryRooms: 'https://backend-sarmg031.azurewebsites.net/api/SurgeryRooms',
+  roomTypes: 'https://backend-sarmg031.azurewebsites.net/api/RoomType',
+  specializations: 'https://backend-sarmg031.azurewebsites.net/api/Specialization',
   /*patient backend*/
   medicalConditions: 'http://localhost:4000/api/medical-condition',
   allergies: 'http://localhost:4000/api/allergy',
   patientMedicalRecord: 'http://localhost:4000/api/patient-medical-record',
   /*algav*/
-  prolog: 'http://backend-sarmg031.azurewebsites.net/api/Prolog',
-  appointments: 'http://backend-sarmg031.azurewebsites.net/api/Appointments',
+  prolog: 'https://backend-sarmg031.azurewebsites.net/api/Prolog',
+  appointments: 'https://backend-sarmg031.azurewebsites.net/api/Appointments',
   three_d_module: 'http://localhost:63342/3DVisualizationModule/Basic_Thumb_Raiser/Thumb_Raiser.html?_ijt=m86s9d2mdo8vjm4a4bb9u7udi7&_ij_reload=RELOAD_ON_SAVE',
   /*auth0*/
   authConfig: {
