@@ -30,7 +30,7 @@ export default (app: Router) => {
         }),
         (req, res, next) => ctrl.createAllergy(req, res, next) );
 
-    route.get('', (req, res, next) => ctrl.getAllAllergies(req, res, next));
+    route.get('', isAuth(['Admin','Doctor']) as unknown as RequestHandler, (req, res, next) => ctrl.getAllAllergies(req, res, next));
 
     route.get('/validateCode',
         isAuth(['Doctor']) as unknown as RequestHandler,
