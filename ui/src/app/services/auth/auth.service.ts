@@ -16,8 +16,6 @@ export class AuthService {
     private isErrorSource = new BehaviorSubject<boolean>(false);
     isError$ = this.isErrorSource.asObservable();
 
-    private accessToken = '';
-
     constructor(
       private http: HttpClient,
       private router: Router
@@ -47,7 +45,7 @@ export class AuthService {
     }
 
     getToken() {
-      return this.accessToken;
+      return localStorage.getItem('accessToken');
     }
 
     isA(desiredRole: string) {
@@ -65,7 +63,7 @@ export class AuthService {
     }
 
     setToken(accessToken: string) {
-      this.accessToken = accessToken;
+      localStorage.setItem('accessToken', accessToken);
     }
 
     verifyToken() : boolean {
@@ -73,7 +71,7 @@ export class AuthService {
     }
 
     private clearToken() {
-      this.accessToken = '';
+      localStorage.removeItem('accessToken');
     }
 
     logout() {
