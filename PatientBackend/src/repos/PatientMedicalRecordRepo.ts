@@ -119,11 +119,12 @@ console.log("patient medical record record: ", patientMedicalRecordRecord);
     const query = { medicalRecordNumber: number.value };
     const patientMedicalRecordRecord = await this.patientMedicalRecordSchema.findOne(query as FilterQuery<IPatientMedicalRecordPersistence & Document>);
 
-    if (patientMedicalRecordRecord != null) {
-      return PatientMedicalRecordMap.toDomain(patientMedicalRecordRecord);
-    } else {
+    if (patientMedicalRecordRecord == null) {
+      console.log("no patient medical record found is null.");
       return null;
     }
+
+    return PatientMedicalRecordMap.toDomain(patientMedicalRecordRecord);
   }
 
   /**

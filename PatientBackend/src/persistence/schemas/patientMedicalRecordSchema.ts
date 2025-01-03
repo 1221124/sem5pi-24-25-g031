@@ -9,6 +9,7 @@ const PatientMedicalRecordSchema = new mongoose.Schema(
         },
         medicalRecordNumber: {
             type: String,
+            required: [true, 'Please enter a medical record number'],
             unique: [true, 'Please enter an unique medical record number'],
         },
         allergies: {

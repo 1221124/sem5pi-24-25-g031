@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import PDFDocument from 'pdfkit';
+import PDFDocument, { PDFDocument as PDFKitPDFDocument } from 'pdfkit';
 import * as fs from 'fs';
 import path from 'path';
 import { Result } from "../core/logic/Result";
@@ -103,7 +103,7 @@ export default class FileService implements IFileService {
      * @param doc PDFDocument instance
      * @param table Object with headers and rows
      */
-    private drawTable(doc: PDFKit.PDFDocument, table: { headers: string[], rows: string[][] }) {
+    private drawTable(doc: PDFKitPDFDocument, table: { headers: string[], rows: string[][] }) {
         const startX = doc.x;
         let startY = doc.y; // Usar uma variável para controlar a posição Y
     

@@ -51,15 +51,14 @@ export class PatientMedicalRecordMap {
     }
   
     public static toDomainfromCreating(raw: CreatingPatientMedicalRecordDto): PatientMedicalRecord {
-        const medicalRecordNumberOrError = MedicalRecordNumber.create(raw.medicalRecordNumber.getValue());
-        if (medicalRecordNumberOrError.isFailure) throw new Error("Medical Record Number failed validation.");
-        const medicalRecordNumber = medicalRecordNumberOrError.getValue();
-
+        console.log("Creating patient medical record from creating: ", raw);
+        console.log("Medical record number: ", raw.medicalRecordNumber);
+        console.log("MRN Value: ", raw.medicalRecordNumber.value);
         const allergies = new Array<MedicalRecordEntry>();
         const medicalConditions = new Array<MedicalRecordEntry>();
 
         const patientMedicalRecordOrError = PatientMedicalRecord.create({
-            medicalRecordNumber: medicalRecordNumber,
+            medicalRecordNumber: raw.medicalRecordNumber,
             allergies: allergies,
             medicalConditions: medicalConditions
             }, new UniqueEntityID());
@@ -72,9 +71,10 @@ export class PatientMedicalRecordMap {
     }
 
     public static toPersistence(patientMedicalRecord: PatientMedicalRecord): any {
+      console.log("MedicalRecordNumber: ", patientMedicalRecord.medicalRecordNumber);
       const a = {
         patientMedicalRecordId: patientMedicalRecord.id.toString(),
-        medicalRecordNumber: patientMedicalRecord.medicalRecordNumber.value,
+        medicalRecordNumber: patientMedicalRecord.medicalRecordNumber,
         allergies: patientMedicalRecord.allergies.map((allergy) => allergy.code.toString() + "_" + allergy.date.toISOString() + "_" + allergy.notMeaningfulAnyMore),
         medicalConditions: patientMedicalRecord.medicalConditions.map((medicalCondition) => medicalCondition.code.toString() + "_" + medicalCondition.date.toISOString() + "_" + medicalCondition.notMeaningfulAnyMore)
       }

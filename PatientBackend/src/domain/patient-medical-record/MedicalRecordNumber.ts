@@ -33,6 +33,6 @@ export class MedicalRecordNumber extends ValueObject<MedicalRecordNumberProps> {
     }
 
     public getValue(): string {
-        return this.value;
+        return this.props.value;
     }
 }
