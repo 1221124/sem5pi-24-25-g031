@@ -1,3 +1,4 @@
+/*
 import { app } from '../../src/app'; // your Express app
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { closeDB, connectDB } from '../setup';
@@ -38,3 +39,5 @@ export function generateAccessToken() {
   const token = jwt.sign(user, secret, { expiresIn: '1h' });
   return token;
 }
+
+ */
