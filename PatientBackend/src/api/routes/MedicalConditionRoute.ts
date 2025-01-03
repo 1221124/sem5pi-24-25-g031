@@ -37,7 +37,7 @@ export default (app: Router) => {
 
   
     route.get('',
-      isAuth(['Admin','Doctor']) as unknown as RequestHandler,
+      isAuth(['Admin','Doctor','Patient']) as unknown as RequestHandler,
        (req, res, next) => ctrl.getAllMedicalConditions(req, res, next));
 
     route.get('/validateCode', 
