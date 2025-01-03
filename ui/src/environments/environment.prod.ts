@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   homeUrl: 'https://sarmg031.netlify.app',
-  patientBackend: 'http://localhost:4000/api',
+  patientBackend: 'https://sem5pi-24-25-g031-production.up.railway.app/api',
   /*sarm*/
   usersApiUrl: 'https://backend-sarmg031.azurewebsites.net/api/Users',
   operationRequests: 'https://backend-sarmg031.azurewebsites.net/api/OperationRequest',
@@ -13,9 +13,9 @@ export const environment = {
   roomTypes: 'https://backend-sarmg031.azurewebsites.net/api/RoomType',
   specializations: 'https://backend-sarmg031.azurewebsites.net/api/Specialization',
   /*patient backend*/
-  medicalConditions: 'http://localhost:4000/api/medical-condition',
-  allergies: 'http://localhost:4000/api/allergy',
-  patientMedicalRecord: 'http://localhost:4000/api/patient-medical-record',
+  medicalConditions: 'https://sem5pi-24-25-g031-production.up.railway.app/api/medical-condition',
+  allergies: 'https://sem5pi-24-25-g031-production.up.railway.app/api/allergy',
+  patientMedicalRecord: 'https://sem5pi-24-25-g031-production.up.railway.app/api/patient-medical-record',
   /*algav*/
   prolog: 'https://backend-sarmg031.azurewebsites.net/api/Prolog',
   appointments: 'https://backend-sarmg031.azurewebsites.net/api/Appointments',
