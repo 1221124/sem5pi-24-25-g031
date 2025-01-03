@@ -195,15 +195,8 @@ export default class PatientMedicalRecordController {
 
       const code = req.body.code;
       const notMeaningfulAnymore = req.body.notMeaningfulAnymore;
-      const date = new Date();
 
-      const allergy = {
-        ICD11Code: code,
-        Date: date,
-        notMeaningfulAnymore: notMeaningfulAnymore
-      } as unknown as MedicalRecordEntry;
-
-      const resultOrError = await this.patientMedicalRecordService.addOrUpdateAllergyEntry(id, allergy) as Result<PatientMedicalRecordDto>;
+      const resultOrError = await this.patientMedicalRecordService.addOrUpdateAllergyEntry(id, code, notMeaningfulAnymore) as Result<PatientMedicalRecordDto>;
 
       console.log("resultOrError:> " + resultOrError);
 

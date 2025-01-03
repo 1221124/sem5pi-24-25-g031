@@ -11,6 +11,6 @@ export default interface IPatientMedicalRecordService  {
     create(creatingPatientMedicalRecord: CreatingPatientMedicalRecordDto): Promise<Result<PatientMedicalRecordDto>>;
     update(id: string, updatingPatientMedicalRecord: UpdatingPatientMedicalRecordDto): Promise<Result<PatientMedicalRecordDto>>;
     addOrUpdateMedicalConditionEntry(id: string, icd11Code: string, notMeaningfulAnyMore: boolean): Promise<Result<PatientMedicalRecordDto>>;
-    addOrUpdateAllergyEntry(id: string, allergy: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>>;
+    addOrUpdateAllergyEntry(id: string, icd11Code: string, notMeaningfulAnyMore: boolean): Promise<Result<PatientMedicalRecordDto>>;
     delete(id: string): Promise<Result<void>>;
 }

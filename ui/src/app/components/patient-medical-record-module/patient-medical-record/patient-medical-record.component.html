@@ -64,13 +64,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let condition of filteredAllergies">
-        <td>{{ condition.ICD11Code }}</td>
-        <td>{{ getAllergyName(condition.ICD11Code) }}</td>
-        <td>{{ condition.Date | date: 'medium' }}</td>
-        <td>{{ condition.notMeaningfulAnymore ? 'Yes' : 'No' }}</td>
+      <tr *ngFor="let allergy of filteredAllergies">
+        <td>{{ allergy.ICD11Code }}</td>
+        <td>{{ getAllergyName(allergy.ICD11Code) }}</td>
+        <td>{{ allergy.Date | date: 'medium' }}</td>
+        <td>{{ allergy.notMeaningfulAnymore ? 'Yes' : 'No' }}</td>
         <td *ngIf="!isPatient">
-          <button class="edit-btn" (click)="openAllergyPopup(condition)">Edit</button>
+          <button class="edit-btn" (click)="openAllergyPopup(allergy)">Edit</button>
         </td>
       </tr>
     </tbody>

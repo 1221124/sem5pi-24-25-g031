@@ -178,13 +178,22 @@ export default class PatientMedicalRecordService implements IPatientMedicalRecor
   /**
    * Adds or updates an allergy entry in a Patient medical record by its ID.
    */
-  public async addOrUpdateAllergyEntry(id: string, allergy: MedicalRecordEntry): Promise<Result<PatientMedicalRecordDto>> {
+  public async addOrUpdateAllergyEntry(id: string, icd11Code: string, notMeaningfulAnyMore: boolean): Promise<Result<PatientMedicalRecordDto>> {
     try {
       const patientMedicalRecord = await this.patientMedicalRecordRepo.findByDomainId(id);
 
       if (!patientMedicalRecord) {
         return Result.fail<PatientMedicalRecordDto>("Patient medical record not found");
       }
+
+      const codeOrFailure = ICD11Code.create(icd11Code);
+      if (codeOrFailure.isFailure) {
+        return Result.fail<PatientMedicalRecordDto>("Invalid ICD-11 code");
+      }
+      const code = codeOrFailure.getValue();
+      const date = new Date();
+
+      const allergy = MedicalRecordEntry.createWithNotMeaningfulAnyMore(code, date, notMeaningfulAnyMore);
 
       patientMedicalRecord.addOrUpdateAllergyEntry(allergy);
 

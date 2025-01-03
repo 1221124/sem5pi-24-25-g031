@@ -162,9 +162,8 @@ export class PatientMedicalRecordComponent implements OnInit {
 
       if (patient.status === 200 && patient.body) {
         this.patientMedicalRecord = patient.body.patientMedicalRecord;
-        this.filteredMedicalConditions = [
-          ...this.patientMedicalRecord.MedicalConditions,
-        ];
+        this.filteredMedicalConditions = [...this.patientMedicalRecord.MedicalConditions];
+        this.filteredAllergies = [...this.patientMedicalRecord.Allergies];
         this.medicalRecordLoaded = true;
       } else {
         this.authService.updateMessage(

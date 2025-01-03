@@ -63,7 +63,7 @@ export class AllergyEntryFormComponent {
     if (this.allergy) {
       if (this.allergy.ICD11Code) {
         this.isEdit = true;
-        this.allergy = { ...this.allergy };
+        this.newAllergy = { ...this.allergy };
       }
     } else {
       this.isEdit = false;
@@ -76,20 +76,20 @@ export class AllergyEntryFormComponent {
     }
   }
 
-  async  validateICD11Code(code: string) {
+  async validateICD11Code(code: string) {
     try {
       if (!code || code === '') {
         this.message = 'ICD11 code cannot be empty';
         this.isError = true;
         return;
       }
-      let isValid = await this.allergyService.validateICD11Code(code, this.accessToken);
+      const isValid = await this.allergyService.validateICD11Code(code, this.accessToken);
 
       console.log(isValid);
 
       if (!this.isEdit) {
-        isValid = isValid && this.patientMedicalRecord.Allergies.findIndex((mc) => mc.ICD11Code === code) === -1;
-        if (!isValid) {
+        const exists = this.patientMedicalRecord.Allergies.findIndex((a) => a.ICD11Code !== code) === -1;
+        if (exists) {
           this.message = 'ICD11 code already exists in patient medical record';
           this.isError = true;
           return;

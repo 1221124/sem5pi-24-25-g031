@@ -96,11 +96,11 @@ export class MedicalConditionEntryFormComponent implements OnInit {
         this.isError = true;
         return;
       }
-      let isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
+      const isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
 
       if (!this.isEdit) {
-        isValid = isValid && this.patientMedicalRecord.MedicalConditions.findIndex((mc) => mc.ICD11Code === code) === -1;
-        if (!isValid) {
+        const exists = this.patientMedicalRecord.MedicalConditions.findIndex((mc) => mc.ICD11Code === code) !== -1;
+        if (exists) {
           this.message = 'ICD11 code already exists in patient medical record';
           this.isError = true;
           return;
