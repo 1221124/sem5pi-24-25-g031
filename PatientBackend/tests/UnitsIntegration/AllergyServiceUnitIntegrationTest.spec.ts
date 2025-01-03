@@ -35,7 +35,7 @@ describe('AllergyService Integration Tests with Repository Isolation', () => {
         description = Description.create('Test Allergy Description 1').getValue();
     });
 
-    it('should create a new patient medical record', async () => {
+    it('should create a new patient allergy', async () => {
         //Arrange
         const newAllergyDto = CreatingAllergyDto.create(
             allergyCode.value,
