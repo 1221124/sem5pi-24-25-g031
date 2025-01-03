@@ -180,17 +180,27 @@ export class PatientMedicalRecordComponent implements OnInit {
   }
 
 
-  getMedicalConditionName(ICD11Code: string): string {
+  async getMedicalConditionName(ICD11Code: string) {
+    if (!this.allMedicalConditions) {
+      await this.getAllMedicalConditions();
+    }
+    
     const medicalCondition = this.allMedicalConditions.find(
-      (condition) => condition.code === ICD11Code
+      (mc) => mc.code === ICD11Code
     );
+
     return medicalCondition ? medicalCondition.name : 'Unknown';
   }
 
-  getAllergyName(ICD11Code: string): string {
+  async getAllergyName(ICD11Code: string) {
+    if (!this.allAlergies) {
+      await this.getAllAllergies();
+    }
+
     const allergy = this.allAlergies.find(
-      (condition) => condition.code === ICD11Code
+      (a) => a.code === ICD11Code
     );
+
     return allergy ? allergy.name : 'Unknown';
   }
 
