@@ -388,9 +388,15 @@ namespace DDDNetCore.PrologIntegrations
                 }            
                 string absolutePrologPath = Path.Combine(projectRootPath, AppSettings.PrologPathLAPR5);
                 absolutePrologPath = absolutePrologPath.Replace(@"\\", "/");
+
+                if (AppSettings.Environment == "Production")
+                {
+                    absolutePrologPath = "/home/prolog/lapr5";
+                }
                 
                 string directoryPath = Path.Combine(absolutePrologPath, "knowledge_base");
                 string filePath = Path.Combine(directoryPath, $"kb-{dateStr}.pl");
+                filePath = filePath.Replace(@"\\", "/");
 
                 if (File.Exists(filePath))
                 {
