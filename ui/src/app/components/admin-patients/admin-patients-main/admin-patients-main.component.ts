@@ -67,7 +67,7 @@ export class AdminPatientsMainComponent {
   ) {}
 
   async ngOnInit() {
-    
+
     this.accessToken = this.authService.getToken() as string;
     if (!this.authService.isAuthWithRole(['Admin', 'Doctor'])) {
       this.router.navigate(['']);
@@ -84,7 +84,7 @@ export class AdminPatientsMainComponent {
     this.role = this.role.trim().toLowerCase();
     if (this.router.url.includes('patient-medical-record')) {
       if (!this.patients || !this.route.snapshot.queryParams['medicalRecordNumber']) {
-        this.router.navigate([`${this.role}/patients`]);	
+        this.router.navigate([`${this.role}/patients`]);
         return;
       }
       this.selectedPatient = this.patients.find(patient => patient.MedicalRecordNumber === this.route.snapshot.queryParams['medicalRecordNumber']);
@@ -357,6 +357,10 @@ export class AdminPatientsMainComponent {
     setTimeout(() => {
       this.showNotification = false;
     }, 5000);
+  }
+
+  navigateToAdminMenu(){
+    this.router.navigate(['admin']).then(r => console.log('Navigated to admin menu:', r)).catch(e => console.error('Error navigating to admin menu:', e));
   }
 
 }

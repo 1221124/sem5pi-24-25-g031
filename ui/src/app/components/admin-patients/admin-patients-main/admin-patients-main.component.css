@@ -35,3 +35,9 @@ button {
   background-color: #4CAF50;
   color: white;
 }
+
+.back-btn {
+  background-color: #a8a8a8;
+  color: white;
+  margin-left: 16px;
+}

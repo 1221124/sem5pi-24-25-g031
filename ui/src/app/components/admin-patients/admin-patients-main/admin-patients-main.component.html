@@ -8,6 +8,8 @@
 
   <button *ngIf="!isDoctor" (click)="openCreateModal()" class="btn-open-create-modal">Create New Patient</button>
 
+  <button (click)="navigateToAdminMenu()" class="back-btn">Back To Menu</button>
+
   <app-admin-patients-table
     *ngIf="!hideTable && patients && patients.length > 0"
     [patients]="patients"
