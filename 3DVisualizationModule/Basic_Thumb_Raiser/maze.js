@@ -310,13 +310,13 @@ export default class Maze {
 
                     console.log("selected bed rrom: ", this.selectedBedRoomNumber);
 
-                    if (selectedBed !== '') window.addEventListener("keydown", (event) => {
-                        if (event.key === 'i') {
-                            this.obtainRoomDataWhenPressingI(selectedBed).then((response) => {
-                                console.log("Response", response);
-                            });
-                        }
-                    });
+                    if (selectedBed !== '') {
+                        window.addEventListener("keydown", (event) => {
+                            if (event.key === 'i')
+                                this.obtainRoomDataWhenPressingI(selectedBed);
+                        });
+                    }
+                    
 
                 } else {
                     console.log("No matching bed found");
@@ -619,45 +619,84 @@ export default class Maze {
         });
     }
 
-    async obtainRoomDataWhenPressingI(selectedBed) {
+    async obtainRoomDataWhenPressingI(selectedBed) { 
         let appointment, surgeryRoom;
         console.log("Selected Bed:", selectedBed);
-
-        if(!selectedBed) return;
-
-        appointment = await this.getAppointment(this.selectedBedRoomNumber);
-        console.log("App: ", appointment);
-
-        surgeryRoom = await this.getSurgeryRoom(this.selectedBedRoomNumber);
-        console.log("Surgery Room: ", surgeryRoom);
-
-        const modalTitle = document.getElementById('modal-title');
-        const modalDetails = document.getElementById('modal-details');
     
-        modalTitle.textContent = `Room: ${this.selectedBedRoomNumber}`;
-        modalDetails.textContent = `Appointment Details: ${JSON.stringify(appointment)}`;
+        if (!selectedBed) return;
     
-        const modal = document.getElementById('room-info-modal');
-        const overlay = document.getElementById('modal-overlay');
-        modal.style.display = 'block';
-        overlay.style.display = 'block';
+        try {
+            // Modal setup
+            const modalTitle = document.getElementById('modal-title');
+            const modalDetails = document.getElementById('modal-details');
+    
+            modalTitle.textContent = `Current Surgery Room Details`;
 
-        const closeModal = () => {
-            modal.style.display = 'none';
-            overlay.style.display = 'none';
+            // Fetch the appointment and surgery room data
+            surgeryRoom = await this.getSurgeryRoom(this.selectedBedRoomNumber);
+            console.log("Surgery Room: ", surgeryRoom);
+
+            // Check if the surgeryRoom is valid or an error
+            if (surgeryRoom && surgeryRoom.status !== 404) {
+                // Format surgery room details in a more pleasant way
+                const surgeryRoomDetails = Object.entries(surgeryRoom)
+                    .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
+                    .join("<br>");
+            
+                modalDetails.innerHTML = `<h3>Surgery Room Info</h3>${surgeryRoomDetails}`;
+            
+                // Fetch and format appointment details
+                appointment = await this.getAppointment(this.selectedBedRoomNumber);
+                console.log("App: ", appointment);
+            
+                const appointmentDetailsContainer = document.createElement("div");
+                appointmentDetailsContainer.style.marginTop = "20px";
+            
+                if (appointment && appointment.status !== 404) {
+                    const appointmentDetails = Object.entries(appointment)
+                        .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
+                        .join("<br>");
+                    appointmentDetailsContainer.innerHTML = `<h3>Current Appointment</h3>${appointmentDetails}`;
+                } else {
+                    const message = appointment?.body?.message || "No appointment found for this room.";
+                    appointmentDetailsContainer.innerHTML = `<h3>Current Appointment</h3><p>${message}</p>`;
+                }
+            
+                modalDetails.appendChild(appointmentDetailsContainer);
+            } else {
+                const message = surgeryRoom?.body?.message || "No surgery room found for this room.";
+                modalDetails.innerHTML = `<h3>Surgery Room Details</h3><p>${message}</p>`;
+            }
+            
+
+            // Show modal
+            const modal = document.getElementById('room-info-modal');
+            const overlay = document.getElementById('modal-overlay');
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
     
-            window.location.reload();
-        };
+            // Close modal logic
+            const closeModal = () => {
+                modal.style.display = 'none';
+                overlay.style.display = 'none';
     
-        document.getElementById('close-modal').onclick = closeModal;
-        overlay.onclick = closeModal;
-        
-        return {
-            surgeryRoomNumber: this.selectedBedRoomNumber,
-            surgeryRoomData: surgeryRoom,
-            appointment: appointment
+                window.location.reload(); // Reload the page to reset the UI
+            };
+    
+            document.getElementById('close-modal').onclick = closeModal;
+            overlay.onclick = closeModal;
+    
+            return {
+                surgeryRoomNumber: this.selectedBedRoomNumber,
+                surgeryRoomData: surgeryRoom,
+                appointment: appointment
+            };
+        } catch (error) {
+            console.error("Error fetching room or appointment data:", error);
+            alert("Something went wrong while fetching data. Please try again.");
         }
     }
+    
 
     async getSurgeryRoom(surgeryRoomNumber) {
         const headers = {
@@ -690,7 +729,12 @@ export default class Maze {
                     }))
                 };
             } else {
-                throw new Error('Unexpected response status: ' + response.status);
+                return {
+                    status: response.status,
+                    body: {
+                        message: 'No surgery room found for the room number'
+                    }
+                }
             }
         } catch (error) {
             console.error('Error fetching surgery room by number:', error);
@@ -731,7 +775,12 @@ export default class Maze {
                 }
                 
             } else {
-                throw new Error('Unexpected response status: ' + response.status);
+                return {
+                    status: response.status,
+                    body: {
+                        message: 'No appointment found for the surgery room number'
+                    }
+                }
             }
         } catch (error) {
             console.error('Error fetching appointment by surgery room number:', error);
