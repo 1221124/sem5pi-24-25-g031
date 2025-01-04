@@ -2,6 +2,7 @@ namespace Infrastructure
 {
     public static class AppSettings
     {
+        public static string Environment { get; private set; }
         public static string EmailDomain { get; private set; }
         public static string ConnectionString { get; private set; }
         public static string SmtpServer { get; private set; }
@@ -37,6 +38,7 @@ namespace Infrastructure
 
         public static void Initialize(IConfiguration configuration)
         {
+            Environment = configuration["Environment"];
             EmailDomain = configuration["EmailSettings:EmailDomain"];
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
             SmtpServer = configuration["SendEmailSettings:SmtpServer"];

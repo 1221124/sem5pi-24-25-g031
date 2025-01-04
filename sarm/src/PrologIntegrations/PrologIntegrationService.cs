@@ -81,6 +81,17 @@ namespace DDDNetCore.PrologIntegrations
                     Directory.CreateDirectory(directoryPath);
                 }
 
+                if (AppSettings.Environment == "Production")
+                {
+                    //directory is sarm, which is the base directory of the project in production
+                    directoryPath = projectRootPath;
+                    Console.WriteLine("Production Environment directory path: " + directoryPath);
+                    //copy file to VM
+                    string scpCommand = $"scp \"{directoryPath}/PlanningModule/lapr5/knowledge_base/kb-{date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2")}.pl\" root@10.9.10.31:/home/prolog/lapr5/knowledge_base/";
+                    Console.WriteLine("SCP Command: " + scpCommand);
+                    SendToVM(scpCommand);
+                }
+
                 string filePath = Path.Combine(directoryPath, "kb-" + date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2") + ".pl");
 
                 Console.WriteLine($"File path: {filePath}");
@@ -138,6 +149,11 @@ namespace DDDNetCore.PrologIntegrations
             
             Console.WriteLine("Current Directory: " + Directory.GetCurrentDirectory());
             Console.WriteLine("Resolved Prolog Path: " + absolutePrologPath);
+
+            if (AppSettings.Environment == "Production")
+            {
+                absolutePrologPath = "/home/prolog/lapr5";
+            }
 
             string kbFilePath = Path.Combine(absolutePrologPath, "knowledge_base", $"kb-{dateStr}.pl");
             kbFilePath = kbFilePath.Replace(@"\\", "/");
@@ -217,6 +233,31 @@ namespace DDDNetCore.PrologIntegrations
                 Console.WriteLine(result);
 
                 return result;
+            }
+        }
+
+        public void SendToVM(string command)
+        {
+            Console.WriteLine("Sending to VM...");
+            var processInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (var process = Process.Start(processInfo))
+            {
+                if (process == null)
+                {
+                    throw new InvalidOperationException("Process could not be started.");
+                }
+
+                using (var reader = process.StandardOutput)
+                {
+                   string output = reader.ReadToEnd();
+                   Console.WriteLine(output);
+                }
             }
         }
 

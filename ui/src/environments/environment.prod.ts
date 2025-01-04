@@ -19,7 +19,7 @@ export const environment = {
   /*algav*/
   prolog: 'https://backend-sarmg031.azurewebsites.net/api/Prolog',
   appointments: 'https://backend-sarmg031.azurewebsites.net/api/Appointments',
-  three_d_module: 'https://3dvisualization-sarmg031.netlify.app?_ijt=m86s9d2mdo8vjm4a4bb9u7udi7&_ij_reload=RELOAD_ON_SAVE',
+  three_d_module: 'https://3d-sarmg031.netlify.app',
   /*auth0*/
   authConfig: {
     clientId: 'ZkqvMdGFLKP5d2DOlKCj8pnqDVihkffn',
