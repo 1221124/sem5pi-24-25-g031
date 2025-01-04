@@ -81,8 +81,8 @@ export class AppointmentsListComponent implements OnInit {
     if (this.currentPage) {
       queryParams['page'] = this.currentPage.toString();
     }
-  
-    this.router.navigate(['/appointments'], { queryParams });
+    const role = this.isDoctor ? 'doctor' : 'admin';
+    this.router.navigate(['/' + role + '/appointments'], { queryParams });
   }
 
   getPaginatedAppointments(): Appointment[] {
