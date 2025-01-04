@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using DDDNetCore.Domain.SurgeryRooms;
 using Infrastructure;
+using Renci.SshNet;
 
 namespace DDDNetCore.PrologIntegrations
 {
@@ -191,48 +192,90 @@ namespace DDDNetCore.PrologIntegrations
         public string RunPrologEngine((string absolutePrologPath, string command1, string command2, string command3) command)
         {
             Console.WriteLine("Running Prolog Engine...");
-            ProcessStartInfo psi = new ProcessStartInfo
-            {
-                FileName = "swipl", 
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = command.absolutePrologPath
-            };
 
-            using (Process process = new Process())
-            {
-                process.StartInfo = psi;
-                process.Start();
-                
-                using (var writer = process.StandardInput)
+            if (AppSettings.Environment == "Production") {
+                using (var client = new SshClient("10.9.10.31", "root", "Asist@DEI@2025"))
                 {
-                    if (writer.BaseStream.CanWrite)
+                    try
                     {
-                        writer.WriteLine("set_prolog_flag(answer_write_options,[max_depth(0)]).");
-                        writer.WriteLine(command.command1);
-                        writer.WriteLine(command.command2);
-                        writer.WriteLine(command.command3);
-                        writer.WriteLine("abort.");
-                        writer.WriteLine("halt.");
+                        client.Connect();
+                        if (!client.IsConnected)
+                        {
+                            throw new Exception("Failed to connect to the server.");
+                        }
+
+                        Console.WriteLine("Connected to server.");
+
+                        string prologCommands = $@"
+                            cd {command.absolutePrologPath};
+                            swipl -g ""set_prolog_flag(answer_write_options,[max_depth(0)]), {command.command1}, {command.command2}, {command.command3}, abort, halt.""
+                        ";
+
+                        Console.WriteLine("Running Prolog commands...");
+                        var result = client.RunCommand(prologCommands);
+
+                        Console.WriteLine("Prolog Output:");
+                        Console.WriteLine(result.Result);
+
+                        return result.Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                        return $"Error: {ex.Message}";
+                    }
+                    finally
+                    {
+                        if (client.IsConnected)
+                        {
+                            client.Disconnect();
+                        }
                     }
                 }
-            
-                string result = process.StandardOutput.ReadToEnd();
-                process.StandardInput.Close();
-
-                process.WaitForExit();
-                if (!process.HasExited)
+            } else {
+                ProcessStartInfo psi = new ProcessStartInfo
                 {
-                    process.Kill();
+                    FileName = "swipl",
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = command.absolutePrologPath
+                };
+
+                using (Process process = new Process())
+                {
+                    process.StartInfo = psi;
+                    process.Start();
+                    
+                    using (var writer = process.StandardInput)
+                    {
+                        if (writer.BaseStream.CanWrite)
+                        {
+                            writer.WriteLine("set_prolog_flag(answer_write_options,[max_depth(0)]).");
+                            writer.WriteLine(command.command1);
+                            writer.WriteLine(command.command2);
+                            writer.WriteLine(command.command3);
+                            writer.WriteLine("abort.");
+                            writer.WriteLine("halt.");
+                        }
+                    }
+                
+                    string result = process.StandardOutput.ReadToEnd();
+                    process.StandardInput.Close();
+
+                    process.WaitForExit();
+                    if (!process.HasExited)
+                    {
+                        process.Kill();
+                    }
+
+                    Console.WriteLine("Prolog Output: ");
+                    Console.WriteLine(result);
+
+                    return result;
                 }
-
-                Console.WriteLine("Prolog Output: ");
-                Console.WriteLine(result);
-
-                return result;
             }
         }
 
