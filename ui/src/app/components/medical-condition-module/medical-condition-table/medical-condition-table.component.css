@@ -1,0 +1,159 @@
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: #333;
+  }
+  
+  /* Container styling */
+  .get-medical-conditions {
+    width: 90%;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Filter container styling */
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .filter-container input {
+    flex: 1 1 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .filter-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .filter-container button:hover {
+    background-color: #0056b3;
+  }
+  
+  .filter-container button:active {
+    background-color: #003f8a;
+  }
+  
+  .filter-container button:last-of-type {
+    background-color: #6c757d;
+  }
+  
+  .filter-container button:last-of-type:hover {
+    background-color: #5a6268;
+  }
+  
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  thead {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  thead th {
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  tbody td {
+    padding: 10px;
+    font-size: 14px;
+    vertical-align: top;
+  }
+  
+  tbody ul {
+    padding-left: 20px;
+    margin: 0;
+  }
+  
+  tbody li {
+    list-style-type: disc;
+  }
+  
+  /* Button actions in table */
+  tbody td button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  tbody td button:first-of-type {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  tbody td button:first-of-type:hover {
+    background-color: #218838;
+  }
+  
+  tbody td button:last-of-type {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  tbody td button:last-of-type:hover {
+    background-color: #c82333;
+  }
+  
+  /* Pagination styling */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    padding: 8px 15px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .pagination button:hover {
+    background-color: #0056b3;
+  }
+  
+  .pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .pagination span {
+    font-size: 14px;
+    margin: 0 10px;
+  }
+  
