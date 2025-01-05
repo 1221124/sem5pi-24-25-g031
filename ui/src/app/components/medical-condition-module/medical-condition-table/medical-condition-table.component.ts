@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { MedicalConditionService } from '../../../services/medical-condition/medical-condition.service';
+import { skip } from 'rxjs';
 
 @Component({
   selector: 'app-medical-condition-table',
@@ -48,7 +49,7 @@ export class MedicalConditionTableComponent implements OnInit {
     searchCode: '',
     searchName: '',
     searchDescription: '',
-    searchSymptoms: [],
+    searchSymptoms: '',
   };
 
   async ngOnInit() {
@@ -63,19 +64,76 @@ export class MedicalConditionTableComponent implements OnInit {
       this.medicalConditions = [];
     }
 
-    this.displayMedicalConditions = [];
-    this.pages.currentPage = 1;
-    this.pages.totalPages = Math.ceil(this.medicalConditions.length / 2);
-    this.changePage(this.pages.currentPage);
+    this.displayMedicalConditions = [...this.medicalConditions];
+    this.pages.totalPages = Math.ceil(this.displayMedicalConditions.length / 2);
+    this.changePage(1, this.medicalConditions);
   }
 
-  changePage(page: number) {
+  changePage1(page: number, ) {
+    this.changePage(page, this.medicalConditions);
+  }
+  
+  changePage(page: number, medicalConditions: MedicalCondition[]) {
     this.pages.currentPage = page;
-    this.displayMedicalConditions = this.medicalConditions.slice((page - 1) * 2, page * 2);
+    this.displayMedicalConditions = medicalConditions.slice((page - 1) * 2, page * 2);
   }
 
   filterMedicalConditions(){
-    console.log("TODO FILTER");
+    if(this.isProcessing){
+      return;
+    }
+
+    this.isProcessing = true;
+
+    if (!this.filter.searchCode && !this.filter.searchName && !this.filter.searchDescription && !this.filter.searchSymptoms) {
+      this.displayMedicalConditions = this.medicalConditions;
+      this.pages.totalPages = Math.ceil(this.displayMedicalConditions.length / 2);
+      this.changePage(1, this.displayMedicalConditions);
+      this.isProcessing = false;
+      return;
+    }
+
+    console.log('this.medicalConditions:', this.medicalConditions);
+      
+    this.displayMedicalConditions = this.medicalConditions.filter(condition => {
+      console.log('Condition:', condition);
+      const matchesCode = this.filter.searchCode ? condition.code.includes(this.filter.searchCode) : true;
+      const matchesName = this.filter.searchName ? condition.name.includes(this.filter.searchName) : true;
+      
+
+      let matchesDescription = true;
+
+      if(this.filter.searchDescription !== ''){
+        const searchWords = this.filter.searchDescription.toLowerCase().split(' ');
+        const conditionWords = condition.description.toLowerCase().split(' ');
+        matchesDescription = searchWords.every(word => conditionWords.includes(word));
+      }
+
+      let matchesSymptoms = true;
+
+      if(this.filter.searchSymptoms !== ''){
+        const searchWords = this.filter.searchSymptoms.toLowerCase().split(' ');
+        console.log('searchWords:', searchWords);
+        const conditionWords = condition.commonSymptoms.map(symptom => symptom.toLowerCase());
+        console.log('conditionWords:', conditionWords);
+        matchesSymptoms = searchWords.every(word => conditionWords.includes(word));
+      }
+      
+      console.log(matchesCode, matchesName, matchesDescription, matchesSymptoms);
+      
+      if(matchesCode && matchesName && matchesDescription && matchesSymptoms){
+        console.log('Matched condition:', condition);
+        return true;
+      }
+
+      console.log('Did not match condition:', condition);
+      return false;
+    });
+
+    console.log('Filtered medical conditions:', this.displayMedicalConditions);
+
+    this.pages.totalPages = Math.ceil(this.displayMedicalConditions.length / 2);
+    this.changePage(1, this.displayMedicalConditions);
   }
 
   clear(){
@@ -83,8 +141,16 @@ export class MedicalConditionTableComponent implements OnInit {
       searchCode: '',
       searchName: '',
       searchDescription: '',
-      searchSymptoms: [],
+      searchSymptoms: '',
     };
+
+    this.displayMedicalConditions = this.medicalConditions;
+    this.pages.totalPages = Math.ceil(this.displayMedicalConditions.length / 2);
+    this.changePage(1, this.medicalConditions);
+    
+    this.isProcessing = false;
+    this.message = '';
+    this.success = false;
   }
 
 }
