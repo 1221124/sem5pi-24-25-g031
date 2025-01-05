@@ -5,8 +5,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 
 # Copy the .csproj file and restore dependencies
-COPY ["DDDNetCore/DDDNetCore.csproj", "DDDNetCore/"]
-RUN dotnet restore "DDDNetCore/DDDNetCore.csproj"
+COPY ["sarm/DDDNetCore.csproj", "sarm/"]
+RUN dotnet restore "sarm/DDDNetCore.csproj"
 
 # Copy the rest of the application code
 COPY . .
