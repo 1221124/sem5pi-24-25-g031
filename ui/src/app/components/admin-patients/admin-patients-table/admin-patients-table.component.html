@@ -14,8 +14,10 @@
         <option value="Female">Female</option>
       </select></th>
       <th><input type="text" [(ngModel)]="filter.medicalRecordNumber" placeholder="Search by MRN" /></th>
-      <th><button class="button-filter" (click)="applyFilter()">Search</button></th>
-      <th><button class="button-filter" (click)="clearFilters()">Clear</button></th>
+      <th>
+        <button class="button-filter" (click)="applyFilter()">Search</button>
+        <button class="button-filter" (click)="clearFilters()">Clear</button>
+      </th>
     </tr>
     <tr>
       <th>Actions</th>
@@ -27,7 +29,6 @@
       <th>Gender</th>
       <th>Medical Record Number</th>
       <th>Emergency Contact</th>
-      <th>Appointment History</th>
     </tr>
     </thead>
     <tbody>
@@ -46,53 +47,8 @@
       <td>{{ patient.Gender}}</td>
       <td>{{ patient.MedicalRecordNumber }}</td>
       <td>{{ patient.EmergencyContact ? patient.EmergencyContact : 'N/A' }}</td>
-      <td>
-        <button class="view-button" type="button" (click)="openAppointmentHistoryModal(patient)">View Appointment History</button>
-      </td>
     </tr>
   </table>
 
 </div>
-<div *ngIf="isAppointmentHistoryModalOpen" class="modal">
-  <div class="modal-content">
-    <span type="button" class="close" (click)="closeAppointmentHistoryModal()">&times;</span>
-    <h2>Appointment History</h2>
-    <table>
-      <thead>
-      <tr>
-        <th>Appointment History</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>
-          <table>
-            <thead>
-            <tr>
-              <th>Start</th>
-              <th>End</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let slot of selectedPatient.appointmentHistory">
-              <td>{{ slot.Start | date: 'yyyy-MM-dd HH:mm' }}</td>
-              <td>{{ slot.End | date: 'yyyy-MM-dd HH:mm' }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </div>
 
-  <!-- <div *ngIf="patientSelected" class="modal">
-    <div class="modal-content">
-      <span class="close" (click)="closePatientMedicalRecordModal()">&times;</span>
-      <app-patient-medical-record
-        [patient]="selectedPatient"
-        (close)="closePatientMedicalRecordModal()">
-      </app-patient-medical-record>
-    </div>
-  </div>   -->
-
-</div>

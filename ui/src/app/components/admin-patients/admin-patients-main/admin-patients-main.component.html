@@ -19,7 +19,7 @@
     (deletePatientEvent)="openDeleteModal($event)"
     (viewPatientMedicalRecordEvent)="openPatientMedicalRecordModal($event)">
   </app-admin-patients-table>
-  <p *ngIf="!hideTable && !patients || patients.length === 0">No patients found.</p>
+
 
   <app-admin-patients-create
     *ngIf="isCreateModalOpen"

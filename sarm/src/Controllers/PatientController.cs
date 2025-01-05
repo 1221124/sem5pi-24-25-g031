@@ -257,15 +257,21 @@ namespace DDDNetCore.Controllers
         [Authorize(Roles = "Admin,Patient")]
         public async Task<ActionResult<PatientDto>> Update(UpdatingPatientDto dto)
         {
+            Console.WriteLine("ENTROU NO UPDATE");
             try
             {
                 if (dto == null)
                 {
+                    Console.WriteLine("dto is null");
                     await _dbLogService.LogAction( EntityType.Patient, DbLogType.Update, "Patient data is required.");
                     return BadRequest("Invalid UpdatingPatientDto");
                 }
+                Console.WriteLine("dto: " + JsonConvert.SerializeObject(dto));
+                
                 var patient = await _service.AdminUpdateAsync(dto);
-
+                
+                Console.WriteLine("PASSOU O SERVIÇO, patient: " + JsonConvert.SerializeObject(patient));
+                
                 if (patient == null)
                 {
                     return NotFound("Patient not found");
@@ -280,6 +286,7 @@ namespace DDDNetCore.Controllers
             }
             catch (BusinessRuleValidationException ex)
             {
+                Console.WriteLine("ENTROU NO CATCH: " + ex.Message);
                 await _dbLogService.LogAction(EntityType.Patient, DbLogType.Update, ex.Message);
                 return BadRequest(new {ex.Message});
             }

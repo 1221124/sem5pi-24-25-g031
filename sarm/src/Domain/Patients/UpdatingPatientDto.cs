@@ -20,7 +20,7 @@ namespace DDDNetCore.Domain.Patients
         public PhoneNumber? PendingPhoneNumber { get; set; }
         public Email? PendingEmail { get; set; }
         
-        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, EmergencyContact? emergencyContact ,List<Slot> appointmentHistory,UserId? userId)
+        public UpdatingPatientDto(Email emailId,Name? firstName, Name? lastName, Email? email, PhoneNumber? phoneNumber, EmergencyContact? emergencyContact ,List<Slot>? appointmentHistory,UserId? userId)
         {
             EmailId = emailId;
             FirstName = firstName;
