@@ -295,48 +295,53 @@ namespace DDDNetCore.PrologIntegrations
             string gatewayHost = AppSettings.VMSSHHost;
             int gatewayPort = int.Parse(AppSettings.VMSSHPort);
             string internalHost = AppSettings.VMSFTPHost;
-            int internalPort = int.Parse(AppSettings.VMSFTPPort);
             string username = AppSettings.VMUsername;
             string password = AppSettings.VMPassword;
 
             var gatewayConnectionInfo = new PasswordConnectionInfo(gatewayHost, gatewayPort, username, password);
-
+            
             using (var gatewayClient = new SshClient(gatewayConnectionInfo))
             {
                 gatewayClient.Connect();
                 if (!gatewayClient.IsConnected)
                 {
-                    throw new Exception("Failed to connect to the gateway.");
+                    throw new Exception("Failure connecting with gateaway.");
                 }
 
-                var portForwarded = new ForwardedPortLocal("127.0.0.1", (uint)internalPort, internalHost, (uint)internalPort);
+                var portForwarded = new ForwardedPortLocal("127.0.0.1", 2222, internalHost, 22);
                 gatewayClient.AddForwardedPort(portForwarded);
                 portForwarded.Start();
+                Console.WriteLine("SSH tunnel initiated on port 2222.");
 
                 try
                 {
-                    var scpConnectionInfo = new PasswordConnectionInfo("127.0.0.1", internalPort, username, password);
-
-                    using (var scpClient = new ScpClient(scpConnectionInfo))
+                    var sftpConnectionInfo = new PasswordConnectionInfo("127.0.0.1", 2222, username, password)
                     {
-                        scpClient.Connect();
-                        if (!scpClient.IsConnected)
+                        Timeout = TimeSpan.FromSeconds(10)
+                    };
+
+                    using (var sftpClient = new SftpClient(sftpConnectionInfo))
+                    {
+                        Console.WriteLine("Connecting to STFP server...");
+                        sftpClient.Connect();
+                        if (!sftpClient.IsConnected)
                         {
-                            throw new Exception("Failed to connect to the internal server via SCP.");
+                            throw new Exception("Failure connecting with SFTP.");
                         }
 
                         using (var fileStream = File.OpenRead(filePath))
                         {
-                            scpClient.Upload(fileStream, destination);
-                            Console.WriteLine("File uploaded successfully via SCP.");
+                            Console.WriteLine("Sending file via SFTP...");
+                            sftpClient.UploadFile(fileStream, destination);
+                            Console.WriteLine("File sent via SFTP.");
                         }
 
-                        scpClient.Disconnect();
+                        sftpClient.Disconnect();
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error during SCP transfer: {ex.Message}");
+                    Console.WriteLine($"Error during SFTP transaction: {ex.Message}");
                 }
 
                 gatewayClient.Disconnect();
