@@ -4,36 +4,51 @@
 
   beforeEach(() => {
     cy.loginRedirect("1220784@isep.ipp.pt");
-    cy.get('.btn.btn-primary', { timeout: 10000 }).contains('Manage Patients Medical Record').should('be.visible').click(); // Aumenta o timeout
+    cy.get('.btn.btn-primary', { timeout: 10000 }).contains('Manage Patients Medical Record').should('be.visible').click();
     cy.url().should('include', '/doctor/patients');
   });
 
   it('should display patients table and details', () => {
-    cy.get('.get-patients').should('exist'); // Verifica se a tabela de pacientes existe
-    cy.get('table thead').should('be.visible'); // Verifica se o cabeçalho da tabela está visível
-    cy.get('table tbody tr').should('have.length.greaterThan', 0); // Certifica que há pacientes listados
+    cy.get('.get-patients').should('exist');
+    cy.get('table thead').should('be.visible');
+    cy.get('table tbody tr').should('have.length.greaterThan', 0);
   });
 
   describe('View Patient Medical Record', () => {
     beforeEach(() => {
       cy.visit('/admin/patients'); // Visita a página de administração dos pacientes
+
+      // Clica no botão "View Medical Record" para navegar até o registro médico do paciente
+      cy.get('button').contains('View Medical Record').first().click();
+
+      // Verifica se a URL foi alterada corretamente para a página do registro médico
+      cy.url().should('include', '/doctor/patients/patient-medical-record');
+
+      // Verifica se os elementos da página de registro médico estão visíveis
+      cy.get('h1').contains('Patient Medical Record').should('be.visible');
+      cy.get('p').contains('Medical Record Number:').should('be.visible');
     });
 
     it('should open the patient medical record modal', () => {
-      cy.get('button').contains('View Medical Record').first().click(); // Clica no botão para visualizar o registro médico
-
+      // Você pode adicionar outros testes aqui relacionados ao registro médico
     });
-
   });
 
   describe('Patient Medical Record Component', () => {
 
     describe('Medical Condition Entry Form', () => {
       beforeEach(() => {
-        cy.visit('/admin/patients/patient-medical-record'); // Visita a página de entrada de condição médica
+        cy.get('button').contains('View Medical Record').first().click();
 
-        cy.get('h1').contains('Patient Medical Record').should('be.visible'); // Verifica o título
-        cy.get('p').contains('Medical Record Number:').should('be.visible'); // Verifica informações principais
+        // Verifica se a URL foi alterada corretamente para a página do registro médico
+        cy.url().should('include', '/doctor/patients/patient-medical-record');
+        cy.get('h1').contains('Patient Medical Record').should('be.visible');
+        cy.get('p').contains('Medical Record Number:').should('be.visible');
+      });
+
+      it('should display allergy entry form correctly', () => {
+
+        cy.get('.add-btn').contains('Add Allergies').should('be.visible').click({ force: true });
       });
     });
   });
