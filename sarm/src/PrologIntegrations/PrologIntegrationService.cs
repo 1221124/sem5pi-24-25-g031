@@ -192,7 +192,7 @@ namespace DDDNetCore.PrologIntegrations
             Console.WriteLine("Environment: " + AppSettings.Environment);
 
             if (AppSettings.Environment == "Production") {
-                using (var client = new SshClient(AppSettings.VMHost, AppSettings.VMUsername, AppSettings.VMPassword))
+                using (var client = new SshClient(AppSettings.VMSSHHost, int.Parse(AppSettings.VMSSHPort), AppSettings.VMSSHUsername, AppSettings.VMSSHPassword))
                 {
                     Console.WriteLine("Connecting to server...");
                     try
@@ -294,7 +294,7 @@ namespace DDDNetCore.PrologIntegrations
         {
             Console.WriteLine("Sending to VM...");
 
-            using (var gatewayClient = new SshClient(AppSettings.VMSSHHost, AppSettings.VMSSHPort, AppSettings.VMSSHUsername, AppSettings.VMSSHPassword))
+            using (var gatewayClient = new SshClient(AppSettings.VMSSHHost, int.Parse(AppSettings.VMSSHPort), AppSettings.VMSSHUsername, AppSettings.VMSSHPassword))
             {
                 Console.WriteLine("Connecting to gateway...");
 
@@ -308,7 +308,7 @@ namespace DDDNetCore.PrologIntegrations
 
                     Console.WriteLine("Connected to gateway.");
 
-                    using (var sftpClient = new SftpClient(gatewayClient.ConnectionInfo, AppSettings.VMSFTPHost, AppSettings.VMSFTPPort, AppSettings.VMSFTPUsername, AppSettings.VMSFTPPassword))
+                    using (var sftpClient = new SftpClient(AppSettings.VMSFTPHost, int.Parse(AppSettings.VMSFTPPort), AppSettings.VMSFTPUsername, AppSettings.VMSFTPPassword))
                     {
                         Console.WriteLine("Connecting to SFTP server...");
 
@@ -334,6 +334,8 @@ namespace DDDNetCore.PrologIntegrations
                                 Console.WriteLine(file.Name);
                             }
                         }
+
+                        if (sftpClient.IsConnected) sftpClient.Disconnect();
                     }
                 }
                 catch (Exception ex)
