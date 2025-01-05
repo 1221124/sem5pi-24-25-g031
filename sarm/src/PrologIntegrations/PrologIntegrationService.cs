@@ -83,8 +83,16 @@ namespace DDDNetCore.PrologIntegrations
                     Directory.CreateDirectory(directoryPath);
                 }
 
+                if (AppSettings.Environment == "Production")
+                {
+                    //directory is sarm, which is the base directory of the project in production
+                    directoryPath = projectRootPath;
+                    Console.WriteLine("Production Environment directory path: " + directoryPath);
+                }
+
                 string filePath = Path.Combine(directoryPath, "kb-" + date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2") + ".pl");
 
+                if (AppSettings.Environment == "Production") filePath.Replace("/", @"\");
                 Console.WriteLine($"File path: {filePath}");
 
                 if (File.Exists(filePath))
@@ -105,7 +113,7 @@ namespace DDDNetCore.PrologIntegrations
                         Console.WriteLine("Production Environment directory path: " + directoryPath);
                         //copy file to VM
                         directoryPath = directoryPath.Replace("/", @"\");
-                        filePath = $"{directoryPath}\\PlanningModule\\lapr5\\knowledge_base\\kb-{date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2")}.pl";
+                        filePath = $"{directoryPath}\\kb-{date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2")}.pl";
                         string destination = "/home/prolog/lapr5/knowledge_base/kb-" + date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2") + ".pl";
                         Console.WriteLine("File path VM: " + filePath);
                         Console.WriteLine("Destination VM: " + destination);
