@@ -80,35 +80,6 @@ describe ('MedicalConditionService Integration Tests with Repository Isolation',
         expect(result.getValue().commonSymptoms.map(symptom => symptom.value)).toStrictEqual(mockMedicalCondition.commonSymptoms.map(symptom => symptom));
     });
 
-    // it('should not create a medical condition if it already exists', async () => {
-    //     // Arrange
-    //     const existingMedicalConditionDto = CreatingMedicalConditionDto.create(
-    //         medicalConditionCode.value,
-    //         medicalConditionName.value,
-    //         medicalConditionDescription.value,
-    //         medicalConditionCommonSymptoms.map(symptom => symptom.value)
-    //     ).getValue();
-
-    //     const existingMedicalCondition: MedicalCondition = MedicalCondition.create({
-    //         code: medicalConditionCode,
-    //         name: medicalConditionName,
-    //         description: medicalConditionDescription,
-    //         commonSymptoms: medicalConditionCommonSymptoms,
-    //     }, domainId).getValue();
-
-    //     vi.spyOn(MedicalConditionMap, 'toDomain')
-
-    //     medicalConditionRepoMock.exists.mockReturnValue(Promise.resolve(true));
-    //     medicalConditionRepoMock.findByCode.mockReturnValue(Promise.resolve(existingMedicalCondition));
-        
-    //     // Act
-    //     const result = await service.createMedicalCondition(existingMedicalConditionDto);
-    //     console.log("Result: ", result);
-    //     // Assert
-    //     expect(result.isFailure).toBe(true);
-    //     expect(medicalConditionRepoMock.save).not.toHaveBeenCalled();
-    // });
-
     it('should return a medical condition by its domain ID', async () => {
         // Arrange
         const mockMedicalCondition: MedicalCondition = MedicalCondition.create({

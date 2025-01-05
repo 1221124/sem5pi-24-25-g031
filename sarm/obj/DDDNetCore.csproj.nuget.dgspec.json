@@ -92,6 +92,10 @@
               "target": "Package",
               "version": "[112.1.0, )"
             },
+            "SSH.NET": {
+              "target": "Package",
+              "version": "[2024.2.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
