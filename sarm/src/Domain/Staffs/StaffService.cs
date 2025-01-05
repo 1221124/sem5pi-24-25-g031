@@ -510,7 +510,7 @@ namespace Domain.Staffs
                         var cleaningStart = surgeryStart.AddMinutes(operationType.PhasesDuration.Cleaning);
 
                         var requiredStaff = operationType.RequiredStaff
-                            .Find(s => s.Role.ToString() == staff.StaffRole.ToString() && s.Specialization == staff.Specialization);
+                            .Find(s => s.Role.ToString() == staff.StaffRole.ToString() && s.Specialization.Value.Trim().ToLower() == staff.Specialization.Value.Trim().ToLower());
 
                         if (requiredStaff == null)
                         {
