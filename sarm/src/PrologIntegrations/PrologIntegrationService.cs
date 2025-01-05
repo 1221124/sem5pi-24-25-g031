@@ -147,7 +147,7 @@ namespace DDDNetCore.PrologIntegrations
             Console.WriteLine($"DateStr: {dateStr}");
 
             string projectRootPath = "";
-            
+            string absolutePrologPath = "";
             if (AppSettings.Environment != "Production")
             {
                 projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -160,9 +160,9 @@ namespace DDDNetCore.PrologIntegrations
                     }
                     projectRootPath = parent.FullName;
                 }
+                absolutePrologPath = Path.Combine(projectRootPath, AppSettings.PrologPathLAPR5);
+                absolutePrologPath = absolutePrologPath.Replace(@"\\", "/");
             }    
-            string absolutePrologPath = Path.Combine(projectRootPath, AppSettings.PrologPathLAPR5);
-            absolutePrologPath = absolutePrologPath.Replace(@"\\", "/");
             
             Console.WriteLine("Current Directory: " + Directory.GetCurrentDirectory());
             Console.WriteLine("Resolved Prolog Path: " + absolutePrologPath);

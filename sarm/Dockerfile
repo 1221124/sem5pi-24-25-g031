@@ -28,3 +28,5 @@ EXPOSE 80
 
 # Set the entrypoint to run the application
 ENTRYPOINT ["dotnet", "DDDNetCore.dll"]
+
+ENV ASPNETCORE_ENVIRONMENT=Production
