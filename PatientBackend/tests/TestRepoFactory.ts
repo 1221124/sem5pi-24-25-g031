@@ -33,7 +33,7 @@ export class TestRepoFactory {
         const model = mongoose.model<IAllergyPersistence & Document>('Allergy', schema);
         return new AllergyRepo(model);
     }
-    
+
     static createMedicalConditionRepo(): MedicalConditionRepo {
         const schema = new Schema<IMedicalConditionPersistence & Document>({});
         const model = mongoose.model<IMedicalConditionPersistence & Document>('MedicalCondition', schema);

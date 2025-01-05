@@ -93,14 +93,23 @@ console.log("Medical condition record: ", medicalConditionRecord);
   /**
    * Find a medical condition by its ICD-11 code.
    */
-  public async findByCode(code: ICD11Code): Promise<MedicalCondition | null> {
-    const query = { code: code.toString() };
-    const medicalConditionRecord = await this.medicalConditionSchema.findOne(query as FilterQuery<IMedicalConditionPersistence & Document>);
+  public async findByCode(code: ICD11Code): Promise<MedicalCondition> {
+    try{
+      const query = { code: code.value };
+      console.log("Query being executed: ", query); // Add this line to check the query being sent
 
-    if (medicalConditionRecord != null) {
-      return MedicalConditionMap.toDomain(medicalConditionRecord);
-    } else {
-      return null;
+      const medicalConditionRecord = await this.medicalConditionSchema.findOne(query as FilterQuery<IMedicalConditionPersistence & Document>);
+
+      if (medicalConditionRecord != null) {
+        console.log("Medical condition record: ", medicalConditionRecord);
+        return MedicalConditionMap.toDomain(medicalConditionRecord);
+      } else {
+        console.log("Medical condition record not found.");
+        return null;
+      }
+    } catch (err) {
+      console.error("Error finding medical condition by code: ", err);
+      throw err;
     }
   }
 
