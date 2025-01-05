@@ -8,10 +8,6 @@
     <select id="priority" [(ngModel)]="request.priority" name="priority">
       <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
     </select>
-    <label for="status">Status:</label>
-    <select id="status" [(ngModel)]="request.status" name="status">
-      <option *ngFor="let status of statuses" [value]="status">{{ status.toUpperCase() }}</option>
-    </select>
 
     <button type="submit">Save</button>
     <button type="button" (click)="emitCloseModalEvent()">Cancel</button>

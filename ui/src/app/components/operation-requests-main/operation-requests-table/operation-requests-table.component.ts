@@ -40,6 +40,8 @@ export class OperationRequestsTableComponent implements OnInit {
   ) {
   }
 
+  loaded = true;
+
   selectedRequest!: OperationRequest;
   filteredRequests: OperationRequest[] = [];
   displayRequests: OperationRequest[] = [];
@@ -92,6 +94,7 @@ export class OperationRequestsTableComponent implements OnInit {
     this.pages.totalPages = Math.ceil(this.requests.length / 2);
     this.changePage(this.pages.currentPage);
 
+    this.loaded = true;
   }
 
   async initialData() {

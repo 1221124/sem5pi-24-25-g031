@@ -8,8 +8,11 @@
   <button (click)="navigateToDoctorMenu()" class="btn btn-secondary">Back to Menu</button>
 
   <!-- Display the filtered table of operation requests -->
+  <div *ngIf="requests.length === 0" class="no-requests">
+    <p>No requests found</p>
+  </div>
   <app-operation-requests-table
-    *ngIf="requests"
+    *ngIf="requests && requests.length > 0"
     [requests]="requests"
     [toMakeAppointment]="false"
     (updateRequestEvent)="openUpdateModal($event)"
