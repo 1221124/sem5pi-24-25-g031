@@ -29,8 +29,8 @@
         <td>{{ allergy.name }}</td>
         <td>{{ allergy.description }}</td>
         <td>
-          <button (click)="updateAllergyEvent.emit(allergy)">Edit</button>
-          <button (click)="deleteAllergyEvent.emit(allergy)">Delete</button>
+          <button class="edit-button" (click)="updateAllergyEvent.emit(allergy)">Edit</button>
+          <button class="delete-button" (click)="deleteAllergyEvent.emit(allergy)">Delete</button>
         </td>
       </tr>
       </tbody>
