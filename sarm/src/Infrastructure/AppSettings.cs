@@ -37,12 +37,10 @@ namespace Infrastructure
         public static string PrologFileAllRooms { get; private set; }
         public static string VMSSHHost { get; private set; }
         public static string VMSSHPort { get; private set; }
-        public static string VMSSHUsername { get; private set; }
-        public static string VMSSHPassword { get; private set; }
         public static string VMSFTPHost { get; private set; }
         public static string VMSFTPPort { get; private set; }
-        public static string VMSFTPUsername { get; private set; }
-        public static string VMSFTPPassword { get; private set; }
+        public static string VMUsername { get; private set; }
+        public static string VMPassword { get; private set; }
 
         public static void Initialize(IConfiguration configuration)
         {
@@ -81,12 +79,10 @@ namespace Infrastructure
             PrologFileAllRooms = configuration["Prolog:FileAllRooms"];
             VMSSHHost = configuration["VM:SSHHost"];
             VMSSHPort = configuration["VM:SSHPort"];
-            VMSSHUsername = configuration["VM:SSHUsername"];
-            VMSSHPassword = configuration["VM:SSHPassword"];
             VMSFTPHost = configuration["VM:SFTPHost"];
             VMSFTPPort = configuration["VM:SFTPPort"];
-            VMSFTPUsername = configuration["VM:SFTPUsername"];
-            VMSFTPPassword = configuration["VM:SFTPPassword"];
+            VMUsername = configuration["VM:Username"];
+            VMPassword = configuration["VM:Password"];
         }
     }
 }

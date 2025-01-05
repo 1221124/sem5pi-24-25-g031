@@ -192,7 +192,7 @@ namespace DDDNetCore.PrologIntegrations
             Console.WriteLine("Environment: " + AppSettings.Environment);
 
             if (AppSettings.Environment == "Production") {
-                using (var client = new SshClient(AppSettings.VMSSHHost, int.Parse(AppSettings.VMSSHPort), AppSettings.VMSSHUsername, AppSettings.VMSSHPassword))
+                using (var client = new SshClient(AppSettings.VMSSHHost, int.Parse(AppSettings.VMSSHPort), AppSettings.VMUsername, AppSettings.VMPassword))
                 {
                     Console.WriteLine("Connecting to server...");
                     try
@@ -292,63 +292,54 @@ namespace DDDNetCore.PrologIntegrations
 
         public void SendToVM(string filePath, string destination)
         {
-            Console.WriteLine("Sending to VM...");
+            string gatewayHost = AppSettings.VMSSHHost;
+            int gatewayPort = int.Parse(AppSettings.VMSSHPort);
+            string internalHost = AppSettings.VMSFTPHost;
+            int internalPort = int.Parse(AppSettings.VMSFTPPort);
+            string username = AppSettings.VMUsername;
+            string password = AppSettings.VMPassword;
 
-            using (var gatewayClient = new SshClient(AppSettings.VMSSHHost, int.Parse(AppSettings.VMSSHPort), AppSettings.VMSSHUsername, AppSettings.VMSSHPassword))
+            var gatewayConnectionInfo = new PasswordConnectionInfo(gatewayHost, gatewayPort, username, password);
+
+            using (var gatewayClient = new SshClient(gatewayConnectionInfo))
             {
-                Console.WriteLine("Connecting to gateway...");
+                gatewayClient.Connect();
+                if (!gatewayClient.IsConnected)
+                {
+                    throw new Exception("Failed to connect to the gateway.");
+                }
+
+                var portForwarded = new ForwardedPortLocal("127.0.0.1", (uint)internalPort, internalHost, (uint)internalPort);
+                gatewayClient.AddForwardedPort(portForwarded);
+                portForwarded.Start();
 
                 try
                 {
-                    gatewayClient.Connect();
-                    if (!gatewayClient.IsConnected)
+                    var scpConnectionInfo = new PasswordConnectionInfo("127.0.0.1", internalPort, username, password);
+
+                    using (var scpClient = new ScpClient(scpConnectionInfo))
                     {
-                        throw new Exception("Failed to connect to the gateway.");
-                    }
-
-                    Console.WriteLine("Connected to gateway.");
-
-                    using (var sftpClient = new SftpClient(AppSettings.VMSFTPHost, int.Parse(AppSettings.VMSFTPPort), AppSettings.VMSFTPUsername, AppSettings.VMSFTPPassword))
-                    {
-                        Console.WriteLine("Connecting to SFTP server...");
-
-                        sftpClient.Connect();
-                        if (!sftpClient.IsConnected)
+                        scpClient.Connect();
+                        if (!scpClient.IsConnected)
                         {
-                            throw new Exception("Failed to connect to the SFTP server.");
+                            throw new Exception("Failed to connect to the internal server via SCP.");
                         }
 
-                        Console.WriteLine("Connected to SFTP server.");
-
-                        using (var fileStream = System.IO.File.OpenRead(filePath))
+                        using (var fileStream = File.OpenRead(filePath))
                         {
-                            Console.WriteLine("Uploading file...");
-                            sftpClient.UploadFile(fileStream, destination, true);
-                            Console.WriteLine("File uploaded.");
-
-                            sftpClient.ChangeDirectory("/home/prolog/lapr5/knowledge_base");
-                            var files = sftpClient.ListDirectory("/home/prolog/lapr5/knowledge_base");
-                            Console.WriteLine("Files in directory: ");
-                            foreach (var file in files)
-                            {
-                                Console.WriteLine(file.Name);
-                            }
+                            scpClient.Upload(fileStream, destination);
+                            Console.WriteLine("File uploaded successfully via SCP.");
                         }
 
-                        if (sftpClient.IsConnected) sftpClient.Disconnect();
+                        scpClient.Disconnect();
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    Console.WriteLine($"Error during SCP transfer: {ex.Message}");
                 }
-                finally
-                {
-                    if (gatewayClient.IsConnected)
-                    {
-                        gatewayClient.Disconnect();
-                    }
-                }
+
+                gatewayClient.Disconnect();
             }
         }
 
@@ -454,7 +445,7 @@ namespace DDDNetCore.PrologIntegrations
                 
                 string directoryPath = Path.Combine(absolutePrologPath, "knowledge_base");
                 string filePath = Path.Combine(directoryPath, $"kb-{dateStr}.pl");
-                filePath = filePath.Replace(@"\\", "/");
+                if (AppSettings.Environment != "Production") filePath = filePath.Replace(@"\\", "/");
 
                 if (File.Exists(filePath))
                 {
