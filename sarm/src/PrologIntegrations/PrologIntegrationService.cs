@@ -294,32 +294,47 @@ namespace DDDNetCore.PrologIntegrations
         {
             Console.WriteLine("Sending to VM...");
 
-            using (var client = new SftpClient(AppSettings.VMHost, 22, AppSettings.VMUsername, AppSettings.VMPassword))
+            using (var gatewayClient = new SshClient(AppSettings.VMSSHHost, AppSettings.VMSSHPort, AppSettings.VMSSHUsername, AppSettings.VMSSHPassword))
             {
-                Console.WriteLine("Connecting to server...");
+                Console.WriteLine("Connecting to gateway...");
+
                 try
                 {
-                    client.Connect();
-                    if (!client.IsConnected)
+                    gatewayClient.Connect();
+                    if (!gatewayClient.IsConnected)
                     {
-                        throw new Exception("Failed to connect to the server.");
+                        throw new Exception("Failed to connect to the gateway.");
                     }
 
-                    Console.WriteLine("Connected to server.");
+                    Console.WriteLine("Connected to gateway.");
 
-                    using (var fileStream = System.IO.File.OpenRead(filePath))
+                    using (var sftpClient = new SftpClient(gatewayClient.ConnectionInfo, AppSettings.VMSFTPHost, AppSettings.VMSFTPPort, AppSettings.VMSFTPUsername, AppSettings.VMSFTPPassword))
                     {
-                        Console.WriteLine("Uploading file...");
-                        client.UploadFile(fileStream, destination, true);
-                        client.ChangeDirectory("/home/prolog/lapr5/knowledge_base");
-                        var files = client.ListDirectory("/home/prolog/lapr5/knowledge_base");
-                        Console.WriteLine("Files in directory: ");
-                        foreach (var file in files)
+                        Console.WriteLine("Connecting to SFTP server...");
+
+                        sftpClient.Connect();
+                        if (!sftpClient.IsConnected)
                         {
-                            Console.WriteLine(file.Name);
+                            throw new Exception("Failed to connect to the SFTP server.");
+                        }
+
+                        Console.WriteLine("Connected to SFTP server.");
+
+                        using (var fileStream = System.IO.File.OpenRead(filePath))
+                        {
+                            Console.WriteLine("Uploading file...");
+                            sftpClient.UploadFile(fileStream, destination, true);
+                            Console.WriteLine("File uploaded.");
+
+                            sftpClient.ChangeDirectory("/home/prolog/lapr5/knowledge_base");
+                            var files = sftpClient.ListDirectory("/home/prolog/lapr5/knowledge_base");
+                            Console.WriteLine("Files in directory: ");
+                            foreach (var file in files)
+                            {
+                                Console.WriteLine(file.Name);
+                            }
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -327,9 +342,9 @@ namespace DDDNetCore.PrologIntegrations
                 }
                 finally
                 {
-                    if (client.IsConnected)
+                    if (gatewayClient.IsConnected)
                     {
-                        client.Disconnect();
+                        gatewayClient.Disconnect();
                     }
                 }
             }
