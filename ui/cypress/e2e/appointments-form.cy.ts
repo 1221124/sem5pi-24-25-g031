@@ -61,7 +61,7 @@ describe('Appointment Form E2E Tests', () => {
 
     cy.get('select[name="surgeryRoom"]').select('OR1');
 
-    cy.get('h5').should('contain', 'Doctor - 394649004');
+    cy.get('h5').should('contain', 'Doctor - Orthopaedics (394649004): 3');
   });
 
   it('should allow staff selection for the appointment', () => {

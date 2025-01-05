@@ -12,6 +12,8 @@ import { Staff } from '../../../models/staff.model';
 import { SurgeryRoomsService } from '../../../services/surgery-rooms/surgery-rooms.service';
 import { OperationRequest } from '../../../models/operation-request.model';
 import { SurgeryRoom } from '../../../models/surgery-room.model';
+import { Specialization } from '../../../models/specialization.model';
+import { SpecializationsService } from '../../../services/specializations/specializations.service';
 
 @Component({
   selector: 'app-appointments-form',
@@ -65,6 +67,7 @@ export class AppointmentsFormComponent implements OnInit {
   }[] = [];
   availableStaff: Staff[] = [];
   surgeryRooms: SurgeryRoom[] = [];
+  specializations: Specialization[] = [];
   staffLoading = false;
   staffMessage = '';
 
@@ -77,6 +80,7 @@ export class AppointmentsFormComponent implements OnInit {
     private operationTypeService: OperationTypesService,
     private staffService: StaffsService,
     private surgeryRoomService: SurgeryRoomsService,
+    private specializationService: SpecializationsService,
     private authService: AuthService,
     private router: Router
   ) {}
@@ -88,7 +92,19 @@ export class AppointmentsFormComponent implements OnInit {
 
     this.accessToken = this.authService.getToken() as string;
     
+    await this.getSpecializations();
     await this.initializeData();
+  }
+
+  async getSpecializations() {
+    try {
+      const response = await this.specializationService.getSpecializations(this.accessToken);
+      if (response.status == 200 && response.body) {
+        this.specializations = response.body.specializations;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async initializeData() {
@@ -226,6 +242,11 @@ export class AppointmentsFormComponent implements OnInit {
         this.staffLoading = false;
       }, 2000);
     }
+  }
+
+  getSpecializationName(code: string): string {
+    const specialization = this.specializations.find(s => s.SNOMEDCTCode === code);
+    return specialization ? specialization.Name : 'Unknown';
   }
 
   async onAppointmentDateChange() {

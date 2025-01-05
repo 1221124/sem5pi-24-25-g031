@@ -23,7 +23,7 @@
     <h4>Required Staff for this Appointment</h4>
     <ul class="list-group">
       <li *ngFor="let staff of requiredStaff" class="list-group-item">
-        {{ staff.Role }} - {{ staff.Specialization }}: {{ staff.Quantity }}
+        {{ staff.Role }} - {{ getSpecializationName(staff.Specialization) }} ({{ staff.Specialization }}): {{ staff.Quantity }}
       </li>
     </ul>
   </div>
@@ -34,7 +34,7 @@
         <div *ngIf="availableStaff.length > 0">
           
           <div class="staff-group-container">
-            <h5 class="staff-group-title">{{ staff.Role }} - {{ staff.Specialization }}</h5>
+            <h5 class="staff-group-title">{{ staff.Role }} - {{ getSpecializationName(staff.Specialization) }} ({{ staff.Specialization }})</h5>
             
             <div class="staff-list">
               <div *ngFor="let available of availableStaff" class="staff-selection">
