@@ -294,7 +294,7 @@ namespace DDDNetCore.PrologIntegrations
         {
             Console.WriteLine("Sending to VM...");
 
-            using (var client = new SftpClient(AppSettings.VMHost, AppSettings.VMUsername, AppSettings.VMPassword))
+            using (var client = new SftpClient(AppSettings.VMHost, 22, AppSettings.VMUsername, AppSettings.VMPassword))
             {
                 Console.WriteLine("Connecting to server...");
                 try
