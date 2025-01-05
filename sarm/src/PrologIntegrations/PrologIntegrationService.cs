@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using DDDNetCore.Domain.SurgeryRooms;
+using FluentAssertions;
 using Infrastructure;
 using Renci.SshNet;
 
@@ -82,17 +83,6 @@ namespace DDDNetCore.PrologIntegrations
                     Directory.CreateDirectory(directoryPath);
                 }
 
-                if (AppSettings.Environment == "Production")
-                {
-                    //directory is sarm, which is the base directory of the project in production
-                    directoryPath = projectRootPath;
-                    Console.WriteLine("Production Environment directory path: " + directoryPath);
-                    //copy file to VM
-                    string scpCommand = $"scp \"{directoryPath}/PlanningModule/lapr5/knowledge_base/kb-{date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2")}.pl\" root@10.9.10.31:/home/prolog/lapr5/knowledge_base/";
-                    Console.WriteLine("SCP Command: " + scpCommand);
-                    SendToVM(scpCommand);
-                }
-
                 string filePath = Path.Combine(directoryPath, "kb-" + date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2") + ".pl");
 
                 Console.WriteLine($"File path: {filePath}");
@@ -108,6 +98,19 @@ namespace DDDNetCore.PrologIntegrations
 
                 if(File.Exists(filePath))
                 {
+                    if (AppSettings.Environment == "Production")
+                    {
+                        //directory is sarm, which is the base directory of the project in production
+                        directoryPath = projectRootPath;
+                        Console.WriteLine("Production Environment directory path: " + directoryPath);
+                        //copy file to VM
+                        directoryPath = directoryPath.Replace("/", @"\");
+                        filePath = $"{directoryPath}\\PlanningModule\\lapr5\\knowledge_base\\kb-{date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2")}.pl";
+                        string destination = "/home/prolog/lapr5/knowledge_base/kb-" + date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2") + ".pl";
+                        Console.WriteLine("File path VM: " + filePath);
+                        Console.WriteLine("Destination VM: " + destination);
+                        SendToVM(filePath, destination);
+                    }
                     return true;
                 }
                 else
@@ -156,30 +159,16 @@ namespace DDDNetCore.PrologIntegrations
                 absolutePrologPath = "/home/prolog/lapr5";
             }
 
-            string kbFilePath = Path.Combine(absolutePrologPath, "knowledge_base", $"kb-{dateStr}.pl");
-            kbFilePath = kbFilePath.Replace(@"\\", "/");
-            string codeFilePath = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFileScheduling);
-            codeFilePath = codeFilePath.Replace(@"\\", "/");
-            string codeFilePathFirstHeuristic = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFileFirstHeuristic);
-            codeFilePathFirstHeuristic = codeFilePathFirstHeuristic.Replace(@"\\", "/");
-            string codeFilePathAllRooms = Path.Combine(absolutePrologPath, "code", AppSettings.PrologFileAllRooms);
-            codeFilePathAllRooms = codeFilePathAllRooms.Replace(@"\\", "/");
-
-            if (!File.Exists(kbFilePath) || !File.Exists(codeFilePath) || !File.Exists(codeFilePathFirstHeuristic) || !File.Exists(codeFilePathAllRooms))
-            {
-                throw new FileNotFoundException("Prolog file(s) not found.");
-            }
-
-            string command1 = $@"consult('knowledge_base/kb-{dateStr}.pl').";
+            string command1 = $@"consult('knowledge_base/kb-{dateStr}.pl')";
             string command2 = option switch
             {
-                0 => $@"consult('code/{AppSettings.PrologFileScheduling}').",
-                1 => $@"consult('code/{AppSettings.PrologFileFirstHeuristic}').",
-                2 => $@"consult('code/{AppSettings.PrologFileAllRooms}').",
+                0 => $@"consult('code/{AppSettings.PrologFileScheduling}')",
+                1 => $@"consult('code/{AppSettings.PrologFileFirstHeuristic}')",
+                2 => $@"consult('code/{AppSettings.PrologFileAllRooms}')",
                 _ => throw new ArgumentException("Invalid option."),
             };
-            string command3 = $@"schedule_appointments({dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
-            if (surgeryRoom != "") command3 = $@"schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime).";
+            string command3 = $@"schedule_appointments({dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime)";
+            if (surgeryRoom != "") command3 = $@"schedule_appointments({surgeryRoom},{dateStr},AppointmentsGenerated,StaffAgendaGenerated,BestFinishingTime)";
 
             Console.WriteLine("Absolute Prolog Path: " + absolutePrologPath);
             Console.WriteLine("Prolog Command 1: " + command1);
@@ -192,10 +181,12 @@ namespace DDDNetCore.PrologIntegrations
         public string RunPrologEngine((string absolutePrologPath, string command1, string command2, string command3) command)
         {
             Console.WriteLine("Running Prolog Engine...");
+            Console.WriteLine("Environment: " + AppSettings.Environment);
 
             if (AppSettings.Environment == "Production") {
-                using (var client = new SshClient("10.9.10.31", "root", "Asist@DEI@2025"))
+                using (var client = new SshClient(AppSettings.VMHost, AppSettings.VMUsername, AppSettings.VMPassword))
                 {
+                    Console.WriteLine("Connecting to server...");
                     try
                     {
                         client.Connect();
@@ -206,16 +197,24 @@ namespace DDDNetCore.PrologIntegrations
 
                         Console.WriteLine("Connected to server.");
 
-                        string prologCommands = $@"
-                            cd {command.absolutePrologPath};
-                            swipl -g ""set_prolog_flag(answer_write_options,[max_depth(0)]), {command.command1}, {command.command2}, {command.command3}, abort, halt.""
+                        string prologCommands = $@"swipl -g ""set_prolog_flag(answer_write_options,[max_depth(0)]), {command.command1}, {command.command2}, {command.command3}, abort, halt.""
                         ";
 
                         Console.WriteLine("Running Prolog commands...");
-                        var result = client.RunCommand(prologCommands);
+                        Console.WriteLine("command.absolutePrologPath: " + command.absolutePrologPath);
+                        Console.WriteLine(prologCommands);
 
-                        Console.WriteLine("Prolog Output:");
+                        string combinedCommand = $@"
+    cd ..;
+    cd {command.absolutePrologPath};
+    ls;
+    {prologCommands}
+";
+                        var result = client.RunCommand(combinedCommand);
+                        Console.WriteLine("Prolog Output: ");
                         Console.WriteLine(result.Result);
+                        Console.WriteLine("Prolog Output Error: ");
+                        Console.WriteLine(result.Error);
 
                         return result.Result;
                     }
@@ -233,6 +232,10 @@ namespace DDDNetCore.PrologIntegrations
                     }
                 }
             } else {
+                command.command1 += ".";
+                command.command2 += ".";
+                command.command3 += ".";
+
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = "swipl",
@@ -279,27 +282,47 @@ namespace DDDNetCore.PrologIntegrations
             }
         }
 
-        public void SendToVM(string command)
+        public void SendToVM(string filePath, string destination)
         {
             Console.WriteLine("Sending to VM...");
-            var processInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
-            {
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
 
-            using (var process = Process.Start(processInfo))
+            using (var client = new SftpClient(AppSettings.VMHost, AppSettings.VMUsername, AppSettings.VMPassword))
             {
-                if (process == null)
+                Console.WriteLine("Connecting to server...");
+                try
                 {
-                    throw new InvalidOperationException("Process could not be started.");
+                    client.Connect();
+                    if (!client.IsConnected)
+                    {
+                        throw new Exception("Failed to connect to the server.");
+                    }
+
+                    Console.WriteLine("Connected to server.");
+
+                    using (var fileStream = System.IO.File.OpenRead(filePath))
+                    {
+                        Console.WriteLine("Uploading file...");
+                        client.UploadFile(fileStream, destination, true);
+                        client.ChangeDirectory("/home/prolog/lapr5/knowledge_base");
+                        var files = client.ListDirectory("/home/prolog/lapr5/knowledge_base");
+                        Console.WriteLine("Files in directory: ");
+                        foreach (var file in files)
+                        {
+                            Console.WriteLine(file.Name);
+                        }
+                    }
+
                 }
-
-                using (var reader = process.StandardOutput)
+                catch (Exception ex)
                 {
-                   string output = reader.ReadToEnd();
-                   Console.WriteLine(output);
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                }
+                finally
+                {
+                    if (client.IsConnected)
+                    {
+                        client.Disconnect();
+                    }
                 }
             }
         }
@@ -317,10 +340,20 @@ namespace DDDNetCore.PrologIntegrations
             {
                 if (item == prologOutputSplitted.Last())
                 {
+                    Console.WriteLine("Last item, skipping...");
                     break;
                 }
 
-                string[] lines = item.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                Console.WriteLine("Item 1: " + item);
+
+                string[] lines = Regex.Split(item, @"\r\n|\n|\r");
+
+                Console.WriteLine("Lines Splitted...");
+
+                for (int j = 0; j < lines.Length; j++)
+                {
+                    Console.WriteLine(j + " " + lines[j]);
+                }
 
                 //skip until the first line with "FOR ROOM"
                 int i = 0;

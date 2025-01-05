@@ -35,6 +35,9 @@ namespace Infrastructure
         public static string PrologFileScheduling { get; private set; }
         public static string PrologFileFirstHeuristic { get; private set; }
         public static string PrologFileAllRooms { get; private set; }
+        public static string VMHost { get; private set; }
+        public static string VMUsername { get; private set; }
+        public static string VMPassword { get; private set; }
 
         public static void Initialize(IConfiguration configuration)
         {
@@ -71,6 +74,9 @@ namespace Infrastructure
             PrologFileScheduling = configuration["Prolog:FileScheduling"];
             PrologFileFirstHeuristic = configuration["Prolog:FileFirstHeuristic"];
             PrologFileAllRooms = configuration["Prolog:FileAllRooms"];
+            VMHost = configuration["VM:Host"];
+            VMUsername = configuration["VM:Username"];
+            VMPassword = configuration["VM:Password"];
         }
     }
 }
