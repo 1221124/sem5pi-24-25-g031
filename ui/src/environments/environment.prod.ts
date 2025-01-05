@@ -3,22 +3,22 @@ export const environment = {
   homeUrl: 'https://sarmg031.netlify.app',
   patientBackend: 'https://sem5pi-24-25-g031-production.up.railway.app/api',
   /*sarm*/
-  usersApiUrl: 'https://backend-sarmg031.azurewebsites.net/api/Users',
-  operationRequests: 'https://backend-sarmg031.azurewebsites.net/api/OperationRequest',
-  operationTypes: 'https://backend-sarmg031.azurewebsites.net/api/OperationTypes',
-  enums: 'https://backend-sarmg031.azurewebsites.net/api/Enums',
-  staffs: 'https://backend-sarmg031.azurewebsites.net/api/Staff',
-  patients: 'https://backend-sarmg031.azurewebsites.net/api/Patient',
-  surgeryRooms: 'https://backend-sarmg031.azurewebsites.net/api/SurgeryRooms',
-  roomTypes: 'https://backend-sarmg031.azurewebsites.net/api/RoomType',
-  specializations: 'https://backend-sarmg031.azurewebsites.net/api/Specialization',
+  usersApiUrl: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/Users',
+  operationRequests: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/OperationRequest',
+  operationTypes: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/OperationTypes',
+  enums: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/Enums',
+  staffs: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/Staff',
+  patients: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/Patient',
+  surgeryRooms: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/SurgeryRooms',
+  roomTypes: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/RoomType',
+  specializations: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/Specialization',
   /*patient backend*/
   medicalConditions: 'https://sem5pi-24-25-g031-production.up.railway.app/api/medical-condition',
   allergies: 'https://sem5pi-24-25-g031-production.up.railway.app/api/allergy',
   patientMedicalRecord: 'https://sem5pi-24-25-g031-production.up.railway.app/api/patient-medical-record',
   /*algav*/
-  prolog: 'https://backend-sarmg031.azurewebsites.net/api/Prolog',
-  appointments: 'https://backend-sarmg031.azurewebsites.net/api/Appointments',
+  prolog: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/Prolog',
+  appointments: 'https://sem5pi-24-25-g031-production-3753.up.railway.app/api/Appointments',
   three_d_module: 'https://3d-sarmg031.netlify.app',
   /*auth0*/
   authConfig: {
