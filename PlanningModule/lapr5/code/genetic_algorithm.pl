@@ -1,150 +1,230 @@
-:-dynamic generations/1.
-:-dynamic population/1.
-:-dynamic prob_crossover/1.
-:-dynamic prob_mutation/1.
+:- consult('C:\\Users\\david\\Documents\\ISEP\\sem5pi-24-25-g031\\PlanningModule\\lapr5\\knowledge_base\\kb-20260810.pl').
 
-% task(Id,ProcessTime,DueTime,PenaltyWeight).
-task(t1,2,5,1).
-task(t2,4,7,6).
-task(t3,1,11,2).
-task(t4,3,9,3).
-task(t5,3,8,2).
+% Dynamic predicates to store parameters and solutions
+:- dynamic generations/1.
+:- dynamic population/1.
+:- dynamic prob_crossover/1.
+:- dynamic prob_mutation/1.
 
-% tasks(NTasks).
-tasks(5).
 
-% parameters initialization
-initialize:-write('Number of new generations: '),read(NG), 			
-    (retract(generations(_));true), asserta(generations(NG)),
-	write('Population size: '),read(PS),
-	(retract(population(_));true), asserta(population(PS)),
-	write('Probability of crossover (%):'), read(P1),
-	PC is P1/100, 
-	(retract(prob_crossover(_));true), 	asserta(prob_crossover(PC)),
-	write('Probability of mutation (%):'), read(P2),
-	PM is P2/100, 
-	(retract(prob_mutation(_));true), asserta(prob_mutation(PM)).
-
-generate:-
-    initialize,
+% Genetic algorithm steps
+generate :-
+    write('Starting genetic algorithm...'), nl,
+    initialize_parameters,
+    write('Parameters initialized.'), nl,
     generate_population(Pop),
-    write('Pop='),write(Pop),nl,
-    evaluate_population(Pop,PopValue),
-    write('PopValue='),write(PopValue),nl,
-    order_population(PopValue,PopOrd),
-    generations(NG),
-    generate_generation(0,NG,PopOrd).
+    write('Generated population: '), write(Pop), nl,
+    evaluate_population(Pop, EvaluatedPop),
+    write('Evaluated population: '), write(EvaluatedPop), nl,
+    order_population(EvaluatedPop, OrderedPop),
+    write('Ordered population: '), write(OrderedPop), nl,
+    generations(MaxGenerations),
+    write('Evolution started...'), nl,
+    evolve_generations(0, MaxGenerations, OrderedPop),
+    write('Evolution completed.'), nl.
 
-generate_population(Pop):-
-    population(PopSize),
-    tasks(NumT),
-    findall(Task,task(Task,_,_,_),TasksList),
-    generate_population(PopSize,TasksList,NumT,Pop).
 
-generate_population(0,_,_,[]):-!.
-generate_population(PopSize,TasksList,NumT,[Ind|Rest]):-
-    PopSize1 is PopSize-1,
-    generate_population(PopSize1,TasksList,NumT,Rest),
-    generate_individual(TasksList,NumT,Ind),
-    not(member(Ind,Rest)).
-generate_population(PopSize,TasksList,NumT,L):-
-    generate_population(PopSize,TasksList,NumT,L).
+% Parameters initialization
+initialize_parameters :- 
+    % Only ask for input once
+    retractall(generations(_)),
+    retractall(population(_)),
+    retractall(prob_crossover(_)),
+    retractall(prob_mutation(_)),
     
+    write('Enter the number of new generations: '), read(NG),
+    asserta(generations(NG)),
+    write('Enter the population size: '), read(PS),
+    asserta(population(PS)),
+    write('Enter the probability of crossover (%): '), read(P1),
+    PC is P1 / 100,
+    asserta(prob_crossover(PC)),
+    write('Enter the probability of mutation (%): '), read(P2),
+    PM is P2 / 100,
+    asserta(prob_mutation(PM)).
+
+% Generate initial population
+generate_population(Pop) :-
+    write('Generating population...'), nl,
+    population(PopSize),
+    write('Population size: '), write(PopSize), nl,
+    findall(Surgery, surgery_id(Surgery, _), Surgeries),
+    write('Surgeries: '), write(Surgeries), nl,
+    generate_population(PopSize, Surgeries, Pop).
+
+generate_population(0, _, []) :- !.
+generate_population(PopSize, Surgeries, [Individual | Rest]) :-
+    PopSize1 is PopSize - 1,
+    generate_individual(Surgeries, Individual),
+    generate_population(PopSize1, Surgeries, Rest).
+
+generate_individual(Surgeries, Individual) :-
+    findall(Staff, staff(Staff, _, _, _), StaffPool),
+    assign_surgeries(Surgeries, StaffPool, Individual).
 
 
-generate_individual([G],1,[G]):-!.
+% Assign surgeries to staff ensuring constraints
+assign_surgeries([], _, []).
+assign_surgeries([Surgery | RestSurgeries], StaffPool, [(Surgery, Assignment) | RestAssignments]) :-
+    surgery_id(Surgery, SurgeryType),
+    find_required_staff(SurgeryType, StaffPool, Assignment),
+    assign_surgeries(RestSurgeries, StaffPool, RestAssignments).
 
-generate_individual(TasksList,NumT,[G|Rest]):-
-    NumTemp is NumT + 1, % to use with random
-    random(1,NumTemp,N),
-    remove(N,TasksList,G,NewList),
-    NumT1 is NumT-1,
-    generate_individual(NewList,NumT1,Rest).
+find_required_staff(SurgeryType, StaffPool, Assignment) :-
+    findall(Role-Speciality-Num,
+            required_staff(SurgeryType, Role, Speciality, Num, _, _, _),
+            Requirements),
+    satisfy_requirements(Requirements, StaffPool, Assignment).
 
-remove(1,[G|Rest],G,Rest).
-remove(N,[G1|Rest],G,[G1|Rest1]):- N1 is N-1,
-            remove(N1,Rest,G,Rest1).
+satisfy_requirements([], _, []).
+satisfy_requirements([Role-Speciality-Num | Rest], StaffPool, [Assigned | RestAssigned]) :-
+    find_qualified_staff(Role, Speciality, StaffPool, QualifiedStaff),
+    select_staff(QualifiedStaff, Num, Assigned),
+    satisfy_requirements(Rest, StaffPool, RestAssigned).
 
+find_qualified_staff(Role, Speciality, StaffPool, QualifiedStaff) :-
+    include(is_qualified(Role, Speciality), StaffPool, QualifiedStaff).
 
-evaluate_population([],[]).
-evaluate_population([Ind|Rest],[Ind*V|Rest1]):-
-    evaluate(Ind,V),
-    evaluate_population(Rest,Rest1).
+is_qualified(Role, Speciality, Staff) :-
+    staff(Staff, Role, Speciality, _).
 
-evaluate(Seq,V):- evaluate(Seq,0,V).
+select_staff(_, 0, []).
+select_staff(QualifiedStaff, Num, [Staff | Rest]) :-
+    Num > 0,
+    random_member(Staff, QualifiedStaff),
+    delete(QualifiedStaff, Staff, UpdatedStaff),
+    Num1 is Num - 1,
+    select_staff(UpdatedStaff, Num1, Rest).
 
-evaluate([ ],_,0).
-evaluate([T|Rest],Inst,V):-
-    task(T,Dur,Due,Pen),
-    FinInst is Inst+Dur,
-    evaluate(Rest,FinInst,VRest),
-    ((FinInst =< Due,!, VT is 0) ; (VT is (FinInst-Due)*Pen)),
-    V is VT+VRest.
+% Fitness function
+evaluate_population([], []).
+evaluate_population([Ind | Rest], [Ind*Fitness | RestFitness]) :-
+    write('Evaluating individual: '), write(Ind), nl,
+    evaluate(Ind, Fitness),
+    write('Fitness: '), write(Fitness), nl,
+    evaluate_population(Rest, RestFitness).
+
+evaluate([], 0).
+evaluate([(Surgery, _Staff) | Rest], TotalFitness) :-
+    write('Evaluating surgery: '), write(Surgery), nl,
+    surgery_id(Surgery, Type),
+    surgery(Type, T1, T2, T3),
+    write('Task parameters: '), write((T1, T2, T3)), nl,
+    % Compute lateness T3
+    PenaltyCost is T1 + T2 + T3,
+    write('Penalty cost: '), write(PenaltyCost), nl,
+    evaluate(Rest, RestFitness),
+    write('Evaluation value so far: '), write(RestFitness), nl,
+    TotalFitness is PenaltyCost + RestFitness.
 
 order_population(PopValue,PopValueOrd):-
     bsort(PopValue,PopValueOrd).
 
-bsort([X],[X]):-!.
-bsort([X|Xs],Ys):-
-    bsort(Xs,Zs),
-    bchange([X|Zs],Ys).
+% Check if any constraint is violated
+violates_constraint(Schedule) :-
+    % Example: A doctor performing multiple surgeries at the same time
+    member((Doctor, _), Schedule),
+    findall(Time, member((Doctor, Time), Schedule), Times),
+    sort(Times, SortedTimes),
+    length(SortedTimes, Length),
+    Length \= 1.  % If there is more than one surgery for the same doctor at the same time, it violates the constraint
 
+bsort([X], [X]) :- !.
+bsort([X | Xs], Ys) :-
+    bsort(Xs, Zs),
+    bchange([X | Zs], Ys).
 
-bchange([X],[X]):-!.
+bchange([X], [X]) :- !.
 
-bchange([X*VX,Y*VY|L1],[Y*VY|L2]):-
-    VX>VY,!,
-    bchange([X*VX|L1],L2).
+bchange([X * VX, Y * VY | L1], [Y * VY | L2]) :-
+    VX > VY, !,
+    bchange([X * VX | L1], L2).
 
-bchange([X|L1],[X|L2]):-bchange(L1,L2).
-    
-generate_generation(G,G,Pop):-!,
-	write('Generation '), write(G), write(':'), nl, write(Pop), nl.
-generate_generation(N,G,Pop):-
-	write('Generation '), write(N), write(':'), nl, write(Pop), nl,
-	crossover(Pop,NPop1),
-	mutation(NPop1,NPop),
-	evaluate_population(NPop,NPopValue),
-	order_population(NPopValue,NPopOrd),
-	N1 is N+1,
-	generate_generation(N1,G,NPopOrd).
+bchange([X | L1], [X | L2]) :- bchange(L1, L2).
 
-generate_crossover_points(P1,P2):- generate_crossover_points1(P1,P2).
+evolve_generations(Current, Max, Pop) :-
+    Current >= Max, !,
+    write('Final Generation: '), write(Pop), nl.
 
-generate_crossover_points1(P1,P2):-
-	tasks(N),
-	NTemp is N+1,
-	random(1,NTemp,P11),
-	random(1,NTemp,P21),
-	P11\==P21,!,
-	((P11<P21,!,P1=P11,P2=P21);P1=P21,P2=P11).
-generate_crossover_points1(P1,P2):-
-	generate_crossover_points1(P1,P2).
+evolve_generations(Current, Max, Pop) :-
+    Current < Max,
+    write('Generation '), write(Current), write(': '), nl, write(Pop), nl,
+    crossover_population(Pop, CrossoverPop),
+    write('Crossover population: '), write(CrossoverPop), nl,
+    mutate_population(CrossoverPop, MutatedPop),
+    write('Mutated population: '), write(MutatedPop), nl,
+    evaluate_population(MutatedPop, EvaluatedPop),
+    write('Evaluated population: '), write(EvaluatedPop), nl,
+    order_population(EvaluatedPop, OrderedPop),
+    write('Ordered population: '), write(OrderedPop), nl,
+    NextGen is Current + 1,
+    write('Next generation: '), write(NextGen), nl,
+    evolve_generations(NextGen, Max, OrderedPop).
 
-
-crossover([ ],[ ]).
-crossover([Ind*_],[Ind]).
-crossover([Ind1*_,Ind2*_|Rest],[NInd1,NInd2|Rest1]):-
-	generate_crossover_points(P1,P2),
-	prob_crossover(Pcruz),random(0.0,1.0,Pc),
+% Crossover operators
+%% Crossover between two individuals
+crossover_population([ ],[ ]).
+crossover_population([Ind*_],[Ind]).
+crossover_population([Ind1*_,Ind2*_|Rest],[NInd1,NInd2|Rest1]):-
+	write('Crossover between: '), write(Ind1), write(' and '), write(Ind2), nl,
+    generate_crossover_points(P1,P2),
+    write('Crossover points: '), write((P1, P2)), nl,
+	prob_crossover(Pcruz),
+    write('Crossover probability: '), write(Pcruz), nl,
+    random(0.0,1.0,Pc),
+    write('Random number: '), write(Pc), nl,
 	((Pc =< Pcruz,!,
-        cross(Ind1,Ind2,P1,P2,NInd1),
-	  cross(Ind2,Ind1,P1,P2,NInd2))
-	;
-	(NInd1=Ind1,NInd2=Ind2)),
-	crossover(Rest,Rest1).
+        write('Performing crossover...'), nl,
+        crossover_individuals(Ind1,Ind2,P1,P2,NInd1),
+        write('First offspring: '), write(NInd1), nl,
+	  crossover_individuals(Ind2,Ind1,P1,P2,NInd2)
+      ));
 
-fillh([ ],[ ]).
+    write('No crossover...'), nl,
+	(NInd1=Ind1,NInd2=Ind2),
+    write('New population: '), write(Rest1), nl,
+	crossover_population(Rest,Rest1).
 
-fillh([_|R1],[h|R2]):-
-	fillh(R1,R2).
+%% Crossover between two individuals - Split at a random point
+crossover_individuals(Ind1,Ind2,P1,P2,NInd11):-
+    write('Individuals'), nl,
+    write('Crossover between: '), write(Ind1), write(' and '), write(Ind2), nl,
+    write('Crossover points: '), write((P1, P2)), nl,
+    sublist(Ind1,P1,P2,Sub1),
+    write('Sublist 1: '), write(Sub1), nl,
+    write('generations(NumT): NumT = '), write(generations(NumT)), nl,
+    generations(NumT),
+    write('Number of tasks: '), write(NumT), nl,
+    R is NumT-P2,
+    write('R: '), write(R), nl,
+    rotate_right(Ind2,R,Ind21),
+    write('Rotated individual: '), write(Ind21), nl,
+    remove(Ind21,Sub1,Sub2),
+    write('Removed sublist: '), write(Sub2), nl,
+    P3 is P2 + 1,
+    write('Crossover point: '), write(P3), nl,
+    insert(Sub2,Sub1,P3,NInd1),
+    write('First offspring: '), write(NInd1), nl,
+    removeh(NInd1,NInd11).
 
-sublist(L1,I1,I2,L):-I1 < I2,!,
+removeh([],[]):-!.
+
+removeh([h|R1],R2):-!,
+    removeh(R1,R2).
+
+removeh([X|R1],[X|R2]):-
+    removeh(R1,R2).
+
+sublist(L1,I1,I2,L):-
     sublist1(L1,I1,I2,L).
 
-sublist(L1,I1,I2,L):-sublist1(L1,I2,I1,L).
+sublist(L1,I1,I2,L):-
+    write('Sublist 1'), nl,
+    sublist1(L1,I2,I1,L).
 
-sublist1([X|R1],1,1,[X|H]):-!, fillh(R1,H).
+sublist1([X|R1],1,1,[X|H]):-!,
+    write('Sublist 2'), nl,
+    fillh(R1,H).
 
 sublist1([X|R1],1,N2,[X|R2]):-!,N3 is N2 - 1,
 	sublist1(R1,1,N3,R2).
@@ -153,7 +233,7 @@ sublist1([_|R1],N1,N2,[h|R2]):-N3 is N1 - 1,
 		N4 is N2 - 1,
 		sublist1(R1,N3,N4,R2).
 
-rotate_right(L,K,L1):- tasks(N),
+rotate_right(L,K,L1):- generations(N),
 	T is N - K,
 	rr(T,L,L1).
 
@@ -173,7 +253,7 @@ remove([_|R1],L,R2):-
 
 insert([],L,_,L):-!.
 insert([X|R],L,N,L2):-
-    tasks(T),
+    generations(T),
     ((N>T,!,N1 is N mod T);N1 = N),
     insert1(X,N1,L,L1),
     N2 is N + 1,
@@ -185,35 +265,39 @@ insert1(X,N,[Y|L],[Y|L1]):-
     N1 is N-1,
     insert1(X,N1,L,L1).
 
-cross(Ind1,Ind2,P1,P2,NInd11):-
-    sublist(Ind1,P1,P2,Sub1),
-    tasks(NumT),
-    R is NumT-P2,
-    rotate_right(Ind2,R,Ind21),
-    remove(Ind21,Sub1,Sub2),
-    P3 is P2 + 1,
-    insert(Sub2,Sub1,P3,NInd1),
-    removeh(NInd1,NInd11).
+fillh([ ],[ ]).
 
+fillh([_|R1],[h|R2]):-
+	fillh(R1,R2).
 
-removeh([],[]).
+%% Helper function to generate random crossover points
+generate_crossover_points(P1, P2) :- 
+    write('Generating crossover points...'), nl,
+    generations(N), 
+    write('Number of tasks: '), write(N), nl,
+    NTemp is N + 1,
+    random(1, NTemp, P11), 
+    random(1, NTemp, P21),
+    P11 \= P21,  % Ensure points are different
+    (P11 < P21 -> P1 = P11, P2 = P21; P1 = P21, P2 = P11).
 
-removeh([h|R1],R2):-!,
-    removeh(R1,R2).
+% Mutation operators
+% Mutate each individual in the population
+mutate_population([], []).  % Base case when no individuals left.
 
-removeh([X|R1],[X|R2]):-
-    removeh(R1,R2).
+mutate_population([Ind | Req], [NInd | Rest1]) :-
+    write('Mutating individual: '), write(Ind), nl,
+    prob_mutation(PM),
+    write('Mutation probability: '), write(PM), nl,
+    random(0.0, 1.0, P),
+    write('Random number: '), write(P), nl,
+    (P =< PM -> mutacao1(Ind, NInd); NInd = Ind),
+    write('Mutated individual: '), write(NInd), nl,
+    mutate_population(Req, Rest1).
 
-mutation([],[]).
-mutation([Ind|Rest],[NInd|Rest1]):-
-	prob_mutation(Pmut),
-	random(0.0,1.0,Pm),
-	((Pm < Pmut,!,mutacao1(Ind,NInd));NInd = Ind),
-	mutation(Rest,Rest1).
-
-mutacao1(Ind,NInd):-
-	generate_crossover_points(P1,P2),
-	mutacao22(Ind,P1,P2,NInd).
+mutacao1(Ind, NInd) :-
+    generate_crossover_points(P1, P2),
+    mutacao22(Ind, P1, P2, NInd).
 
 mutacao22([G1|Ind],1,P2,[G2|NInd]):-
 	!, P21 is P2-1,
