@@ -443,15 +443,18 @@ namespace DDDNetCore.PrologIntegrations
                 string dateStr = dateTime.Year.ToString() + dateTime.Month.ToString("D2") + dateTime.Day.ToString("D2");
 
                 string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
-                for (int i = 0; i < 5; i++) // Navigate up 5 levels
+                if (AppSettings.Environment != "Production")
                 {
-                    var parent = Directory.GetParent(projectRootPath);
-                    if (parent == null)
+                    for (int i = 0; i < 5; i++) // Navigate up 5 levels
                     {
-                        throw new InvalidOperationException("Could not determine the project root directory.");
+                        var parent = Directory.GetParent(projectRootPath);
+                        if (parent == null)
+                        {
+                            throw new InvalidOperationException("Could not determine the project root directory.");
+                        }
+                        projectRootPath = parent.FullName;
                     }
-                    projectRootPath = parent.FullName;
-                }            
+                }   
                 string absolutePrologPath = Path.Combine(projectRootPath, AppSettings.PrologPathLAPR5);
                 absolutePrologPath = absolutePrologPath.Replace(@"\\", "/");
 
