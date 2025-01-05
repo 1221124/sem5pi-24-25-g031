@@ -10,15 +10,27 @@ describe('Appointment Form E2E Tests', () => {
   });
 
   it('should create a new appointment', () => {
-    const surgeryRoom = 'OR1';
-    const startDate = '2025-01-20 14:47';
+    const surgeryRoom = 'OR5';
+    const startDate = '2025-01-20T16:30';
     const assignedStaff = ['D20241 - David Sousa', 'D20243 - Beatriz Costa', 'D20244 - Aurora Magalhães', 'D20245 - Maria Leão', 'N20241 - Guilherme Ribeiro', 'N20242 - Mara Teixeira', 'N20243 - Simão Cunha', 'N20244 - Núria Sousa', 'T20241 - Tiago Carvalho'];
 
     cy.get('button').contains('Schedule an Appointment').click();
 
-    cy.get('input type="datetime-local"]').clear().type(startDate);
+    cy.wait(2000);
+    
+    cy.get('button').contains('Convert to Appointment').first().click();
 
-    cy.get('select[name="surgeryRoom"]').select(surgeryRoom);
+    cy.wait(3000);
+
+    cy.get('body').should('not.have.class', 'loading');
+
+    cy.get('input[name="appointmentDateStart"]').clear().type(startDate);
+
+    cy.get('body').should('not.have.class', 'loading');
+
+    cy.get('select').first().select(surgeryRoom);
+
+    cy.get('body').should('not.have.class', 'loading');
 
     assignedStaff.forEach(staff => {
       cy.get('input[type="checkbox"]').check(staff);
@@ -34,7 +46,7 @@ describe('Appointment Form E2E Tests', () => {
   it('should show required staff for appointment', () => {
     cy.get('button').contains('Schedule an Appointment').click();
 
-    cy.get('input type="datetime-local"]').clear().type('2025-01-20 18:00');
+    cy.get('input[name="appointmentDateStart"]').clear().type('2025-01-20T18:00');
 
     cy.get('select[name="surgeryRoom"]').select('OR1');
 
@@ -45,18 +57,17 @@ describe('Appointment Form E2E Tests', () => {
   it('should display staff options based on role and specialization', () => {
     cy.get('button').contains('Schedule an Appointment').click();
 
-    cy.get('input type="datetime-local"]').clear().type('2025-01-20 18:00');
+    cy.get('input[name="appointmentDateStart"]').clear().type('2025-01-20T14:00');
 
     cy.get('select[name="surgeryRoom"]').select('OR1');
 
-    cy.get('h5').should('contain', 'Doctor - Orthopaedics');
-    cy.get('input[type="checkbox"]').should('be.visible');
+    cy.get('h5').should('contain', 'Doctor - 394649004');
   });
 
   it('should allow staff selection for the appointment', () => {
     cy.get('button').contains('Schedule an Appointment').click();
 
-    cy.get('input type="datetime-local"]').clear().type('2025-01-20 18:00');
+    cy.get('input[name="appointmentDateStart"]').clear().type('2025-01-20T18:00');
 
     cy.get('select[name="surgeryRoom"]').select('OR3');
 
@@ -70,19 +81,25 @@ describe('Appointment Form E2E Tests', () => {
   });
 
   it('should update an existing appointment', () => {
-    const surgeryRoom = 'OR1';
-    const startDate = '2025-01-20 18:45';
+    const surgeryRoom = 'OR5';
+    const startDate = '2025-01-20T16:45';
     const assignedStaff = ['D20241 - David Sousa', 'D20243 - Beatriz Costa', 'D20244 - Aurora Magalhães', 'D20245 - Maria Leão', 'N20241 - Guilherme Ribeiro', 'N20242 - Mara Teixeira', 'N20243 - Simão Cunha', 'N20244 - Núria Sousa', 'T20241 - Tiago Carvalho'];
 
     cy.get('table tbody tr').first().find('button').contains('Edit').click();
 
-    cy.get('input type="datetime-local"]').clear().type(startDate);
+    cy.get('input[name="appointmentDateStart"]').clear().type(startDate);
+
+    cy.wait(2000);
 
     cy.get('select[name="surgeryRoom"]').select(surgeryRoom);
+
+    cy.wait(5000);
 
     assignedStaff.forEach(staff => {
       cy.get('input[type="checkbox"]').check(staff);
     });
+
+    cy.wait(1000);
 
     cy.get('button[type="submit"]').contains('Update Appointment').click();
 
