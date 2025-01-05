@@ -130,7 +130,7 @@ namespace DDDNetCore.PrologIntegrations
             {
                 Console.WriteLine($"Error: {e.Message}");
                 Console.WriteLine($"Stack Trace: {e.StackTrace}");
-                throw new Exception("Error creating file content", e);
+                throw new Exception("Error creating file content + " + e.Message, e);
             }
 
         }
