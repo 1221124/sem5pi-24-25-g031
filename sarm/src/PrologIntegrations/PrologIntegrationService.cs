@@ -146,16 +146,21 @@ namespace DDDNetCore.PrologIntegrations
             string dateStr = date.Year.ToString() + date.Month.ToString("D2") + date.Day.ToString("D2");
             Console.WriteLine($"DateStr: {dateStr}");
 
-            string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
-            for (int i = 0; i < 5; i++) // Navigate up 5 levels
+            string projectRootPath = "";
+            
+            if (AppSettings.Environment != "Production")
             {
-                var parent = Directory.GetParent(projectRootPath);
-                if (parent == null)
+                projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
+                for (int i = 0; i < 5; i++) // Navigate up 5 levels
                 {
-                    throw new InvalidOperationException("Could not determine the project root directory.");
+                    var parent = Directory.GetParent(projectRootPath);
+                    if (parent == null)
+                    {
+                        throw new InvalidOperationException("Could not determine the project root directory.");
+                    }
+                    projectRootPath = parent.FullName;
                 }
-                projectRootPath = parent.FullName;
-            }            
+            }    
             string absolutePrologPath = Path.Combine(projectRootPath, AppSettings.PrologPathLAPR5);
             absolutePrologPath = absolutePrologPath.Replace(@"\\", "/");
             
@@ -207,6 +212,11 @@ namespace DDDNetCore.PrologIntegrations
 
                         string prologCommands = $@"swipl -g ""set_prolog_flag(answer_write_options,[max_depth(0)]), {command.command1}, {command.command2}, {command.command3}, abort, halt.""
                         ";
+                        if (command.command3.Contains("or"))
+                        {
+                            prologCommands = $@"swipl -g ""set_prolog_flag(answer_write_options,[max_depth(0)]), {command.command1}, {command.command2}, {command.command3}, halt.""
+                            ";
+                        }
 
                         Console.WriteLine("Running Prolog commands...");
                         Console.WriteLine("command.absolutePrologPath: " + command.absolutePrologPath);
