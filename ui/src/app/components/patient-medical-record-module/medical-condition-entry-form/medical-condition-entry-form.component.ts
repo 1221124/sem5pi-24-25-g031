@@ -7,6 +7,7 @@ import { PatientMedicalRecordService } from '../../../services/patient-medical-r
 import { PatientMedicalRecord } from '../../../models/patient-medical-record.model';
 import { FormsModule } from '@angular/forms';
 import { MedicalConditionService } from '../../../services/medical-condition/medical-condition.service';
+import { MedicalCondition } from '../../../models/medical-condition.model';
 
 @Component({
   selector: 'app-medical-condition-entry-form',
@@ -28,6 +29,7 @@ export class MedicalConditionEntryFormComponent implements OnInit {
     Allergies: [],
     MedicalConditions: []
   }
+  @Input() allMedicalConditions: MedicalCondition[] = [];
   @Output() closeMedicalCondition = new EventEmitter<void>();
   @Output() closeAllergy = new EventEmitter<void>();
 
@@ -57,6 +59,12 @@ export class MedicalConditionEntryFormComponent implements OnInit {
     }
 
     this.accessToken = this.authService.getToken() as string;
+
+    if (!this.allMedicalConditions) {
+      await this.medicalConditionService.get(this.accessToken).then((response) => {
+        this.allMedicalConditions = response.body;
+      });
+    }
 
     if (this.medicalCondition) {
       if (this.medicalCondition.ICD11Code) {
@@ -96,7 +104,7 @@ export class MedicalConditionEntryFormComponent implements OnInit {
         this.isError = true;
         return;
       }
-      const isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
+      // const isValid = await this.medicalConditionService.validateICD11Code(code, this.accessToken);
 
       if (!this.isEdit) {
         const exists = this.patientMedicalRecord.MedicalConditions.findIndex((mc) => mc.ICD11Code === code) !== -1;
@@ -107,11 +115,10 @@ export class MedicalConditionEntryFormComponent implements OnInit {
         }
       }
 
-      if (isValid) {
-        this.message = 'ICD11 code is valid';
+      if (this.allMedicalConditions.findIndex((mc) => mc.code === code) !== -1) {
         this.isError = false;
       } else {
-        this.message = 'ICD11 code is invalid';
+        this.message = 'ICD11 code does not exist in the system or is not valid';
         this.isError = true;
       }
     } catch (error) {

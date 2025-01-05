@@ -100,19 +100,19 @@ export class OperationRequestsTableComponent implements OnInit {
       status: ''
     }
 
-    try {
-      const response = await this.service.getAll(this.accessToken);
+    // try {
+    //   const response = await this.service.getAll(this.accessToken);
 
-      if (response.status === 200 || response.status === 201) {
-        this.requests = response.body || [];
-      } else {
-        console.error('Failed to fetch requests:', response.status);
-        this.requests = [];
-      }
-    } catch (error) {
-      console.error('Error during initial data fetch:', error);
-      this.requests = [];
-    }
+    //   if (response.status === 200 || response.status === 201) {
+    //     this.requests = response.body || [];
+    //   } else {
+    //     console.error('Failed to fetch requests:', response.status);
+    //     this.requests = [];
+    //   }
+    // } catch (error) {
+    //   console.error('Error during initial data fetch:', error);
+    //   this.requests = [];
+    // }
 
     try {
       const response = await this.operationTypesService.getOperationTypes(emptyFilter, this.accessToken);

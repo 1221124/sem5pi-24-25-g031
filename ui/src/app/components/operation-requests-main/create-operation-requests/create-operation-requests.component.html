@@ -25,7 +25,7 @@
                 (focus)="operationTypeTouched = true">
           <option value="" disabled selected>Select Operation Type</option>
           <option *ngFor="let operationType of operationTypes" [value]="operationType.OperationTypeCode">
-            {{ operationType.Specialization }} >>> {{ operationType.Name }}
+            {{ operationType.Name }}
           </option>
         </select>
       </div>

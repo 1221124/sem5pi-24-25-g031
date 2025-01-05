@@ -8,6 +8,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../../services/auth/auth.service';
 import {Router} from '@angular/router';
+import { Allergy } from '../../../models/allergy.model';
 
 @Component({
   selector: 'app-allergy-entry-form',
@@ -31,13 +32,12 @@ export class AllergyEntryFormComponent {
     Allergies: [],
     MedicalConditions: []
   }
-
   @Input() allergy: MedicalRecordEntry = {
     ICD11Code: '',
     Date: new Date(),
     notMeaningfulAnymore: false
   };
-
+  @Input() allAllergies: Allergy[] = [];
   @Output() closeAllergy = new EventEmitter<void>();
   @Output() closeDownload = new EventEmitter<void>();
 
@@ -59,6 +59,12 @@ export class AllergyEntryFormComponent {
     }
 
     this.accessToken = this.authService.getToken() as string;
+
+    if (!this.allAllergies) {
+      await this.allergyService.get(this.accessToken).then((response) => {
+        this.allAllergies = response.body;
+      });
+    }
 
     if (this.allergy) {
       if (this.allergy.ICD11Code) {
@@ -83,12 +89,10 @@ export class AllergyEntryFormComponent {
         this.isError = true;
         return;
       }
-      const isValid = await this.allergyService.validateICD11Code(code, this.accessToken);
-
-      console.log(isValid);
+      // const isValid = await this.allergyService.validateICD11Code(code, this.accessToken);
 
       if (!this.isEdit) {
-        const exists = this.patientMedicalRecord.Allergies.findIndex((a) => a.ICD11Code !== code) === -1;
+        const exists = this.patientMedicalRecord.Allergies.findIndex((a) => a.ICD11Code === code) !== -1;
         if (exists) {
           this.message = 'ICD11 code already exists in patient medical record';
           this.isError = true;
@@ -96,11 +100,11 @@ export class AllergyEntryFormComponent {
         }
       }
 
-      if (isValid) {
+      if (this.allAllergies.findIndex((a) => a.code === code) !== -1) {
         this.message = 'ICD11 code is valid';
         this.isError = false;
       } else {
-        this.message = 'ICD11 code is invalid';
+        this.message = 'ICD11 code does not exist in the system or is not valid';
         this.isError = true;
       }
     } catch (error) {

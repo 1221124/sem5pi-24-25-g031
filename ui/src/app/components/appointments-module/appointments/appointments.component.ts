@@ -245,7 +245,7 @@ export class AppointmentsComponent implements OnInit {
       this.requests = [];
       const response = await this.requestService.getAll(this.accessToken);
       this.requests = response.body || [];
-      // this.requests.filter((req) => (req.status.toLowerCase() == 'pending' || req.status.toLowerCase() == 'rejected'));
+      this.requests = this.requests.filter((req) => (req.status.toLowerCase() == 'pending' || req.status.toLowerCase() == 'rejected'));
     } catch (error) {
       console.error('Error fetching operation requests:', error);
     }

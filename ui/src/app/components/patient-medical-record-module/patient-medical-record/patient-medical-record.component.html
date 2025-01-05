@@ -13,7 +13,7 @@
     <input
       id="search"
       type="text"
-      [(ngModel)]="searchQuery"
+      [(ngModel)]="searchQueryMedicalCondition"
       (input)="searchMedicalConditions()"
       placeholder="Enter code or name"
     />
@@ -48,7 +48,7 @@
     <input
       id="searchAllergies"
       type="text"
-      [(ngModel)]="searchQuery"
+      [(ngModel)]="searchQueryAllergy"
       (input)="searchAllergies()"
       placeholder="Enter code or name"
     />
@@ -82,6 +82,7 @@
     *ngIf="medicalConditionPopup"
     [medicalCondition]="medicalCondition"
     [patientMedicalRecord]="patientMedicalRecord"
+    [allMedicalConditions]="allMedicalConditions"
     (closeMedicalCondition)="closeMedicalConditionPopup()">
   </app-medical-condition-entry-form>
 </div>
@@ -90,6 +91,7 @@
     *ngIf="allergyPopup"
     [allergy]="allergy"
     [patientMedicalRecord]="patientMedicalRecord"
+    [allAllergies]="allAlergies"
     (closeAllergy)="closeAllergyPopup()">
   </app-allergy-entry-form>
 </div>

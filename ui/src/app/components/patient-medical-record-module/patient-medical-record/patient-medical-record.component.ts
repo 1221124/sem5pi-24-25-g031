@@ -65,7 +65,9 @@ export class PatientMedicalRecordComponent implements OnInit {
   medicalCondition: MedicalRecordEntry | null = null;
   allergy: MedicalRecordEntry | null = null;
 
-  searchQuery: string = '';
+  searchQueryMedicalCondition: string = '';
+  searchQueryAllergy: string = '';
+
   filteredMedicalConditions: MedicalRecordEntry[] = [];
   filteredAllergies: MedicalRecordEntry[] = [];
 
@@ -214,7 +216,7 @@ export class PatientMedicalRecordComponent implements OnInit {
   }
 
   searchMedicalConditions() {
-    const query = this.searchQuery.toLowerCase();
+    const query = this.searchQueryMedicalCondition.toLowerCase();
 
     this.filteredMedicalConditions = this.patientMedicalRecord.MedicalConditions.filter(
       (condition) =>
@@ -224,7 +226,7 @@ export class PatientMedicalRecordComponent implements OnInit {
   }
 
   searchAllergies() {
-    const query = this.searchQuery.toLowerCase();
+    const query = this.searchQueryAllergy.toLowerCase();
 
     this.filteredAllergies = this.patientMedicalRecord.Allergies.filter(
       (condition) =>
