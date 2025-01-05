@@ -22,6 +22,8 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+    </ItemGroup>
+    <ItemGroup  Condition="'$(Configuration)' != 'Release'">
         <ProjectReference Include="..\sarm\DDDNetCore.csproj" />
     </ItemGroup>
 </Project>
