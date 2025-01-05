@@ -66,24 +66,26 @@ namespace DDDNetCore.PrologIntegrations
 
                 // Navigate to the project root directory safely
                 string projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
-                for (int i = 0; i < 5; i++) // Navigate up 5 levels
+                string directoryPath = "";
+                if (AppSettings.Environment != "Production")
                 {
-                    var parent = Directory.GetParent(projectRootPath);
-                    if (parent == null)
+                    for (int i = 0; i < 5; i++) // Navigate up 5 levels
                     {
-                        throw new InvalidOperationException("Could not determine the project root directory.");
+                        var parent = Directory.GetParent(projectRootPath);
+                        if (parent == null)
+                        {
+                            throw new InvalidOperationException("Could not determine the project root directory.");
+                        }
+                        projectRootPath = parent.FullName;
                     }
-                    projectRootPath = parent.FullName;
-                }
-                
-                string directoryPath = Path.Combine(projectRootPath, "PlanningModule", "lapr5", "knowledge_base");
+                    
+                    directoryPath = Path.Combine(projectRootPath, "PlanningModule", "lapr5", "knowledge_base");
 
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
-                if (AppSettings.Environment == "Production")
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+                } else
                 {
                     //directory is sarm, which is the base directory of the project in production
                     directoryPath = projectRootPath;
