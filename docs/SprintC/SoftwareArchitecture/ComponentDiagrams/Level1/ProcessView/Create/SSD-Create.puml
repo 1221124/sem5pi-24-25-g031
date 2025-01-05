@@ -2,7 +2,7 @@
 
 actor User
 participant System
-participant AzureSQLDatabase
+participant PostgreSQLDb
 
 activate User
     User -> System : Request Create (include object)
@@ -10,11 +10,11 @@ activate User
         
         System -> System : Validate object
         
-        System -> AzureSQLDatabase : Create object
-        activate AzureSQLDatabase
+        System -> PostgreSQLDb : Create object
+        activate PostgreSQLDb
             
-            AzureSQLDatabase --> System : Return success/error message
-        deactivate AzureSQLDatabase
+            PostgreSQLDb --> System : Return success/error message
+        deactivate PostgreSQLDb
         
         System --> User : Return success/error message
     deactivate System

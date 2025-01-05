@@ -5,7 +5,7 @@ autonumber
 
 actor User
 participant System
-participant AzureSQLDatabase
+participant PostgreSQLDb
 
 activate User
     User -> System : Request Delete (include Object)
@@ -13,11 +13,11 @@ activate User
     
         System -> System : Validate Object
         
-        System -> AzureSQLDatabase : Delete Object
-        activate AzureSQLDatabase
+        System -> PostgreSQLDb : Delete Object
+        activate PostgreSQLDb
             
-            AzureSQLDatabase --> System : Return object
-        deactivate AzureSQLDatabase
+            PostgreSQLDb --> System : Return object
+        deactivate PostgreSQLDb
         
         System --> User: Return success/error message
     deactivate System
