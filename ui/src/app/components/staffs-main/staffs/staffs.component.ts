@@ -51,7 +51,7 @@ export class StaffsComponent implements OnInit {
   totalItems: number = 0;
   totalPages: number = 1;
   currentPage: number = 1;
-  itemsPerPage: number = 1;
+  itemsPerPage: number = 5;
   showMessage: boolean = false;
   constructor(private staffService: StaffsService, private authService: AuthService, private enumsService: EnumsService, private specializationService: SpecializationsService, private router: Router, private route: ActivatedRoute) { }
 

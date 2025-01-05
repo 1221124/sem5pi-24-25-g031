@@ -4,14 +4,14 @@
         <tr>
             <th colspan="2">
                 Name
-                <input type="text" [(ngModel)]="filter.name" name="name" placeholder="Filter by Name" />
+                <input type="text" [(ngModel)]="filter.name" (input)="applyFilter()" name="name" placeholder="Filter by Name" />
             <th>
                 Email
-                <input type="text" [(ngModel)]="filter.email" name="email" placeholder="Filter by Email" />
+                <input type="text" [(ngModel)]="filter.email" (input)="applyFilter()" name="email" placeholder="Filter by Email" />
             </th>
             <th colspan="2">
                 Specialization
-                <select [(ngModel)]="filter.specialization" name="specialization" id="specialization">
+                <select [(ngModel)]="filter.specialization" (input)="applyFilter()" name="specialization" id="specialization">
                     <option *ngFor="let spec of specializations" [value]="spec">
                         {{ spec.SNOMEDCTCode }} - {{ spec.Name }}
                     </option>
@@ -19,7 +19,7 @@
             </th>
             <th>
               <div class="filter-buttons">
-                <button class="apply-filter-btn" (click)="applyFilter()">Apply Filters</button>
+                <!--<button class="apply-filter-btn" (click)="applyFilter()">Apply Filters</button>-->
                 <button class="clear-filter-btn" (click)="clearFilters()">Clear Filters</button>
               </div>
             </th>

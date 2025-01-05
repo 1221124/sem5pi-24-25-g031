@@ -30,7 +30,7 @@ export class ListStaffsComponent implements OnInit {
   @Input() totalItems: number = 0;
   @Input() totalPages: number = 1;
   @Input() currentPage: number = 1;
-  @Input() itemsPerPage: number = 1;
+  @Input() itemsPerPage: number = 5;
   @Output() updateStaffEvent = new EventEmitter<Staff>();
   @Output() statusToggle = new EventEmitter<Staff>();
 
@@ -89,9 +89,24 @@ export class ListStaffsComponent implements OnInit {
   }
 
   getPaginatedStaff(): Staff[] {
-    console.log("Entrou");
+    const filteredStaffs = this.staffs.filter((staff) => {
+      const matchesName = this.filter.name
+        ? staff.FullName.FirstName.toLowerCase().includes(this.filter.name.toLowerCase()) ||
+        staff.FullName.LastName.toLowerCase().includes(this.filter.name.toLowerCase())
+        : true;
+
+      const matchesEmail = this.filter.email
+        ? staff.ContactInformation.Email.toLowerCase().includes(this.filter.email.toLowerCase())
+        : true;
+
+      const matchesSpecialization = this.filter.specialization
+        ? staff.specialization === this.filter.specialization
+        : true;
+
+      return matchesName && matchesEmail && matchesSpecialization;
+    });
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.staffs.slice(start, start + this.itemsPerPage);
+    return filteredStaffs.slice(start, start + this.itemsPerPage);
   }
 
   nextPage() {
@@ -108,8 +123,10 @@ export class ListStaffsComponent implements OnInit {
     this.updateQueryParams();
   }
 
-  async applyFilter() {
-    this.filter.pageNumber = 1;
+  applyFilter() {
+    this.currentPage = 1;
+
+    this.updateQueryParams();
   }
 
   async clearFilters() {
