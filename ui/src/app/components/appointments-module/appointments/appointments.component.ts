@@ -215,7 +215,8 @@ export class AppointmentsComponent implements OnInit {
     this.filter.staff = '';
     this.filter.patient = '';
     await this.loadAppointments().then(() => {
-      this.router.navigate(['/appointments'], { queryParams: { page: 1 } });
+      if (this.isDoctor) this.router.navigate(['/doctor/appointments'], { queryParams: { page: 1 } });
+      else this.router.navigate(['/admin/appointments'], { queryParams: { page: 1 } });
       this.showList = true;
     });
   }
