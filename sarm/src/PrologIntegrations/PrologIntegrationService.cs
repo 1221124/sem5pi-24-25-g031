@@ -341,6 +341,12 @@ namespace DDDNetCore.PrologIntegrations
                             throw new Exception("Failure connecting with SFTP.");
                         }
 
+                        if (sftpClient.Exists(destination))
+                        {
+                            Console.WriteLine("File already exists on SFTP server. Deleting existing file...");
+                            sftpClient.DeleteFile(destination);
+                        }
+
                         using (var fileStream = File.OpenRead(filePath))
                         {
                             Console.WriteLine("Sending file via SFTP...");
