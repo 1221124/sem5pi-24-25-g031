@@ -128,7 +128,7 @@ builder.Services.AddTransient<RoomTypeService>();
 builder.Services.AddTransient<ISpecializationRepository, SpecializationRepository>();
 builder.Services.AddTransient<SpecializationService>();
 
-// builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
+builder.Services.AddSingleton<IHostedService, MonitorSurgeryRoomService>();
 
 builder.Services.AddScoped<PrologIntegrationService>();
 builder.Services.AddScoped<PrologService>();
