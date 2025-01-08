@@ -46,7 +46,7 @@ Each team member was assigned specific use cases to work on:
 - _UC094 (US7.4.11)_: As a system administrator, I would like to create a public file share, in SMB/CIFS or NFS format, to speed things up between the various teams.
 - _UC095 (US7.4.12)_: As a system administrator, we need to ensure that backups have been carried out correctly if necessary. To do this, we must automate their recovery, validating that the system is working at the end (e.g. database - execute a SQL query successfully after recovery).
 
-### **Gustavo Lima, 1200567**
+### **Guilherme Ribeiro, 1220786**
 
 - _UC064 (US7.1.1)_: As a user, I want to have an integrated UI for all modules of the system so that I don’t need to switch between application URLs.
 - _UC065 (US7.1.2)_: As a user, I want the application menu to adjust according to my role so that it only presents me the options I may access.
